@@ -245,6 +245,7 @@ function Initialize-StartupModules {
 
     $loadTimes = @{}
     $totalTimer = [System.Diagnostics.Stopwatch]::StartNew()
+    $jobs = @()
     
     $VerbosePreference = 'SilentlyContinue'
     $DebugPreference = 'SilentlyContinue'
@@ -252,22 +253,66 @@ function Initialize-StartupModules {
     $InformationPreference = 'SilentlyContinue'
     
     try {
+        # Create a hashtable to store module initialization scriptblocks
+        $moduleJobs = @{}
+        
         foreach ($moduleName in $startupModules) {
-            if ($moduleName -in @('core', 'shell', 'starship')) {
+            $moduleInfo = $script:moduleRegistry[$moduleName]
+            
+            # Create a job for each module
+            $job = Start-Job -ScriptBlock {
+                param($moduleName, $moduleInfo)
+                
                 $sw = [System.Diagnostics.Stopwatch]::StartNew()
-                Import-UnifiedModule $moduleName -Silent
-                $sw.Stop()
-                $loadTimes[$moduleName] = $sw.ElapsedMilliseconds
-            } else {
-                Import-UnifiedModule $moduleName -Silent
+                
+                try {
+                    if ($moduleInfo.InitializerBlock) {
+                        & $moduleInfo.InitializerBlock
+                    } elseif ($moduleInfo.ModulePath -and (Test-Path $moduleInfo.ModulePath)) {
+                        Import-Module $moduleInfo.ModulePath -Force
+                    } else {
+                        Import-Module $moduleName -Force
+                    }
+                    
+                    $sw.Stop()
+                    return @{
+                        Name = $moduleName
+                        Success = $true
+                        Time = $sw.ElapsedMilliseconds
+                    }
+                } catch {
+                    if ($moduleInfo.OnFailure) {
+                        & $moduleInfo.OnFailure
+                    }
+                    return @{
+                        Name = $moduleName
+                        Success = $false
+                        Error = $_.Exception.Message
+                    }
+                }
+            } -ArgumentList $moduleName, $moduleInfo
+            
+            $jobs += $job
+        }
+        
+        # Wait for all jobs to complete
+        $results = $jobs | Wait-Job | Receive-Job
+        
+        # Process results
+        foreach ($result in $results) {
+            if ($result.Success) {
+                $script:loadedModules[$result.Name] = $true
+                $loadTimes[$result.Name] = $result.Time
             }
         }
     } finally {
         $totalTimer.Stop()
         $loadTimes['Module load time'] = $totalTimer.ElapsedMilliseconds
+        # Cleanup jobs
+        $jobs | Remove-Job -Force
     }
     
-    #$loadTimes
+    return $loadTimes
 }
 
 
