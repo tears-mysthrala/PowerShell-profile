@@ -312,7 +312,7 @@ function Initialize-StartupModules {
         $jobs | Remove-Job -Force
     }
     
-    return $loadTimes
+    #return $loadTimes
 }
 
 
