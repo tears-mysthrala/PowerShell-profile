@@ -1,0 +1,133 @@
+<Objs Version="1.1.0.1" xmlns="http://schemas.microsoft.com/powershell/2004/04">
+  <Obj RefId="0">
+    <TN RefId="0">
+      <T>Microsoft.PowerShell.Commands.PSRepositoryItemInfo</T>
+      <T>System.Management.Automation.PSCustomObject</T>
+      <T>System.Object</T>
+    </TN>
+    <MS>
+      <S N="Name">Get-WindowsAutoPilotInfo</S>
+      <S N="Version">3.9</S>
+      <S N="Type">Script</S>
+      <S N="Description">This script uses WMI to retrieve properties needed for a customer to register a device with Windows Autopilot.  Note that it is normal for the resulting CSV file to not collect a Windows Product ID (PKID) value since this is not required to register a device.  Only the serial number and hardware hash will be populated.</S>
+      <S N="Author">Windows Autopilot</S>
+      <Obj N="CompanyName" RefId="1">
+        <TN RefId="1">
+          <T>System.Object[]</T>
+          <T>System.Array</T>
+          <T>System.Object</T>
+        </TN>
+        <LST>
+          <S>hdang</S>
+          <S>BrianP</S>
+          <S>marsun</S>
+          <S>zakstacks</S>
+          <S>Nandhini_Prasad</S>
+        </LST>
+      </Obj>
+      <Nil N="Copyright" />
+      <DT N="PublishedDate">2023-07-06T21:21:22+02:00</DT>
+      <Obj N="InstalledDate" RefId="2">
+        <DT>2024-11-06T11:18:09.5941267+01:00</DT>
+        <MS>
+          <Obj N="DisplayHint" RefId="3">
+            <TN RefId="2">
+              <T>Microsoft.PowerShell.Commands.DisplayHintType</T>
+              <T>System.Enum</T>
+              <T>System.ValueType</T>
+              <T>System.Object</T>
+            </TN>
+            <ToString>DateTime</ToString>
+            <I32>2</I32>
+          </Obj>
+        </MS>
+      </Obj>
+      <Nil N="UpdatedDate" />
+      <Nil N="LicenseUri" />
+      <Nil N="ProjectUri" />
+      <Nil N="IconUri" />
+      <Obj N="Tags" RefId="4">
+        <TNRef RefId="1" />
+        <LST>
+          <S>Windows</S>
+          <S>AutoPilot</S>
+          <S>PSScript</S>
+        </LST>
+      </Obj>
+      <Obj N="Includes" RefId="5">
+        <TN RefId="3">
+          <T>System.Collections.Hashtable</T>
+          <T>System.Object</T>
+        </TN>
+        <DCT>
+          <En>
+            <S N="Key">Function</S>
+            <Obj N="Value" RefId="6">
+              <TNRef RefId="1" />
+              <LST />
+            </Obj>
+          </En>
+          <En>
+            <S N="Key">Cmdlet</S>
+            <Ref N="Value" RefId="6" />
+          </En>
+          <En>
+            <S N="Key">RoleCapability</S>
+            <Ref N="Value" RefId="6" />
+          </En>
+          <En>
+            <S N="Key">DscResource</S>
+            <Ref N="Value" RefId="6" />
+          </En>
+          <En>
+            <S N="Key">Workflow</S>
+            <Ref N="Value" RefId="6" />
+          </En>
+          <En>
+            <S N="Key">Command</S>
+            <Ref N="Value" RefId="6" />
+          </En>
+        </DCT>
+      </Obj>
+      <Nil N="PowerShellGetFormatVersion" />
+      <S N="ReleaseNotes">Version 1.0:  Original published version._x000A_Version 1.1:  Added -Append switch._x000A_Version 1.2:  Added -Credential switch._x000A_Version 1.3:  Added -Partner switch._x000A_Version 1.4:  Switched from Get-WMIObject to Get-CimInstance._x000A_Version 1.5:  Added -GroupTag parameter._x000A_Version 1.6:  Bumped version number (no other change)._x000A_Version 2.0:  Added -Online parameter._x000A_Version 2.1:  Bug fix._x000A_Version 2.3:  Updated comments._x000A_Version 2.4:  Updated "online" import logic to wait for the device to sync, added new parameter._x000A_Version 2.5:  Added AssignedUser for Intune importing, and AssignedComputerName for online Intune importing._x000A_Version 2.6:  Added support for app-based authentication via Connect-MSGraphApp._x000A_Version 2.7:  Added new Reboot option for use with -Online -Assign._x000A_Version 2.8:  Fixed up parameter sets._x000A_Version 2.9:  Fixed typo installing AzureAD module._x000A_Version 3.0:  Fixed typo for app-based auth, added logic to explicitly install NuGet (silently)._x000A_Version 3.2:  Fixed logic to explicitly install NuGet (silently)._x000A_Version 3.3:  Added more logging and error handling for group membership._x000A_Version 3.4:  Added logic to verify that devices were added successfully.  Fixed a bug that could cause all Autopilot devices to be added to the specified AAD group._x000A_Version 3.5:  Added logic to display the serial number of the gathered device._x000A_Version 3.6:  Switch from MSGraph to MgGraph._x000A_Version 3.7:  Switching back to using Write-Host._x000A_Version 3.8:  AddToGroup dependencies fixed._x000A_Version 3.9:  Expand MgGraph scopes and enforce minimum version for WindowsAutoPilotIntune module.</S>
+      <Obj N="Dependencies" RefId="7">
+        <TNRef RefId="1" />
+        <LST />
+      </Obj>
+      <S N="RepositorySourceLocation">https://www.powershellgallery.com/api/v2/items/psscript</S>
+      <S N="Repository">PSGallery</S>
+      <S N="PackageManagementProvider">NuGet</S>
+      <Obj N="AdditionalMetadata" RefId="8">
+        <TN RefId="4">
+          <T>System.Management.Automation.PSCustomObject</T>
+          <T>System.Object</T>
+        </TN>
+        <MS>
+          <S N="description">This script uses WMI to retrieve properties needed for a customer to register a device with Windows Autopilot.  Note that it is normal for the resulting CSV file to not collect a Windows Product ID (PKID) value since this is not required to register a device.  Only the serial number and hardware hash will be populated.</S>
+          <S N="requireLicenseAcceptance">False</S>
+          <S N="releaseNotes">Version 1.0:  Original published version._x000A_Version 1.1:  Added -Append switch._x000A_Version 1.2:  Added -Credential switch._x000A_Version 1.3:  Added -Partner switch._x000A_Version 1.4:  Switched from Get-WMIObject to Get-CimInstance._x000A_Version 1.5:  Added -GroupTag parameter._x000A_Version 1.6:  Bumped version number (no other change)._x000A_Version 2.0:  Added -Online parameter._x000A_Version 2.1:  Bug fix._x000A_Version 2.3:  Updated comments._x000A_Version 2.4:  Updated "online" import logic to wait for the device to sync, added new parameter._x000A_Version 2.5:  Added AssignedUser for Intune importing, and AssignedComputerName for online Intune importing._x000A_Version 2.6:  Added support for app-based authentication via Connect-MSGraphApp._x000A_Version 2.7:  Added new Reboot option for use with -Online -Assign._x000A_Version 2.8:  Fixed up parameter sets._x000A_Version 2.9:  Fixed typo installing AzureAD module._x000A_Version 3.0:  Fixed typo for app-based auth, added logic to explicitly install NuGet (silently)._x000A_Version 3.2:  Fixed logic to explicitly install NuGet (silently)._x000A_Version 3.3:  Added more logging and error handling for group membership._x000A_Version 3.4:  Added logic to verify that devices were added successfully.  Fixed a bug that could cause all Autopilot devices to be added to the specified AAD group._x000A_Version 3.5:  Added logic to display the serial number of the gathered device._x000A_Version 3.6:  Switch from MSGraph to MgGraph._x000A_Version 3.7:  Switching back to using Write-Host._x000A_Version 3.8:  AddToGroup dependencies fixed._x000A_Version 3.9:  Expand MgGraph scopes and enforce minimum version for WindowsAutoPilotIntune module.</S>
+          <S N="isLatestVersion">True</S>
+          <S N="isAbsoluteLatestVersion">True</S>
+          <S N="versionDownloadCount">59429600</S>
+          <S N="downloadCount">110669374</S>
+          <S N="packageSize">8247</S>
+          <S N="published">06/07/2023 21:21:22 +02:00</S>
+          <S N="created">06/07/2023 21:21:22 +02:00</S>
+          <S N="lastUpdated">06/11/2024 10:10:00 +01:00</S>
+          <S N="tags">Windows AutoPilot PSScript</S>
+          <S N="developmentDependency">False</S>
+          <S N="updated">2024-11-06T10:10:00Z</S>
+          <S N="NormalizedVersion">3.9.0</S>
+          <S N="Authors">Windows Autopilot</S>
+          <S N="IsPrerelease">false</S>
+          <S N="ItemType">Script</S>
+          <S N="FileList">Get-WindowsAutopilotInfo.nuspec|Get-WindowsAutopilotInfo.ps1</S>
+          <S N="GUID">ebf446a3-3362-4774-83c0-b7299410b63f</S>
+          <S N="CompanyName">Microsoft</S>
+        </MS>
+      </Obj>
+      <S N="InstalledLocation">C:\Users\unaiu\Documents\PowerShell\Scripts</S>
+    </MS>
+  </Obj>
+</Objs>

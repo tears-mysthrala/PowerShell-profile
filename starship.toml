@@ -1,0 +1,192 @@
+command_timeout = 100
+scan_timeout = 10
+
+format = """
+[](fg:#a3aed2)\
+[](bg:#769ff0 fg:#a3aed2)\
+[$username](bg:#769ff0 fg:#090c0c)\
+[ from](bg:#769ff0 fg:#090c0c)\
+[ $hostname ](bg:#769ff0 fg:#090c0c)\
+[⌚ $cmd_duration ](bg:#394260 fg:#769ff0)\
+[💾 RAM: $memory_usage ](bg:#212736 fg:#769ff0)\
+[📅 $time ](bg:#1d2230 fg:#769ff0)\
+$git_branch\
+$git_status\
+$docker_context\
+$conda\
+$nodejs\
+$python\
+$rust\
+$golang\
+$php\
+$java\
+$kotlin\
+$ruby\
+$package\
+$terraform\
+$aws\
+$azure\
+$line_break\
+[$directory](fg:#769ff0)\
+$character"""
+
+
+[username]
+style_user = "bg:#769ff0 fg:#090c0c"
+format = "$user"
+show_always = true
+
+[hostname]
+ssh_only = false
+style = "bg:#769ff0 fg:#090c0c"
+format = "$hostname"
+
+[directory]
+style = "fg:#769ff0"
+format = "[$path]($style)"
+truncation_length = 3
+truncate_to_repo = true
+
+[cmd_duration]
+min_time = 1
+style = "bg:#394260 fg:#769ff0"
+format = "$duration"
+
+[time]
+disabled = false
+style = "bg:#1d2230 fg:#769ff0"
+format = '$time'
+time_format = "%I:%M:%S %p"
+
+[memory_usage]
+disabled = false
+threshold = -1
+format = "$ram"
+style = "bg:#212736 fg:#769ff0"
+
+[character]
+success_symbol = "[❯](bold green)"
+error_symbol = "[❯](bold red)"
+
+[line_break]
+disabled = false
+
+
+[git_branch]
+style = "bg:#394260 fg:#769ff0"
+format = "[ $symbol$branch ]($style)"
+symbol = " "
+
+[git_status]
+style = "bg:#394260 fg:#769ff0"
+format = '[$all_status$ahead_behind ]($style)'
+ahead = "⇡${count}"
+behind = "⇣${count}"
+diverged = "⇕⇡${ahead_count}⇣${behind_count}"
+deleted = "✖${count}"
+renamed = "»${count}"
+modified = "!${count}"
+staged = "+${count}"
+untracked = "?${count}"
+
+[docker_context]
+style = "bg:#212736 fg:#769ff0"
+format = '[ ${symbol}$context ]($style)'
+symbol = "🐋 " 
+disabled = true
+
+[conda]
+style = "bg:#212736 fg:#769ff0"
+format = '[ ${symbol}$environment ]($style)'
+symbol = "🐍 " 
+
+[nodejs]
+style = "bg:#212736 fg:#769ff0"
+format = '[ ${symbol}${version} ]($style)'
+symbol = "⬢ "
+detect_files = ["package.json"]
+detect_folders = ["node_modules"]
+disabled = true
+
+[python]
+style = "bg:#212736 fg:#769ff0"
+format = '[ ${symbol}${version} ]($style)'
+symbol = "🐍 "
+detect_files = ["requirements.txt", "pyproject.toml"]
+detect_folders = [".venv", "venv"]
+disabled = true
+
+[rust]
+style = "bg:#212736 fg:#769ff0"
+format = '[ ${symbol}${version} ]($style)'
+symbol = "🦀 "
+detect_files = ["Cargo.toml"]
+detect_folders = [".cargo"]
+disabled = true
+
+[golang]
+style = "bg:#212736 fg:#769ff0"
+format = '[ ${symbol}${version} ]($style)'
+symbol = "🐹 "
+detect_files = ["go.mod"]
+detect_folders = ["Godeps"]
+disabled = true
+
+[php]
+style = "bg:#212736 fg:#769ff0"
+format = '[ ${symbol}${version} ]($style)'
+symbol = "🐘 "
+detect_files = ["composer.json"]
+detect_folders = ["vendor"]
+disabled = true
+
+[java]
+style = "bg:#212736 fg:#769ff0"
+format = '[ ${symbol}${version} ]($style)'
+symbol = "☕ "
+detect_files = ["pom.xml"]
+detect_folders = ["target"]
+disabled = true
+
+[kotlin]
+style = "bg:#212736 fg:#769ff0"
+format = '[ ${symbol}${version} ]($style)'
+symbol = "🅺 "
+detect_files = ["build.gradle.kts"]
+detect_folders = [".kotlin"]
+disabled = true
+
+[ruby]
+style = "bg:#212736 fg:#769ff0"
+format = '[ ${symbol}${version} ]($style)'
+symbol = "💎 "
+detect_files = ["Gemfile"]
+detect_folders = [".rbenv"]
+disabled = true
+
+[package]
+style = "bg:#212736 fg:#769ff0"
+format = '[ ${symbol}${version} ]($style)'
+symbol = "📦 "
+disabled = true
+
+[terraform]
+style = "bg:#212736 fg:#769ff0"
+format = '[ ${symbol}${workspace} ]($style)'
+symbol = "💠 "
+detect_files = ["*.tf", "*.tfvars"]
+detect_folders = [".terraform"]
+disabled = true
+
+
+[azure]
+style = "bg:#212736 fg:#769ff0"
+format = '[ Azure:${subscription} ]($style)'
+symbol = "☁️ "
+disabled = true
+
+[aws]
+style = "bg:#212736 fg:#769ff0"
+format = '[ AWS:${profile} ]($style)'
+symbol = "☁️ "
+disabled = true

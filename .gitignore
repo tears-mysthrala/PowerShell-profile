@@ -1,0 +1,19 @@
+# PowerShell specific directories
+Modules/
+Help/
+
+# PowerShell logs and temporary files
+*.log
+*.tmp
+
+# Module specific
+*.psd1
+*.psm1
+*.ps1xml
+
+# VS Code workspace settings
+.vscode/
+
+# Windows specific
+Thumb.db
+desktop.ini
