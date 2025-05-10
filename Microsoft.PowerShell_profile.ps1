@@ -112,9 +112,7 @@ $modulesToImport = @(
 # Already initialized at the start
 
 # Add Update-Profile function
-function Update-Profile {
-    [CmdletBinding()]
-    param()
+function Update-Profile {    
     try {
         $profilePath = $PROFILE
         if (Test-Path $profilePath) {
@@ -191,12 +189,13 @@ Register-ArgumentCompleter -Native -CommandName langflow -ScriptBlock $scriptblo
 $globalStopwatch.Stop()
 
 # Display timing results for key operations
-$profileTiming.GetEnumerator() | Where-Object { $_.Key -in @('Core Initialization', 'Shell Enhancements', 'Starship') } | Sort-Object Value -Descending | ForEach-Object {
-    Write-Host ("$($_.Key): $($_.Value)ms").PadRight(40) -NoNewline
-    Write-Host "[$('=' * [math]::Min(40, [math]::Floor($_.Value / 10)))]" -ForegroundColor Yellow
-}
-
-Write-Host "Total profile load time: $($globalStopwatch.ElapsedMilliseconds)ms" -ForegroundColor Cyan
+# Remove these lines from the end of the file:
+# $profileTiming.GetEnumerator() | Where-Object { $_.Key -in @('Core Initialization', 'Shell Enhancements', 'Starship') } | Sort-Object Value -Descending | ForEach-Object {
+#     Write-Host ("$($_.Key): $($_.Value)ms").PadRight(40) -NoNewline
+#     Write-Host "[$('=' * [math]::Min(40, [math]::Floor($_.Value / 10)))]" -ForegroundColor Yellow
+# }
+# 
+# Write-Host "Total profile load time: $($globalStopwatch.ElapsedMilliseconds)ms" -ForegroundColor Cyan
 
 
 function Import-ScriptFile {

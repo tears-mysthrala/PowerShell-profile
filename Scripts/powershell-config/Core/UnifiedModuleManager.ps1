@@ -267,7 +267,7 @@ function Initialize-StartupModules {
         $loadTimes['Module load time'] = $totalTimer.ElapsedMilliseconds
     }
     
-    $loadTimes
+    #$loadTimes
 }
 
 
