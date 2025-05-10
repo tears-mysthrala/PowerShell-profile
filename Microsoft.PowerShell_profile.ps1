@@ -1,6 +1,6 @@
 # Let the script run even on error
 # $ErrorActionPreference = "SilentlyContinue"
-
+$ProfileDir = Split-Path -Parent $PROFILE
 # Initialize profiling
 $profileTiming = @{}
 $globalStopwatch = [System.Diagnostics.Stopwatch]::StartNew()
@@ -34,17 +34,17 @@ if (!([Environment]::UserInteractive -and -not $([Environment]::GetCommandLineAr
 }
 
 # Initialize Unified Module Manager
-. "$env:USERPROFILE\OneDrive\Documents\PowerShell\Scripts\powershell-config\Core\UnifiedModuleManager.ps1"
+. "$ProfileDir\Scripts\powershell-config\Core\UnifiedModuleManager.ps1"
 
 # Initialize Starship
 Measure-Block 'Starship' {
-    $ENV:STARSHIP_CONFIG = "$env:USERPROFILE\OneDrive\Documents\PowerShell\starship.toml"
+    $ENV:STARSHIP_CONFIG = "$ProfileDir\starship.toml"
     Invoke-Expression (&starship init powershell)
 }
 
 # Register core modules
 # Register unified aliases
-. "$env:USERPROFILE\OneDrive\Documents\PowerShell\Scripts\powershell-config\Shell\Aliases\unified_aliases.ps1"
+. "$ProfileDir\Scripts\powershell-config\Shell\Aliases\unified_aliases.ps1"
 
 Register-UnifiedModule 'scoop-completion' -InitializerBlock {
     Import-Module "$($(Get-Item $(Get-Command scoop.ps1).Path).Directory.Parent.FullName)\modules\scoop-completion" -ErrorAction SilentlyContinue
@@ -71,20 +71,20 @@ Measure-Block 'Core Initialization' {
 
 # Register System Utilities
 Register-UnifiedModule 'SystemUpdater' -InitializerBlock { 
-    Import-Module "$env:USERPROFILE\OneDrive\Documents\PowerShell\Scripts\powershell-config\Apps\Updates\SystemUpdater.psd1" -Force
-    . "$env:USERPROFILE\OneDrive\Documents\PowerShell\Scripts\powershell-config\setAlias.ps1"
+    Import-Module "$ProfileDir\Scripts\powershell-config\Apps\Updates\SystemUpdater.psd1" -Force
+    . "$ProfileDir\Scripts\powershell-config\setAlias.ps1"
 } -LoadOnStartup $true
-Register-UnifiedModule 'CheckWifiPassword' -InitializerBlock { . "$env:USERPROFILE\OneDrive\Documents\PowerShell\Scripts\powershell-config\Helpers\checkWifiPassword.ps1" }
+Register-UnifiedModule 'CheckWifiPassword' -InitializerBlock { . "$ProfileDir\Scripts\powershell-config\Helpers\checkWifiPassword.ps1" }
 Register-UnifiedModule 'Chtsh' -InitializerBlock { . "$env:USERPROFILE/OneDrive\Documents/PowerShell/Scripts/powershell-config/chtsh.ps1" }
 Register-UnifiedModule 'AppsManage' -InitializerBlock { . "$env:USERPROFILE/OneDrive\Documents/PowerShell/Scripts/powershell-config/appsManage.ps1" }
 
 # Register Additional Utilities
-Register-UnifiedModule 'LinuxLike' -InitializerBlock { . "$env:USERPROFILE\OneDrive\Documents\PowerShell\Scripts\powershell-config\Helpers\linuxLike.ps1" }
-Register-UnifiedModule 'Gpg' -InitializerBlock { . "$env:USERPROFILE\OneDrive\Documents\PowerShell\Scripts\powershell-config\Helpers\gpg.ps1" }
-Register-UnifiedModule 'CloudflareWARP' -InitializerBlock { . "$env:USERPROFILE\OneDrive\Documents\PowerShell\Scripts\powershell-config\Helpers\cloudflareWARP.ps1" }
-Register-UnifiedModule 'Clean' -InitializerBlock { . "$env:USERPROFILE\OneDrive\Documents\PowerShell\Scripts\powershell-config\Helpers\clean.ps1" }
-Register-UnifiedModule 'Stylus' -InitializerBlock { . "$env:USERPROFILE\OneDrive\Documents\PowerShell\Scripts\powershell-config\Helpers\stylus.ps1" }
-Register-UnifiedModule 'Utils' -InitializerBlock { . "$env:USERPROFILE\OneDrive\Documents\PowerShell\Scripts\powershell-config\Helpers\utils.ps1" }
+Register-UnifiedModule 'LinuxLike' -InitializerBlock { . "$ProfileDir\Scripts\powershell-config\Helpers\linuxLike.ps1" }
+Register-UnifiedModule 'Gpg' -InitializerBlock { . "$ProfileDir\Scripts\powershell-config\Helpers\gpg.ps1" }
+Register-UnifiedModule 'CloudflareWARP' -InitializerBlock { . "$ProfileDir\Scripts\powershell-config\Helpers\cloudflareWARP.ps1" }
+Register-UnifiedModule 'Clean' -InitializerBlock { . "$ProfileDir\Scripts\powershell-config\Helpers\clean.ps1" }
+Register-UnifiedModule 'Stylus' -InitializerBlock { . "$ProfileDir\Scripts\powershell-config\Helpers\stylus.ps1" }
+Register-UnifiedModule 'Utils' -InitializerBlock { . "$ProfileDir\Scripts\powershell-config\Helpers\utils.ps1" }
 
 # Create wrapper functions for module loading
 function Use-CheckWifiPassword { Import-UnifiedModule 'CheckWifiPassword' }
@@ -157,7 +157,7 @@ Register-UnifiedModule 'Catppuccin' -InitializerBlock { Import-Module 'Catppucci
 # Register PSReadLine with startup priority
 Register-UnifiedModule 'PSReadLine' -InitializerBlock {
     Import-Module PSReadLine -ErrorAction SilentlyContinue
-    . "$env:USERPROFILE\OneDrive\Documents\PowerShell\Scripts\powershell-config\Helpers\PSReadLine.ps1"
+    . "$ProfileDir\Scripts\powershell-config\Helpers\PSReadLine.ps1"
     Set-PSReadLineKeyHandler -Chord Tab -Function MenuComplete
 } -LoadOnStartup $true -OnFailure { Write-Warning "Failed to initialize PSReadLine" }
 

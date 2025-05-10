@@ -7,7 +7,7 @@ function Update-AllApps {
     
     # Execute the update script
     try {
-        . "$env:USERPROFILE\OneDrive\Documents\PowerShell\Scripts\powershell-config\UpdateApps.ps1"
+        . "$ProfileDir\Scripts\powershell-config\UpdateApps.ps1"
         Write-Host "Update completed successfully." -ForegroundColor Green
     }
     catch {

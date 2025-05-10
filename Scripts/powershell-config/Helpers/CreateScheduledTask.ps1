@@ -1,7 +1,7 @@
 # Path: Scripts/powershell-config/CreateScheduledTask.ps1
 
 # Define the action to run the PowerShell script
-$action = New-ScheduledTaskAction -Execute "powershell.exe" -Argument "-File `"$env:USERPROFILE\OneDrive\Documents\PowerShell\Scripts\powershell-config\UpdateApps.ps1`""
+$action = New-ScheduledTaskAction -Execute "powershell.exe" -Argument "-File `"$ProfileDir\Scripts\powershell-config\UpdateApps.ps1`""
 
 # Define the trigger to run daily at 2 AM
 $trigger = New-ScheduledTaskTrigger -Daily -At "2:00AM"
