@@ -13,20 +13,10 @@ function Measure-Block {
     $profileTiming[$Name] = $sw.ElapsedMilliseconds
 }
 
-# VARIABLES
-# Environment Variables
-$envVars = @{
-    'EDITOR' = 'nvim'
-    'VISUAL' = 'code'
-    'PAGER'  = 'delta'
-    'PYTHONIOENCODING' = 'utf-8'
-}
-
-foreach ($key in $envVars.Keys) {
-    if (Get-Command $envVars[$key] -ErrorAction SilentlyContinue) {
-        Set-Item -Path "env:$key" -Value $envVars[$key]
-    }
-}
+# Set essential environment variables
+$env:PYTHONIOENCODING = 'utf-8'
+if (Get-Command nvim -ErrorAction SilentlyContinue) { $env:EDITOR = 'nvim' }
+if (Get-Command code -ErrorAction SilentlyContinue) { $env:VISUAL = 'code' }
 
 # If is in non-interactive shell, then return
 if (!([Environment]::UserInteractive -and -not $([Environment]::GetCommandLineArgs() | Where-Object { $_ -like '-NonI*' }))) {
@@ -59,46 +49,43 @@ Register-UnifiedModule 'chocolatey-profile' -InitializerBlock {
     Import-Module "$env:ChocolateyInstall\helpers\chocolateyProfile.psm1" -ErrorAction SilentlyContinue
 } -LoadOnStartup $true
 
-# Shell enhancements
-Measure-Block 'Shell Enhancements' {
-    # zoxide
+# Initialize core components
+$VerbosePreference = 'SilentlyContinue'
+Initialize-StartupModules
+
+# Initialize shell enhancements if available
+if (Get-Command zoxide -ErrorAction SilentlyContinue) {
+    $env:_ZO_DATA_DIR = "$ProfileDir\.zo"
     Invoke-Expression (& { (zoxide init powershell --cmd cd | Out-String) })
-    # gh completion
+}
+if (Get-Command gh -ErrorAction SilentlyContinue) {
     Invoke-Expression (& { (gh completion -s powershell | Out-String) })
 }
 
-# Initialize core tools and modules
-Measure-Block 'Core Initialization' {
-    $VerbosePreference = 'Continue'
-    Initialize-StartupModules
-    $VerbosePreference = 'SilentlyContinue'
+# Register utility modules (lazy-loaded)
+@{
+    'SystemUpdater' = @{ 
+        Block = { 
+            Import-Module "$ProfileDir\Scripts\powershell-config\Apps\Updates\SystemUpdater.psd1" -Force
+            . "$ProfileDir\Scripts\powershell-config\setAlias.ps1"
+        }
+        Category = 'System'
+    }
+    'CheckWifiPassword' = @{ Block = { . "$ProfileDir\Scripts\powershell-config\Helpers\checkWifiPassword.ps1" }; Category = 'Network' }
+    'CloudflareWARP' = @{ Block = { . "$ProfileDir\Scripts\powershell-config\Helpers\cloudflareWARP.ps1" }; Category = 'Network' }
+    'Gpg' = @{ Block = { . "$ProfileDir\Scripts\powershell-config\Helpers\gpg.ps1" }; Category = 'Security' }
+    'Chtsh' = @{ Block = { . "$ProfileDir\Scripts\powershell-config\chtsh.ps1" }; Category = 'Dev' }
+    'LinuxLike' = @{ Block = { . "$ProfileDir\Scripts\powershell-config\Helpers\linuxLike.ps1" }; Category = 'Shell' }
+    'AppsManage' = @{ Block = { . "$ProfileDir\Scripts\powershell-config\appsManage.ps1" }; Category = 'Apps' }
+    'Clean' = @{ Block = { . "$ProfileDir\Scripts\powershell-config\Helpers\clean.ps1" }; Category = 'System' }
+    'Stylus' = @{ Block = { . "$ProfileDir\Scripts\powershell-config\Helpers\stylus.ps1" }; Category = 'Dev' }
+}.GetEnumerator() | ForEach-Object {
+    Register-UnifiedModule $_.Key -InitializerBlock $_.Value.Block
 }
-
-# Register System Management Utilities
-Register-UnifiedModule 'SystemUpdater' -InitializerBlock { 
-    Import-Module "$ProfileDir\Scripts\powershell-config\Apps\Updates\SystemUpdater.psd1" -Force
-    . "$ProfileDir\Scripts\powershell-config\setAlias.ps1"
-} -LoadOnStartup $true
-
-# Register Network & Security Utilities
-Register-UnifiedModule 'CheckWifiPassword' -InitializerBlock { . "$ProfileDir\Scripts\powershell-config\Helpers\checkWifiPassword.ps1" }
-Register-UnifiedModule 'CloudflareWARP' -InitializerBlock { . "$ProfileDir\Scripts\powershell-config\Helpers\cloudflareWARP.ps1" }
-Register-UnifiedModule 'Gpg' -InitializerBlock { . "$ProfileDir\Scripts\powershell-config\Helpers\gpg.ps1" }
-
-# Register Developer Tools
-Register-UnifiedModule 'Chtsh' -InitializerBlock { . "$ProfileDir\Scripts\powershell-config\chtsh.ps1" }
-Register-UnifiedModule 'LinuxLike' -InitializerBlock { . "$ProfileDir\Scripts\powershell-config\Helpers\linuxLike.ps1" }
-
-# Register Application Management
-Register-UnifiedModule 'AppsManage' -InitializerBlock { . "$ProfileDir\Scripts\powershell-config\appsManage.ps1" }
-Register-UnifiedModule 'Clean' -InitializerBlock { . "$ProfileDir\Scripts\powershell-config\Helpers\clean.ps1" }
-Register-UnifiedModule 'Stylus' -InitializerBlock { . "$ProfileDir\Scripts\powershell-config\Helpers\stylus.ps1" }
 
 # Create wrapper functions for module loading
 $moduleAliases = @{
     'CheckWifiPassword' = 'Network tools'
-    'CheckBattery' = 'System tools'
-    'Chezmoi' = 'Configuration management'
     'Chtsh' = 'Developer tools'
     'AppsManage' = 'Application management'
     'LinuxLike' = 'Shell utilities'
@@ -114,47 +101,51 @@ foreach ($module in $moduleAliases.Keys) {
 
 # Timing measurement was already initialized at the start
 
-# Add Update-Profile function
+# Add Update-Profile function with proper state cleanup
 function Update-Profile {    
     try {
-        $profilePath = $PROFILE
-        if (Test-Path $profilePath) {
-            . $profilePath
+        # Clean up state
+        Remove-Module -Name PSReadLine, Catppuccin, Terminal-Icons -ErrorAction SilentlyContinue
+        Get-Job | Remove-Job -Force -ErrorAction SilentlyContinue
+        
+        # Reload profile
+        if (Test-Path $PROFILE) {
+            . $PROFILE
             Write-Host "PowerShell profile successfully reloaded." -ForegroundColor Green
         } else {
-            Write-Warning "Profile file not found at: $profilePath"
+            Write-Warning "Profile file not found at: $PROFILE"
         }
     } catch {
         Write-Error "Failed to reload profile: $_"
+        Write-Host "Try restarting your PowerShell session instead." -ForegroundColor Yellow
     }
 }
 
-# Register UI and theming modules
-Register-UnifiedModule 'Terminal-Icons' -InitializerBlock { Import-Module 'Terminal-Icons' } -LoadOnStartup $true -OnFailure { Write-Warning "Failed to load Terminal-Icons module" }
-Register-UnifiedModule 'Catppuccin' -InitializerBlock { Import-Module 'Catppuccin' } -LoadOnStartup $true -OnFailure { Write-Warning "Failed to load Catppuccin module" }
-
-# Configure Catppuccin theme
-Register-UnifiedModule 'CatppuccinTheme' -InitializerBlock {
-    Import-Module 'Catppuccin' -ErrorAction SilentlyContinue
-    $Flavor = $Catppuccin.Mocha
-    if ($Flavor) {
-        $styleMap = @{
-            Debug = $Flavor.Sky
-            Error = $Flavor.Red
-            ErrorAccent = $Flavor.Blue
-            FormatAccent = $Flavor.Teal
-            TableHeader = $Flavor.Rosewater
-            Verbose = $Flavor.Yellow ?? '#FFFF00'
-            Warning = $Flavor.Peach ?? '#FFA500'
-        }
-        
-        foreach ($style in $styleMap.Keys) {
-            $PSStyle.Formatting.$style = $styleMap[$style].Foreground()
+# Register essential UI modules
+Register-UnifiedModule 'UI' -InitializerBlock {
+    Import-Module 'Terminal-Icons' -ErrorAction SilentlyContinue
+    if (Import-Module 'Catppuccin' -PassThru) {
+        try {
+            $Flavor = $Catppuccin.Mocha
+            if ($Flavor -and $PSStyle) {
+                $styleMap = @{
+                    Debug = $Flavor.Sky
+                    Error = $Flavor.Red
+                    ErrorAccent = $Flavor.Blue
+                    FormatAccent = $Flavor.Teal
+                    TableHeader = $Flavor.Rosewater
+                    Verbose = $Flavor.Yellow ?? '#FFFF00'
+                    Warning = $Flavor.Peach ?? '#FFA500'
+                }
+                foreach ($style in $styleMap.GetEnumerator()) {
+                    $PSStyle.Formatting.$($style.Key) = $style.Value.Foreground()
+                }
+            }
+        } catch {
+            Write-Warning "Failed to apply theme: $_"
         }
     }
-} -LoadOnStartup $true -OnFailure { Write-Warning "Failed to initialize Catppuccin theme" }
-Register-UnifiedModule 'Terminal-Icons' -InitializerBlock { Import-Module 'Terminal-Icons' } -LoadOnStartup $true -OnFailure { Write-Warning "Failed to load Terminal-Icons module" }
-Register-UnifiedModule 'Catppuccin' -InitializerBlock { Import-Module 'Catppuccin' } -LoadOnStartup $true -OnFailure { Write-Warning "Failed to load Catppuccin module" }
+} -LoadOnStartup $true
 
 # Register editor and completion modules
 Register-UnifiedModule 'PSReadLine' -InitializerBlock {
@@ -171,40 +162,35 @@ if (Get-Command git -ErrorAction SilentlyContinue) {
 if (Get-Command docker -ErrorAction SilentlyContinue) {
     Register-UnifiedModule 'DockerCompletion' -InitializerBlock { Import-Module DockerCompletion } -LoadOnStartup $true -OnFailure { Write-Warning "Failed to load docker completion" }
 }
-$scriptblock = {
-    param($wordToComplete, $commandAst, $cursorPosition)
-    $Env:_LANGFLOW_COMPLETE = "complete_powershell"
-    $Env:_TYPER_COMPLETE_ARGS = $commandAst.ToString()
-    $Env:_TYPER_COMPLETE_WORD_TO_COMPLETE = $wordToComplete
-    langflow | ForEach-Object {
-        $commandArray = $_ -Split ":::"
-        $command = $commandArray[0]
-        $helpString = $commandArray[1]
-        [System.Management.Automation.CompletionResult]::new(
-            $command, $command, 'ParameterValue', $helpString)
+# Only register langflow completion if the command exists
+if (Get-Command langflow -ErrorAction SilentlyContinue) {
+    $langflowCompleter = {
+        param($wordToComplete, $commandAst, $cursorPosition)
+        
+        try {
+            $env:_LANGFLOW_COMPLETE = "complete_powershell"
+            $env:_TYPER_COMPLETE_ARGS = $commandAst.ToString()
+            $env:_TYPER_COMPLETE_WORD_TO_COMPLETE = $wordToComplete
+            
+            langflow | ForEach-Object {
+                $command, $helpString = $_ -split ":::"
+                [System.Management.Automation.CompletionResult]::new(
+                    $command, $command, 'ParameterValue', $helpString)
+            }
+        }
+        finally {
+            $env:_LANGFLOW_COMPLETE = ""
+            $env:_TYPER_COMPLETE_ARGS = ""
+            $env:_TYPER_COMPLETE_WORD_TO_COMPLETE = ""
+        }
     }
-    $Env:_LANGFLOW_COMPLETE = ""
-    $Env:_TYPER_COMPLETE_ARGS = ""
-    $Env:_TYPER_COMPLETE_WORD_TO_COMPLETE = ""
+    
+    Register-ArgumentCompleter -Native -CommandName langflow -ScriptBlock $langflowCompleter
 }
-Register-ArgumentCompleter -Native -CommandName langflow -ScriptBlock $scriptblock
 
 # Display timing results for key operations
 $globalStopwatch.Stop()
 Write-Host "Profile loaded in $($globalStopwatch.ElapsedMilliseconds)ms" -ForegroundColor Cyan
 
 
-function Import-ScriptFile {
-    param([string]$Path)
-    if (Test-Path $Path) {
-        try {
-            . $Path
-        } catch {
-            Write-Warning "Failed to load $Path : $_"
-        }
-    } else {
-        Write-Warning "Script file not found: $Path"
-    }
-}
-
-# Chocolatey tab completion is handled by the chocolatey-profile module registration above
+# End of profile configuration
