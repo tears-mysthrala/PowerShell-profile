@@ -170,16 +170,42 @@ function pkill($name) { Get-Process $name -ErrorAction SilentlyContinue | Stop-P
 function pgrep($name) { Get-Process $name }
 
 # Profile management
-function Edit-Profile {
-    if ($host.Name -match "ise") {
-        $psISE.CurrentPowerShellTab.Files.Add($profile)
-    }
-    else {
-        v $profile
+function Update-Profile {
+    [CmdletBinding()]
+    param()
+    
+    try {
+        # Clean up state first
+        Reset-ProfileState -Quiet
+        
+        # Reload profile
+        if (Test-Path $PROFILE) {
+            $timer = [System.Diagnostics.Stopwatch]::StartNew()
+            # Use dot-sourcing with string to avoid type conversion issues
+            . ([string]$PROFILE)
+            $timer.Stop()
+            
+            Write-Host "`n✓ Profile reloaded successfully" -ForegroundColor Green
+            Write-Host "  Time: $($timer.ElapsedMilliseconds)ms" -ForegroundColor Gray
+            
+            # Verify critical modules
+            $criticalModules = @('PSReadLine', 'Terminal-Icons')
+            $missing = $criticalModules | Where-Object { -not (Get-Module $_) }
+            if ($missing) {
+                Write-Warning "Some critical modules did not load: $($missing -join ', ')"
+            }
+        } else {
+            Write-Warning "Profile not found at: $PROFILE"
+            return
+        }
+    } catch {
+        Write-Error "Failed to reload profile: $_"
+        Write-Host "Try these steps:" -ForegroundColor Yellow
+        Write-Host " 1. Restart PowerShell with: pwsh -NoProfile" -ForegroundColor Gray
+        Write-Host " 2. Then run: . `$PROFILE" -ForegroundColor Gray
     }
 }
 
-function Update-Profile { . $PROFILE }
 Set-Alias -Name rl -Value Update-Profile
 
 # Export all aliases and functions
@@ -276,12 +302,6 @@ function uptime {
     net statistics workstation | Select-String "since" | foreach-object { $_.ToString().Replace('Statistics since ', 'Since: ') }
   }
 }
-
-function Update-Profile {
-  . $PROFILE
-}
-
-Set-Alias -Name rl -Value Update-Profile
 
 function find-file($name) {
   Get-ChildItem -recurse -filter "*${name}*" -ErrorAction SilentlyContinue | ForEach-Object {

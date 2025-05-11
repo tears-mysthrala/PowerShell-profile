@@ -26,20 +26,20 @@ if (!([Environment]::UserInteractive -and -not $([Environment]::GetCommandLineAr
 # Initialize Unified Module Manager
 . "$ProfileDir\Scripts\powershell-config\Core\UnifiedModuleManager.ps1"
 
-# Initialize Starship
-Measure-Block 'Starship' {
-    $ENV:STARSHIP_CONFIG = "$ProfileDir\starship.toml"
-    Invoke-Expression (&starship init powershell)
-}
-
-# Initialize startup tools
-Measure-Block 'Tool Initialization' {
+# Load core configurations
+Measure-Block 'Core Setup' {    # Load aliases first as they're used by other modules
+    . "$ProfileDir\Scripts\powershell-config\Shell\Aliases\unified_aliases.ps1"
+    
+    # Initialize startup tools
     Initialize-StartupTools
+    
+    # Configure Starship if available
+    if (Get-Command starship -ErrorAction SilentlyContinue) {
+        $ENV:STARSHIP_CONFIG = "$ProfileDir\starship.toml"
+        $ENV:STARSHIP_CACHE = "$ProfileDir\.starship\cache"
+        Invoke-Expression $(&starship init powershell --print-full-init | Out-String)
+    }
 }
-
-# Register core modules
-# Register unified aliases
-. "$ProfileDir\Scripts\powershell-config\Shell\Aliases\unified_aliases.ps1"
 
 Register-UnifiedModule 'scoop-completion' -InitializerBlock {
     Import-Module "$($(Get-Item $(Get-Command scoop.ps1).Path).Directory.Parent.FullName)\modules\scoop-completion" -ErrorAction SilentlyContinue
@@ -83,8 +83,8 @@ if (Get-Command gh -ErrorAction SilentlyContinue) {
     Register-UnifiedModule $_.Key -InitializerBlock $_.Value.Block
 }
 
-# Create wrapper functions for module loading
-$moduleAliases = @{
+# Create module use functions
+$script:moduleAliases = @{
     'CheckWifiPassword' = 'Network tools'
     'Chtsh' = 'Developer tools'
     'AppsManage' = 'Application management'
@@ -95,54 +95,144 @@ $moduleAliases = @{
     'Stylus' = 'Development tools'
 }
 
-foreach ($module in $moduleAliases.Keys) {
-    Set-Item -Path "function:Use-$module" -Value ([scriptblock]::Create("Import-UnifiedModule '$module'"))
+# Register module functions
+foreach ($module in $script:moduleAliases.Keys) {
+    $functionName = "Use-$module"
+    $scriptBlock = {
+        try {
+            $moduleName = $args[0]
+            Import-UnifiedModule $moduleName
+            Write-Host "Loaded $moduleName module" -ForegroundColor Green
+        } catch {
+            Write-Error "Failed to load module: $_"
+        }
+    }.GetNewClosure()
+
+    # Create function that automatically passes the module name
+    $wrapper = [ScriptBlock]::Create(@"
+        function global:$functionName { 
+            `$scriptBlock.InvokeWithContext(`$null, [System.Management.Automation.PSVariable[]]@(), @('$module'))
+        }
+"@)
+    
+    . $wrapper
 }
 
 # Timing measurement was already initialized at the start
 
-# Add Update-Profile function with proper state cleanup
-function Update-Profile {    
-    try {
-        # Clean up state
-        Remove-Module -Name PSReadLine, Catppuccin, Terminal-Icons -ErrorAction SilentlyContinue
-        Get-Job | Remove-Job -Force -ErrorAction SilentlyContinue
-        
-        # Reload profile
-        if (Test-Path $PROFILE) {
-            . $PROFILE
-            Write-Host "PowerShell profile successfully reloaded." -ForegroundColor Green
-        } else {
-            Write-Warning "Profile file not found at: $PROFILE"
+# Profile management functions
+function Reset-ProfileState {
+    [CmdletBinding()]
+    param([switch]$Quiet)
+    
+    # Status tracking
+    $status = @{
+        ModulesRemoved = @()
+        EnvVarsCleared = @()
+        JobsRemoved = 0
+    }
+    
+    # Remove background jobs
+    $status.JobsRemoved = (Get-Job).Count
+    Get-Job | Remove-Job -Force -ErrorAction SilentlyContinue
+    
+    # Remove modules
+    @(
+        'PSReadLine', 'Catppuccin', 'Terminal-Icons', 'posh-git',
+        'DockerCompletion', 'CompletionPredictor'
+    ) | ForEach-Object {
+        if (Get-Module $_ -ErrorAction SilentlyContinue) {
+            Remove-Module $_ -Force -ErrorAction SilentlyContinue
+            $status.ModulesRemoved += $_
         }
-    } catch {
-        Write-Error "Failed to reload profile: $_"
-        Write-Host "Try restarting your PowerShell session instead." -ForegroundColor Yellow
+    }
+    
+    # Clear environment variables
+    @(
+        '_LANGFLOW_COMPLETE', '_TYPER_COMPLETE_ARGS', '_TYPER_COMPLETE_WORD_TO_COMPLETE',
+        'STARSHIP_SHELL', 'STARSHIP_SESSION_KEY'
+    ) | ForEach-Object {
+        if (Test-Path "env:$_") {
+            Remove-Item "env:$_" -ErrorAction SilentlyContinue
+            $status.EnvVarsCleared += $_
+        }
+    }
+    
+    # Report status unless quiet
+    if (-not $Quiet -and ($status.ModulesRemoved.Count -gt 0 -or $status.JobsRemoved -gt 0)) {
+        Write-Host "Profile state reset:" -ForegroundColor Blue
+        if ($status.ModulesRemoved) { Write-Host " - Removed modules: $($status.ModulesRemoved -join ', ')" -ForegroundColor Gray }
+        if ($status.EnvVarsCleared) { Write-Host " - Cleared variables: $($status.EnvVarsCleared -join ', ')" -ForegroundColor Gray }
+        if ($status.JobsRemoved) { Write-Host " - Removed $($status.JobsRemoved) background jobs" -ForegroundColor Gray }
     }
 }
 
-# Register essential UI modules
+function Update-Profile {    
+    [CmdletBinding()]
+    param()
+    
+    try {
+        # Clean up state
+        Reset-ProfileState -Quiet
+        
+        # Reload profile
+        if (Test-Path $PROFILE) {
+            $timer = [System.Diagnostics.Stopwatch]::StartNew()
+            . $PROFILE
+            $timer.Stop()
+            
+            Write-Host "`n✓ Profile reloaded successfully" -ForegroundColor Green
+            Write-Host "  Time: $($timer.ElapsedMilliseconds)ms" -ForegroundColor Gray
+            
+            # Verify critical modules
+            $criticalModules = @('PSReadLine', 'Terminal-Icons')
+            $missing = $criticalModules | Where-Object { -not (Get-Module $_) }
+            if ($missing) {
+                Write-Warning "Some critical modules did not load: $($missing -join ', ')"
+            }
+        } else {
+            Write-Warning "Profile not found at: $PROFILE"
+            return
+        }
+    } catch {
+        Write-Error "Failed to reload profile: $_"
+        Write-Host "Try these steps:" -ForegroundColor Yellow
+        Write-Host " 1. Restart PowerShell: pwsh -NoProfile" -ForegroundColor Gray
+        Write-Host " 2. Then run: . `$PROFILE" -ForegroundColor Gray
+    }
+}
+
+# Configure UI and theming
 Register-UnifiedModule 'UI' -InitializerBlock {
-    Import-Module 'Terminal-Icons' -ErrorAction SilentlyContinue
-    if (Import-Module 'Catppuccin' -PassThru) {
-        try {
-            $Flavor = $Catppuccin.Mocha
-            if ($Flavor -and $PSStyle) {
-                $styleMap = @{
-                    Debug = $Flavor.Sky
-                    Error = $Flavor.Red
-                    ErrorAccent = $Flavor.Blue
-                    FormatAccent = $Flavor.Teal
-                    TableHeader = $Flavor.Rosewater
-                    Verbose = $Flavor.Yellow ?? '#FFFF00'
-                    Warning = $Flavor.Peach ?? '#FFA500'
-                }
-                foreach ($style in $styleMap.GetEnumerator()) {
-                    $PSStyle.Formatting.$($style.Key) = $style.Value.Foreground()
+    # Import UI modules if available
+    $uiModules = @{
+        'Terminal-Icons' = $null
+        'Catppuccin' = {
+            param($Module)
+            if ($PSStyle -and $Module.Mocha) {
+                @{
+                    Debug = $Module.Mocha.Sky
+                    Error = $Module.Mocha.Red
+                    ErrorAccent = $Module.Mocha.Blue
+                    FormatAccent = $Module.Mocha.Teal
+                    TableHeader = $Module.Mocha.Rosewater
+                    Verbose = $Module.Mocha.Yellow ?? '#FFFF00'
+                    Warning = $Module.Mocha.Peach ?? '#FFA500'
+                }.GetEnumerator() | ForEach-Object {
+                    $PSStyle.Formatting.$($_.Key) = $_.Value.Foreground()
                 }
             }
+        }
+    }
+    
+    foreach ($module in $uiModules.GetEnumerator()) {
+        try {
+            $imported = Import-Module $module.Key -PassThru -ErrorAction Stop
+            if ($imported -and $module.Value) { 
+                & $module.Value $imported
+            }
         } catch {
-            Write-Warning "Failed to apply theme: $_"
+            Write-Warning "Failed to load $($module.Key): $_"
         }
     }
 } -LoadOnStartup $true
@@ -162,30 +252,36 @@ if (Get-Command git -ErrorAction SilentlyContinue) {
 if (Get-Command docker -ErrorAction SilentlyContinue) {
     Register-UnifiedModule 'DockerCompletion' -InitializerBlock { Import-Module DockerCompletion } -LoadOnStartup $true -OnFailure { Write-Warning "Failed to load docker completion" }
 }
-# Only register langflow completion if the command exists
-if (Get-Command langflow -ErrorAction SilentlyContinue) {
-    $langflowCompleter = {
-        param($wordToComplete, $commandAst, $cursorPosition)
-        
-        try {
-            $env:_LANGFLOW_COMPLETE = "complete_powershell"
-            $env:_TYPER_COMPLETE_ARGS = $commandAst.ToString()
-            $env:_TYPER_COMPLETE_WORD_TO_COMPLETE = $wordToComplete
-            
-            langflow | ForEach-Object {
-                $command, $helpString = $_ -split ":::"
-                [System.Management.Automation.CompletionResult]::new(
-                    $command, $command, 'ParameterValue', $helpString)
+# Register completion for CLI tools
+Register-UnifiedModule 'Completions' -InitializerBlock {
+    # Register langflow completion if available
+    if (Get-Command langflow -ErrorAction SilentlyContinue) {
+        $langflowCompleter = {
+            param($wordToComplete, $commandAst, $cursorPosition)
+            try {
+                $env:_LANGFLOW_COMPLETE = "complete_powershell"
+                $env:_TYPER_COMPLETE_ARGS = $commandAst.ToString()
+                $env:_TYPER_COMPLETE_WORD_TO_COMPLETE = $wordToComplete
+                
+                $results = langflow | ForEach-Object {
+                    $parts = $_ -split ":::", 2
+                    if ($parts.Length -eq 2) {
+                        [System.Management.Automation.CompletionResult]::new(
+                            $parts[0], 
+                            $parts[0], 
+                            'ParameterValue', 
+                            $parts[1]
+                        )
+                    }
+                }
+                $results
+            }
+            finally {
+                Remove-Item 'env:_LANGFLOW_COMPLETE', 'env:_TYPER_COMPLETE_ARGS', 'env:_TYPER_COMPLETE_WORD_TO_COMPLETE' -ErrorAction SilentlyContinue
             }
         }
-        finally {
-            $env:_LANGFLOW_COMPLETE = ""
-            $env:_TYPER_COMPLETE_ARGS = ""
-            $env:_TYPER_COMPLETE_WORD_TO_COMPLETE = ""
-        }
+        Register-ArgumentCompleter -Native -CommandName langflow -ScriptBlock $langflowCompleter
     }
-    
-    Register-ArgumentCompleter -Native -CommandName langflow -ScriptBlock $langflowCompleter
 }
 
 # Display timing results for key operations
