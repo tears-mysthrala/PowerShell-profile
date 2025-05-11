@@ -42,6 +42,11 @@ Measure-Block 'Starship' {
     Invoke-Expression (&starship init powershell)
 }
 
+# Initialize startup tools
+Measure-Block 'Tool Initialization' {
+    Initialize-StartupTools
+}
+
 # Register core modules
 # Register unified aliases
 . "$ProfileDir\Scripts\powershell-config\Shell\Aliases\unified_aliases.ps1"
@@ -69,47 +74,45 @@ Measure-Block 'Core Initialization' {
     $VerbosePreference = 'SilentlyContinue'
 }
 
-# Register System Utilities
+# Register System Management Utilities
 Register-UnifiedModule 'SystemUpdater' -InitializerBlock { 
     Import-Module "$ProfileDir\Scripts\powershell-config\Apps\Updates\SystemUpdater.psd1" -Force
     . "$ProfileDir\Scripts\powershell-config\setAlias.ps1"
 } -LoadOnStartup $true
-Register-UnifiedModule 'CheckWifiPassword' -InitializerBlock { . "$ProfileDir\Scripts\powershell-config\Helpers\checkWifiPassword.ps1" }
-Register-UnifiedModule 'Chtsh' -InitializerBlock { . "$env:USERPROFILE/OneDrive\Documents/PowerShell/Scripts/powershell-config/chtsh.ps1" }
-Register-UnifiedModule 'AppsManage' -InitializerBlock { . "$env:USERPROFILE/OneDrive\Documents/PowerShell/Scripts/powershell-config/appsManage.ps1" }
 
-# Register Additional Utilities
-Register-UnifiedModule 'LinuxLike' -InitializerBlock { . "$ProfileDir\Scripts\powershell-config\Helpers\linuxLike.ps1" }
-Register-UnifiedModule 'Gpg' -InitializerBlock { . "$ProfileDir\Scripts\powershell-config\Helpers\gpg.ps1" }
+# Register Network & Security Utilities
+Register-UnifiedModule 'CheckWifiPassword' -InitializerBlock { . "$ProfileDir\Scripts\powershell-config\Helpers\checkWifiPassword.ps1" }
 Register-UnifiedModule 'CloudflareWARP' -InitializerBlock { . "$ProfileDir\Scripts\powershell-config\Helpers\cloudflareWARP.ps1" }
+Register-UnifiedModule 'Gpg' -InitializerBlock { . "$ProfileDir\Scripts\powershell-config\Helpers\gpg.ps1" }
+
+# Register Developer Tools
+Register-UnifiedModule 'Chtsh' -InitializerBlock { . "$ProfileDir\Scripts\powershell-config\chtsh.ps1" }
+Register-UnifiedModule 'LinuxLike' -InitializerBlock { . "$ProfileDir\Scripts\powershell-config\Helpers\linuxLike.ps1" }
+
+# Register Application Management
+Register-UnifiedModule 'AppsManage' -InitializerBlock { . "$ProfileDir\Scripts\powershell-config\appsManage.ps1" }
 Register-UnifiedModule 'Clean' -InitializerBlock { . "$ProfileDir\Scripts\powershell-config\Helpers\clean.ps1" }
 Register-UnifiedModule 'Stylus' -InitializerBlock { . "$ProfileDir\Scripts\powershell-config\Helpers\stylus.ps1" }
-Register-UnifiedModule 'Utils' -InitializerBlock { . "$ProfileDir\Scripts\powershell-config\Helpers\utils.ps1" }
 
 # Create wrapper functions for module loading
-function Use-CheckWifiPassword { Import-UnifiedModule 'CheckWifiPassword' }
-function Use-CheckBattery { Import-UnifiedModule 'CheckBattery' }
-function Use-Chezmoi { Import-UnifiedModule 'Chezmoi' }
-function Use-Chtsh { Import-UnifiedModule 'Chtsh' }
-function Use-AppsManage { Import-UnifiedModule 'AppsManage' }
-function Use-LinuxLike { Import-UnifiedModule 'LinuxLike' }
-function Use-Gpg { Import-UnifiedModule 'Gpg' }
-function Use-CloudflareWARP { Import-UnifiedModule 'CloudflareWARP' }
-function Use-Clean { Import-UnifiedModule 'Clean' }
-function Use-Stylus { Import-UnifiedModule 'Stylus' }
-function Use-Utils { Import-UnifiedModule 'Utils' }
+$moduleAliases = @{
+    'CheckWifiPassword' = 'Network tools'
+    'CheckBattery' = 'System tools'
+    'Chezmoi' = 'Configuration management'
+    'Chtsh' = 'Developer tools'
+    'AppsManage' = 'Application management'
+    'LinuxLike' = 'Shell utilities'
+    'Gpg' = 'Security tools'
+    'CloudflareWARP' = 'Network tools'
+    'Clean' = 'System maintenance'
+    'Stylus' = 'Development tools'
+}
 
-# Group related imports
-$modulesToImport = @(
-    'Terminal-Icons',
-    'posh-wakatime',
-    'CompletionPredictor',
-    'Catppuccin'
-)
+foreach ($module in $moduleAliases.Keys) {
+    Set-Item -Path "function:Use-$module" -Value ([scriptblock]::Create("Import-UnifiedModule '$module'"))
+}
 
-
-# Add timing measurement
-# Already initialized at the start
+# Timing measurement was already initialized at the start
 
 # Add Update-Profile function
 function Update-Profile {    
@@ -126,33 +129,34 @@ function Update-Profile {
     }
 }
 
-# Register Catppuccin theme configuration
+# Register UI and theming modules
+Register-UnifiedModule 'Terminal-Icons' -InitializerBlock { Import-Module 'Terminal-Icons' } -LoadOnStartup $true -OnFailure { Write-Warning "Failed to load Terminal-Icons module" }
+Register-UnifiedModule 'Catppuccin' -InitializerBlock { Import-Module 'Catppuccin' } -LoadOnStartup $true -OnFailure { Write-Warning "Failed to load Catppuccin module" }
+
+# Configure Catppuccin theme
 Register-UnifiedModule 'CatppuccinTheme' -InitializerBlock {
-    if (Get-Module Catppuccin) {
-        try {
-            $Flavor = $Catppuccin.Mocha
-            if ($Flavor) {
-                $PSStyle.Formatting.Debug = $Flavor.Sky.Foreground()
-                $PSStyle.Formatting.Error = $Flavor.Red.Foreground()
-                $PSStyle.Formatting.ErrorAccent = $Flavor.Blue.Foreground()
-                $PSStyle.Formatting.FormatAccent = $Flavor.Teal.Foreground()
-                $PSStyle.Formatting.TableHeader = $Flavor.Rosewater.Foreground()
-                $PSStyle.Formatting.Verbose = if($Flavor.Yellow) { $Flavor.Yellow.Foreground() } else { '#FFFF00' }
-                $PSStyle.Formatting.Warning = if($Flavor.Peach) { $Flavor.Peach.Foreground() } else { '#FFA500' }
-            }
-        } catch {
-            Write-Warning "Failed to apply Catppuccin theme: $_"
+    Import-Module 'Catppuccin' -ErrorAction SilentlyContinue
+    $Flavor = $Catppuccin.Mocha
+    if ($Flavor) {
+        $styleMap = @{
+            Debug = $Flavor.Sky
+            Error = $Flavor.Red
+            ErrorAccent = $Flavor.Blue
+            FormatAccent = $Flavor.Teal
+            TableHeader = $Flavor.Rosewater
+            Verbose = $Flavor.Yellow ?? '#FFFF00'
+            Warning = $Flavor.Peach ?? '#FFA500'
+        }
+        
+        foreach ($style in $styleMap.Keys) {
+            $PSStyle.Formatting.$style = $styleMap[$style].Foreground()
         }
     }
 } -LoadOnStartup $true -OnFailure { Write-Warning "Failed to initialize Catppuccin theme" }
+Register-UnifiedModule 'Terminal-Icons' -InitializerBlock { Import-Module 'Terminal-Icons' } -LoadOnStartup $true -OnFailure { Write-Warning "Failed to load Terminal-Icons module" }
+Register-UnifiedModule 'Catppuccin' -InitializerBlock { Import-Module 'Catppuccin' } -LoadOnStartup $true -OnFailure { Write-Warning "Failed to load Catppuccin module" }
 
-# Register optional modules
-Register-UnifiedModule 'Terminal-Icons' -InitializerBlock { Import-Module 'Terminal-Icons' } -OnFailure { Write-Warning "Failed to load Terminal-Icons module" }
-Register-UnifiedModule 'posh-wakatime' -InitializerBlock { Import-Module 'posh-wakatime' } -OnFailure { Write-Warning "Failed to load posh-wakatime module" }
-Register-UnifiedModule 'CompletionPredictor' -InitializerBlock { Import-Module 'CompletionPredictor' } -OnFailure { Write-Warning "Failed to load CompletionPredictor module" }
-Register-UnifiedModule 'Catppuccin' -InitializerBlock { Import-Module 'Catppuccin' } -OnFailure { Write-Warning "Failed to load Catppuccin module" }
-
-# Register PSReadLine with startup priority
+# Register editor and completion modules
 Register-UnifiedModule 'PSReadLine' -InitializerBlock {
     Import-Module PSReadLine -ErrorAction SilentlyContinue
     . "$ProfileDir\Scripts\powershell-config\Helpers\PSReadLine.ps1"
@@ -185,17 +189,9 @@ $scriptblock = {
 }
 Register-ArgumentCompleter -Native -CommandName langflow -ScriptBlock $scriptblock
 
-# Add at the end of the profile
-$globalStopwatch.Stop()
-
 # Display timing results for key operations
-# Remove these lines from the end of the file:
-# $profileTiming.GetEnumerator() | Where-Object { $_.Key -in @('Core Initialization', 'Shell Enhancements', 'Starship') } | Sort-Object Value -Descending | ForEach-Object {
-#     Write-Host ("$($_.Key): $($_.Value)ms").PadRight(40) -NoNewline
-#     Write-Host "[$('=' * [math]::Min(40, [math]::Floor($_.Value / 10)))]" -ForegroundColor Yellow
-# }
-# 
-# Write-Host "Total profile load time: $($globalStopwatch.ElapsedMilliseconds)ms" -ForegroundColor Cyan
+$globalStopwatch.Stop()
+Write-Host "Profile loaded in $($globalStopwatch.ElapsedMilliseconds)ms" -ForegroundColor Cyan
 
 
 function Import-ScriptFile {
@@ -211,12 +207,4 @@ function Import-ScriptFile {
     }
 }
 
-# Import the Chocolatey Profile that contains the necessary code to enable
-# tab-completions to function for `choco`.
-# Be aware that if you are missing these lines from your profile, tab completion
-# for `choco` will not function.
-# See https://ch0.co/tab-completion for details.
-$ChocolateyProfile = "$env:ChocolateyInstall\helpers\chocolateyProfile.psm1"
-if (Test-Path($ChocolateyProfile)) {
-  Import-Module "$ChocolateyProfile"
-}
+# Chocolatey tab completion is handled by the chocolatey-profile module registration above

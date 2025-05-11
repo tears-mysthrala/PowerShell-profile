@@ -19,7 +19,7 @@ function Test-CommandExists {
     }
 }
 
-# Navigation aliases
+# Navigation aliases and utilities
 function .. { Set-Location .\.. }
 function ... { Set-Location .\..\..\ }
 function .3 { Set-Location .\..\..\..\.. }
@@ -236,12 +236,23 @@ function Update-PowerShell {
   }
 }
 
+function Test-IsAdmin {
+  return ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
+}
 
-
-# function ll
-# {
-#   Get-ChildItem -Path $pwd -File
-# }
+function Restart-BIOS {
+  if (Test-IsAdmin) {
+    shutdown /r /fw /f /t 0
+  }
+  else {
+    if (Test-CommandExists sudo) {
+      sudo shutdown /r /fw /f /t 0
+    }
+    else {
+      Write-Host "Please run with administrator privilege"
+    }
+  }
+}
 
 function Get-PubIP {
   (Invoke-WebRequest http://ifconfig.me/ip ).Content
@@ -400,7 +411,7 @@ function Test-IsAdmin {
 }
 
 function Restart-BIOS {
-  if (Check-IsAdmin) {
+  if (Test-IsAdmin) {
     shutdown /r /fw /f /t 0
   }
   else {

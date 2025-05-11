@@ -6,6 +6,8 @@ $script:moduleLoadAttempts = @{}
 $script:moduleDependencies = @{}
 $script:moduleVersions = @{}
 $script:moduleInitializers = @{}
+$script:toolRegistry = @{}
+$script:loadedTools = @{}
 
 function Register-UnifiedModule {
     [CmdletBinding(SupportsShouldProcess)]
@@ -110,6 +112,68 @@ function Register-UnifiedModule {
         LoadAttempts = 0
         ModulePath = $ModulePath
         IgnoreIfMissing = $IgnoreIfMissing
+    }
+}
+
+# Lazy loading functionality from LazyModuleManager
+function Import-LazyModule {
+    param([string]$Name)
+    if ($script:loadedModules[$Name]) { return $true }
+    
+    if ($script:moduleRegistry.ContainsKey($Name)) {
+        try {
+            Import-UnifiedModule $Name
+            return $true
+        } catch {
+            Write-Warning ("Failed to load module '{0}': {1}" -f $Name, $_.Exception.Message)
+            return $false
+        }
+    }
+    return $false
+}
+
+# Tool management functionality from LazyToolManager
+function Register-UnifiedTool {
+    param(
+        [string]$Name,
+        [scriptblock]$InitializerBlock,
+        [bool]$LoadOnStartup = $false
+    )
+    $script:toolRegistry[$Name] = @{
+        Block = $InitializerBlock
+        LoadOnStartup = $LoadOnStartup
+    }
+}
+
+function Import-UnifiedTool {
+    param([string]$Name)
+    if ($script:loadedTools[$Name]) { return $true }
+    
+    if ($script:toolRegistry.ContainsKey($Name)) {
+        try {
+            & $script:toolRegistry[$Name].Block
+            $script:loadedTools[$Name] = $true
+            return $true
+        } catch {
+            Write-Warning ("Failed to load tool '{0}': {1}" -f $Name, $_.Exception.Message)
+            return $false
+        }
+    }
+    return $false
+}
+
+function Initialize-StartupTools {
+    $script:toolRegistry.GetEnumerator() | Where-Object { $_.Value.LoadOnStartup } | ForEach-Object {
+        Import-UnifiedTool $_.Key
+    }
+}
+
+function Get-UnifiedToolStatus {
+    $script:loadedTools.GetEnumerator() | ForEach-Object {
+        [PSCustomObject]@{
+            Name = $_.Key
+            Loaded = $_.Value
+        }
     }
 }
 
@@ -314,7 +378,6 @@ function Initialize-StartupModules {
     
     #return $loadTimes
 }
-
 
 function Get-UnifiedModuleStatus {
     $script:moduleRegistry.GetEnumerator() | ForEach-Object {
