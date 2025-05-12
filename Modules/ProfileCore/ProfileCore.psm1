@@ -111,6 +111,29 @@ class ModuleManager {
 $script:moduleAliases = [System.Collections.Generic.Dictionary[string,hashtable]]::new()
 $script:manager = [ModuleManager]::new($moduleRoot)
 
+# Import core utility modules first
+$utilsPath = "$ProfileDir\Scripts\powershell-config\Core\Utils"
+if (Test-Path $utilsPath) {
+    Get-ChildItem -Path $utilsPath -Filter "*.ps1" | ForEach-Object {
+        $utilFile = $_
+        $moduleName = [System.IO.Path]::GetFileNameWithoutExtension($utilFile.Name)
+        $moduleContent = Get-Content -Path $utilFile.FullName -Raw
+        
+        # Create a new module with the utility script content
+        New-Module -Name $moduleName -ScriptBlock ([ScriptBlock]::Create(@"
+            Set-StrictMode -Version Latest
+            `$ErrorActionPreference = 'Stop'
+            `$script:moduleRoot = Split-Path -Parent '$($utilFile.FullName)'
+            
+            # Define functions and aliases from the script
+            $moduleContent
+            
+            # Export all functions and aliases from this module scope
+            Export-ModuleMember -Function * -Alias *
+"@)) | Import-Module -Global -Force
+    }
+}
+
 function Register-PSModule {
     param(
         [Parameter(Mandatory=$true)]
@@ -135,19 +158,45 @@ function Register-PSModule {
     $script:manager.Register($Name, $Description, $Category, $InitializerBlock, $LoadOnStartup, $MinVersion, $Dependencies)
 }
 
-function Import-PSModule {
-    param(
+function Import-PSModule {    param(
         [Parameter(Mandatory=$true)]
         [string]$Name
     )
     
-    $result = $script:manager.Import($Name)
-    
-    if (-not $result.Success) {
-        throw $result.Error
+    if (-not $script:moduleAliases.ContainsKey($Name)) {
+        throw "Module '$Name' is not registered"
     }
     
-    return $result
+    $moduleInfo = $script:moduleAliases[$Name]
+    $timer = [System.Diagnostics.Stopwatch]::StartNew()
+    
+    try {
+        $moduleContent = Get-Content -Path $moduleInfo.Path -Raw
+        
+        # Create a new module with the script content
+        New-Module -Name $Name -ScriptBlock ([ScriptBlock]::Create(@"
+            Set-StrictMode -Version Latest
+            `$ErrorActionPreference = 'Stop'
+            `$script:moduleRoot = Split-Path -Parent '$($moduleInfo.Path)'
+            
+            # Define functions and aliases from the script
+            $moduleContent
+            
+            # Export all functions and aliases from this module scope
+            Export-ModuleMember -Function * -Alias *
+"@)) | Import-Module -Global -Force
+        
+        $timer.Stop()
+        return @{
+            Success = $true
+            Time = $timer.ElapsedMilliseconds
+        }
+    } catch {
+        return @{
+            Success = $false
+            Error = $_.Exception.Message
+        }
+    }
 }
 
 function Get-PSModules {
@@ -165,10 +214,30 @@ function Initialize-PSModules {
     $script:moduleAliases.Keys | Where-Object { 
         $script:moduleAliases[$_].LoadOnStartup 
     } | ForEach-Object {
-        try {
-            Import-PSModule $_
+        $moduleName = $_
+        $moduleInfo = $script:moduleAliases[$moduleName]
+        
+        try {            if ($moduleInfo.Path -match '\.psd1$') {
+                Import-Module $moduleInfo.Path -Force
+            } else {
+                $moduleContent = Get-Content -Path $moduleInfo.Path -Raw
+                
+                # Create a new module with the script content
+                New-Module -Name $moduleName -ScriptBlock ([ScriptBlock]::Create(@"
+                    Set-StrictMode -Version Latest
+                    `$ErrorActionPreference = 'Stop'
+                    `$script:moduleRoot = Split-Path -Parent '$($moduleInfo.Path)'
+                    
+                    # Define functions and aliases from the script
+                    $moduleContent
+                    
+                    # Export all functions and aliases from this module scope
+                    Export-ModuleMember -Function * -Alias *
+"@)) | Import-Module -Global -Force
+            }
+            Write-Host "Loaded $($moduleInfo.Description) successfully" -ForegroundColor Green
         } catch {
-            Write-Warning "Failed to initialize module $_`: $($_.Exception.Message)"
+            Write-Warning "Failed to initialize module $moduleName`: $($_.Exception.Message)"
         }
     }
 }
@@ -178,14 +247,24 @@ $moduleConfig = Import-PowerShellDataFile "$moduleRoot\Config\ModuleConfig.psd1"
 
 # Register modules from configuration
 foreach ($category in $moduleConfig.Keys) {
-    foreach ($module in $moduleConfig[$category]) {
-        $scriptPath = "$env:USERPROFILE\OneDrive\Documents\PowerShell\Scripts\powershell-config\$($module.Path)"
+    foreach ($module in $moduleConfig[$category]) {        $scriptPath = "$env:USERPROFILE\OneDrive\Documents\PowerShell\Scripts\powershell-config\$($module.Path)"
         
-        $initBlock = if ($module.IsModule) {
-            [ScriptBlock]::Create("Import-Module '$scriptPath' -Force")
-        } else {
-            [ScriptBlock]::Create(". '$scriptPath'")
-        }
+        $initBlock = [ScriptBlock]::Create(@"
+            # Create module scope
+            New-Module -Name '$($module.Name)' -ScriptBlock {
+                Set-StrictMode -Version Latest
+                `$ErrorActionPreference = 'Stop'
+                
+                # Script-level variables
+                `$script:moduleRoot = Split-Path -Parent '$scriptPath'
+                
+                # Import the script content
+                . '$scriptPath'
+                
+                # Export all functions and aliases
+                Export-ModuleMember -Function * -Alias *
+            } | Import-Module -Global
+"@)
         
         Register-PSModule -Name $module.Name -Description $module.Description -Category $category -InitializerBlock $initBlock
         $script:moduleAliases[$module.Name] = @{
@@ -211,11 +290,27 @@ $script:moduleAliases.Keys | ForEach-Object {
     }.GetNewClosure()
 }
 
-# Helper function to list available modules
+# Helper functions
 function Get-AvailableModules {
     Get-PSModules | Format-Table -AutoSize
 }
 
+# Set up aliases
 Set-Alias -Name modules -Value Get-AvailableModules
 
-Export-ModuleMember -Function * -Variable moduleAliases -Alias modules
+# Create a list of all functions to export
+$functionsToExport = @(
+    'Register-PSModule'
+    'Import-PSModule'
+    'Initialize-PSModules'
+    'Get-PSModules'
+    'Get-AvailableModules'
+)
+
+# Add all Use-* functions dynamically
+$functionsToExport += $script:moduleAliases.Keys | ForEach-Object {
+    "Use-$_"
+}
+
+# Export module members
+Export-ModuleMember -Function $functionsToExport -Variable moduleAliases -Alias modules

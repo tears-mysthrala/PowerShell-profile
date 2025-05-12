@@ -76,12 +76,29 @@ Measure-Block 'Core Setup' {
         # Import core module
         Import-Module ProfileCore -Force -ErrorAction Stop
         Write-Host "Core module loaded successfully" -ForegroundColor Green
-        
-        # Load common utilities
+          # Load common utilities
         $utilsPath = "$ProfileDir\Scripts\powershell-config\Core\Utils"
         if (Test-Path $utilsPath) {
+            # Create a hashtable to store already loaded modules
+            $loadedUtilModules = @{}
+            
             Get-ChildItem -Path $utilsPath -Filter "*.ps1" | ForEach-Object {
-                . $_.FullName
+                $moduleName = [System.IO.Path]::GetFileNameWithoutExtension($_.Name)
+                if (-not $loadedUtilModules.ContainsKey($moduleName)) {
+                    $scriptBlock = {
+                        param($Path)
+                        New-Module -Name $([System.IO.Path]::GetFileNameWithoutExtension($Path)) -ScriptBlock {
+                            param($ScriptPath)
+                            Set-StrictMode -Version Latest
+                            $ErrorActionPreference = 'Stop'
+                            . $ScriptPath
+                            Export-ModuleMember -Function * -Alias *
+                        } -ArgumentList $Path | Import-Module -Global
+                    }
+                    
+                    & $scriptBlock -Path $_.FullName
+                    $loadedUtilModules[$moduleName] = $true
+                }
             }
             Write-Host "Utility modules loaded successfully" -ForegroundColor Green
         }

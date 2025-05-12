@@ -6,7 +6,8 @@
     CompanyName = 'None'
     Copyright = '(c) 2025 unaiu. All rights reserved.'
     Description = 'Core profile functionality for PowerShell'
-    PowerShellVersion = '7.0'    RootModule = 'ProfileCore.psm1'
+    PowerShellVersion = '7.0'
+    RootModule = 'ProfileCore.psm1'
     FunctionsToExport = @(
         'Register-PSModule',
         'Import-PSModule',
