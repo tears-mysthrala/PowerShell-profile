@@ -64,19 +64,36 @@ if (!([Environment]::UserInteractive -and -not $([Environment]::GetCommandLineAr
 # Initialize background jobs array
 $script:backgroundJobs = @()
 
-# Load core modules with error handling
-Measure-Block 'Core Modules' {
+# Load core configuration
+Measure-Block 'Core Setup' {
     try {
+        # Ensure module path is set correctly
+        $modulePath = "$ProfileDir\Modules"
+        if ($env:PSModulePath -notlike "*$modulePath*") {
+            $env:PSModulePath = "$modulePath;" + $env:PSModulePath
+        }
+        
+        # Import core module
         Import-Module ProfileCore -Force -ErrorAction Stop
-        Write-Host "Core modules loaded successfully" -ForegroundColor Green
+        Write-Host "Core module loaded successfully" -ForegroundColor Green
+        
+        # Load common utilities
+        $utilsPath = "$ProfileDir\Scripts\powershell-config\Core\Utils"
+        if (Test-Path $utilsPath) {
+            Get-ChildItem -Path $utilsPath -Filter "*.ps1" | ForEach-Object {
+                . $_.FullName
+            }
+            Write-Host "Utility modules loaded successfully" -ForegroundColor Green
+        }
     } catch {
         Write-Host "Failed to load core modules: $_" -ForegroundColor Red
         Write-Host "Some features may not be available" -ForegroundColor Yellow
     }
 }
 
-# Load core configurations with error handling
+# Configure shell environment
 Measure-Block 'Shell Setup' {
+    # Load aliases
     $aliasPath = "$ProfileDir\Scripts\powershell-config\Shell\Aliases\unified_aliases.ps1"
     if (Test-Path $aliasPath) {
         try {
@@ -86,33 +103,15 @@ Measure-Block 'Shell Setup' {
             Write-Host "Failed to load aliases: $_" -ForegroundColor Red
         }
     }
-}
-
-# Configure Starship prompt
-if (Get-Command starship -ErrorAction SilentlyContinue) {
-    Measure-Block 'Starship Init' {
+    
+    # Initialize shell enhancements
+    if (Get-Command starship -ErrorAction SilentlyContinue) {
         $ENV:STARSHIP_CONFIG = "$ProfileDir\starship.toml"
         $ENV:STARSHIP_CACHE = "$ProfileDir\.starship\cache"
         Invoke-Expression $(&starship init powershell --print-full-init | Out-String)
     }
-}
-
-# Configure shell enhancements asynchronously
-Measure-Block 'Shell Enhancements' -Async {
-    # Zoxide directory jumper
-    if (Get-Command zoxide -ErrorAction SilentlyContinue) {
-        $env:_ZO_DATA_DIR = "$using:ProfileDir\.zo"
-        Invoke-Expression (& { (zoxide init powershell --cmd cd | Out-String) })
-    }
     
-    # GitHub CLI completion
-    if (Get-Command gh -ErrorAction SilentlyContinue) {
-        Invoke-Expression (& { (gh completion -s powershell | Out-String) })
-    }
-}
-
-# PSReadLine configuration
-Measure-Block 'PSReadLine Setup' {
+    # Configure PSReadLine
     $PSReadLineOptions = @{
         PredictionSource = 'HistoryAndPlugin'
         PredictionViewStyle = 'ListView'
@@ -133,9 +132,23 @@ Measure-Block 'PSReadLine Setup' {
     Set-PSReadLineKeyHandler -Key DownArrow -Function HistorySearchForward
 }
 
+# Initialize shell tools asynchronously
+Measure-Block 'Shell Tools' -Async {
+    # Zoxide directory jumper
+    if (Get-Command zoxide -ErrorAction SilentlyContinue) {
+        $env:_ZO_DATA_DIR = "$using:ProfileDir\.zo"
+        Invoke-Expression (& { (zoxide init powershell --cmd cd | Out-String) })
+    }
+    
+    # GitHub CLI completion
+    if (Get-Command gh -ErrorAction SilentlyContinue) {
+        Invoke-Expression (& { (gh completion -s powershell | Out-String) })
+    }
+}
+
 # Initialize startup modules
 Measure-Block 'Module Initialization' {
-    Initialize-StartupModules
+    Initialize-PSModules
 }
 
 # Wait for background jobs and record timing

@@ -1,15 +1,17 @@
 # PowerShell specific directories
-Modules/
 Help/
 
 # PowerShell logs and temporary files
 *.log
 *.tmp
 
-# Module specific
-*.psd1
-*.psm1
-*.ps1xml
+# Module exceptions - don't ignore our custom modules
+!Modules/ProfileCore/
+!Modules/ProfileCore/**
+
+# But still ignore other modules
+Modules/*
+!Modules/ProfileCore/
 
 # VS Code workspace settings
 .vscode/
