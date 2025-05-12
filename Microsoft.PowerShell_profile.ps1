@@ -67,17 +67,12 @@ $script:backgroundJobs = @()
 # Load core configuration
 Measure-Block 'Core Setup' {
     try {
-        # Ensure module path is set correctly
-        $modulePath = "$ProfileDir\Modules"
-        if ($env:PSModulePath -notlike "*$modulePath*") {
-            $env:PSModulePath = "$modulePath;" + $env:PSModulePath
-        }
-        
         # Import core module
         Import-Module ProfileCore -Force -ErrorAction Stop
         Write-Host "Core module loaded successfully" -ForegroundColor Green
-          # Load common utilities
-        $utilsPath = "$ProfileDir\Scripts\powershell-config\Core\Utils"
+        
+        # Load common utilities
+        $utilsPath = "$ProfileDir\Core\Utils"
         if (Test-Path $utilsPath) {
             # Create a hashtable to store already loaded modules
             $loadedUtilModules = @{}
@@ -111,7 +106,7 @@ Measure-Block 'Core Setup' {
 # Configure shell environment
 Measure-Block 'Shell Setup' {
     # Load aliases
-    $aliasPath = "$ProfileDir\Scripts\powershell-config\Shell\Aliases\unified_aliases.ps1"
+    $aliasPath = "$ProfileDir\Scripts\Shell\unified_aliases.ps1"
     if (Test-Path $aliasPath) {
         try {
             . $aliasPath
@@ -123,7 +118,7 @@ Measure-Block 'Shell Setup' {
     
     # Initialize shell enhancements
     if (Get-Command starship -ErrorAction SilentlyContinue) {
-        $ENV:STARSHIP_CONFIG = "$ProfileDir\starship.toml"
+        $ENV:STARSHIP_CONFIG = "$ProfileDir\Config\starship.toml"
         $ENV:STARSHIP_CACHE = "$ProfileDir\.starship\cache"
         Invoke-Expression $(&starship init powershell --print-full-init | Out-String)
     }

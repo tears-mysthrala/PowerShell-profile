@@ -6,7 +6,7 @@ function New-DirectoryAndEnter {
     Set-Location $dir
 }
 
-function Extract-Archive {
+function Expand-CustomArchive {
     param (
         [Parameter(Mandatory=$true)]
         [string]$File,
@@ -35,26 +35,26 @@ function Extract-Archive {
                 return
             }
         }
-        Write-Host "Extracted '$File' to '$Folder'"
+        Write-Host "Expanded '$File' to '$Folder'"
     } else {
         Write-Error "File not found: $File"
     }
 }
 
-function Extract-MultipleArchives {
+function Expand-CustomArchives {
     param([string[]]$Files)
     
     $CurrentDate = (Get-Date).ToString("yyyy-MM-dd_HH-mm-ss")
-    $BaseFolder = "extracted_$CurrentDate"
+    $BaseFolder = "expanded_$CurrentDate"
     New-Item -Path $BaseFolder -ItemType Directory | Out-Null
     
     foreach ($File in $Files) {
-        Extract-Archive -File $File -Folder "$BaseFolder\$([System.IO.Path]::GetFileNameWithoutExtension($File))"
+        Expand-CustomArchive -File $File -Folder "$BaseFolder\$([System.IO.Path]::GetFileNameWithoutExtension($File))"
     }
 }
 
 Set-Alias -Name mkcd -Value New-DirectoryAndEnter
-Set-Alias -Name extract -Value Extract-Archive
-Set-Alias -Name extract-multi -Value Extract-MultipleArchives
+Set-Alias -Name extract -Value Expand-CustomArchive
+Set-Alias -Name extract-multi -Value Expand-CustomArchives
 
 Export-ModuleMember -Function * -Alias *
