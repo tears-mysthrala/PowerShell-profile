@@ -124,7 +124,8 @@ if (Get-Command exa -ErrorAction SilentlyContinue) {
 
 # File and directory management
 function mkcd { param($dir) mkdir $dir -Force; Set-Location $dir }
-function touch($file) { "" | Out-File $file -Encoding ASCII }
+function New-File($file) { "" | Out-File $file -Encoding ASCII }
+Set-Alias -Name touch -Value New-File
 
 # System information and utilities
 function Get-PubIP { (Invoke-WebRequest http://ifconfig.me/ip ).Content }
@@ -154,20 +155,26 @@ function find-file($name) {
     }
 }
 
-function grep($regex, $dir) {
+function Find-String($regex, $dir) {
     if ($dir) {
-        Get-ChildItem $dir | select-string $regex
+        Get-ChildItem $dir | Select-String $regex
         return
     }
-    $input | select-string $regex
+    $input | Select-String $regex
 }
+Set-Alias -Name grep -Value Find-String
 
 # System utilities
 function df { get-volume }
 function which($name) { Get-Command $name | Select-Object -ExpandProperty Definition }
-function export($name, $value) { set-item -force -path "env:$name" -value $value; }
-function pkill($name) { Get-Process $name -ErrorAction SilentlyContinue | Stop-Process }
-function pgrep($name) { Get-Process $name }
+function Set-EnvironmentVariable($name, $value) { set-item -force -path "env:$name" -value $value }
+Set-Alias -Name export -Value Set-EnvironmentVariable
+
+function Stop-ProcessByName($name) { Get-Process $name -ErrorAction SilentlyContinue | Stop-Process }
+Set-Alias -Name pkill -Value Stop-ProcessByName
+
+function Get-ProcessByName($name) { Get-Process $name }
+Set-Alias -Name pgrep -Value Get-ProcessByName
 
 # Profile management
 function Update-Profile {
@@ -310,11 +317,12 @@ function find-file($name) {
   }
 }
 
-function unzip ($file) {
-  Write-Output("Extracting", $file, "to", $pwd)
-  $fullFile = Get-ChildItem -Path $pwd -Filter .\cove.zip | ForEach-Object { $_.FullName }
-  Expand-Archive -Path $fullFile -DestinationPath $pwd
+function Expand-ZipFile($file) {
+    Write-Output("Extracting", $file, "to", $pwd)
+    $fullFile = Get-ChildItem -Path $pwd -Filter .\cove.zip | ForEach-Object { $_.FullName }
+    Expand-Archive -Path $fullFile -DestinationPath $pwd
 }
+Set-Alias -Name unzip -Value Expand-ZipFile
 
 function hb {
   if ($args.Length -eq 0) {
@@ -364,18 +372,21 @@ function sysinfo {
 }
 
 # Networking Utilities
-function flushdns {
-  Clear-DnsClientCache 
+function Clear-DnsCache {
+    Clear-DnsClientCache 
 }
+Set-Alias -Name flushdns -Value Clear-DnsCache
 
 # Clipboard Utilities
-function cpy {
-  Set-Clipboard $args[0] 
+function Set-ClipboardContent {
+    Set-Clipboard $args[0] 
 }
+Set-Alias -Name cpy -Value Set-ClipboardContent
 
-function pst {
-  Get-Clipboard 
+function Get-ClipboardContent {
+    Get-Clipboard 
 }
+Set-Alias -Name pst -Value Get-ClipboardContent
 
 function ix ($file) {
   curl.exe -F "f:1=@$file" ix.io
@@ -397,13 +408,16 @@ function df {
   get-volume
 }
 
-function sed($file, $find, $replace) {
+function Edit-FileContent($file, $find, $replace) {
      (Get-Content $file).replace("$find", $replace) | Set-Content $file
 }
+Set-Alias -Name sed -Value Edit-FileContent
 
-function which($name) {
-  Get-Command $name | Select-Object -ExpandProperty Definition
+function Get-CommandPath($command) {
+    Get-Command -Name $command -ErrorAction SilentlyContinue |
+    Select-Object -ExpandProperty Path -ErrorAction SilentlyContinue
 }
+Set-Alias -Name which -Value Get-CommandPath
 
 function export($name, $value) {
   set-item -force -path "env:$name" -value $value;
@@ -420,11 +434,6 @@ function pgrep($name) {
 # Powershell profile from https://github.com/craftzdog/dotfiles-public/blob/master/.config/powershell/user_profile.ps1
 
 [console]::InputEncoding = [console]::OutputEncoding = New-Object System.Text.UTF8Encoding
-
-function which ($command) {
-  Get-Command -Name $command -ErrorAction SilentlyContinue |
-  Select-Object -ExpandProperty Path -ErrorAction SilentlyContinue
-}
 
 function Test-IsAdmin {
   return ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
@@ -445,7 +454,7 @@ function Restart-BIOS {
 }
 
 # Ref: https://gist.github.com/mikepruett3/7ca6518051383ee14f9cf8ae63ba18a7
-function extract {
+function Expand-CustomArchive {
   param (
     [string]$File,
     [string]$Folder
@@ -481,15 +490,17 @@ function extract {
     Write-Host "Extracted "$FILE" to "$($Folder)""
   }
 }
+Set-Alias -Name extract -Value Expand-CustomArchive
 
-function extract_multi {
-  $CurrentDate = (Get-Date).ToString("yyyy-MM-dd_HH-mm-ss")
-  $Folder = "extracted_$($CurrentDate)"
-  New-Item -Path $Folder -ItemType Directory | Out-Null
-  foreach ($File in $args) {
-    extract -File $File -Folder "$($Folder)\$([System.IO.Path]::GetFileNameWithoutExtension($File))"
-  }
+function Expand-MultipleArchives {
+    $CurrentDate = (Get-Date).ToString("yyyy-MM-dd_HH-mm-ss")
+    $Folder = "extracted_$($CurrentDate)"
+    New-Item -Path $Folder -ItemType Directory | Out-Null
+    foreach ($File in $args) {
+        Expand-CustomArchive -File $File -Folder "$($Folder)\$([System.IO.Path]::GetFileNameWithoutExtension($File))"
+    }
 }
+Set-Alias -Name extract_multi -Value Expand-MultipleArchives
 
 function Get-Fonts {
   param (

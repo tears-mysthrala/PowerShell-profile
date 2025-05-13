@@ -68,7 +68,9 @@ $script:backgroundJobs = @()
 Measure-Block 'Core Setup' {
     try {
         # Import core module
+        $verbosePreference = 'SilentlyContinue'  # Suppress verb warnings temporarily
         Import-Module ProfileCore -Force -ErrorAction Stop
+        $verbosePreference = 'Continue'  # Restore verbose preference
         Write-Host "Core module loaded successfully" -ForegroundColor Green
         
         # Load common utilities
@@ -82,6 +84,7 @@ Measure-Block 'Core Setup' {
                 if (-not $loadedUtilModules.ContainsKey($moduleName)) {
                     $scriptBlock = {
                         param($Path)
+                        $verbosePreference = 'SilentlyContinue'  # Suppress verb warnings temporarily
                         New-Module -Name $([System.IO.Path]::GetFileNameWithoutExtension($Path)) -ScriptBlock {
                             param($ScriptPath)
                             Set-StrictMode -Version Latest
@@ -89,6 +92,7 @@ Measure-Block 'Core Setup' {
                             . $ScriptPath
                             Export-ModuleMember -Function * -Alias *
                         } -ArgumentList $Path | Import-Module -Global
+                        $verbosePreference = 'Continue'  # Restore verbose preference
                     }
                     
                     & $scriptBlock -Path $_.FullName

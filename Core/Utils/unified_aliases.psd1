@@ -69,7 +69,41 @@ PowerShellVersion = '5.1'
 # NestedModules = @()
 
 # Functions to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no functions to export.
-FunctionsToExport = '*'
+FunctionsToExport = @(
+    # File Operations
+    'New-File',
+    'Expand-CustomArchive',
+    'Expand-MultipleArchives',
+    'Expand-ZipFile',
+    'Find-String',
+    'Edit-FileContent',
+    
+    # Process Management
+    'Stop-ProcessByName',
+    'Get-ProcessByName',
+    
+    # Environment and System
+    'Set-EnvironmentVariable',
+    'Get-CommandPath',
+    'Test-IsAdmin',
+    'Get-PubIP',
+    'Get-FormatedUptime',
+    'Get-Fonts',
+    
+    # Clipboard Operations
+    'Set-ClipboardContent',
+    'Get-ClipboardContent',
+    
+    # Network Operations
+    'Clear-DnsCache',
+    
+    # Profile Management
+    'Update-Profile',
+    'Update-PowerShell',
+    
+    # Other functions
+    '*'
+)
 
 # Cmdlets to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no cmdlets to export.
 CmdletsToExport = '*'
