@@ -62,7 +62,10 @@ if (!([Environment]::UserInteractive -and -not $([Environment]::GetCommandLineAr
 }
 
 # Initialize background jobs array
+$global:backgroundJobs = @()
 $script:backgroundJobs = @()
+$global:profileTiming = @{}
+$script:profileTiming = @{}
 
 # Load core configuration
 Measure-Block 'Core Setup' {
