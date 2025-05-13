@@ -66,33 +66,62 @@ $script:backgroundJobs = @()
 
 # Load core configuration
 Measure-Block 'Core Setup' {
-    try {
-        # Import core module
-        $verbosePreference = 'SilentlyContinue'  # Suppress verb warnings temporarily
-        Import-Module ProfileCore -Force -ErrorAction Stop
-        $verbosePreference = 'Continue'  # Restore verbose preference
-        Write-Host "Core module loaded successfully" -ForegroundColor Green
+    try {        # Import core modules
+        $originalPreferences = @{
+            Warning = $WarningPreference
+            Verbose = $VerbosePreference
+            Information = $InformationPreference
+        }
         
-        # Load common utilities
+        # Suppress all non-critical messages
+        $WarningPreference = 'SilentlyContinue'
+        $VerbosePreference = 'SilentlyContinue'
+        $InformationPreference = 'SilentlyContinue'
+        
+        Import-Module ProfileManagement -Force -ErrorAction Stop
+        Import-Module ProfileCore -Force -ErrorAction Stop
+        
+        # Restore preferences
+        $WarningPreference = $originalPreferences.Warning
+        $VerbosePreference = $originalPreferences.Verbose
+        $InformationPreference = $originalPreferences.Information
+        Write-Host "Core module loaded successfully" -ForegroundColor Green        # Load common utilities
         $utilsPath = "$ProfileDir\Core\Utils"
         if (Test-Path $utilsPath) {
             # Create a hashtable to store already loaded modules
             $loadedUtilModules = @{}
-            
-            Get-ChildItem -Path $utilsPath -Filter "*.ps1" | ForEach-Object {
+              Get-ChildItem -Path $utilsPath -Filter "*.ps1" | ForEach-Object {
                 $moduleName = [System.IO.Path]::GetFileNameWithoutExtension($_.Name)
                 if (-not $loadedUtilModules.ContainsKey($moduleName)) {
                     $scriptBlock = {
                         param($Path)
-                        $verbosePreference = 'SilentlyContinue'  # Suppress verb warnings temporarily
-                        New-Module -Name $([System.IO.Path]::GetFileNameWithoutExtension($Path)) -ScriptBlock {
-                            param($ScriptPath)
-                            Set-StrictMode -Version Latest
-                            $ErrorActionPreference = 'Stop'
-                            . $ScriptPath
-                            Export-ModuleMember -Function * -Alias *
-                        } -ArgumentList $Path | Import-Module -Global
-                        $verbosePreference = 'Continue'  # Restore verbose preference
+                        # Save all preference variables
+                        $origPrefs = @{
+                            Warning = $global:WarningPreference
+                            Verbose = $global:VerbosePreference
+                            Information = $global:InformationPreference
+                        }
+                        
+                        # Suppress all warnings and verbose output
+                        $global:WarningPreference = 'SilentlyContinue'
+                        $global:VerbosePreference = 'SilentlyContinue'
+                        $global:InformationPreference = 'SilentlyContinue'
+                        
+                        try {
+                            New-Module -Name $([System.IO.Path]::GetFileNameWithoutExtension($Path)) -ScriptBlock {
+                                param($ScriptPath)
+                                Set-StrictMode -Version Latest
+                                $ErrorActionPreference = 'Stop'
+                                . $ScriptPath
+                                Export-ModuleMember -Function * -Alias *
+                            } -ArgumentList $Path | Import-Module -Global -WarningAction SilentlyContinue
+                        }
+                        finally {
+                            # Restore all preference variables
+                            $global:WarningPreference = $origPrefs.Warning
+                            $global:VerbosePreference = $origPrefs.Verbose
+                            $global:InformationPreference = $origPrefs.Information
+                        }
                     }
                     
                     & $scriptBlock -Path $_.FullName
@@ -113,14 +142,25 @@ Measure-Block 'Shell Setup' {
     $aliasPath = "$ProfileDir\Scripts\Shell\unified_aliases.ps1"
     if (Test-Path $aliasPath) {
         try {
+            # Temporarily suppress warnings
+            $WarningPreference = 'SilentlyContinue'
+            $VerbosePreference = 'SilentlyContinue'
             . $aliasPath
+            # Restore preferences
+            $WarningPreference = 'Continue'
+            $VerbosePreference = 'Continue'
             Write-Host "Aliases loaded successfully" -ForegroundColor Green
         } catch {
             Write-Host "Failed to load aliases: $_" -ForegroundColor Red
         }
     }
+      # Initialize shell enhancements
+    # Load Terminal-Icons module for file icons
+    if (Get-Module -ListAvailable Terminal-Icons) {
+        Import-Module Terminal-Icons -ErrorAction SilentlyContinue
+    }
     
-    # Initialize shell enhancements
+    # Initialize starship prompt
     if (Get-Command starship -ErrorAction SilentlyContinue) {
         $ENV:STARSHIP_CONFIG = "$ProfileDir\Config\starship.toml"
         $ENV:STARSHIP_CACHE = "$ProfileDir\.starship\cache"

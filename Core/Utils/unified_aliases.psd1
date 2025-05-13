@@ -6,6 +6,15 @@
 # Generated on: 10/05/2025
 #
 
+using module @{
+    ModuleVersion = '1.0.0'
+    PrivateData = @{
+        PSData = @{
+            Prerelease = 'custom'
+        }
+    }
+}
+
 @{
 
 # Script module or binary module file associated with this manifest.

@@ -177,43 +177,7 @@ function Get-ProcessByName($name) { Get-Process $name }
 Set-Alias -Name pgrep -Value Get-ProcessByName
 
 # Profile management
-function Update-Profile {
-    [CmdletBinding()]
-    param()
-    
-    try {
-        # Clean up state first
-        Reset-ProfileState -Quiet
-        
-        # Reload profile
-        if (Test-Path $PROFILE) {
-            $timer = [System.Diagnostics.Stopwatch]::StartNew()
-            # Use dot-sourcing with string to avoid type conversion issues
-            . ([string]$PROFILE)
-            $timer.Stop()
-            
-            Write-Host "`n✓ Profile reloaded successfully" -ForegroundColor Green
-            Write-Host "  Time: $($timer.ElapsedMilliseconds)ms" -ForegroundColor Gray
-            
-            # Verify critical modules
-            $criticalModules = @('PSReadLine', 'Terminal-Icons')
-            $missing = $criticalModules | Where-Object { -not (Get-Module $_) }
-            if ($missing) {
-                Write-Warning "Some critical modules did not load: $($missing -join ', ')"
-            }
-        } else {
-            Write-Warning "Profile not found at: $PROFILE"
-            return
-        }
-    } catch {
-        Write-Error "Failed to reload profile: $_"
-        Write-Host "Try these steps:" -ForegroundColor Yellow
-        Write-Host " 1. Restart PowerShell with: pwsh -NoProfile" -ForegroundColor Gray
-        Write-Host " 2. Then run: . `$PROFILE" -ForegroundColor Gray
-    }
-}
-
-Set-Alias -Name rl -Value Update-Profile
+# This is now handled by the ProfileManagement module
 
 # Export all aliases and functions
 # Export-ModuleMember -Function * -Alias * -Variable EDITOR
