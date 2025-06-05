@@ -32,7 +32,10 @@ jobs:
       - name: Run DevSkim scanner
         uses: microsoft/DevSkim-Action@v1
         with:
-          output-directory: ${{ github.workspace }}
+          output-directory: .
+          output-filename: devskim-results.sarif
+          directory-to-scan: .
+          ignore-globs: "**/.git/**,**/bin/**"
 
       - name: Validate SARIF file
         run: |
