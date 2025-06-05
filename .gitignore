@@ -10,7 +10,7 @@ Help/
 !Modules/ProfileCore/**
 
 # But still ignore other modules
-Modules/*
+#Modules/*
 !Modules/ProfileCore/
 
 # VS Code workspace settings

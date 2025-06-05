@@ -1,0 +1,138 @@
+<Objs Version="1.1.0.1" xmlns="http://schemas.microsoft.com/powershell/2004/04">
+  <Obj RefId="0">
+    <TN RefId="0">
+      <T>Microsoft.PowerShell.Commands.PSRepositoryItemInfo</T>
+      <T>System.Management.Automation.PSCustomObject</T>
+      <T>System.Object</T>
+    </TN>
+    <MS>
+      <S N="Name">CompletionPredictor</S>
+      <Version N="Version">0.1.1</Version>
+      <S N="Type">Module</S>
+      <S N="Description">Command-line intellisense based on PowerShell auto-completion</S>
+      <S N="Author">PowerShell</S>
+      <S N="CompanyName">dongbow</S>
+      <S N="Copyright">Copyright (c) Microsoft Corporation.</S>
+      <DT N="PublishedDate">2023-05-03T21:38:39+02:00</DT>
+      <Obj N="InstalledDate" RefId="1">
+        <DT>2024-09-27T13:23:42.3554619+02:00</DT>
+        <MS>
+          <Obj N="DisplayHint" RefId="2">
+            <TN RefId="1">
+              <T>Deserialized.Microsoft.PowerShell.Commands.DisplayHintType</T>
+              <T>Deserialized.System.Enum</T>
+              <T>Deserialized.System.ValueType</T>
+              <T>Deserialized.System.Object</T>
+            </TN>
+            <ToString>DateTime</ToString>
+            <I32>2</I32>
+          </Obj>
+        </MS>
+      </Obj>
+      <Obj N="UpdatedDate" RefId="3">
+        <DT>2024-10-30T14:10:02.8262971+01:00</DT>
+        <MS>
+          <Obj N="DisplayHint" RefId="4">
+            <TN RefId="2">
+              <T>Microsoft.PowerShell.Commands.DisplayHintType</T>
+              <T>System.Enum</T>
+              <T>System.ValueType</T>
+              <T>System.Object</T>
+            </TN>
+            <ToString>DateTime</ToString>
+            <I32>2</I32>
+          </Obj>
+        </MS>
+      </Obj>
+      <Nil N="LicenseUri" />
+      <URI N="ProjectUri">https://github.com/PowerShell/CompletionPredictor</URI>
+      <Nil N="IconUri" />
+      <Obj N="Tags" RefId="5">
+        <TN RefId="3">
+          <T>System.Object[]</T>
+          <T>System.Array</T>
+          <T>System.Object</T>
+        </TN>
+        <LST>
+          <S>PSEdition_Core</S>
+          <S>PSModule</S>
+        </LST>
+      </Obj>
+      <Obj N="Includes" RefId="6">
+        <TN RefId="4">
+          <T>System.Collections.Hashtable</T>
+          <T>System.Object</T>
+        </TN>
+        <DCT>
+          <En>
+            <S N="Key">RoleCapability</S>
+            <Obj N="Value" RefId="7">
+              <TNRef RefId="3" />
+              <LST />
+            </Obj>
+          </En>
+          <En>
+            <S N="Key">Command</S>
+            <Ref N="Value" RefId="7" />
+          </En>
+          <En>
+            <S N="Key">Workflow</S>
+            <Ref N="Value" RefId="7" />
+          </En>
+          <En>
+            <S N="Key">Cmdlet</S>
+            <Ref N="Value" RefId="7" />
+          </En>
+          <En>
+            <S N="Key">Function</S>
+            <Ref N="Value" RefId="7" />
+          </En>
+          <En>
+            <S N="Key">DscResource</S>
+            <Ref N="Value" RefId="7" />
+          </En>
+        </DCT>
+      </Obj>
+      <Nil N="PowerShellGetFormatVersion" />
+      <Nil N="ReleaseNotes" />
+      <Obj N="Dependencies" RefId="8">
+        <TNRef RefId="3" />
+        <LST />
+      </Obj>
+      <S N="RepositorySourceLocation">https://www.powershellgallery.com/api/v2</S>
+      <S N="Repository">PSGallery</S>
+      <S N="PackageManagementProvider">NuGet</S>
+      <Obj N="AdditionalMetadata" RefId="9">
+        <TN RefId="5">
+          <T>System.Management.Automation.PSCustomObject</T>
+          <T>System.Object</T>
+        </TN>
+        <MS>
+          <S N="copyright">Copyright (c) Microsoft Corporation.</S>
+          <S N="description">Command-line intellisense based on PowerShell auto-completion</S>
+          <S N="requireLicenseAcceptance">False</S>
+          <S N="isLatestVersion">True</S>
+          <S N="isAbsoluteLatestVersion">True</S>
+          <S N="versionDownloadCount">87849</S>
+          <S N="downloadCount">90571</S>
+          <S N="packageSize">39852</S>
+          <S N="published">03/05/2023 21:38:39 +02:00</S>
+          <S N="created">03/05/2023 21:38:39 +02:00</S>
+          <S N="lastUpdated">30/10/2024 13:00:00 +01:00</S>
+          <S N="tags">PSEdition_Core PSModule</S>
+          <S N="developmentDependency">False</S>
+          <S N="updated">2024-10-30T13:00:00Z</S>
+          <S N="NormalizedVersion">0.1.1</S>
+          <S N="Authors">PowerShell</S>
+          <S N="IsPrerelease">false</S>
+          <S N="ItemType">Module</S>
+          <S N="FileList">CompletionPredictor.nuspec|CompletionPredictor.psd1|PowerShell.Predictor.dll|_manifest\spdx_2.2\manifest.spdx.json|_manifest\spdx_2.2\manifest.spdx.json.sha256</S>
+          <S N="GUID">dab36133-7065-440d-ac9a-821187afc400</S>
+          <S N="PowerShellVersion">7.2</S>
+          <S N="CompanyName">Microsoft Corporation</S>
+        </MS>
+      </Obj>
+      <S N="InstalledLocation">C:\Users\unaiu\Documents\PowerShell\Modules\CompletionPredictor\0.1.1</S>
+    </MS>
+  </Obj>
+</Objs>

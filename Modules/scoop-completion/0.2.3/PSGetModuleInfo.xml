@@ -1,0 +1,148 @@
+<Objs Version="1.1.0.1" xmlns="http://schemas.microsoft.com/powershell/2004/04">
+  <Obj RefId="0">
+    <TN RefId="0">
+      <T>Microsoft.PowerShell.Commands.PSRepositoryItemInfo</T>
+      <T>System.Management.Automation.PSCustomObject</T>
+      <T>System.Object</T>
+    </TN>
+    <MS>
+      <S N="Name">scoop-completion</S>
+      <Version N="Version">0.2.3</Version>
+      <S N="Type">Module</S>
+      <S N="Description">A Scoop tab completion module for PowerShell.</S>
+      <S N="Author">ala</S>
+      <S N="CompanyName">ala</S>
+      <Nil N="Copyright" />
+      <DT N="PublishedDate">2020-06-04T12:32:11+02:00</DT>
+      <Obj N="InstalledDate" RefId="1">
+        <DT>2025-02-06T10:24:36.8453828+01:00</DT>
+        <MS>
+          <Obj N="DisplayHint" RefId="2">
+            <TN RefId="1">
+              <T>Deserialized.Microsoft.PowerShell.Commands.DisplayHintType</T>
+              <T>Deserialized.System.Enum</T>
+              <T>Deserialized.System.ValueType</T>
+              <T>Deserialized.System.Object</T>
+            </TN>
+            <ToString>DateTime</ToString>
+            <I32>2</I32>
+          </Obj>
+        </MS>
+      </Obj>
+      <Obj N="UpdatedDate" RefId="3">
+        <DT>2025-03-25T01:36:01.8247691+01:00</DT>
+        <MS>
+          <Obj N="DisplayHint" RefId="4">
+            <TN RefId="2">
+              <T>Microsoft.PowerShell.Commands.DisplayHintType</T>
+              <T>System.Enum</T>
+              <T>System.ValueType</T>
+              <T>System.Object</T>
+            </TN>
+            <ToString>DateTime</ToString>
+            <I32>2</I32>
+          </Obj>
+        </MS>
+      </Obj>
+      <URI N="LicenseUri">https://opensource.org/licenses/MIT</URI>
+      <URI N="ProjectUri">https://github.com/Moeologist/scoop-completion</URI>
+      <Nil N="IconUri" />
+      <Obj N="Tags" RefId="5">
+        <TN RefId="3">
+          <T>System.Object[]</T>
+          <T>System.Array</T>
+          <T>System.Object</T>
+        </TN>
+        <LST>
+          <S>scoop</S>
+          <S>tab</S>
+          <S>completion</S>
+          <S>PSModule</S>
+        </LST>
+      </Obj>
+      <Obj N="Includes" RefId="6">
+        <TN RefId="4">
+          <T>System.Collections.Hashtable</T>
+          <T>System.Object</T>
+        </TN>
+        <DCT>
+          <En>
+            <S N="Key">RoleCapability</S>
+            <Obj N="Value" RefId="7">
+              <TNRef RefId="3" />
+              <LST />
+            </Obj>
+          </En>
+          <En>
+            <S N="Key">Function</S>
+            <Obj N="Value" RefId="8">
+              <TNRef RefId="3" />
+              <LST>
+                <S>TabExpansion</S>
+              </LST>
+            </Obj>
+          </En>
+          <En>
+            <S N="Key">Command</S>
+            <Obj N="Value" RefId="9">
+              <TNRef RefId="3" />
+              <LST>
+                <S>TabExpansion</S>
+              </LST>
+            </Obj>
+          </En>
+          <En>
+            <S N="Key">DscResource</S>
+            <Ref N="Value" RefId="7" />
+          </En>
+          <En>
+            <S N="Key">Cmdlet</S>
+            <Ref N="Value" RefId="7" />
+          </En>
+          <En>
+            <S N="Key">Workflow</S>
+            <Ref N="Value" RefId="7" />
+          </En>
+        </DCT>
+      </Obj>
+      <Nil N="PowerShellGetFormatVersion" />
+      <Nil N="ReleaseNotes" />
+      <Obj N="Dependencies" RefId="10">
+        <TNRef RefId="3" />
+        <LST />
+      </Obj>
+      <S N="RepositorySourceLocation">https://www.powershellgallery.com/api/v2</S>
+      <S N="Repository">PSGallery</S>
+      <S N="PackageManagementProvider">NuGet</S>
+      <Obj N="AdditionalMetadata" RefId="11">
+        <TN RefId="5">
+          <T>System.Management.Automation.PSCustomObject</T>
+          <T>System.Object</T>
+        </TN>
+        <MS>
+          <S N="description">A Scoop tab completion module for PowerShell.</S>
+          <S N="requireLicenseAcceptance">True</S>
+          <S N="isLatestVersion">True</S>
+          <S N="isAbsoluteLatestVersion">True</S>
+          <S N="versionDownloadCount">47764</S>
+          <S N="downloadCount">48238</S>
+          <S N="packageSize">5563</S>
+          <S N="published">04/06/2020 12:32:11 +02:00</S>
+          <S N="created">04/06/2020 12:32:11 +02:00</S>
+          <S N="lastUpdated">25/03/2025 0:30:00 +01:00</S>
+          <S N="tags">scoop tab completion PSModule PSFunction_TabExpansion PSCommand_TabExpansion PSIncludes_Function</S>
+          <S N="developmentDependency">False</S>
+          <S N="updated">2025-03-25T00:30:00Z</S>
+          <S N="NormalizedVersion">0.2.3</S>
+          <S N="Authors">ala</S>
+          <S N="IsPrerelease">false</S>
+          <S N="ItemType">Module</S>
+          <S N="FileList">scoop-completion.nuspec|install.json|manifest.json|scoop-completion.psd1|scoop-completion.psm1</S>
+          <S N="GUID">e79be23b-d149-46c8-85a3-620f2669d2e1</S>
+          <S N="PowerShellVersion">5.0</S>
+        </MS>
+      </Obj>
+      <S N="InstalledLocation">C:\Users\tears\OneDrive\Documents\PowerShell\Modules\scoop-completion\0.2.3</S>
+    </MS>
+  </Obj>
+</Objs>

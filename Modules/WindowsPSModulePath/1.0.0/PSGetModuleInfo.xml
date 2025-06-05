@@ -1,0 +1,151 @@
+<Objs Version="1.1.0.1" xmlns="http://schemas.microsoft.com/powershell/2004/04">
+  <Obj RefId="0">
+    <TN RefId="0">
+      <T>Microsoft.PowerShell.Commands.PSRepositoryItemInfo</T>
+      <T>System.Management.Automation.PSCustomObject</T>
+      <T>System.Object</T>
+    </TN>
+    <MS>
+      <S N="Name">WindowsPSModulePath</S>
+      <Version N="Version">1.0.0</Version>
+      <S N="Type">Module</S>
+      <S N="Description">Simplify using existing Windows PowerShell modules on PowerShell Core by appending the PSModulePath from Windows PowerShell.  PSModulePath is not persisted and only applicable to the current process and child processes</S>
+      <S N="Author">Steve Lee</S>
+      <S N="CompanyName">stevel-msft</S>
+      <S N="Copyright">(c) Microsoft. All rights reserved.</S>
+      <DT N="PublishedDate">2017-08-24T02:59:20+02:00</DT>
+      <Obj N="InstalledDate" RefId="1">
+        <DT>2025-02-06T10:25:50.6574962+01:00</DT>
+        <MS>
+          <Obj N="DisplayHint" RefId="2">
+            <TN RefId="1">
+              <T>Deserialized.Microsoft.PowerShell.Commands.DisplayHintType</T>
+              <T>Deserialized.System.Enum</T>
+              <T>Deserialized.System.ValueType</T>
+              <T>Deserialized.System.Object</T>
+            </TN>
+            <ToString>DateTime</ToString>
+            <I32>2</I32>
+          </Obj>
+        </MS>
+      </Obj>
+      <Obj N="UpdatedDate" RefId="3">
+        <DT>2025-03-25T01:35:48.6357693+01:00</DT>
+        <MS>
+          <Obj N="DisplayHint" RefId="4">
+            <TN RefId="2">
+              <T>Microsoft.PowerShell.Commands.DisplayHintType</T>
+              <T>System.Enum</T>
+              <T>System.ValueType</T>
+              <T>System.Object</T>
+            </TN>
+            <ToString>DateTime</ToString>
+            <I32>2</I32>
+          </Obj>
+        </MS>
+      </Obj>
+      <Nil N="LicenseUri" />
+      <Nil N="ProjectUri" />
+      <Nil N="IconUri" />
+      <Obj N="Tags" RefId="5">
+        <TN RefId="3">
+          <T>System.Object[]</T>
+          <T>System.Array</T>
+          <T>System.Object</T>
+        </TN>
+        <LST>
+          <S>Windows</S>
+          <S>PowerShellCore</S>
+          <S>PSModule</S>
+          <S>PSEdition_Core</S>
+          <S>PSEdition_Desktop</S>
+        </LST>
+      </Obj>
+      <Obj N="Includes" RefId="6">
+        <TN RefId="4">
+          <T>System.Collections.Hashtable</T>
+          <T>System.Object</T>
+        </TN>
+        <DCT>
+          <En>
+            <S N="Key">RoleCapability</S>
+            <Obj N="Value" RefId="7">
+              <TNRef RefId="3" />
+              <LST />
+            </Obj>
+          </En>
+          <En>
+            <S N="Key">Function</S>
+            <Obj N="Value" RefId="8">
+              <TNRef RefId="3" />
+              <LST>
+                <S>Add-WindowsPSModulePath</S>
+              </LST>
+            </Obj>
+          </En>
+          <En>
+            <S N="Key">Command</S>
+            <Obj N="Value" RefId="9">
+              <TNRef RefId="3" />
+              <LST>
+                <S>Add-WindowsPSModulePath</S>
+              </LST>
+            </Obj>
+          </En>
+          <En>
+            <S N="Key">DscResource</S>
+            <Ref N="Value" RefId="7" />
+          </En>
+          <En>
+            <S N="Key">Cmdlet</S>
+            <Ref N="Value" RefId="7" />
+          </En>
+          <En>
+            <S N="Key">Workflow</S>
+            <Ref N="Value" RefId="7" />
+          </En>
+        </DCT>
+      </Obj>
+      <Nil N="PowerShellGetFormatVersion" />
+      <Nil N="ReleaseNotes" />
+      <Obj N="Dependencies" RefId="10">
+        <TNRef RefId="3" />
+        <LST />
+      </Obj>
+      <S N="RepositorySourceLocation">https://www.powershellgallery.com/api/v2</S>
+      <S N="Repository">PSGallery</S>
+      <S N="PackageManagementProvider">NuGet</S>
+      <Obj N="AdditionalMetadata" RefId="11">
+        <TN RefId="5">
+          <T>System.Management.Automation.PSCustomObject</T>
+          <T>System.Object</T>
+        </TN>
+        <MS>
+          <S N="copyright">(c) Microsoft. All rights reserved.</S>
+          <S N="description">Simplify using existing Windows PowerShell modules on PowerShell Core by appending the PSModulePath from Windows PowerShell.  PSModulePath is not persisted and only applicable to the current process and child processes</S>
+          <S N="requireLicenseAcceptance">False</S>
+          <S N="isLatestVersion">True</S>
+          <S N="isAbsoluteLatestVersion">True</S>
+          <S N="versionDownloadCount">47827</S>
+          <S N="downloadCount">47827</S>
+          <S N="packageSize">4333</S>
+          <S N="published">24/08/2017 2:59:20 +02:00</S>
+          <S N="created">24/08/2017 2:59:20 +02:00</S>
+          <S N="lastUpdated">25/03/2025 0:30:00 +01:00</S>
+          <S N="tags">Windows PowerShellCore PSModule PSEdition_Core PSEdition_Desktop PSFunction_Add-WindowsPSModulePath PSCommand_Add-WindowsPSModulePath PSIncludes_Function</S>
+          <S N="developmentDependency">False</S>
+          <S N="updated">2025-03-25T00:30:00Z</S>
+          <S N="NormalizedVersion">1.0.0</S>
+          <S N="Authors">Steve Lee</S>
+          <S N="IsPrerelease">false</S>
+          <S N="ItemType">Module</S>
+          <S N="FileList">WindowsPSModulePath.nuspec|WindowsPSModulePath.psd1|WindowsPSModulePath.psm1</S>
+          <S N="GUID">735537ea-edfe-43c6-8d9e-f210471061b8</S>
+          <S N="PowerShellVersion">5.1</S>
+          <S N="CompanyName">Microsoft Corp</S>
+        </MS>
+      </Obj>
+      <S N="InstalledLocation">C:\Users\tears\OneDrive\Documents\PowerShell\Modules\WindowsPSModulePath\1.0.0</S>
+    </MS>
+  </Obj>
+</Objs>
