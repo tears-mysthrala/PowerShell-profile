@@ -13,10 +13,12 @@ function Measure-Block {
         if ($Async) {
             $job = Start-Job -ScriptBlock $Block
             $script:backgroundJobs += @{ Name = $Name; Job = $job }
-        } else {
+        }
+        else {
             & $Block
         }
-    } finally {
+    }
+    finally {
         $sw.Stop()
         if (-not $Async) {
             $script:profileTiming[$Name] = $sw.ElapsedMilliseconds
@@ -69,10 +71,11 @@ $script:profileTiming = @{}
 
 # Load core configuration
 Measure-Block 'Core Setup' {
-    try {        # Import core modules
+    try {
+        # Import core modules
         $originalPreferences = @{
-            Warning = $WarningPreference
-            Verbose = $VerbosePreference
+            Warning     = $WarningPreference
+            Verbose     = $VerbosePreference
             Information = $InformationPreference
         }
         
@@ -80,6 +83,10 @@ Measure-Block 'Core Setup' {
         $WarningPreference = 'SilentlyContinue'
         $VerbosePreference = 'SilentlyContinue'
         $InformationPreference = 'SilentlyContinue'
+        
+        # Import ModuleInstaller first to ensure all required modules are available
+        Import-Module "$ProfileDir\Core\ModuleInstaller.ps1" -Force -ErrorAction Stop
+        Install-RequiredModules
         
         Import-Module ProfileManagement -Force -ErrorAction Stop
         Import-Module ProfileCore -Force -ErrorAction Stop
@@ -93,15 +100,15 @@ Measure-Block 'Core Setup' {
         if (Test-Path $utilsPath) {
             # Create a hashtable to store already loaded modules
             $loadedUtilModules = @{}
-              Get-ChildItem -Path $utilsPath -Filter "*.ps1" | ForEach-Object {
+            Get-ChildItem -Path $utilsPath -Filter "*.ps1" | ForEach-Object {
                 $moduleName = [System.IO.Path]::GetFileNameWithoutExtension($_.Name)
                 if (-not $loadedUtilModules.ContainsKey($moduleName)) {
                     $scriptBlock = {
                         param($Path)
                         # Save all preference variables
                         $origPrefs = @{
-                            Warning = $global:WarningPreference
-                            Verbose = $global:VerbosePreference
+                            Warning     = $global:WarningPreference
+                            Verbose     = $global:VerbosePreference
                             Information = $global:InformationPreference
                         }
                         
@@ -133,7 +140,8 @@ Measure-Block 'Core Setup' {
             }
             Write-Host "Utility modules loaded successfully" -ForegroundColor Green
         }
-    } catch {
+    }
+    catch {
         Write-Host "Failed to load core modules: $_" -ForegroundColor Red
         Write-Host "Some features may not be available" -ForegroundColor Yellow
     }
@@ -153,11 +161,12 @@ Measure-Block 'Shell Setup' {
             $WarningPreference = 'Continue'
             $VerbosePreference = 'Continue'
             Write-Host "Aliases loaded successfully" -ForegroundColor Green
-        } catch {
+        }
+        catch {
             Write-Host "Failed to load aliases: $_" -ForegroundColor Red
         }
     }
-      # Initialize shell enhancements
+    # Initialize shell enhancements
     # Load Terminal-Icons module for file icons
     if (Get-Module -ListAvailable Terminal-Icons) {
         Import-Module Terminal-Icons -ErrorAction SilentlyContinue
@@ -172,16 +181,16 @@ Measure-Block 'Shell Setup' {
     
     # Configure PSReadLine
     $PSReadLineOptions = @{
-        PredictionSource = 'HistoryAndPlugin'
-        PredictionViewStyle = 'ListView'
+        PredictionSource              = 'HistoryAndPlugin'
+        PredictionViewStyle           = 'ListView'
         HistorySearchCursorMovesToEnd = $true
-        Colors = @{
-            Command = '#8BE9FD'
-            Number = '#BD93F9'
-            Member = '#50FA7B'
+        Colors                        = @{
+            Command   = '#8BE9FD'
+            Number    = '#BD93F9'
+            Member    = '#50FA7B'
             Parameter = '#FFB86C'
-            Comment = '#6272A4'
-            String = '#F1FA8C'
+            Comment   = '#6272A4'
+            String    = '#F1FA8C'
         }
     }
     
