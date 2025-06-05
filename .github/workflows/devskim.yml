@@ -49,3 +49,5 @@ jobs:
           branch: security/devskim-updates
           base: main
           delete-branch: true
+          add-paths: |
+            devskim-results.sarif
