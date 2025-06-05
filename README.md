@@ -1,4 +1,4 @@
-# PowerShell Environment Configuration
+# PowerShell Environment Configuration [![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/tears-mysthrala/PowerShell-profile)
 
 A comprehensive PowerShell environment setup with various utilities, aliases, and functions for enhanced productivity.
 
