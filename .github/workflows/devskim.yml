@@ -7,11 +7,11 @@ name: DevSkim
 
 on:
   push:
-    branches: [ "main" ]
+    branches: ["main"]
   pull_request:
-    branches: [ "main" ]
+    branches: ["main"]
   schedule:
-    - cron: '33 23 * * 0'
+    - cron: "33 23 * * 0"
 
 jobs:
   lint:
@@ -19,8 +19,9 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       actions: read
-      contents: read
+      contents: write
       security-events: write
+      pull-requests: write
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -32,3 +33,17 @@ jobs:
         uses: github/codeql-action/upload-sarif@v3
         with:
           sarif_file: devskim-results.sarif
+
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v5
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: "chore: update security fixes from DevSkim scan"
+          title: "Security: DevSkim scan updates"
+          body: |
+            This PR contains security updates from the latest DevSkim scan.
+
+            Please review the changes carefully before merging.
+          branch: security/devskim-updates
+          base: main
+          delete-branch: true
