@@ -222,7 +222,6 @@ Import-Module -Name Microsoft.WinGet.CommandNotFound
 
 # --- Catppuccin Theme Integration ---
 try {
-    # Ensure Catppuccin is available in the module path (installed via git clone)
     Import-Module Catppuccin -ErrorAction Stop
     $global:CatppuccinFlavor = $Catppuccin['Mocha']
     Write-Host "Catppuccin theme loaded (Mocha flavor)" -ForegroundColor Cyan
