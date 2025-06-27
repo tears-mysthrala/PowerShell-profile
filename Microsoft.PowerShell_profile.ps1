@@ -85,7 +85,7 @@ Measure-Block 'Core Setup' {
         $InformationPreference = 'SilentlyContinue'
         
         # Import ModuleInstaller first to ensure all required modules are available
-        Import-Module "$ProfileDir\Core\ModuleInstaller.ps1" -Force -ErrorAction Stop
+        Import-Module "$ProfileDir\Core\ModuleInstaller.psm1" -Force -ErrorAction Stop
         Install-RequiredModules
         
         Import-Module ProfileManagement -Force -ErrorAction Stop
@@ -276,3 +276,13 @@ $script:profileTiming.GetEnumerator() | Sort-Object Value -Descending | ForEach-
 
 Import-Module -Name Microsoft.WinGet.CommandNotFound
 #f45873b3-b655-43a6-b217-97c00aa0db58
+
+# --- Catppuccin Theme Integration ---
+try {
+    # Ensure Catppuccin is available in the module path (installed via git clone)
+    Import-Module Catppuccin -ErrorAction Stop
+    $global:CatppuccinFlavor = $Catppuccin['Mocha']
+    Write-Host "Catppuccin theme loaded (Mocha flavor)" -ForegroundColor Cyan
+} catch {
+    Write-Host "Catppuccin theme not loaded: $_" -ForegroundColor Yellow
+}

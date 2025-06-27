@@ -1,5 +1,8 @@
 # Common utility functions used across the PowerShell profile
 
+# Create module scope
+$script:moduleRoot = Split-Path -Parent $PSCommandPath
+
 function Test-CommandExists {
     [CmdletBinding()]
     param([string]$command)
