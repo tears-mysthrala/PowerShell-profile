@@ -23,7 +23,7 @@ $requiredModules = @{
         Description = 'Directory jumping'
     }
     'Catppuccin'                    = @{
-        MinVersion  = '1.0.0'
+        MinVersion  = '0.2.0'
         Description = 'Catppuccin theme for PowerShell'
     }
     'PSWindowsUpdate'               = @{
@@ -45,16 +45,15 @@ function Test-ModuleInstalled {
         [string]$ModuleName,
         [string]$MinVersion
     )
-    
+  
+    # Default logic for other modules
     $module = Get-Module -ListAvailable $ModuleName | Sort-Object Version -Descending | Select-Object -First 1
     if (-not $module) {
         return $false
     }
-    
     if ($MinVersion -and ($module.Version -lt [version]$MinVersion)) {
         return $false
     }
-    
     return $true
 }
 
@@ -62,31 +61,18 @@ function Install-RequiredModules {
     [CmdletBinding()]
     param()
     
-    Write-Host "Checking required PowerShell modules..." -ForegroundColor Cyan
-    
     foreach ($module in $requiredModules.GetEnumerator()) {
         $moduleName = $module.Key
         $moduleInfo = $module.Value
         
-        Write-Host "`nChecking $moduleName ($($moduleInfo.Description))..." -ForegroundColor Yellow
-        
         if (Test-ModuleInstalled -ModuleName $moduleName -MinVersion $moduleInfo.MinVersion) {
-            Write-Host "✓ $moduleName is already installed and up to date" -ForegroundColor Green
             continue
         }
-        
-        Write-Host "Installing $moduleName..." -ForegroundColor Yellow
         try {
-            Install-Module -Name $moduleName -MinimumVersion $moduleInfo.MinVersion -Scope CurrentUser -Force -AllowClobber
-            Write-Host "✓ Successfully installed $moduleName" -ForegroundColor Green
+            Install-Module -Name $moduleName -MinimumVersion $moduleInfo.MinVersion -Scope CurrentUser -Force -AllowClobber -ErrorAction Stop -Confirm:$false -WarningAction SilentlyContinue | Out-Null
         }
         catch {
-            Write-Warning "Failed to install $moduleName`: $_"
+            Write-Host "Failed to install module '$moduleName': $_" -ForegroundColor Red
         }
     }
-    
-    Write-Host "`nModule installation complete!" -ForegroundColor Cyan
 }
-
-# Export the function
-Export-ModuleMember -Function Install-RequiredModules 

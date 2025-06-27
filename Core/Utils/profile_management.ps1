@@ -29,4 +29,4 @@ function Reset-ProfileState {
     }
 }
 
-Export-ModuleMember -Function Reset-ProfileState
+# Export-ModuleMember -Function Reset-ProfileState

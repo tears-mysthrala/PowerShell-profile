@@ -47,4 +47,4 @@ foreach ($module in $script:moduleAliases.Keys) {
 }
 
 # Export functions
-Export-ModuleMember -Function * -Variable moduleAliases
+# Export-ModuleMember -Function * -Variable moduleAliases

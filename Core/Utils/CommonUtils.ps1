@@ -37,4 +37,4 @@ function Initialize-EncodingConfig {
     [console]::InputEncoding = [console]::OutputEncoding = New-Object System.Text.UTF8Encoding
 }
 
-Export-ModuleMember -Function *
+# Export-ModuleMember -Function *
