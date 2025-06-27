@@ -57,4 +57,4 @@ Set-Alias -Name mkcd -Value New-DirectoryAndEnter
 Set-Alias -Name extract -Value Expand-CustomArchive
 Set-Alias -Name extract-multi -Value Expand-CustomArchives
 
-Export-ModuleMember -Function * -Alias *
+# Export-ModuleMember -Function * -Alias *

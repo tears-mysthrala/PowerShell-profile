@@ -16,7 +16,7 @@ function Update-AllApps {
 }
 
 # Export the function
-Export-ModuleMember -Function Update-AllApps
+# Export-ModuleMember -Function Update-AllApps
 
 $SCOOP_APPS_TO_UPGRADE = @(
   "extras/autohotkey",

@@ -85,7 +85,7 @@ Measure-Block 'Core Setup' {
         $InformationPreference = 'SilentlyContinue'
         
         # Import ModuleInstaller first to ensure all required modules are available
-        Import-Module "$ProfileDir\Core\ModuleInstaller.psm1" -Force -ErrorAction Stop
+        Import-Module "$ProfileDir\Core\ModuleInstaller.ps1" -Force -ErrorAction Stop
         Install-RequiredModules
         
         Import-Module ProfileManagement -Force -ErrorAction Stop
@@ -95,28 +95,50 @@ Measure-Block 'Core Setup' {
         $WarningPreference = $originalPreferences.Warning
         $VerbosePreference = $originalPreferences.Verbose
         $InformationPreference = $originalPreferences.Information
-        Write-Host "Core module loaded successfully" -ForegroundColor Green        # Load common utilities
+        # Write-Host "Core module loaded successfully" -ForegroundColor Green        # Load common utilities
         $utilsPath = "$ProfileDir\Core\Utils"
         if (Test-Path $utilsPath) {
-            # Import utility modules
-            Get-ChildItem -Path $utilsPath -Filter "*.psm1" | ForEach-Object {
-                try {
-                    # Suppress warnings during module import
-                    $WarningPreference = 'SilentlyContinue'
-                    $VerbosePreference = 'SilentlyContinue'
+            # Create a hashtable to store already loaded modules
+            $loadedUtilModules = @{}
+            Get-ChildItem -Path $utilsPath -Filter "*.ps1" | ForEach-Object {
+                $moduleName = [System.IO.Path]::GetFileNameWithoutExtension($_.Name)
+                if (-not $loadedUtilModules.ContainsKey($moduleName)) {
+                    $scriptBlock = {
+                        param($Path)
+                        # Save all preference variables
+                        $origPrefs = @{
+                            Warning     = $global:WarningPreference
+                            Verbose     = $global:VerbosePreference
+                            Information = $global:InformationPreference
+                        }
+                        
+                        # Suppress all warnings and verbose output
+                        $global:WarningPreference = 'SilentlyContinue'
+                        $global:VerbosePreference = 'SilentlyContinue'
+                        $global:InformationPreference = 'SilentlyContinue'
+                        
+                        try {
+                            New-Module -Name $([System.IO.Path]::GetFileNameWithoutExtension($Path)) -ScriptBlock {
+                                param($ScriptPath)
+                                Set-StrictMode -Version Latest
+                                $ErrorActionPreference = 'Stop'
+                                . $ScriptPath
+                                # Export-ModuleMember -Function * -Alias *
+                            } -ArgumentList $Path | Import-Module -Global -WarningAction SilentlyContinue
+                        }
+                        finally {
+                            # Restore all preference variables
+                            $global:WarningPreference = $origPrefs.Warning
+                            $global:VerbosePreference = $origPrefs.Verbose
+                            $global:InformationPreference = $origPrefs.Information
+                        }
+                    }
                     
-                    Import-Module $_.FullName -Force -Global -ErrorAction Stop
-                }
-                catch {
-                    Write-Host "Failed to load module $($_.Name): $_" -ForegroundColor Yellow
-                }
-                finally {
-                    # Restore preferences
-                    $WarningPreference = $originalPreferences.Warning
-                    $VerbosePreference = $originalPreferences.Verbose
+                    & $scriptBlock -Path $_.FullName
+                    $loadedUtilModules[$moduleName] = $true
                 }
             }
-            Write-Host "Utility modules loaded successfully" -ForegroundColor Green
+            # Write-Host "Utility modules loaded successfully" -ForegroundColor Green
         }
     }
     catch {
@@ -138,10 +160,10 @@ Measure-Block 'Shell Setup' {
             # Restore preferences
             $WarningPreference = 'Continue'
             $VerbosePreference = 'Continue'
-            Write-Host "Aliases loaded successfully" -ForegroundColor Green
+            # Write-Host "Aliases loaded successfully" -ForegroundColor Green
         }
         catch {
-            Write-Host "Failed to load aliases: $_" -ForegroundColor Red
+            # Write-Host "Failed to load aliases: $_" -ForegroundColor Red
         }
     }
     # Initialize shell enhancements
@@ -197,6 +219,41 @@ Measure-Block 'Module Initialization' {
     Initialize-PSModules
 }
 
+# --- Catppuccin Theme Setup ---
+function Test-CatppuccinPresent {
+    $module = Get-Module -ListAvailable Catppuccin | Sort-Object Version -Descending | Select-Object -First 1
+    if ($module) { return $true }
+    $customPaths = @(
+        "$env:USERPROFILE\\Documents\\PowerShell\\Modules\\Catppuccin",
+        "$env:USERPROFILE\\Documents\\WindowsPowerShell\\Modules\\Catppuccin",
+        "$env:USERPROFILE\\OneDrive\\Documents\\PowerShell\\Modules\\Catppuccin"
+    )
+    foreach ($path in $customPaths) {
+        if (Test-Path $path) {
+            $files = Get-ChildItem -Path $path -Include *.psd1,*.psm1 -File -ErrorAction SilentlyContinue
+            if ($files) {
+                return $true
+            }
+        }
+    }
+    return $false
+}
+
+if (-not (Test-CatppuccinPresent)) {
+    try {
+        if (Get-Command git -ErrorAction SilentlyContinue) {
+            git clone https://github.com/catppuccin/powershell.git "$HOME\Documents\PowerShell\Modules\Catppuccin"
+            Write-Host "Catppuccin module cloned successfully." -ForegroundColor Green
+        } else {
+            Write-Host "Git is not installed. Please install Git to clone Catppuccin module." -ForegroundColor Yellow
+        }
+    } catch {
+        # Silently ignore if not found in repositories
+    }
+} else {
+    # Catppuccin module already present.
+}
+
 # Wait for background jobs and record timing
 $globalStopwatch.Stop()
 $script:backgroundJobs | ForEach-Object {
@@ -210,21 +267,12 @@ $script:backgroundJobs | ForEach-Object {
 
 # Report startup performance
 $totalTime = $globalStopwatch.ElapsedMilliseconds
-Write-Host "`nProfile loaded in ${totalTime}ms" -ForegroundColor Cyan
+Write-Host "Profile loaded in ${totalTime}ms" -ForegroundColor Cyan
 $script:profileTiming.GetEnumerator() | Sort-Object Value -Descending | ForEach-Object {
-    Write-Host "$($_.Key): $($_.Value)ms" -ForegroundColor Gray
+    Write-Host "$($_.Key): $($_.Value)ms" -ForegroundColor Green
 }
 
 #f45873b3-b655-43a6-b217-97c00aa0db58 PowerToys CommandNotFound module
 
 Import-Module -Name Microsoft.WinGet.CommandNotFound
 #f45873b3-b655-43a6-b217-97c00aa0db58
-
-# --- Catppuccin Theme Integration ---
-try {
-    Import-Module Catppuccin -ErrorAction Stop
-    $global:CatppuccinFlavor = $Catppuccin['Mocha']
-    Write-Host "Catppuccin theme loaded (Mocha flavor)" -ForegroundColor Cyan
-} catch {
-    Write-Host "Catppuccin theme not loaded: $_" -ForegroundColor Yellow
-}
