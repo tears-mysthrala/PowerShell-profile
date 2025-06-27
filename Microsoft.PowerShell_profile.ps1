@@ -85,7 +85,7 @@ Measure-Block 'Core Setup' {
         $InformationPreference = 'SilentlyContinue'
         
         # Import ModuleInstaller first to ensure all required modules are available
-        Import-Module "$ProfileDir\Core\ModuleInstaller.ps1" -Force -ErrorAction Stop
+        Import-Module "$ProfileDir\Core\ModuleInstaller.psm1" -Force -ErrorAction Stop
         Install-RequiredModules
         
         Import-Module ProfileManagement -Force -ErrorAction Stop
@@ -98,44 +98,22 @@ Measure-Block 'Core Setup' {
         Write-Host "Core module loaded successfully" -ForegroundColor Green        # Load common utilities
         $utilsPath = "$ProfileDir\Core\Utils"
         if (Test-Path $utilsPath) {
-            # Create a hashtable to store already loaded modules
-            $loadedUtilModules = @{}
-            Get-ChildItem -Path $utilsPath -Filter "*.ps1" | ForEach-Object {
-                $moduleName = [System.IO.Path]::GetFileNameWithoutExtension($_.Name)
-                if (-not $loadedUtilModules.ContainsKey($moduleName)) {
-                    $scriptBlock = {
-                        param($Path)
-                        # Save all preference variables
-                        $origPrefs = @{
-                            Warning     = $global:WarningPreference
-                            Verbose     = $global:VerbosePreference
-                            Information = $global:InformationPreference
-                        }
-                        
-                        # Suppress all warnings and verbose output
-                        $global:WarningPreference = 'SilentlyContinue'
-                        $global:VerbosePreference = 'SilentlyContinue'
-                        $global:InformationPreference = 'SilentlyContinue'
-                        
-                        try {
-                            New-Module -Name $([System.IO.Path]::GetFileNameWithoutExtension($Path)) -ScriptBlock {
-                                param($ScriptPath)
-                                Set-StrictMode -Version Latest
-                                $ErrorActionPreference = 'Stop'
-                                . $ScriptPath
-                                Export-ModuleMember -Function * -Alias *
-                            } -ArgumentList $Path | Import-Module -Global -WarningAction SilentlyContinue
-                        }
-                        finally {
-                            # Restore all preference variables
-                            $global:WarningPreference = $origPrefs.Warning
-                            $global:VerbosePreference = $origPrefs.Verbose
-                            $global:InformationPreference = $origPrefs.Information
-                        }
-                    }
+            # Import utility modules
+            Get-ChildItem -Path $utilsPath -Filter "*.psm1" | ForEach-Object {
+                try {
+                    # Suppress warnings during module import
+                    $WarningPreference = 'SilentlyContinue'
+                    $VerbosePreference = 'SilentlyContinue'
                     
-                    & $scriptBlock -Path $_.FullName
-                    $loadedUtilModules[$moduleName] = $true
+                    Import-Module $_.FullName -Force -Global -ErrorAction Stop
+                }
+                catch {
+                    Write-Host "Failed to load module $($_.Name): $_" -ForegroundColor Yellow
+                }
+                finally {
+                    # Restore preferences
+                    $WarningPreference = $originalPreferences.Warning
+                    $VerbosePreference = $originalPreferences.Verbose
                 }
             }
             Write-Host "Utility modules loaded successfully" -ForegroundColor Green
@@ -241,3 +219,13 @@ $script:profileTiming.GetEnumerator() | Sort-Object Value -Descending | ForEach-
 
 Import-Module -Name Microsoft.WinGet.CommandNotFound
 #f45873b3-b655-43a6-b217-97c00aa0db58
+
+# --- Catppuccin Theme Integration ---
+try {
+    # Ensure Catppuccin is available in the module path (installed via git clone)
+    Import-Module Catppuccin -ErrorAction Stop
+    $global:CatppuccinFlavor = $Catppuccin['Mocha']
+    Write-Host "Catppuccin theme loaded (Mocha flavor)" -ForegroundColor Cyan
+} catch {
+    Write-Host "Catppuccin theme not loaded: $_" -ForegroundColor Yellow
+}
