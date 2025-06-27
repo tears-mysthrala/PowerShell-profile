@@ -86,6 +86,7 @@ Measure-Block 'Core Setup' {
         
         # Import ModuleInstaller first to ensure all required modules are available
         Import-Module "$ProfileDir\Core\ModuleInstaller.psm1" -Force -ErrorAction Stop
+        Import-Module "$ProfileDir\Core\ModuleInstaller.psm1" -Force -ErrorAction Stop
         Install-RequiredModules
         
         Import-Module ProfileManagement -Force -ErrorAction Stop

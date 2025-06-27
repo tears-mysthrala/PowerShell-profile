@@ -5,22 +5,27 @@ $requiredModules = @{
     'PSReadLine'                    = @{
         MinVersion  = '2.2.0'
         Description = 'Enhanced command line editing'
+        ManualInstall = $false
     }
     'Terminal-Icons'                = @{
         MinVersion  = '0.10.0'
         Description = 'File and folder icons in terminal'
+        ManualInstall = $false
     }
     'posh-git'                      = @{
         MinVersion  = '1.1.0'
         Description = 'Git integration for PowerShell'
+        ManualInstall = $false
     }
     'PSFzf'                         = @{
         MinVersion  = '2.5.0'
         Description = 'Fuzzy finder integration'
+        ManualInstall = $false
     }
     'z'                             = @{
         MinVersion  = '1.1.0'
         Description = 'Directory jumping'
+        ManualInstall = $false
     }
     'Catppuccin'                    = @{
         MinVersion  = '0.2.0'
@@ -29,21 +34,25 @@ $requiredModules = @{
     'PSWindowsUpdate'               = @{
         MinVersion  = '2.2.0.3'
         Description = 'Windows Update management'
+        ManualInstall = $false
     }
     'PowerShellGet'                 = @{
         MinVersion  = '2.2.5'
         Description = 'PowerShell module management'
+        ManualInstall = $false
     }
     'Microsoft.PowerToys.Configure' = @{
         MinVersion  = '0.91.1.0'
         Description = 'PowerToys configuration'
+        ManualInstall = $false
     }
 }
 
 function Test-ModuleInstalled {
     param(
         [string]$ModuleName,
-        [string]$MinVersion
+        [string]$MinVersion,
+        [bool]$ManualInstall = $false
     )
   
     # Default logic for other modules
@@ -65,6 +74,10 @@ function Install-RequiredModules {
         $moduleName = $module.Key
         $moduleInfo = $module.Value
         
+        if ($moduleInfo.ContainsKey('ManualInstall') -and $moduleInfo.ManualInstall) {
+            Write-Warning "$moduleName must be installed/updated manually (git clone/pull). Skipping automatic installation."
+            continue
+        }
         if (Test-ModuleInstalled -ModuleName $moduleName -MinVersion $moduleInfo.MinVersion) {
             continue
         }
