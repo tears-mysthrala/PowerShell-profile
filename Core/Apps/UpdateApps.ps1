@@ -170,11 +170,26 @@ try {
 Write-Log "Waiting for package manager updates to complete..."
 Wait-Job -Job $jobs | Out-Null
 
-# Process results from jobs
+
+# Color map for each job name
+$jobColors = @{
+    'WingetUpdate'     = 'Cyan'
+    'ScoopUpdate'      = 'Yellow'
+    'ChocolateyUpdate' = 'Magenta'
+    'NpmUpdate'        = 'Green'
+}
+
+# Process results from jobs with color
 foreach ($job in $jobs) {
     $result = Receive-Job -Job $job
-    Write-Log "Results from $($job.Name):"
-    $result | ForEach-Object { Write-Log $_ }
+    $color = $jobColors[$job.Name]
+    if (-not $color) { $color = 'White' }
+    Write-Host ("Results from $($job.Name):") -ForegroundColor $color
+    if ($result) {
+        $result | ForEach-Object { Write-Host $_ -ForegroundColor $color }
+    } else {
+        Write-Host "(No output)" -ForegroundColor $color
+    }
     Remove-Job -Job $job
 }
 
