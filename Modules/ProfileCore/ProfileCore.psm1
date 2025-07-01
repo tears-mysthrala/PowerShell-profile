@@ -122,6 +122,8 @@ if (Test-Path $utilsPath) {
         # Create a new module with the utility script content
         New-Module -Name $moduleName -ScriptBlock ([ScriptBlock]::Create(@"
             Set-StrictMode -Version Latest
+            # Set ErrorActionPreference to 'Stop' to ensure errors are not silently ignored (restored after module load if needed)
+            Write-Host "[INFO] Setting ErrorActionPreference to 'Stop' for utility module load..." -ForegroundColor Yellow
             `$ErrorActionPreference = 'Stop'
             `$script:moduleRoot = Split-Path -Parent '$($utilFile.FullName)'
             
@@ -176,6 +178,8 @@ function Import-PSModule {    param(
         # Create a new module with the script content
         New-Module -Name $Name -ScriptBlock ([ScriptBlock]::Create(@"
             Set-StrictMode -Version Latest
+            # Set ErrorActionPreference to 'Stop' to ensure errors are not silently ignored (restored after module load if needed)
+            Write-Host "[INFO] Setting ErrorActionPreference to 'Stop' for module load..." -ForegroundColor Yellow
             `$ErrorActionPreference = 'Stop'
             `$script:moduleRoot = Split-Path -Parent '$($moduleInfo.Path)'
             
@@ -225,6 +229,8 @@ function Initialize-PSModules {
                 # Create a new module with the script content
                 New-Module -Name $moduleName -ScriptBlock ([ScriptBlock]::Create(@"
                     Set-StrictMode -Version Latest
+                    # Set ErrorActionPreference to 'Stop' to ensure errors are not silently ignored (restored after module load if needed)
+                    Write-Host "[INFO] Setting ErrorActionPreference to 'Stop' for module load..." -ForegroundColor Yellow
                     `$ErrorActionPreference = 'Stop'
                     `$script:moduleRoot = Split-Path -Parent '$($moduleInfo.Path)'
                     
@@ -253,6 +259,8 @@ foreach ($category in $moduleConfig.Keys) {
             # Create module scope
             New-Module -Name '$($module.Name)' -ScriptBlock {
                 Set-StrictMode -Version Latest
+                # Set ErrorActionPreference to 'Stop' to ensure errors are not silently ignored (restored after module load if needed)
+                Write-Host "[INFO] Setting ErrorActionPreference to 'Stop' for registered module load..." -ForegroundColor Yellow
                 `$ErrorActionPreference = 'Stop'
                 
                 # Script-level variables

@@ -69,6 +69,14 @@ $script:backgroundJobs = @()
 $global:profileTiming = @{}
 $script:profileTiming = @{}
 
+# By default, show info logs unless suppressed explicitly
+$global:ProfileSuppressInfoLogs = $false
+
+# Suppress info logs if not loaded with --no-supress
+if ($MyInvocation.Line -notmatch '--no-supress') {
+    $global:ProfileSuppressInfoLogs = $true
+}
+
 # Load core configuration
 Measure-Block 'Core Setup' {
     try {
@@ -79,7 +87,10 @@ Measure-Block 'Core Setup' {
             Information = $InformationPreference
         }
         
-        # Suppress all non-critical messages
+        # Suppress all non-critical messages (log this action)
+        if (-not $global:ProfileSuppressInfoLogs) {
+            Write-Host "[INFO] Suppressing warnings, verbose, and information messages temporarily..." -ForegroundColor Yellow
+        }
         $WarningPreference = 'SilentlyContinue'
         $VerbosePreference = 'SilentlyContinue'
         $InformationPreference = 'SilentlyContinue'
@@ -111,8 +122,11 @@ Measure-Block 'Core Setup' {
                             Verbose     = $global:VerbosePreference
                             Information = $global:InformationPreference
                         }
-                        
-                        # Suppress all warnings and verbose output
+
+                        # Suppress all warnings and verbose output (log this action)
+                        if (-not $global:ProfileSuppressInfoLogs) {
+                            Write-Host "[INFO] Suppressing warnings, verbose, and information messages for utility module load..." -ForegroundColor Yellow
+                        }
                         $global:WarningPreference = 'SilentlyContinue'
                         $global:VerbosePreference = 'SilentlyContinue'
                         $global:InformationPreference = 'SilentlyContinue'
@@ -153,13 +167,20 @@ Measure-Block 'Shell Setup' {
     $aliasPath = "$ProfileDir\Scripts\Shell\unified_aliases.ps1"
     if (Test-Path $aliasPath) {
         try {
-            # Temporarily suppress warnings
+            # Temporarily suppress warnings (log this action)
+            if (-not $global:ProfileSuppressInfoLogs) {
+                Write-Host "[INFO] Suppressing warnings and verbose output for alias loading..." -ForegroundColor Yellow
+            }
             $WarningPreference = 'SilentlyContinue'
             $VerbosePreference = 'SilentlyContinue'
-            . $aliasPath
-            # Restore preferences
-            $WarningPreference = 'Continue'
-            $VerbosePreference = 'Continue'
+            try {
+                . $aliasPath
+            }
+            finally {
+                # Restore preferences
+                $WarningPreference = 'Continue'
+                $VerbosePreference = 'Continue'
+            }
             # Write-Host "Aliases loaded successfully" -ForegroundColor Green
         }
         catch {
@@ -169,14 +190,31 @@ Measure-Block 'Shell Setup' {
     # Initialize shell enhancements
     # Load Terminal-Icons module for file icons
     if (Get-Module -ListAvailable Terminal-Icons) {
+        # Import Terminal-Icons, but log if suppressed errors might occur
+        if (-not $global:ProfileSuppressInfoLogs) {
+            Write-Host "[INFO] Importing Terminal-Icons with ErrorAction SilentlyContinue (errors will be suppressed)" -ForegroundColor Yellow
+        }
         Import-Module Terminal-Icons -ErrorAction SilentlyContinue
     }
     
     # Initialize starship prompt
     if (Get-Command starship -ErrorAction SilentlyContinue) {
+        # Initialize starship prompt, log if command is not found
         $ENV:STARSHIP_CONFIG = "$ProfileDir\Config\starship.toml"
         $ENV:STARSHIP_CACHE = "$ProfileDir\.starship\cache"
-        Invoke-Expression $(&starship init powershell --print-full-init | Out-String)
+        try {
+            Invoke-Expression $(&starship init powershell --print-full-init | Out-String)
+        }
+        catch {
+            if (-not $global:ProfileSuppressInfoLogs) {
+                Write-Host "[WARN] Failed to initialize starship prompt: $_" -ForegroundColor Yellow
+            }
+        }
+    }
+    else {
+        if (-not $global:ProfileSuppressInfoLogs) {
+            Write-Host "[INFO] Starship not found, skipping prompt initialization." -ForegroundColor Yellow
+        }
     }
     
     # Configure PSReadLine
@@ -230,7 +268,7 @@ function Test-CatppuccinPresent {
     )
     foreach ($path in $customPaths) {
         if (Test-Path $path) {
-            $files = Get-ChildItem -Path $path -Include *.psd1,*.psm1 -File -ErrorAction SilentlyContinue
+            $files = Get-ChildItem -Path $path -Include *.psd1, *.psm1 -File -ErrorAction SilentlyContinue
             if ($files) {
                 return $true
             }
@@ -244,13 +282,16 @@ if (-not (Test-CatppuccinPresent)) {
         if (Get-Command git -ErrorAction SilentlyContinue) {
             git clone https://github.com/catppuccin/powershell.git "$HOME\Documents\PowerShell\Modules\Catppuccin"
             Write-Host "Catppuccin module cloned successfully." -ForegroundColor Green
-        } else {
+        }
+        else {
             Write-Host "Git is not installed. Please install Git to clone Catppuccin module." -ForegroundColor Yellow
         }
-    } catch {
+    }
+    catch {
         # Silently ignore if not found in repositories
     }
-} else {
+}
+else {
     # Catppuccin module already present.
 }
 

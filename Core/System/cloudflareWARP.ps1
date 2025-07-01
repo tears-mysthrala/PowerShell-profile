@@ -2,6 +2,7 @@ $CLOUDFLAREWARP_SERVICE_NAME = "CloudflareWARP"
 
 function Start-CloudFlareWarp
 {
+  Write-Host "[INFO] Checking for CloudflareWARP service with ErrorAction SilentlyContinue (errors will be suppressed)" -ForegroundColor Yellow
   $sv = Get-Service -Name $CLOUDFLAREWARP_SERVICE_NAME -ErrorAction SilentlyContinue
   if ($sv)
   {
@@ -17,9 +18,11 @@ function Start-CloudFlareWarp
 
 function Stop-CloudFlareWarp 
 {
+  Write-Host "[INFO] Checking for CloudflareWARP service with ErrorAction SilentlyContinue (errors will be suppressed)" -ForegroundColor Yellow
   $sv = Get-Service -Name $CLOUDFLAREWARP_SERVICE_NAME -ErrorAction SilentlyContinue
   if ($sv)
   {
+    Write-Host "[INFO] Stopping Cloudflare WARP process with ErrorAction SilentlyContinue (errors will be suppressed)" -ForegroundColor Yellow
     Stop-Process -Name "Cloudflare WARP" -Force -ErrorAction SilentlyContinue
     Start-Process -filepath "powershell" -Argumentlist "Set-Service -Name $($CLOUDFLAREWARP_SERVICE_NAME) -Status Stopped -PassThru; Set-Service -Name $($CLOUDFLAREWARP_SERVICE_NAME) -StartupType Disabled" -Verb runas
     Write-Host "Stopped CloudflareWARP"

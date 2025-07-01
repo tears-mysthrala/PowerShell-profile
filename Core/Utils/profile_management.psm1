@@ -16,6 +16,8 @@ function Reset-ProfileState {
         $script:profileTiming = @{}
         
         # Reset preference variables to their defaults
+        # Reset preference variables to their defaults (log this action)
+        Write-Host "[INFO] Resetting global preference variables to defaults..." -ForegroundColor Yellow
         $global:WarningPreference = 'Continue'
         $global:VerbosePreference = 'SilentlyContinue'
         $global:InformationPreference = 'Continue'

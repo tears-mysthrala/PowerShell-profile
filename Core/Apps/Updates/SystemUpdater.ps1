@@ -29,6 +29,7 @@ function Handle-UpdateError {
 # Command existence check
 function Test-CommandExists {
     param($Command)
+    Write-Host "[INFO] Checking for command '$Command' with ErrorAction SilentlyContinue (errors will be suppressed)" -ForegroundColor Yellow
     $null -ne (Get-Command -Name $Command -ErrorAction SilentlyContinue)
 }
 
@@ -48,6 +49,7 @@ function Update-System {
     try {
         # Windows Update
         Write-Progress @progressParams -Status 'Checking Windows updates'
+        Write-Host "[INFO] Checking for Get-WindowsUpdate with ErrorAction SilentlyContinue (errors will be suppressed)" -ForegroundColor Yellow
         if (Get-Command Get-WindowsUpdate -ErrorAction SilentlyContinue) {
             if (!(Get-Module -ListAvailable -Name PSWindowsUpdate)) {
                 Install-Module PSWindowsUpdate -Force -AllowClobber
@@ -113,6 +115,7 @@ function Update-PowerShellModules {
     Get-Module -ListAvailable | ForEach-Object {
         $currentModule = $_
         try {
+            Write-Host "[INFO] Checking online version for module '$($currentModule.Name)' with ErrorAction SilentlyContinue (errors will be suppressed)" -ForegroundColor Yellow
             $online = Find-Module -Name $currentModule.Name -ErrorAction SilentlyContinue
             if ($online -and ($online.Version -gt $currentModule.Version)) {
                 $modulesToUpdate[$currentModule.Name] = @{
@@ -128,6 +131,7 @@ function Update-PowerShellModules {
     foreach ($moduleName in $modulesToUpdate.Keys) {
         $moduleInfo = $modulesToUpdate[$moduleName]
         try {
+            Write-Host "[INFO] Checking if module '$moduleName' is loaded with ErrorAction SilentlyContinue (errors will be suppressed)" -ForegroundColor Yellow
             $loadedModule = Get-Module -Name $moduleName -ErrorAction SilentlyContinue
             if ($loadedModule) {
                 Remove-Module -Name $moduleName -Force -ErrorAction Stop

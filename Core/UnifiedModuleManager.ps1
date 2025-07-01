@@ -32,12 +32,23 @@ function Register-UnifiedModule {
         Information = $InformationPreference
     }
     
+    # Suppress all non-critical messages (log this action)
+    Write-Host "[INFO] Suppressing Verbose, Debug, Warning, and Information output temporarily..." -ForegroundColor Yellow
+    $oldVerbose = $VerbosePreference
+    $oldDebug = $DebugPreference
+    $oldWarning = $WarningPreference
+    $oldInformation = $InformationPreference
     $VerbosePreference = 'SilentlyContinue'
     $DebugPreference = 'SilentlyContinue'
     $WarningPreference = 'SilentlyContinue'
     $InformationPreference = 'SilentlyContinue'
     
     # Check if module exists before registration
+    # Restore previous preferences after block
+    $VerbosePreference = $oldVerbose
+    $DebugPreference = $oldDebug
+    $WarningPreference = $oldWarning
+    $InformationPreference = $oldInformation
     $moduleExists = $false
     $moduleInfo = $null
     $moduleSearchPaths = @($env:PSModulePath -split ';')
@@ -73,6 +84,8 @@ function Register-UnifiedModule {
     }
     
     if (-not $moduleExists) {
+        # Suppress errors when checking for module (log this action)
+        Write-Host "[INFO] Checking for module $Name with ErrorAction SilentlyContinue (errors will be suppressed)" -ForegroundColor Yellow
         $moduleInfo = Get-Module -ListAvailable $Name -ErrorAction SilentlyContinue | 
                      Sort-Object Version -Descending | 
                      Select-Object -First 1
@@ -268,12 +281,23 @@ function Import-UnifiedModule {
             Information = $InformationPreference
         }
         
+        # Suppress all non-critical messages (log this action)
+        Write-Host "[INFO] Suppressing Verbose, Debug, Warning, and Information output temporarily..." -ForegroundColor Yellow
+        $oldVerbose = $VerbosePreference
+        $oldDebug = $DebugPreference
+        $oldWarning = $WarningPreference
+        $oldInformation = $InformationPreference
         $VerbosePreference = 'SilentlyContinue'
         $DebugPreference = 'SilentlyContinue'
         $WarningPreference = 'SilentlyContinue'
         $InformationPreference = 'SilentlyContinue'
         
         try {
+            # Restore previous preferences after block
+            $VerbosePreference = $oldVerbose
+            $DebugPreference = $oldDebug
+            $WarningPreference = $oldWarning
+            $InformationPreference = $oldInformation
             if ($moduleInfo.InitializerBlock) {
                 & $moduleInfo.InitializerBlock
             } elseif ($moduleInfo.ModulePath -and (Test-Path $moduleInfo.ModulePath)) {
@@ -311,12 +335,23 @@ function Initialize-StartupModules {
     $totalTimer = [System.Diagnostics.Stopwatch]::StartNew()
     $jobs = @()
     
+    # Suppress all non-critical messages (log this action)
+    Write-Host "[INFO] Suppressing Verbose, Debug, Warning, and Information output temporarily..." -ForegroundColor Yellow
+    $oldVerbose = $VerbosePreference
+    $oldDebug = $DebugPreference
+    $oldWarning = $WarningPreference
+    $oldInformation = $InformationPreference
     $VerbosePreference = 'SilentlyContinue'
     $DebugPreference = 'SilentlyContinue'
     $WarningPreference = 'SilentlyContinue'
     $InformationPreference = 'SilentlyContinue'
     
     try {
+        # Restore previous preferences after block
+        $VerbosePreference = $oldVerbose
+        $DebugPreference = $oldDebug
+        $WarningPreference = $oldWarning
+        $InformationPreference = $oldInformation
         # Create a hashtable to store module initialization scriptblocks
         $moduleJobs = @{}
         
@@ -403,8 +438,13 @@ function Register-ChocolateyProfile {
         return
     }
     
+    # Suppress Verbose output for Chocolatey registration (log this action)
+    Write-Host "[INFO] Suppressing Verbose output for Chocolatey registration..." -ForegroundColor Yellow
+    $oldVerbose = $VerbosePreference
     $VerbosePreference = 'SilentlyContinue'
     try {
+        # Restore previous VerbosePreference after block
+        $VerbosePreference = $oldVerbose
         if (Test-Path $chocoPath) {
             Register-UnifiedModule -Name $chocoModule `
                                 -InitializerBlock { Import-Module $chocoPath -Force -ErrorAction SilentlyContinue } `

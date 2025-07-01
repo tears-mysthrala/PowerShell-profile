@@ -21,6 +21,7 @@ function Handle-Error {
 # Function to check if a command exists
 function Test-CommandExists {
     param($Command)
+    Write-Host "[INFO] Checking for command '$Command' with ErrorAction SilentlyContinue (errors will be suppressed)" -ForegroundColor Yellow
     $null -ne (Get-Command -Name $Command -ErrorAction SilentlyContinue)
 }
 
@@ -100,6 +101,7 @@ try {
     Get-Module -ListAvailable | ForEach-Object {
         $currentModule = $_
         try {
+            Write-Host "[INFO] Checking online version for module '$($currentModule.Name)' with ErrorAction SilentlyContinue (errors will be suppressed)" -ForegroundColor Yellow
             $online = Find-Module -Name $currentModule.Name -ErrorAction SilentlyContinue
             if ($online -and ($online.Version -gt $currentModule.Version)) {
                 $modulesToUpdate[$currentModule.Name] = @{
@@ -117,6 +119,7 @@ try {
         $moduleInfo = $modulesToUpdate[$moduleName]
         try {
             # Check if module is currently loaded
+            Write-Host "[INFO] Checking if module '$moduleName' is loaded with ErrorAction SilentlyContinue (errors will be suppressed)" -ForegroundColor Yellow
             $loadedModule = Get-Module -Name $moduleName -ErrorAction SilentlyContinue
             if ($loadedModule) {
                 Write-Log "INFO: Unloading module '$moduleName' for update..."

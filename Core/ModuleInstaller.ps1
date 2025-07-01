@@ -69,6 +69,8 @@ function Install-RequiredModules {
             continue
         }
         try {
+            # Suppress warnings during module installation (log this action)
+            Write-Host "[INFO] Installing module '$moduleName' with WarningAction SilentlyContinue (warnings will be suppressed)" -ForegroundColor Yellow
             Install-Module -Name $moduleName -MinimumVersion $moduleInfo.MinVersion -Scope CurrentUser -Force -AllowClobber -ErrorAction Stop -Confirm:$false -WarningAction SilentlyContinue | Out-Null
         }
         catch {

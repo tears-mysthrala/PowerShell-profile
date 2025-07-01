@@ -6,6 +6,8 @@ $script:moduleRoot = Split-Path -Parent $PSCommandPath
 function Test-CommandExists {
     param($command)
     $oldPreference = $ErrorActionPreference
+    # Suppress errors for command existence check (log this action)
+    Write-Host "[INFO] Suppressing errors for Get-Command in Test-CommandExists..." -ForegroundColor Yellow
     $ErrorActionPreference = 'SilentlyContinue'
     try {
         if (Get-Command $command) {

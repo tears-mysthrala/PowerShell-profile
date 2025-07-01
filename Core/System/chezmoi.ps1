@@ -1,5 +1,6 @@
 Set-Alias -Name cm -Value chezmoi -Option AllScope
 
+Write-Host "[INFO] Checking for chezmoi command with ErrorAction SilentlyContinue (errors will be suppressed)" -ForegroundColor Yellow
 if (Get-Command "chezmoi" -ErrorAction SilentlyContinue)
 {
   Invoke-Expression (& { (chezmoi completion powershell | Out-String) })

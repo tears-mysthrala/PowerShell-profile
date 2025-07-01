@@ -2,21 +2,25 @@
 
 # Ensure Test-CommandExists is available
 function Test-CommandExists {
-    param($command)
-    $oldPreference = $ErrorActionPreference
-    $ErrorActionPreference = 'SilentlyContinue'
-    try {
-        if (Get-Command $command) {
-            return $true
-        }
+  param($command)
+  $oldPreference = $ErrorActionPreference
+  # Suppress errors for command existence check (log this action)
+  if (-not $global:ProfileSuppressInfoLogs) {
+    Write-Host "[INFO] Suppressing errors for Get-Command in Test-CommandExists..." -ForegroundColor Yellow
+  }
+  $ErrorActionPreference = 'SilentlyContinue'
+  try {
+    if (Get-Command $command) {
+      return $true
     }
-    catch {
-        Write-Host "$command does not exist"
-        return $false
-    }
-    finally {
-        $ErrorActionPreference = $oldPreference
-    }
+  }
+  catch {
+    Write-Host "$command does not exist"
+    return $false
+  }
+  finally {
+    $ErrorActionPreference = $oldPreference
+  }
 }
 
 # Navigation aliases and utilities
@@ -28,31 +32,31 @@ function .5 { Set-Location .\..\..\..\..\..\.. }
 
 # Editor detection and configuration
 if (Test-CommandExists nvim) {
-    if (Test-Path "$env:LOCALAPPDATA/$env:DEFAULT_NVIM_CONFIG" -PathType Container) {
-        $env:NVIM_APPNAME = $env:DEFAULT_NVIM_CONFIG
-    }
-    $EDITOR = 'nvim'
+  if (Test-Path "$env:LOCALAPPDATA/$env:DEFAULT_NVIM_CONFIG" -PathType Container) {
+    $env:NVIM_APPNAME = $env:DEFAULT_NVIM_CONFIG
+  }
+  $EDITOR = 'nvim'
 }
 elseif (Test-CommandExists code) {
-    $EDITOR = 'code'
+  $EDITOR = 'code'
 }
 elseif (Test-CommandExists notepad) {
-    $EDITOR = 'notepad'
+  $EDITOR = 'notepad'
 }
 elseif (Test-CommandExists pvim) {
-    $EDITOR = 'pvim'
+  $EDITOR = 'pvim'
 }
 elseif (Test-CommandExists vim) {
-    $EDITOR = 'vim'
+  $EDITOR = 'vim'
 }
 elseif (Test-CommandExists vi) {
-    $EDITOR = 'vi'
+  $EDITOR = 'vi'
 }
 elseif (Test-CommandExists 'notepad++') {
-    $EDITOR = 'notepad++'
+  $EDITOR = 'notepad++'
 }
 elseif (Test-CommandExists sublime_text) {
-    $EDITOR = 'sublime_text'
+  $EDITOR = 'sublime_text'
 }
 
 # System aliases
@@ -80,46 +84,50 @@ Set-Alias -Name dc -Value docker-compose
 
 # Conditional aliases
 if (Get-Command lazygit -ErrorAction SilentlyContinue) {
-    Set-Alias -Name lg -Value lazygit
+  Set-Alias -Name lg -Value lazygit
 }
 
 # Configure bat if available
 if (Get-Command bat -ErrorAction SilentlyContinue) {
-    $env:BAT_THEME = 'Nord'
-    Remove-Item Alias:cat -Force -ErrorAction SilentlyContinue
-    Set-Alias -Name cat -Value bat -Force -Option AllScope -Scope Global
+  $env:BAT_THEME = 'Nord'
+  Remove-Item Alias:cat -Force -ErrorAction SilentlyContinue
+  Set-Alias -Name cat -Value bat -Force -Option AllScope -Scope Global
 }
 
 # Configure exa if available
 if (Get-Command exa -ErrorAction SilentlyContinue) {
-    function ls_with_exa {
-        param([Parameter(ValueFromRemainingArguments=$true)]$params)
-        $exaOutput = $(if ($params) {
-            exa --icons --git --color=always --group-directories-first $params
-        } else {
-            exa --icons --git --color=always --group-directories-first
-        })
-        if (Get-Command bat -ErrorAction SilentlyContinue) {
-            $exaOutput | Out-String | bat --plain --paging=never
-        } else {
-            $exaOutput
-        }
+  function ls_with_exa {
+    param([Parameter(ValueFromRemainingArguments = $true)]$params)
+    $exaOutput = $(if ($params) {
+        exa --icons --git --color=always --group-directories-first $params
+      }
+      else {
+        exa --icons --git --color=always --group-directories-first
+      })
+    if (Get-Command bat -ErrorAction SilentlyContinue) {
+      $exaOutput | Out-String | bat --plain --paging=never
     }
-    function ll_with_exa {
-        $exaOutput = exa --icons --git --color=always --group-directories-first --long --header
-        if (Get-Command bat -ErrorAction SilentlyContinue) {
-            $exaOutput | Out-String | bat --plain --paging=never
-        } else {
-            $exaOutput
-        }
+    else {
+      $exaOutput
     }
-    Set-Alias -Name ls -Value ls_with_exa -Force -Option AllScope -Scope Global
-    Set-Alias -Name ll -Value ll_with_exa -Force -Option AllScope -Scope Global
-} else {
-    function ll {
-        Get-ChildItem | Format-Table -AutoSize -Property Mode, LastWriteTime, Length, Name
+  }
+  function ll_with_exa {
+    $exaOutput = exa --icons --git --color=always --group-directories-first --long --header
+    if (Get-Command bat -ErrorAction SilentlyContinue) {
+      $exaOutput | Out-String | bat --plain --paging=never
     }
-    Set-Alias -Name ll -Value ll -Force -Option AllScope -Scope Global
+    else {
+      $exaOutput
+    }
+  }
+  Set-Alias -Name ls -Value ls_with_exa -Force -Option AllScope -Scope Global
+  Set-Alias -Name ll -Value ll_with_exa -Force -Option AllScope -Scope Global
+}
+else {
+  function ll {
+    Get-ChildItem | Format-Table -AutoSize -Property Mode, LastWriteTime, Length, Name
+  }
+  Set-Alias -Name ll -Value ll -Force -Option AllScope -Scope Global
 }
 
 # File and directory management
@@ -130,37 +138,37 @@ Set-Alias -Name touch -Value New-File
 # System information and utilities
 function Get-PubIP { (Invoke-WebRequest http://ifconfig.me/ip ).Content }
 function Get-FormatedUptime {
-    $bootuptime = (Get-CimInstance -ClassName Win32_OperatingSystem).LastBootUpTime
-    $CurrentDate = Get-Date
-    $uptime = $CurrentDate - $bootuptime
-    Write-Output "Uptime: $($uptime.Days) Days, $($uptime.Hours) Hours, $($uptime.Minutes) Minutes"
+  $bootuptime = (Get-CimInstance -ClassName Win32_OperatingSystem).LastBootUpTime
+  $CurrentDate = Get-Date
+  $uptime = $CurrentDate - $bootuptime
+  Write-Output "Uptime: $($uptime.Days) Days, $($uptime.Hours) Hours, $($uptime.Minutes) Minutes"
 }
 
 function uptime {
-    If ($PSVersionTable.PSVersion.Major -eq 5) {
-        Get-WmiObject win32_operatingsystem |
-        Select-Object @{EXPRESSION = { $_.ConverttoDateTime($_.lastbootuptime) } } | Format-Table -HideTableHeaders
-    }
-    Else {
-        Get-FormatedUptime
-        net statistics workstation | Select-String "since" | foreach-object { $_.ToString().Replace('Statistics since ', 'Since: ') }
-    }
+  If ($PSVersionTable.PSVersion.Major -eq 5) {
+    Get-WmiObject win32_operatingsystem |
+    Select-Object @{EXPRESSION = { $_.ConverttoDateTime($_.lastbootuptime) } } | Format-Table -HideTableHeaders
+  }
+  Else {
+    Get-FormatedUptime
+    net statistics workstation | Select-String "since" | foreach-object { $_.ToString().Replace('Statistics since ', 'Since: ') }
+  }
 }
 
 # Search and find utilities
 function find-file($name) {
-    Get-ChildItem -recurse -filter "*${name}*" -ErrorAction SilentlyContinue | ForEach-Object {
-        $place_path = $_.directory
-        Write-Output "${place_path}\${_}"
-    }
+  Get-ChildItem -recurse -filter "*${name}*" -ErrorAction SilentlyContinue | ForEach-Object {
+    $place_path = $_.directory
+    Write-Output "${place_path}\${_}"
+  }
 }
 
 function Find-String($regex, $dir) {
-    if ($dir) {
-        Get-ChildItem $dir | Select-String $regex
-        return
-    }
-    $input | Select-String $regex
+  if ($dir) {
+    Get-ChildItem $dir | Select-String $regex
+    return
+  }
+  $input | Select-String $regex
 }
 Set-Alias -Name grep -Value Find-String
 
@@ -185,15 +193,15 @@ Set-Alias -Name pgrep -Value Get-ProcessByName
 # Create module manifest if it doesn't exist
 $manifestPath = Join-Path $PSScriptRoot 'unified_aliases.psd1'
 if (-not (Test-Path $manifestPath)) {
-    New-ModuleManifest -Path $manifestPath `
-        -RootModule 'unified_aliases.ps1' `
-        -ModuleVersion '1.0.0' `
-        -Author 'PowerShell User' `
-        -Description 'Unified PowerShell Aliases' `
-        -PowerShellVersion '5.1' `
-        -FunctionsToExport '*' `
-        -AliasesToExport '*' `
-        -VariablesToExport 'EDITOR'
+  New-ModuleManifest -Path $manifestPath `
+    -RootModule 'unified_aliases.ps1' `
+    -ModuleVersion '1.0.0' `
+    -Author 'PowerShell User' `
+    -Description 'Unified PowerShell Aliases' `
+    -PowerShellVersion '5.1' `
+    -FunctionsToExport '*' `
+    -AliasesToExport '*' `
+    -VariablesToExport 'EDITOR'
 }
 
 # ref: https://github.com/ChrisTitusTech/powershell-profile/blob/main/Microsoft.PowerShell_profile.ps1
@@ -282,9 +290,9 @@ function find-file($name) {
 }
 
 function Expand-ZipFile($file) {
-    Write-Output("Extracting", $file, "to", $pwd)
-    $fullFile = Get-ChildItem -Path $pwd -Filter .\cove.zip | ForEach-Object { $_.FullName }
-    Expand-Archive -Path $fullFile -DestinationPath $pwd
+  Write-Output("Extracting", $file, "to", $pwd)
+  $fullFile = Get-ChildItem -Path $pwd -Filter .\cove.zip | ForEach-Object { $_.FullName }
+  Expand-Archive -Path $fullFile -DestinationPath $pwd
 }
 Set-Alias -Name unzip -Value Expand-ZipFile
 
@@ -337,18 +345,18 @@ function sysinfo {
 
 # Networking Utilities
 function Clear-DnsCache {
-    Clear-DnsClientCache 
+  Clear-DnsClientCache 
 }
 Set-Alias -Name flushdns -Value Clear-DnsCache
 
 # Clipboard Utilities
 function Set-ClipboardContent {
-    Set-Clipboard $args[0] 
+  Set-Clipboard $args[0] 
 }
 Set-Alias -Name cpy -Value Set-ClipboardContent
 
 function Get-ClipboardContent {
-    Get-Clipboard 
+  Get-Clipboard 
 }
 Set-Alias -Name pst -Value Get-ClipboardContent
 
@@ -373,13 +381,13 @@ function df {
 }
 
 function Edit-FileContent($file, $find, $replace) {
-     (Get-Content $file).replace("$find", $replace) | Set-Content $file
+  (Get-Content $file).replace("$find", $replace) | Set-Content $file
 }
 Set-Alias -Name sed -Value Edit-FileContent
 
 function Get-CommandPath($command) {
-    Get-Command -Name $command -ErrorAction SilentlyContinue |
-    Select-Object -ExpandProperty Path -ErrorAction SilentlyContinue
+  Get-Command -Name $command -ErrorAction SilentlyContinue |
+  Select-Object -ExpandProperty Path -ErrorAction SilentlyContinue
 }
 Set-Alias -Name which -Value Get-CommandPath
 
@@ -457,12 +465,12 @@ function Expand-CustomArchive {
 Set-Alias -Name extract -Value Expand-CustomArchive
 
 function Expand-MultipleArchives {
-    $CurrentDate = (Get-Date).ToString("yyyy-MM-dd_HH-mm-ss")
-    $Folder = "extracted_$($CurrentDate)"
-    New-Item -Path $Folder -ItemType Directory | Out-Null
-    foreach ($File in $args) {
-        Expand-CustomArchive -File $File -Folder "$($Folder)\$([System.IO.Path]::GetFileNameWithoutExtension($File))"
-    }
+  $CurrentDate = (Get-Date).ToString("yyyy-MM-dd_HH-mm-ss")
+  $Folder = "extracted_$($CurrentDate)"
+  New-Item -Path $Folder -ItemType Directory | Out-Null
+  foreach ($File in $args) {
+    Expand-CustomArchive -File $File -Folder "$($Folder)\$([System.IO.Path]::GetFileNameWithoutExtension($File))"
+  }
 }
 Set-Alias -Name extract_multi -Value Expand-MultipleArchives
 
