@@ -29,7 +29,7 @@ function Handle-UpdateError {
 # Command existence check
 function Test-CommandExists {
     param($Command)
-    Write-Host "[INFO] Checking for command '$Command' with ErrorAction SilentlyContinue (errors will be suppressed)" -ForegroundColor Yellow
+    #Write-Host "[INFO] Checking for command '$Command' with ErrorAction SilentlyContinue (errors will be suppressed)" -ForegroundColor Yellow
     $null -ne (Get-Command -Name $Command -ErrorAction SilentlyContinue)
 }
 
@@ -39,7 +39,7 @@ function Update-System {
     param()
 
     $progressParams = @{
-        Activity = 'System Upgrade'
+        Activity         = 'System Upgrade'
         CurrentOperation = 'Initializing'
     }
 
@@ -49,7 +49,7 @@ function Update-System {
     try {
         # Windows Update
         Write-Progress @progressParams -Status 'Checking Windows updates'
-        Write-Host "[INFO] Checking for Get-WindowsUpdate with ErrorAction SilentlyContinue (errors will be suppressed)" -ForegroundColor Yellow
+        #Write-Host "[INFO] Checking for Get-WindowsUpdate with ErrorAction SilentlyContinue (errors will be suppressed)" -ForegroundColor Yellow
         if (Get-Command Get-WindowsUpdate -ErrorAction SilentlyContinue) {
             if (!(Get-Module -ListAvailable -Name PSWindowsUpdate)) {
                 Install-Module PSWindowsUpdate -Force -AllowClobber
@@ -87,8 +87,8 @@ function Update-System {
         Write-Progress @progressParams -Status 'Checking Store apps'
         if (Get-Command Get-CimInstance -ErrorAction SilentlyContinue) {
             Get-CimInstance -Namespace 'Root\cimv2' -ClassName 'Win32_AppxUpdateInfo' | 
-                Where-Object { $_.UpdateAvailable -eq $true } | 
-                ForEach-Object { Add-AppxPackage -Path $_.PackageLocation }
+            Where-Object { $_.UpdateAvailable -eq $true } | 
+            ForEach-Object { Add-AppxPackage -Path $_.PackageLocation }
         }
 
         # PowerShell module updates
@@ -115,15 +115,16 @@ function Update-PowerShellModules {
     Get-Module -ListAvailable | ForEach-Object {
         $currentModule = $_
         try {
-            Write-Host "[INFO] Checking online version for module '$($currentModule.Name)' with ErrorAction SilentlyContinue (errors will be suppressed)" -ForegroundColor Yellow
+            #Write-Host "[INFO] Checking online version for module '$($currentModule.Name)' with ErrorAction SilentlyContinue (errors will be suppressed)" -ForegroundColor Yellow
             $online = Find-Module -Name $currentModule.Name -ErrorAction SilentlyContinue
             if ($online -and ($online.Version -gt $currentModule.Version)) {
                 $modulesToUpdate[$currentModule.Name] = @{
                     'CurrentVersion' = $currentModule.Version
-                    'NewVersion' = $online.Version
+                    'NewVersion'     = $online.Version
                 }
             }
-        } catch {
+        }
+        catch {
             Write-Warning "Could not check online version for module '$($currentModule.Name)': $($_.Exception.Message)"
         }
     }
@@ -131,7 +132,7 @@ function Update-PowerShellModules {
     foreach ($moduleName in $modulesToUpdate.Keys) {
         $moduleInfo = $modulesToUpdate[$moduleName]
         try {
-            Write-Host "[INFO] Checking if module '$moduleName' is loaded with ErrorAction SilentlyContinue (errors will be suppressed)" -ForegroundColor Yellow
+            #Write-Host "[INFO] Checking if module '$moduleName' is loaded with ErrorAction SilentlyContinue (errors will be suppressed)" -ForegroundColor Yellow
             $loadedModule = Get-Module -Name $moduleName -ErrorAction SilentlyContinue
             if ($loadedModule) {
                 Remove-Module -Name $moduleName -Force -ErrorAction Stop

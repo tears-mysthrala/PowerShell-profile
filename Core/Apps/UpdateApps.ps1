@@ -21,7 +21,7 @@ function Handle-Error {
 # Function to check if a command exists
 function Test-CommandExists {
     param($Command)
-    Write-Host "[INFO] Checking for command '$Command' with ErrorAction SilentlyContinue (errors will be suppressed)" -ForegroundColor Yellow
+    #Write-Host "[INFO] Checking for command '$Command' with ErrorAction SilentlyContinue (errors will be suppressed)" -ForegroundColor Yellow
     $null -ne (Get-Command -Name $Command -ErrorAction SilentlyContinue)
 }
 
@@ -36,7 +36,8 @@ try {
     Get-WindowsUpdate -AcceptAll -Install -AutoReboot:$false | ForEach-Object {
         Write-Log "Installing Windows Update: $($_.Title)"
     }
-} catch {
+}
+catch {
     Handle-Error "Failed to process Windows updates"
 }
 
@@ -48,7 +49,8 @@ if (Test-CommandExists 'winget') {
     $jobs += Start-Job -ScriptBlock {
         try {
             winget upgrade --all --accept-source-agreements --disable-interactivity
-        } catch {
+        }
+        catch {
             Write-Output "ERROR: Winget update failed - $($_.Exception.Message)"
         }
     } -Name 'WingetUpdate'
@@ -60,7 +62,8 @@ if (Test-CommandExists 'scoop') {
     $jobs += Start-Job -ScriptBlock {
         try {
             scoop update *
-        } catch {
+        }
+        catch {
             Write-Output "ERROR: Scoop update failed - $($_.Exception.Message)"
         }
     } -Name 'ScoopUpdate'
@@ -72,7 +75,8 @@ if (Test-CommandExists 'choco') {
     $jobs += Start-Job -ScriptBlock {
         try {
             choco upgrade all -y --no-progress
-        } catch {
+        }
+        catch {
             Write-Output "ERROR: Chocolatey update failed - $($_.Exception.Message)"
         }
     } -Name 'ChocolateyUpdate'
@@ -84,7 +88,8 @@ if (Test-CommandExists 'npm') {
     $jobs += Start-Job -ScriptBlock {
         try {
             npm update -g --silent
-        } catch {
+        }
+        catch {
             Write-Output "ERROR: NPM update failed - $($_.Exception.Message)"
         }
     } -Name 'NpmUpdate'
@@ -101,15 +106,16 @@ try {
     Get-Module -ListAvailable | ForEach-Object {
         $currentModule = $_
         try {
-            Write-Host "[INFO] Checking online version for module '$($currentModule.Name)' with ErrorAction SilentlyContinue (errors will be suppressed)" -ForegroundColor Yellow
+            #Write-Host "[INFO] Checking online version for module '$($currentModule.Name)' with ErrorAction SilentlyContinue (errors will be suppressed)" -ForegroundColor Yellow
             $online = Find-Module -Name $currentModule.Name -ErrorAction SilentlyContinue
             if ($online -and ($online.Version -gt $currentModule.Version)) {
                 $modulesToUpdate[$currentModule.Name] = @{
                     'CurrentVersion' = $currentModule.Version
-                    'NewVersion' = $online.Version
+                    'NewVersion'     = $online.Version
                 }
             }
-        } catch {
+        }
+        catch {
             Write-Log "WARNING: Could not check online version for module '$($currentModule.Name)': $($_.Exception.Message)"
         }
     }
@@ -119,7 +125,7 @@ try {
         $moduleInfo = $modulesToUpdate[$moduleName]
         try {
             # Check if module is currently loaded
-            Write-Host "[INFO] Checking if module '$moduleName' is loaded with ErrorAction SilentlyContinue (errors will be suppressed)" -ForegroundColor Yellow
+            #Write-Host "[INFO] Checking if module '$moduleName' is loaded with ErrorAction SilentlyContinue (errors will be suppressed)" -ForegroundColor Yellow
             $loadedModule = Get-Module -Name $moduleName -ErrorAction SilentlyContinue
             if ($loadedModule) {
                 Write-Log "INFO: Unloading module '$moduleName' for update..."
