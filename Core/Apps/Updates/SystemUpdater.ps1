@@ -61,7 +61,7 @@ function Update-System {
         # Winget updates
         Write-Progress @progressParams -Status 'Checking winget packages'
         if (Test-CommandExists 'winget') {
-            winget upgrade --all --accept-source-agreements --accept-package-agreements
+            winget upgrade -rhu --accept-source-agreements --accept-package-agreements
         }
 
         # Scoop updates

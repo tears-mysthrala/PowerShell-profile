@@ -48,7 +48,7 @@ $jobs = @()
 if (Test-CommandExists 'winget') {
     $jobs += Start-Job -ScriptBlock {
         try {
-            winget upgrade --all --accept-source-agreements --disable-interactivity
+            winget upgrade -rhu --accept-source-agreements --accept-package-agreements --disable-interactivity
         }
         catch {
             Write-Output "ERROR: Winget update failed - $($_.Exception.Message)"
