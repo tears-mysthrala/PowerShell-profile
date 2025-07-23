@@ -1,5 +1,8 @@
 # Common utility functions used across the PowerShell profile
 
+# Create module scope
+$script:moduleRoot = Split-Path -Parent $PSCommandPath
+
 function Test-CommandExists {
     [CmdletBinding()]
     param([string]$command)
@@ -37,4 +40,15 @@ function Initialize-EncodingConfig {
     [console]::InputEncoding = [console]::OutputEncoding = New-Object System.Text.UTF8Encoding
 }
 
-# Export-ModuleMember -Function *
+# Create module manifest if it doesn't exist
+if (-not (Test-Path "$moduleRoot\CommonUtils.psd1")) {
+    New-ModuleManifest -Path "$moduleRoot\CommonUtils.psd1" `
+        -RootModule 'CommonUtils.psm1' `
+        -ModuleVersion '1.0.0' `
+        -Author 'unaiu' `
+        -Description 'Common utility functions for PowerShell profile' `
+        -FunctionsToExport @('Test-CommandExists', 'Test-IsAdmin', 'Get-FormatedUptime', 'Get-PubIP', 'Initialize-EncodingConfig')
+}
+
+# Export module members
+Export-ModuleMember -Function Test-CommandExists, Test-IsAdmin, Get-FormatedUptime, Get-PubIP, Initialize-EncodingConfig
