@@ -31,7 +31,7 @@ function Get-FormatedUptime {
 }
 
 function Get-PubIP {
-    (Invoke-WebRequest http://ifconfig.me/ip).Content
+    (Invoke-WebRequest https://ifconfig.me/ip).Content
 }
 
 function Initialize-EncodingConfig {
