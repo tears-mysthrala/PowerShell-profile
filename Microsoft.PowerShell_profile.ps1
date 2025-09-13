@@ -382,15 +382,34 @@ Measure-Block 'Shell Setup' {
         $script:StarshipInitialized = $false
 
         Measure-Block 'Prompt:InitFunc' {
-            function Initialize-Starship {
+            # Create Initialize-Starship as a real function in the Function: provider so it exists
+            # in the interactive scope instead of being local to this Measure-Block.
+            $initSb = {
                 if ($script:StarshipInitialized) { return }
                 try {
                     $init = & starship init powershell --print-full-init 2>$null
-                    if ($init) { Invoke-Expression $init }
+                    if ($init) {
+                        # starship may return an array of lines; coerce to a single script string
+                        $initText = if ($init -is [System.Array]) { $init -join "`n" } else { $init.ToString() }
+                        Invoke-Expression $initText
+                    }
                     $script:StarshipInitialized = $true
                 } catch {
-                    Write-Warning "Starship init failed: $_"
+                    Write-Warning ("Starship init failed: {0}" -f $_)
                 }
+            }
+            try {
+                # Define the function at global scope so it's visible to the interactive session.
+                try {
+                    Set-Item -Path 'Function:Global:Initialize-Starship' -Value $initSb -Force -ErrorAction Stop
+                } catch {
+                    # Fallback: define a global function that invokes the scriptblock
+                    Set-Item -Path 'Function:Global:Initialize-Starship' -Value { & $initSb } -Force -ErrorAction SilentlyContinue
+                }
+            } catch {
+                Write-Warning ("Failed to register Initialize-Starship function globally: {0}" -f $_)
+                # Fallback: define the function normally if provider-based set fails
+                function global:Initialize-Starship { & $initSb }
             }
         }
 
