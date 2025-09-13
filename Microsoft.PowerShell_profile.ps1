@@ -261,6 +261,29 @@ Measure-Block 'Core Setup' {
     }
 }
 
+# Create lightweight Use-* functions lazily in the background to avoid startup cost
+Start-Job -ScriptBlock {
+    Start-Sleep -Milliseconds 200
+    try {
+        if ($script:moduleAliases) {
+            foreach ($name in $script:moduleAliases.Keys) {
+                $functionName = "Use-$name"
+                if (-not (Get-Command -Name $functionName -ErrorAction SilentlyContinue)) {
+                    Set-Item -Path "Function:$functionName" -Value {
+                        param($args)
+                        # Replace this proxy with a real loader and invoke it
+                        Remove-Item "Function:$functionName" -ErrorAction SilentlyContinue
+                        Import-PSModule $name
+                        & (Get-Command -Name $functionName -ErrorAction SilentlyContinue) @args
+                    }.GetNewClosure()
+                }
+            }
+        }
+    } catch {
+        # non-fatal
+    }
+} | Out-Null
+
 # Configure shell environment
 Measure-Block 'Shell Setup' {
     Measure-Block 'Aliases' {

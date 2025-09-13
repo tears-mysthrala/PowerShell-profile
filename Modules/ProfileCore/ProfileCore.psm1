@@ -262,20 +262,9 @@ Measure-Block 'ProfileCore:LoadAndRegisterModules' {
         }
     }
 
-    # Create module loading functions
-    $script:moduleAliases.Keys | ForEach-Object {
-        $moduleName = $_
-        $functionName = "Use-$moduleName"
-
-        Set-Item -Path "Function:$functionName" -Value {
-            try {
-                Import-PSModule $moduleName
-                Write-Host "Loaded $($script:moduleAliases[$moduleName].Description) successfully" -ForegroundColor Green
-            } catch {
-                Write-Host "Failed to load $($script:moduleAliases[$moduleName].Description): $_" -ForegroundColor Red
-            }
-        }.GetNewClosure()
-    }
+    # NOTE: Creation of Use-* functions is intentionally deferred to the interactive profile
+    # to avoid creating many functions synchronously at startup. The profile will create
+    # lightweight Use-* functions lazily (in background) so the prompt returns quickly.
 }
 
 # Helper functions

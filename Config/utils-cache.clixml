@@ -41,8 +41,24 @@
         </Obj>
       </En>
       <En>
-        <S N="Key">CommonUtils</S>
+        <S N="Key">profile_management</S>
         <Obj N="Value" RefId="3">
+          <TNRef RefId="1" />
+          <DCT>
+            <En>
+              <S N="Key">LastWriteTime</S>
+              <DT N="Value">2025-06-28T01:22:40.4231334+02:00</DT>
+            </En>
+            <En>
+              <S N="Key">Path</S>
+              <S N="Value">C:\Users\unaiu\OneDrive\Documents\PowerShell\Core\Utils\profile_management.ps1</S>
+            </En>
+          </DCT>
+        </Obj>
+      </En>
+      <En>
+        <S N="Key">CommonUtils</S>
+        <Obj N="Value" RefId="4">
           <TNRef RefId="1" />
           <DCT>
             <En>
@@ -58,7 +74,7 @@
       </En>
       <En>
         <S N="Key">SearchUtils</S>
-        <Obj N="Value" RefId="4">
+        <Obj N="Value" RefId="5">
           <TNRef RefId="1" />
           <DCT>
             <En>
@@ -68,22 +84,6 @@
             <En>
               <S N="Key">Path</S>
               <S N="Value">C:\Users\unaiu\OneDrive\Documents\PowerShell\Core\Utils\SearchUtils.ps1</S>
-            </En>
-          </DCT>
-        </Obj>
-      </En>
-      <En>
-        <S N="Key">profile_management</S>
-        <Obj N="Value" RefId="5">
-          <TNRef RefId="1" />
-          <DCT>
-            <En>
-              <S N="Key">LastWriteTime</S>
-              <DT N="Value">2025-06-28T01:22:40.4231334+02:00</DT>
-            </En>
-            <En>
-              <S N="Key">Path</S>
-              <S N="Value">C:\Users\unaiu\OneDrive\Documents\PowerShell\Core\Utils\profile_management.ps1</S>
             </En>
           </DCT>
         </Obj>
