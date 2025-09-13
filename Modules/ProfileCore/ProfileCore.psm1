@@ -111,28 +111,21 @@ class ModuleManager {
 $script:moduleAliases = [System.Collections.Generic.Dictionary[string,hashtable]]::new()
 $script:manager = [ModuleManager]::new($moduleRoot)
 
-# Import core utility modules first
+# Register core utility scripts for deferred loading (do not import at startup)
 $utilsPath = "$ProfileDir\Scripts\powershell-config\Core\Utils"
 if (Test-Path $utilsPath) {
     Get-ChildItem -Path $utilsPath -Filter "*.ps1" | ForEach-Object {
         $utilFile = $_
         $moduleName = [System.IO.Path]::GetFileNameWithoutExtension($utilFile.Name)
-        $moduleContent = Get-Content -Path $utilFile.FullName -Raw
-        
-        # Create a new module with the utility script content
-        New-Module -Name $moduleName -ScriptBlock ([ScriptBlock]::Create(@"
-            Set-StrictMode -Version Latest
-            # Set ErrorActionPreference to 'Stop' to ensure errors are not silently ignored (restored after module load if needed)
-            Write-Host "[INFO] Setting ErrorActionPreference to 'Stop' for utility module load..." -ForegroundColor Yellow
-            `$ErrorActionPreference = 'Stop'
-            `$script:moduleRoot = Split-Path -Parent '$($utilFile.FullName)'
-            
-            # Define functions and aliases from the script
-            $moduleContent
-            
-            # Export all functions and aliases from this module scope
-            Export-ModuleMember -Function * -Alias *
-"@)) | Import-Module -Global -Force
+        $scriptPath = $utilFile.FullName
+
+        # Register utility script for on-demand loading
+        $script:moduleAliases[$moduleName] = @{
+            Description = "Utility: $moduleName"
+            Category = 'Utility'
+            Path = $scriptPath
+            LoadOnStartup = $false
+        }
     }
 }
 
@@ -248,54 +241,41 @@ function Initialize-PSModules {
     }
 }
 
-# Load module configuration
-$moduleConfig = Import-PowerShellDataFile "$moduleRoot\Config\ModuleConfig.psd1"
+# Load module configuration and register modules (timed)
+Measure-Block 'ProfileCore:LoadAndRegisterModules' {
+    # Load module configuration
+    $moduleConfig = Import-PowerShellDataFile "$moduleRoot\Config\ModuleConfig.psd1"
 
-# Register modules from configuration
-foreach ($category in $moduleConfig.Keys) {
-    foreach ($module in $moduleConfig[$category]) {        $scriptPath = "$env:USERPROFILE\OneDrive\Documents\PowerShell\Scripts\powershell-config\$($module.Path)"
-        
-        $initBlock = [ScriptBlock]::Create(@"
-            # Create module scope
-            New-Module -Name '$($module.Name)' -ScriptBlock {
-                Set-StrictMode -Version Latest
-                # Set ErrorActionPreference to 'Stop' to ensure errors are not silently ignored (restored after module load if needed)
-                Write-Host "[INFO] Setting ErrorActionPreference to 'Stop' for registered module load..." -ForegroundColor Yellow
-                `$ErrorActionPreference = 'Stop'
-                
-                # Script-level variables
-                `$script:moduleRoot = Split-Path -Parent '$scriptPath'
-                
-                # Import the script content
-                . '$scriptPath'
-                
-                # Export all functions and aliases
-                Export-ModuleMember -Function * -Alias *
-            } | Import-Module -Global
-"@)
-        
-        Register-PSModule -Name $module.Name -Description $module.Description -Category $category -InitializerBlock $initBlock
-        $script:moduleAliases[$module.Name] = @{
-            Description = $module.Description
-            Category = $category
-            Path = $scriptPath
+    # Register modules from configuration
+    foreach ($category in $moduleConfig.Keys) {
+        foreach ($module in $moduleConfig[$category]) {
+            $scriptPath = "$env:USERPROFILE\OneDrive\Documents\PowerShell\Scripts\powershell-config\$($module.Path)"
+
+            # Use a lightweight initializer that imports the module on demand to avoid heavy string creation at startup
+            $initBlock = [ScriptBlock]::Create("Import-PSModule '$($module.Name)'")
+            Register-PSModule -Name $module.Name -Description $module.Description -Category $category -InitializerBlock $initBlock
+            $script:moduleAliases[$module.Name] = @{
+                Description = $module.Description
+                Category = $category
+                Path = $scriptPath
+            }
         }
     }
-}
 
-# Create module loading functions
-$script:moduleAliases.Keys | ForEach-Object {
-    $moduleName = $_
-    $functionName = "Use-$moduleName"
-    
-    Set-Item -Path "Function:$functionName" -Value {
-        try {
-            Import-PSModule $moduleName
-            Write-Host "Loaded $($script:moduleAliases[$moduleName].Description) successfully" -ForegroundColor Green
-        } catch {
-            Write-Host "Failed to load $($script:moduleAliases[$moduleName].Description): $_" -ForegroundColor Red
-        }
-    }.GetNewClosure()
+    # Create module loading functions
+    $script:moduleAliases.Keys | ForEach-Object {
+        $moduleName = $_
+        $functionName = "Use-$moduleName"
+
+        Set-Item -Path "Function:$functionName" -Value {
+            try {
+                Import-PSModule $moduleName
+                Write-Host "Loaded $($script:moduleAliases[$moduleName].Description) successfully" -ForegroundColor Green
+            } catch {
+                Write-Host "Failed to load $($script:moduleAliases[$moduleName].Description): $_" -ForegroundColor Red
+            }
+        }.GetNewClosure()
+    }
 }
 
 # Helper functions
