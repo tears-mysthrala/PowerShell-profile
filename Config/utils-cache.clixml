@@ -1,0 +1,93 @@
+<Objs Version="1.1.0.1" xmlns="http://schemas.microsoft.com/powershell/2004/04">
+  <Obj RefId="0">
+    <TN RefId="0">
+      <T>Deserialized.System.Collections.Hashtable</T>
+      <T>Deserialized.System.Object</T>
+    </TN>
+    <DCT>
+      <En>
+        <S N="Key">CommonUtils</S>
+        <Obj N="Value" RefId="1">
+          <TN RefId="1">
+            <T>System.Collections.Hashtable</T>
+            <T>System.Object</T>
+          </TN>
+          <DCT>
+            <En>
+              <S N="Key">Path</S>
+              <S N="Value">C:\Users\unaiu\OneDrive\Documents\PowerShell\Core\Utils\CommonUtils.ps1</S>
+            </En>
+            <En>
+              <S N="Key">LastWriteTime</S>
+              <DT N="Value">2025-07-23T16:28:26.0596389+02:00</DT>
+            </En>
+          </DCT>
+        </Obj>
+      </En>
+      <En>
+        <S N="Key">FileSystemUtils</S>
+        <Obj N="Value" RefId="2">
+          <TNRef RefId="1" />
+          <DCT>
+            <En>
+              <S N="Key">Path</S>
+              <S N="Value">C:\Users\unaiu\OneDrive\Documents\PowerShell\Core\Utils\FileSystemUtils.ps1</S>
+            </En>
+            <En>
+              <S N="Key">LastWriteTime</S>
+              <DT N="Value">2025-06-28T01:22:40.4213019+02:00</DT>
+            </En>
+          </DCT>
+        </Obj>
+      </En>
+      <En>
+        <S N="Key">profile_management</S>
+        <Obj N="Value" RefId="3">
+          <TNRef RefId="1" />
+          <DCT>
+            <En>
+              <S N="Key">Path</S>
+              <S N="Value">C:\Users\unaiu\OneDrive\Documents\PowerShell\Core\Utils\profile_management.ps1</S>
+            </En>
+            <En>
+              <S N="Key">LastWriteTime</S>
+              <DT N="Value">2025-06-28T01:22:40.4231334+02:00</DT>
+            </En>
+          </DCT>
+        </Obj>
+      </En>
+      <En>
+        <S N="Key">SearchUtils</S>
+        <Obj N="Value" RefId="4">
+          <TNRef RefId="1" />
+          <DCT>
+            <En>
+              <S N="Key">Path</S>
+              <S N="Value">C:\Users\unaiu\OneDrive\Documents\PowerShell\Core\Utils\SearchUtils.ps1</S>
+            </En>
+            <En>
+              <S N="Key">LastWriteTime</S>
+              <DT N="Value">2025-05-12T00:35:50.3850193+02:00</DT>
+            </En>
+          </DCT>
+        </Obj>
+      </En>
+      <En>
+        <S N="Key">unified_aliases</S>
+        <Obj N="Value" RefId="5">
+          <TNRef RefId="1" />
+          <DCT>
+            <En>
+              <S N="Key">Path</S>
+              <S N="Value">C:\Users\unaiu\OneDrive\Documents\PowerShell\Core\Utils\unified_aliases.ps1</S>
+            </En>
+            <En>
+              <S N="Key">LastWriteTime</S>
+              <DT N="Value">2025-07-01T15:21:13.6244935+02:00</DT>
+            </En>
+          </DCT>
+        </Obj>
+      </En>
+    </DCT>
+  </Obj>
+</Objs>

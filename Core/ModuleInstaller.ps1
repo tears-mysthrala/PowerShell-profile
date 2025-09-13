@@ -45,9 +45,32 @@ function Test-ModuleInstalled {
         [string]$ModuleName,
         [string]$MinVersion
     )
+    
+    # Use cache if available
+    $cacheFile = "$env:TEMP\PSModuleCache.json"
+    if (Test-Path $cacheFile) {
+        $cache = Get-Content $cacheFile | ConvertFrom-Json
+        $cachedModule = $cache.$ModuleName
+        if ($cachedModule) {
+            return [version]$cachedModule.Version -ge [version]$MinVersion
+        }
+    }
   
     # Default logic for other modules
     $module = Get-Module -ListAvailable $ModuleName | Sort-Object Version -Descending | Select-Object -First 1
+    
+    # Update cache
+    if ($module) {
+        $cache = @{}
+        if (Test-Path $cacheFile) {
+            $cache = Get-Content $cacheFile | ConvertFrom-Json
+        }
+        $cache | Add-Member -NotePropertyName $ModuleName -NotePropertyValue @{
+            Version = $module.Version.ToString()
+            Path = $module.ModuleBase
+        } -Force
+        $cache | ConvertTo-Json | Set-Content $cacheFile
+    }
     if (-not $module) {
         return $false
     }

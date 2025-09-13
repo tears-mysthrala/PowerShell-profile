@@ -29,33 +29,55 @@ function Measure-Block {
 # Set essential environment variables
 $ProfileDir = Split-Path -Parent $PROFILE
 Measure-Block 'Environment Setup' {
-    # Encoding settings
-    $env:PYTHONIOENCODING = 'utf-8'
-    [System.Console]::OutputEncoding = [System.Text.UTF8Encoding]::new()
+    # Use cached environment settings if available
+    $envCachePath = "$ProfileDir\Config\env-cache.clixml"
     
-    # Module path
-    $customModulePath = "$ProfileDir\Modules"
-    if ($env:PSModulePath -notlike "*$customModulePath*") {
-        $env:PSModulePath = "$customModulePath;" + $env:PSModulePath
-    }
-    
-    # Editor preferences with fallbacks
-    $editors = @(
-        @{ Command = 'nvim'; EnvVar = 'EDITOR' },
-        @{ Command = 'code'; EnvVar = 'VISUAL' },
-        @{ Command = 'notepad'; EnvVar = 'EDITOR' }
-    )
-    
-    foreach ($editor in $editors) {
-        if (Get-Command $editor.Command -ErrorAction SilentlyContinue) {
-            Set-Item "env:$($editor.EnvVar)" -Value $editor.Command
-            break
+    if (Test-Path $envCachePath) {
+        $cachedEnv = Import-Clixml $envCachePath
+        foreach ($key in $cachedEnv.Keys) {
+            Set-Item "env:$key" -Value $cachedEnv[$key]
         }
+        [System.Console]::OutputEncoding = [System.Text.UTF8Encoding]::new()
     }
-    
-    # Performance optimizations
-    $env:POWERSHELL_TELEMETRY_OPTOUT = 1
-    $env:POWERSHELL_UPDATECHECK = 'Off'
+    else {
+        # Encoding settings
+        $env:PYTHONIOENCODING = 'utf-8'
+        [System.Console]::OutputEncoding = [System.Text.UTF8Encoding]::new()
+        
+        # Module path
+        $customModulePath = "$ProfileDir\Modules"
+        if ($env:PSModulePath -notlike "*$customModulePath*") {
+            $env:PSModulePath = "$customModulePath;" + $env:PSModulePath
+        }
+        
+        # Editor preferences with fallbacks
+        $editors = @(
+            @{ Command = 'nvim'; EnvVar = 'EDITOR' },
+            @{ Command = 'code'; EnvVar = 'VISUAL' },
+            @{ Command = 'notepad'; EnvVar = 'EDITOR' }
+        )
+        
+        foreach ($editor in $editors) {
+            if (Get-Command $editor.Command -ErrorAction SilentlyContinue) {
+                Set-Item "env:$($editor.EnvVar)" -Value $editor.Command
+                break
+            }
+        }
+        
+        # Performance optimizations
+        $env:POWERSHELL_TELEMETRY_OPTOUT = 1
+        $env:POWERSHELL_UPDATECHECK = 'Off'
+        
+        # Cache the environment settings
+        $envToCache = @{
+            PYTHONIOENCODING = $env:PYTHONIOENCODING
+            EDITOR = $env:EDITOR
+            VISUAL = $env:VISUAL
+            POWERSHELL_TELEMETRY_OPTOUT = $env:POWERSHELL_TELEMETRY_OPTOUT
+            POWERSHELL_UPDATECHECK = $env:POWERSHELL_UPDATECHECK
+        }
+        $envToCache | Export-Clixml -Path $envCachePath
+    }
 }
 
 # If is in non-interactive shell, then return early
@@ -78,26 +100,44 @@ if ($MyInvocation.Line -notmatch '--no-supress') {
 }
 
 # Load core configuration
+$global:WarningPreference = $global:VerbosePreference = $global:InformationPreference = 'SilentlyContinue'
+
 Measure-Block 'Core Setup' {
     try {
-        # Import core modules
-        $originalPreferences = @{
-            Warning     = $WarningPreference
-            Verbose     = $VerbosePreference
-            Information = $InformationPreference
+        # Create module cache directory if it doesn't exist
+        $moduleCacheDir = Join-Path $ProfileDir 'Config\ModuleCache'
+        if (-not (Test-Path $moduleCacheDir)) {
+            New-Item -ItemType Directory -Path $moduleCacheDir -Force | Out-Null
         }
         
-        # Suppress all non-critical messages (log this action)
-        if (-not $global:ProfileSuppressInfoLogs) {
-            Write-Host "[INFO] Suppressing warnings, verbose, and information messages temporarily..." -ForegroundColor Yellow
+        # Import ModuleInstaller only when needed
+        $global:LazyLoadModules = {
+            Import-Module "$ProfileDir\Core\ModuleInstaller.ps1" -Force -ErrorAction Stop
+            Install-RequiredModules
         }
-        $WarningPreference = 'SilentlyContinue'
-        $VerbosePreference = 'SilentlyContinue'
-        $InformationPreference = 'SilentlyContinue'
         
-        # Import ModuleInstaller first to ensure all required modules are available
-        Import-Module "$ProfileDir\Core\ModuleInstaller.ps1" -Force -ErrorAction Stop
-        Install-RequiredModules
+        # Create lazy-loading proxy functions for commonly used module commands
+        $lazyLoadCommands = @{
+            'Get-GitStatus' = 'posh-git'
+            'Invoke-Fzf' = 'PSFzf'
+            'Set-TerminalIcon' = 'Terminal-Icons'
+        }
+        
+        foreach ($command in $lazyLoadCommands.Keys) {
+            $moduleName = $lazyLoadCommands[$command]
+            $sb = {
+                param($cmd, $module)
+                # Remove the proxy function
+                Remove-Item "Function:\$cmd"
+                # Load the actual module
+                Import-Module $module -ErrorAction Stop
+                # Call the original command with the same arguments
+                $commandInfo = Get-Command $cmd
+                & $commandInfo @args
+            }.GetNewClosure()
+            
+            Set-Item "Function:\$command" -Value $sb
+        }
         
         Import-Module ProfileManagement -Force -ErrorAction Stop
         Import-Module ProfileCore -Force -ErrorAction Stop
@@ -106,56 +146,66 @@ Measure-Block 'Core Setup' {
         $WarningPreference = $originalPreferences.Warning
         $VerbosePreference = $originalPreferences.Verbose
         $InformationPreference = $originalPreferences.Information
-        # Write-Host "Core module loaded successfully" -ForegroundColor Green        # Load common utilities
+        # Write-Host "Core module loaded successfully" -ForegroundColor Green        # Load common utilities with optimized caching
         $utilsPath = "$ProfileDir\Core\Utils"
+        $utilsCachePath = "$ProfileDir\Config\utils-cache.clixml"
+        
         if (Test-Path $utilsPath) {
-            # Create a hashtable to store already loaded modules
-            $loadedUtilModules = @{}
+            # Initialize cache
+            $utilsCache = @{}
+            if (Test-Path $utilsCachePath) {
+                $utilsCache = Import-Clixml -Path $utilsCachePath
+            }
+            
+            # Load utilities sequentially with optimized caching
             Get-ChildItem -Path $utilsPath -Filter "*.ps1" | ForEach-Object {
                 $moduleName = [System.IO.Path]::GetFileNameWithoutExtension($_.Name)
-                if (-not $loadedUtilModules.ContainsKey($moduleName)) {
-                    $scriptBlock = {
-                        param($Path)
-                        # Save all preference variables
-                        $origPrefs = @{
-                            Warning     = $global:WarningPreference
-                            Verbose     = $global:VerbosePreference
-                            Information = $global:InformationPreference
-                        }
-
-                        # Suppress all warnings and verbose output (log this action)
-                        if (-not $global:ProfileSuppressInfoLogs) {
-                            Write-Host "[INFO] Suppressing warnings, verbose, and information messages for utility module load..." -ForegroundColor Yellow
-                        }
-                        $global:WarningPreference = 'SilentlyContinue'
-                        $global:VerbosePreference = 'SilentlyContinue'
-                        $global:InformationPreference = 'SilentlyContinue'
-                        
+                $filePath = $_.FullName
+                
+                # Check if module needs loading based on cache
+                $needsLoading = $true
+                if ($utilsCache.ContainsKey($moduleName)) {
+                    $cached = $utilsCache[$moduleName]
+                    if ((Get-Item $filePath).LastWriteTime -eq $cached.LastWriteTime) {
+                        $needsLoading = $false
+                        # Try to import from cache
                         try {
-                            New-Module -Name $([System.IO.Path]::GetFileNameWithoutExtension($Path)) -ScriptBlock {
-                                param($ScriptPath)
-                                Set-StrictMode -Version Latest
-                                $ErrorActionPreference = 'Stop'
-                                . $ScriptPath
-                                # Export-ModuleMember -Function * -Alias *
-                            } -ArgumentList $Path | Import-Module -Global -WarningAction SilentlyContinue
-                        }
-                        finally {
-                            # Restore all preference variables
-                            $global:WarningPreference = $origPrefs.Warning
-                            $global:VerbosePreference = $origPrefs.Verbose
-                            $global:InformationPreference = $origPrefs.Information
+                            $cachedModule = Get-Module -Name $moduleName -ErrorAction SilentlyContinue
+                            if (-not $cachedModule) {
+                                $needsLoading = $true
+                            }
+                        } catch {
+                            $needsLoading = $true
                         }
                     }
+                }
+                
+                if ($needsLoading) {
+                    try {
+                        # Load module directly
+                        $scriptBlock = {
+                            param($ScriptPath)
+                            Set-StrictMode -Version Latest
+                            . $ScriptPath
+                        }
+                        New-Module -Name $moduleName -ScriptBlock $scriptBlock -ArgumentList $filePath |
+                            Import-Module -Global -WarningAction SilentlyContinue
                     
-                    & $scriptBlock -Path $_.FullName
-                    $loadedUtilModules[$moduleName] = $true
+                        # Update cache
+                        $utilsCache[$moduleName] = @{
+                            LastWriteTime = (Get-Item $filePath).LastWriteTime
+                            Path = $filePath
+                        }
+                    } catch {
+                        Write-Warning "Failed to load utility module $moduleName`: $_"
+                    }
                 }
             }
-            # Write-Host "Utility modules loaded successfully" -ForegroundColor Green
+
+            # Save updated cache
+            $utilsCache | Export-Clixml -Path $utilsCachePath
         }
-    }
-    catch {
+    } catch {
         Write-Host "Failed to load core modules: $_" -ForegroundColor Red
         Write-Host "Some features may not be available" -ForegroundColor Yellow
     }
