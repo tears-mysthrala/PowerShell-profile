@@ -6,6 +6,22 @@ using namespace System.Management.Automation
 # Set up script-level variables
 $script:moduleRoot = Split-Path -Parent $PSCommandPath
 
+# Provide a lightweight Measure-Block stub when loaded outside the interactive profile
+if (-not (Get-Command -Name Measure-Block -ErrorAction SilentlyContinue)) {
+    function Measure-Block {
+        param(
+            [string]$Name,
+            [scriptblock]$Block,
+            [switch]$Async
+        )
+        try {
+            if ($Async) { Start-Job -ScriptBlock $Block | Out-Null } else { & $Block }
+        } catch {
+            # best-effort, swallow errors in the stub
+        }
+    }
+}
+
 # Define module management types
 class ModuleInfo {
     [string]$Name
@@ -208,35 +224,36 @@ function Get-PSModules {
 }
 
 function Initialize-PSModules {
-    $script:moduleAliases.Keys | Where-Object { 
-        $script:moduleAliases[$_].LoadOnStartup 
-    } | ForEach-Object {
-        $moduleName = $_
-        $moduleInfo = $script:moduleAliases[$moduleName]
-        
-        try {            if ($moduleInfo.Path -match '\.psd1$') {
-                Import-Module $moduleInfo.Path -Force
-            } else {
-                $moduleContent = Get-Content -Path $moduleInfo.Path -Raw
-                
-                # Create a new module with the script content
-                New-Module -Name $moduleName -ScriptBlock ([ScriptBlock]::Create(@"
-                    Set-StrictMode -Version Latest
-                    # Set ErrorActionPreference to 'Stop' to ensure errors are not silently ignored (restored after module load if needed)
-                    Write-Host "[INFO] Setting ErrorActionPreference to 'Stop' for module load..." -ForegroundColor Yellow
-                    `$ErrorActionPreference = 'Stop'
-                    `$script:moduleRoot = Split-Path -Parent '$($moduleInfo.Path)'
-                    
-                    # Define functions and aliases from the script
-                    $moduleContent
-                    
-                    # Export all functions and aliases from this module scope
-                    Export-ModuleMember -Function * -Alias *
-"@)) | Import-Module -Global -Force
+    # Make initialization metadata-only: don't perform heavy imports at startup.
+    # For modules marked LoadOnStartup, create a lightweight Use-* proxy which will
+    # perform the real import in the interactive runspace on first use.
+    $toProxy = $script:moduleAliases.Keys | Where-Object { $script:moduleAliases[$_].LoadOnStartup }
+    foreach ($moduleName in $toProxy) {
+        $funcName = "Use-$moduleName"
+        try {
+            if (-not (Get-Command -Name $funcName -ErrorAction SilentlyContinue)) {
+                # capture the current module name to avoid foreach variable capture issues
+                $m = $moduleName
+                $sb = {
+                    param($args)
+                    $name = $m
+                    # Remove this proxy so subsequent calls execute the real Use-* if it redefines itself
+                    Remove-Item -Path "Function:Use-$name" -ErrorAction SilentlyContinue
+                    try {
+                        # Perform the real import in the interactive runspace
+                        Import-PSModule $name
+                    } catch {
+                        Write-Warning ("Failed to import module {0}: {1}" -f $name, $_.Exception.Message)
+                        return
+                    }
+                    # If a Use-* function was defined by the module, invoke it with the original args
+                    $real = Get-Command -Name "Use-$name" -CommandType Function -ErrorAction SilentlyContinue
+                    if ($real) { & $real @args }
+                }.GetNewClosure()
+                Set-Item -Path "Function:$funcName" -Value $sb
             }
-            Write-Host "Loaded $($moduleInfo.Description) successfully" -ForegroundColor Green
         } catch {
-            Write-Warning "Failed to initialize module $moduleName`: $($_.Exception.Message)"
+            Write-Warning "Failed to create proxy for module $moduleName`: $($_.Exception.Message)"
         }
     }
 }

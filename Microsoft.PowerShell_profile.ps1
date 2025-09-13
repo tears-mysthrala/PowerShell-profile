@@ -566,15 +566,15 @@ try {
 
 Import-Module -Name Microsoft.WinGet.CommandNotFound
 #f45873b3-b655-43a6-b217-97c00aa0db58
-Import-Module PSReadLine
-Set-PSReadLineKeyHandler -Chord Tab -Function MenuComplete
+# PSReadLine full setup is deferred to Enable-FullPSReadLine (called lazily from the prompt)
+# Argument completers remain registered below.
 $scriptblock = {
     param($wordToComplete, $commandAst, $cursorPosition)
     $Env:_MOV_CLI_COMPLETE = "complete_powershell"
     $Env:_TYPER_COMPLETE_ARGS = $commandAst.ToString()
     $Env:_TYPER_COMPLETE_WORD_TO_COMPLETE = $wordToComplete
     mov-cli | ForEach-Object {
-        $commandArray = $_ -Split ":::"
+        $commandArray = $_ -Split ":::" 
         $command = $commandArray[0]
         $helpString = $commandArray[1]
         [System.Management.Automation.CompletionResult]::new(
@@ -585,3 +585,26 @@ $scriptblock = {
     $Env:_TYPER_COMPLETE_WORD_TO_COMPLETE = ""
 }
 Register-ArgumentCompleter -Native -CommandName mov-cli -ScriptBlock $scriptblock
+
+# Kick off an asynchronous PSReadLine full-loader so heavy setup doesn't block the prompt.
+# The full options and richer key handlers are still enabled lazily on first prompt via Enable-FullPSReadLine,
+# but we can pre-warm PSReadLine in background so features become available shortly after startup.
+try {
+    Start-BackgroundJob -ScriptBlock {
+        Start-Sleep -Milliseconds 150
+        try {
+            Import-Module PSReadLine -ErrorAction Stop
+            # Apply richer handlers; wrapped in try to avoid crashing background job
+            try {
+                Set-PSReadLineOption -PredictionSource History -ErrorAction SilentlyContinue
+                Set-PSReadLineKeyHandler -Key Tab -Function MenuComplete -ErrorAction SilentlyContinue
+                Set-PSReadLineKeyHandler -Key UpArrow -Function HistorySearchBackward -ErrorAction SilentlyContinue
+                Set-PSReadLineKeyHandler -Key DownArrow -Function HistorySearchForward -ErrorAction SilentlyContinue
+            } catch { }
+        } catch {
+            # Background pre-warm failed; nothing to do
+        }
+    } | Out-Null
+} catch {
+    # If background jobs are not permitted, skip pre-warm and rely on lazy enable
+}
