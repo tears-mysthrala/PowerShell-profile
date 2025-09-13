@@ -27,7 +27,6 @@ function Measure-Block {
     }
 }
 
-# Helper: start a background job using Start-ThreadJob when available, otherwise Start-Job
 function Start-BackgroundJob {
     param(
         [scriptblock]$ScriptBlock,
@@ -377,10 +376,11 @@ Measure-Block 'Shell Setup' {
     # Lazy-initialize starship at first prompt to avoid blocking startup
     $starshipCmd = Get-Command starship -ErrorAction SilentlyContinue
     if ($starshipCmd) {
-          # Per user's preference, expose the config selector as '#file:starship.toml' and
-          # also provide the absolute path to starship via --config for reliability.
-          $ENV:STARSHIP_CONFIG = '#file:starship.toml'
+          # Use the '#file:' selector but point it at the absolute config path so Starship
+          # can always find the file regardless of the current working directory.
           $starshipConfigPath = Join-Path $ProfileDir 'Config\starship.toml'
+          # Use the absolute path to the config file so Starship can read it directly.
+          $ENV:STARSHIP_CONFIG = $starshipConfigPath
           $ENV:STARSHIP_CACHE = Join-Path $ProfileDir '.starship\cache'
         $script:StarshipInitialized = $false
 
@@ -400,12 +400,12 @@ Measure-Block 'Shell Setup' {
                             if ($initText) { Invoke-Expression $initText }
                         } catch {
                             # Fallback to live init if cache read fails
-                            $init = & starship init powershell --print-full-init --config "$starshipConfigPath" 2>$null
+                            $init = & starship init powershell --print-full-init 2>$null
                             if ($init) { $initText = if ($init -is [System.Array]) { $init -join "`n" } else { $init.ToString() }; Invoke-Expression $initText }
                         }
                     } else {
                         # No cache yet — run live init and continue
-                        $init = & starship init powershell --print-full-init --config "$starshipConfigPath" 2>$null
+                        $init = & starship init powershell --print-full-init 2>$null
                         if ($init) { $initText = if ($init -is [System.Array]) { $init -join "`n" } else { $init.ToString() }; Invoke-Expression $initText }
                     }
 
@@ -467,7 +467,7 @@ Measure-Block 'Shell Setup' {
                     $cacheDir = Join-Path $ProfileDir '.starship'
                     if (-not (Test-Path $cacheDir)) { New-Item -ItemType Directory -Path $cacheDir -Force | Out-Null }
                     $cacheFile = Join-Path $cacheDir 'starship-init.ps1'
-                    $init = & starship init powershell --print-full-init --config "$starshipConfigPath" 2>$null
+                    $init = & starship init powershell --print-full-init 2>$null
                     if ($init) {
                         $initText = if ($init -is [System.Array]) { $init -join "`n" } else { $init.ToString() }
                         Set-Content -Path $cacheFile -Value $initText -Encoding UTF8 -Force
@@ -618,6 +618,43 @@ try {
     }
 } catch {
     Write-Warning "Failed to enumerate profile timing: $_"
+}
+
+# If the profile was explicitly dot-sourced (for example: `. $PROFILE`), load Starship now
+# so the interactive prompt immediately reflects the configured prompt. This preserves
+# lazy initialization for normal startup while honoring manual reloads.
+if ($Host.UI) {
+    try {
+        $cacheDir = Join-Path $ProfileDir '.starship'
+        $cacheFile = Join-Path $cacheDir 'starship-init.ps1'
+
+        if (Test-Path $cacheFile) {
+            $initText = Get-Content -Path $cacheFile -Raw -ErrorAction Stop
+            if ($initText) { Invoke-Expression $initText }
+        }
+        else {
+            $init = & starship init powershell --print-full-init 2>$null
+            if ($init) {
+                $initText = if ($init -is [System.Array]) { $init -join "`n" } else { $init.ToString() }
+                Invoke-Expression $initText
+            }
+        }
+
+        # Mark initialized and, if Starship exported a global prompt, install it
+        $script:StarshipInitialized = $true
+        $gp = Get-Command -Name Global:prompt -CommandType Function -ErrorAction SilentlyContinue
+        if ($gp -and $gp.ScriptBlock) { Set-Item -Path 'Function:prompt' -Value $gp.ScriptBlock -Force }
+
+        # If PSReadLine is available, redraw the prompt so the new prompt is visible now
+        if (Get-Command -Name Set-PSReadLineOption -ErrorAction SilentlyContinue) {
+            try { [Microsoft.PowerShell.PSConsoleReadLine]::InvokePrompt() } catch { }
+        }
+
+        # If explicitly dot-sourced by the user, provide a short confirmation
+        if ($MyInvocation.InvocationName -eq '.') { Write-Host 'Starship initialized and prompt applied' -ForegroundColor Green }
+    } catch {
+        Write-Warning "Synchronous Starship init failed: $_"
+    }
 }
 
 #f45873b3-b655-43a6-b217-97c00aa0db58 PowerToys CommandNotFound module
