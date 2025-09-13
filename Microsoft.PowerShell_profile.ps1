@@ -190,70 +190,86 @@ Measure-Block 'Core Setup' {
         $WarningPreference = $originalPreferences.Warning
         $VerbosePreference = $originalPreferences.Verbose
         $InformationPreference = $originalPreferences.Information
-        # Write-Host "Core module loaded successfully" -ForegroundColor Green        # Load common utilities with optimized caching
+        # Write-Host "Core module loaded successfully" -ForegroundColor Green
+        # Load common utilities with optimized caching (measured in sub-steps)
         $utilsPath = "$ProfileDir\Core\Utils"
         $utilsCachePath = "$ProfileDir\Config\utils-cache.clixml"
-        
+
         if (Test-Path $utilsPath) {
             # Initialize cache
             $utilsCache = @{}
             if (Test-Path $utilsCachePath) {
                 $utilsCache = Import-Clixml -Path $utilsCachePath
             }
-            
-            # Load utilities in background jobs with optimized caching (non-blocking)
-            Get-ChildItem -Path $utilsPath -Filter "*.ps1" | ForEach-Object {
-                $moduleName = [System.IO.Path]::GetFileNameWithoutExtension($_.Name)
-                $filePath = $_.FullName
 
-                # Check if module needs loading based on cache
-                $needsLoading = $true
-                if ($utilsCache.ContainsKey($moduleName)) {
-                    $cached = $utilsCache[$moduleName]
-                    if ((Get-Item $filePath).LastWriteTime -eq $cached.LastWriteTime) {
-                        # If module is already imported in this session, skip
+            # Enumerate utility files (measured)
+            Measure-Block 'Utils:Enumerate' {
+                $utilsFiles = Get-ChildItem -Path $utilsPath -Filter "*.ps1"
+            }
+
+            # Enqueue background jobs for utils that need loading (measured)
+            Measure-Block 'Utils:EnqueueJobs' {
+                foreach ($file in $utilsFiles) {
+                    $moduleName = [System.IO.Path]::GetFileNameWithoutExtension($file.Name)
+                    $filePath = $file.FullName
+
+                    # Check if module needs loading based on cache
+                    $needsLoading = $true
+                    if ($utilsCache.ContainsKey($moduleName)) {
+                        $cached = $utilsCache[$moduleName]
                         try {
-                            $cachedModule = Get-Module -Name $moduleName -ErrorAction SilentlyContinue
-                            if ($cachedModule) { $needsLoading = $false }
-                        } catch { $needsLoading = $true }
-                    }
-                }
-
-                if ($needsLoading) {
-                    try {
-                        # Start background job to create and import the module (non-blocking)
-                        $job = Start-Job -ScriptBlock {
-                            param($Path, $Name)
-                            Set-StrictMode -Version Latest
-                            $ErrorActionPreference = 'Stop'
-                            try {
-                                $scriptBlock = {
-                                    param($ScriptPath)
-                                    . $ScriptPath
-                                }
-                                New-Module -Name $Name -ScriptBlock $scriptBlock -ArgumentList $Path |
-                                    Import-Module -Global -WarningAction SilentlyContinue
-                            } catch {
-                                Write-Error ("Utility module import failed for {0}: {1}" -f $Name, $_)
+                            if ((Get-Item $filePath).LastWriteTime -eq $cached.LastWriteTime) {
+                                # If module is already imported in this session, skip
+                                $cachedModule = Get-Module -Name $moduleName -ErrorAction SilentlyContinue
+                                if ($cachedModule) { $needsLoading = $false }
                             }
-                        } -ArgumentList $filePath, $moduleName
-
-                        # Track background job so we can inspect later if needed
-                        $script:backgroundJobs += @{ Name = $moduleName; Job = $job }
-
-                        # Update cache in main session
-                        $utilsCache[$moduleName] = @{
-                            LastWriteTime = (Get-Item $filePath).LastWriteTime
-                            Path = $filePath
+                        } catch {
+                            $needsLoading = $true
                         }
-                    } catch {
-                        Write-Warning "Failed to enqueue utility module $moduleName`: $_"
+                    }
+
+                    if ($needsLoading) {
+                        try {
+                            # Start background job to create and import the module (non-blocking)
+                            $job = Start-Job -ScriptBlock {
+                                param($Path, $Name)
+                                Set-StrictMode -Version Latest
+                                $ErrorActionPreference = 'Stop'
+                                try {
+                                    $scriptBlock = {
+                                        param($ScriptPath)
+                                        . $ScriptPath
+                                    }
+                                    New-Module -Name $Name -ScriptBlock $scriptBlock -ArgumentList $Path |
+                                        Import-Module -Global -WarningAction SilentlyContinue
+                                } catch {
+                                    Write-Error ("Utility module import failed for {0}: {1}" -f $Name, $_)
+                                }
+                            } -ArgumentList $filePath, $moduleName
+
+                            # Track background job so we can inspect later if needed
+                            $script:backgroundJobs += @{ Name = $moduleName; Job = $job }
+
+                            # Update cache in main session
+                            $utilsCache[$moduleName] = @{
+                                LastWriteTime = (Get-Item $filePath).LastWriteTime
+                                Path = $filePath
+                            }
+                        } catch {
+                            Write-Warning "Failed to enqueue utility module $moduleName`: $_"
+                        }
                     }
                 }
             }
 
-            # Save updated cache
-            $utilsCache | Export-Clixml -Path $utilsCachePath
+            # Save updated cache (measured)
+            Measure-Block 'Utils:SaveCache' {
+                try {
+                    $utilsCache | Export-Clixml -Path $utilsCachePath
+                } catch {
+                    # ignore cache write errors
+                }
+            }
         }
     } catch {
         Write-Host "Failed to load core modules: $_" -ForegroundColor Red
@@ -313,48 +329,75 @@ Measure-Block 'Shell Setup' {
     }
 
     # Initialize shell enhancements
-    Measure-Block 'Terminal-Icons' -Async {
-        # Load Terminal-Icons module for file icons asynchronously
-        if (Get-Module -ListAvailable Terminal-Icons) {
-            Import-Module Terminal-Icons -ErrorAction SilentlyContinue
+    # Create a lazy proxy for Terminal-Icons: don't probe module lists at startup (avoids slow Get-Module)
+    Measure-Block 'Terminal-Icons:LazyProxy' {
+        try {
+            # Define a small helper to lazy-load Terminal-Icons on first use of its expected functions
+            $tiCommands = @('Set-TerminalIcon','Get-Icon','Get-TerminalIcon')
+            foreach ($name in $tiCommands) {
+                if (-not (Get-Command -Name $name -ErrorAction SilentlyContinue)) {
+                    Set-Item -Path "Function:$name" -Value {
+                        param($args)
+                        # Remove the proxy
+                        Remove-Item "Function:$name" -ErrorAction SilentlyContinue
+                        try {
+                            Import-Module 'Terminal-Icons' -ErrorAction SilentlyContinue
+                        } catch {
+                            # If import fails, recreate a stub that warns once
+                            Set-Item -Path "Function:$name" -Value { param($a) Write-Warning "Terminal-Icons is not available." }
+                            return
+                        }
+                        # Invoke the now-available command
+                        $cmd = Get-Command -Name $name -ErrorAction SilentlyContinue
+                        if ($cmd) { & $cmd @args }
+                    }.GetNewClosure()
+                }
+            }
+        } catch {
+            # non-fatal
         }
     }
 
     # Lazy-initialize starship at first prompt to avoid blocking startup
-    if (Get-Command starship -ErrorAction SilentlyContinue) {
+    $starshipCmd = Get-Command starship -ErrorAction SilentlyContinue
+    if ($starshipCmd) {
         $ENV:STARSHIP_CONFIG = "$ProfileDir\Config\starship.toml"
         $ENV:STARSHIP_CACHE = "$ProfileDir\.starship\cache"
         $script:StarshipInitialized = $false
 
-        function Initialize-Starship {
-            if ($script:StarshipInitialized) { return }
-            try {
-                $init = & starship init powershell --print-full-init 2>$null
-                if ($init) { Invoke-Expression $init }
-                $script:StarshipInitialized = $true
-            } catch {
-                Write-Warning "Starship init failed: $_"
+        Measure-Block 'Prompt:InitFunc' {
+            function Initialize-Starship {
+                if ($script:StarshipInitialized) { return }
+                try {
+                    $init = & starship init powershell --print-full-init 2>$null
+                    if ($init) { Invoke-Expression $init }
+                    $script:StarshipInitialized = $true
+                } catch {
+                    Write-Warning "Starship init failed: $_"
+                }
             }
         }
 
         # Define a lightweight prompt that initializes starship on first run
-        $script:OriginalPrompt = $null
-        if ($function:prompt) { $script:OriginalPrompt = $function:prompt }
+        Measure-Block 'Prompt:PromptWrapper' {
+            $script:OriginalPrompt = $null
+            if ($function:prompt) { $script:OriginalPrompt = $function:prompt }
 
-        function prompt {
-            if (-not $script:StarshipInitialized) {
-                Initialize-Starship
-                Start-Sleep -Milliseconds 10
-            }
-            $current = Get-Command prompt -CommandType Function -ErrorAction SilentlyContinue
-            if ($current -and $current.ScriptBlock -ne $function:prompt.ScriptBlock) {
-                try {
-                    return & $current.ScriptBlock
-                } catch {
-                    # fallthrough to basic prompt
+            function prompt {
+                if (-not $script:StarshipInitialized) {
+                    Initialize-Starship
+                    Start-Sleep -Milliseconds 10
                 }
+                $current = Get-Command prompt -CommandType Function -ErrorAction SilentlyContinue
+                if ($current -and $current.ScriptBlock -ne $function:prompt.ScriptBlock) {
+                    try {
+                        return & $current.ScriptBlock
+                    } catch {
+                        # fallthrough to basic prompt
+                    }
+                }
+                return "PS $($executionContext.SessionState.Path.CurrentLocation)> "
             }
-            return "PS $($executionContext.SessionState.Path.CurrentLocation)> "
         }
     } else {
         if (-not $global:ProfileSuppressInfoLogs) {
