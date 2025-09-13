@@ -46,7 +46,8 @@ $jobs = @()
 
 # Winget updates
 if (Test-CommandExists 'winget') {
-    $jobs += Start-Job -ScriptBlock {
+    if (Get-Command -Name Start-ThreadJob -ErrorAction SilentlyContinue) {
+        $jobs += Start-ThreadJob -ScriptBlock {
         try {
             winget upgrade -rhu --accept-source-agreements --accept-package-agreements --disable-interactivity
         }
@@ -59,7 +60,8 @@ if (Test-CommandExists 'winget') {
 
 # Scoop updates
 if (Test-CommandExists 'scoop') {
-    $jobs += Start-Job -ScriptBlock {
+        if (Get-Command -Name Start-ThreadJob -ErrorAction SilentlyContinue) {
+            $jobs += Start-ThreadJob -ScriptBlock {
         try {
             scoop update *
         }
@@ -72,7 +74,8 @@ if (Test-CommandExists 'scoop') {
 
 # Chocolatey updates
 if (Test-CommandExists 'choco') {
-    $jobs += Start-Job -ScriptBlock {
+        if (Get-Command -Name Start-ThreadJob -ErrorAction SilentlyContinue) {
+            $jobs += Start-ThreadJob -ScriptBlock {
         try {
             choco upgrade all -y --no-progress
         }
@@ -85,7 +88,8 @@ if (Test-CommandExists 'choco') {
 
 # NPM global updates
 if (Test-CommandExists 'npm') {
-    $jobs += Start-Job -ScriptBlock {
+        if (Get-Command -Name Start-ThreadJob -ErrorAction SilentlyContinue) {
+            $jobs += Start-ThreadJob -ScriptBlock {
         try {
             npm update -g --silent
         }

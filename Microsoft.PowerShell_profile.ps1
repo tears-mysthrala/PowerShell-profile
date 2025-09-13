@@ -11,7 +11,8 @@ function Measure-Block {
     $sw = [System.Diagnostics.Stopwatch]::StartNew()
     try {
         if ($Async) {
-            $job = Start-Job -ScriptBlock $Block
+            # Use faster thread jobs when available
+            $job = Start-BackgroundJob -ScriptBlock $Block
             $script:backgroundJobs += @{ Name = $Name; Job = $job }
         }
         else {
@@ -24,6 +25,22 @@ function Measure-Block {
             $script:profileTiming[$Name] = $sw.ElapsedMilliseconds
         }
     }
+}
+
+# Helper: start a background job using Start-ThreadJob when available, otherwise Start-Job
+function Start-BackgroundJob {
+    param(
+        [scriptblock]$ScriptBlock,
+        [Parameter(ValueFromRemainingArguments=$true)] $ArgumentList
+    )
+    try {
+        if (Get-Command -Name Start-ThreadJob -ErrorAction SilentlyContinue) {
+            return Start-ThreadJob -ScriptBlock $ScriptBlock -ArgumentList $ArgumentList
+        }
+    } catch {
+        # fall back
+    }
+    return Start-Job -ScriptBlock $ScriptBlock -ArgumentList $ArgumentList
 }
 
 # Set essential environment variables

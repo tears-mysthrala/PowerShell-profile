@@ -358,8 +358,8 @@ function Initialize-StartupModules {
         foreach ($moduleName in $startupModules) {
             $moduleInfo = $script:moduleRegistry[$moduleName]
             
-            # Create a job for each module
-            $job = Start-Job -ScriptBlock {
+            # Create a job for each module (prefer Start-ThreadJob when available)
+            $jobScript = {
                 param($moduleName, $moduleInfo)
                 
                 $sw = [System.Diagnostics.Stopwatch]::StartNew()
@@ -389,8 +389,12 @@ function Initialize-StartupModules {
                         Error = $_.Exception.Message
                     }
                 }
-            } -ArgumentList $moduleName, $moduleInfo
-            
+            }
+            if (Get-Command -Name Start-ThreadJob -ErrorAction SilentlyContinue) {
+                $job = Start-ThreadJob -ScriptBlock $jobScript -ArgumentList $moduleName, $moduleInfo
+            } else {
+                $job = Start-Job -ScriptBlock $jobScript -ArgumentList $moduleName, $moduleInfo
+            }
             $jobs += $job
         }
         

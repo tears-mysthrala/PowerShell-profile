@@ -128,7 +128,7 @@ function Install-RequiredModules {
     # Run installation in a background job to avoid blocking the profile
     $missingList = $missing | ForEach-Object { $_.Name }
     $req = $requiredModules
-    Start-Job -Name 'BackgroundModuleInstaller' -ScriptBlock {
+    $scriptBlock = {
         param($mods, $required)
         foreach ($m in $mods) {
             $info = $required[$m]
@@ -140,5 +140,11 @@ function Install-RequiredModules {
                 Write-Output "[BackgroundModuleInstaller] Failed to install module '$m': $_"
             }
         }
-    } -ArgumentList (,$missingList,,$req) | Out-Null
+    }
+
+    if (Get-Command -Name Start-ThreadJob -ErrorAction SilentlyContinue) {
+        Start-ThreadJob -Name 'BackgroundModuleInstaller' -ScriptBlock $scriptBlock -ArgumentList (,$missingList,,$req) | Out-Null
+    } else {
+        Start-Job -Name 'BackgroundModuleInstaller' -ScriptBlock $scriptBlock -ArgumentList (,$missingList,,$req) | Out-Null
+    }
 }
