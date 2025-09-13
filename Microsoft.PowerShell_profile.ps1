@@ -142,7 +142,6 @@ Measure-Block 'Core Setup' {
             $lazyLoadCommands = @{
                 'Get-GitStatus' = 'posh-git'
                 'Invoke-Fzf' = 'PSFzf'
-                'Set-TerminalIcon' = 'Terminal-Icons'
             }
             foreach ($command in $lazyLoadCommands.Keys) {
                 $moduleName = $lazyLoadCommands[$command]
@@ -157,6 +156,34 @@ Measure-Block 'Core Setup' {
                     & $commandInfo @args
                 }.GetNewClosure()
                 Set-Item "Function:\$command" -Value $sb
+            }
+        }
+
+        # Provide an explicit enable function for Terminal-Icons so nothing related to it is created at startup
+        function Enable-TerminalIcons {
+            param(
+                [switch]$Async
+            )
+            $sb = {
+                try {
+                    Import-Module 'Terminal-Icons' -ErrorAction Stop
+                } catch {
+                    Write-Warning "Terminal-Icons could not be loaded: $_"
+                    return
+                }
+                # Optionally replace/seed any helper functions
+                if (-not (Get-Command -Name Set-TerminalIcon -ErrorAction SilentlyContinue)) {
+                    # nothing to do; module should export functions
+                }
+            }
+            if ($Async) {
+                if (Get-Command -Name Start-ThreadJob -ErrorAction SilentlyContinue) {
+                    Start-ThreadJob -ScriptBlock $sb | Out-Null
+                } else {
+                    Start-Job -ScriptBlock $sb | Out-Null
+                }
+            } else {
+                & $sb
             }
         }
 
@@ -346,34 +373,6 @@ Measure-Block 'Shell Setup' {
     }
 
     # Initialize shell enhancements
-    # Create a lazy proxy for Terminal-Icons: don't probe module lists at startup (avoids slow Get-Module)
-    Measure-Block 'Terminal-Icons:LazyProxy' {
-        try {
-            # Define a small helper to lazy-load Terminal-Icons on first use of its expected functions
-            $tiCommands = @('Set-TerminalIcon','Get-Icon','Get-TerminalIcon')
-            foreach ($name in $tiCommands) {
-                if (-not (Get-Command -Name $name -ErrorAction SilentlyContinue)) {
-                    Set-Item -Path "Function:$name" -Value {
-                        param($args)
-                        # Remove the proxy
-                        Remove-Item "Function:$name" -ErrorAction SilentlyContinue
-                        try {
-                            Import-Module 'Terminal-Icons' -ErrorAction SilentlyContinue
-                        } catch {
-                            # If import fails, recreate a stub that warns once
-                            Set-Item -Path "Function:$name" -Value { param($a) Write-Warning "Terminal-Icons is not available." }
-                            return
-                        }
-                        # Invoke the now-available command
-                        $cmd = Get-Command -Name $name -ErrorAction SilentlyContinue
-                        if ($cmd) { & $cmd @args }
-                    }.GetNewClosure()
-                }
-            }
-        } catch {
-            # non-fatal
-        }
-    }
 
     # Lazy-initialize starship at first prompt to avoid blocking startup
     $starshipCmd = Get-Command starship -ErrorAction SilentlyContinue
@@ -523,14 +522,6 @@ else {
 $globalStopwatch.Stop()
 
 # Provide helper functions to enable features on demand instead of importing heavy modules at startup.
-function Enable-TerminalIcons {
-    if (Get-Module -ListAvailable -Name Terminal-Icons) {
-        Import-Module Terminal-Icons -ErrorAction SilentlyContinue
-        Write-Host 'Terminal-Icons enabled' -ForegroundColor Green
-    } else {
-        Write-Host 'Terminal-Icons not available on PSModulePath' -ForegroundColor Yellow
-    }
-}
 
 function Enable-GHCompletion {
     if (Get-Command gh -ErrorAction SilentlyContinue) {
