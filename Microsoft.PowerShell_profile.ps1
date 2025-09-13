@@ -377,8 +377,11 @@ Measure-Block 'Shell Setup' {
     # Lazy-initialize starship at first prompt to avoid blocking startup
     $starshipCmd = Get-Command starship -ErrorAction SilentlyContinue
     if ($starshipCmd) {
-        $ENV:STARSHIP_CONFIG = "$ProfileDir\Config\starship.toml"
-        $ENV:STARSHIP_CACHE = "$ProfileDir\.starship\cache"
+          # Per user's preference, expose the config selector as '#file:starship.toml' and
+          # also provide the absolute path to starship via --config for reliability.
+          $ENV:STARSHIP_CONFIG = '#file:starship.toml'
+          $starshipConfigPath = Join-Path $ProfileDir 'Config\starship.toml'
+          $ENV:STARSHIP_CACHE = Join-Path $ProfileDir '.starship\cache'
         $script:StarshipInitialized = $false
 
         Measure-Block 'Prompt:InitFunc' {
@@ -387,12 +390,25 @@ Measure-Block 'Shell Setup' {
             $initSb = {
                 if ($script:StarshipInitialized) { return }
                 try {
-                    $init = & starship init powershell --print-full-init 2>$null
-                    if ($init) {
-                        # starship may return an array of lines; coerce to a single script string
-                        $initText = if ($init -is [System.Array]) { $init -join "`n" } else { $init.ToString() }
-                        Invoke-Expression $initText
+                    $cacheDir = Join-Path $ProfileDir '.starship'
+                    $cacheFile = Join-Path $cacheDir 'starship-init.ps1'
+
+                    if (Test-Path $cacheFile) {
+                        # Use cached init script when available (written by background pre-warm)
+                        try {
+                            $initText = Get-Content -Path $cacheFile -Raw -ErrorAction Stop
+                            if ($initText) { Invoke-Expression $initText }
+                        } catch {
+                            # Fallback to live init if cache read fails
+                            $init = & starship init powershell --print-full-init --config "$starshipConfigPath" 2>$null
+                            if ($init) { $initText = if ($init -is [System.Array]) { $init -join "`n" } else { $init.ToString() }; Invoke-Expression $initText }
+                        }
+                    } else {
+                        # No cache yet — run live init and continue
+                        $init = & starship init powershell --print-full-init --config "$starshipConfigPath" 2>$null
+                        if ($init) { $initText = if ($init -is [System.Array]) { $init -join "`n" } else { $init.ToString() }; Invoke-Expression $initText }
                     }
+
                     $script:StarshipInitialized = $true
                 } catch {
                     Write-Warning ("Starship init failed: {0}" -f $_)
@@ -440,6 +456,29 @@ Measure-Block 'Shell Setup' {
                 }
                 return "PS $($executionContext.SessionState.Path.CurrentLocation)> "
             }
+        }
+
+        # Background pre-warm: write the starship init script to a cache file so Initialize-Starship
+        # can quickly load it without invoking the starship binary in the interactive runspace.
+        try {
+            $prewarmSb = {
+                param($ProfileDir)
+                try {
+                    $cacheDir = Join-Path $ProfileDir '.starship'
+                    if (-not (Test-Path $cacheDir)) { New-Item -ItemType Directory -Path $cacheDir -Force | Out-Null }
+                    $cacheFile = Join-Path $cacheDir 'starship-init.ps1'
+                    $init = & starship init powershell --print-full-init --config "$starshipConfigPath" 2>$null
+                    if ($init) {
+                        $initText = if ($init -is [System.Array]) { $init -join "`n" } else { $init.ToString() }
+                        Set-Content -Path $cacheFile -Value $initText -Encoding UTF8 -Force
+                    }
+                } catch {
+                    # ignore pre-warm failures
+                }
+            }
+            Start-BackgroundJob -ScriptBlock $prewarmSb -ArgumentList $ProfileDir | Out-Null
+        } catch {
+            # if background jobs not permitted, skip pre-warm
         }
     } else {
         if (-not $global:ProfileSuppressInfoLogs) {

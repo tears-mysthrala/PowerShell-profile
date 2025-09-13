@@ -22,8 +22,24 @@
         </Obj>
       </En>
       <En>
-        <S N="Key">unified_aliases</S>
+        <S N="Key">SearchUtils</S>
         <Obj N="Value" RefId="2">
+          <TNRef RefId="0" />
+          <DCT>
+            <En>
+              <S N="Key">Path</S>
+              <S N="Value">C:\Users\unaiu\OneDrive\Documents\PowerShell\Core\Utils\SearchUtils.ps1</S>
+            </En>
+            <En>
+              <S N="Key">LastWriteTime</S>
+              <DT N="Value">2025-05-12T00:35:50.3850193+02:00</DT>
+            </En>
+          </DCT>
+        </Obj>
+      </En>
+      <En>
+        <S N="Key">unified_aliases</S>
+        <Obj N="Value" RefId="3">
           <TNRef RefId="0" />
           <DCT>
             <En>
@@ -39,7 +55,7 @@
       </En>
       <En>
         <S N="Key">profile_management</S>
-        <Obj N="Value" RefId="3">
+        <Obj N="Value" RefId="4">
           <TNRef RefId="0" />
           <DCT>
             <En>
@@ -49,22 +65,6 @@
             <En>
               <S N="Key">LastWriteTime</S>
               <DT N="Value">2025-06-28T01:22:40.4231334+02:00</DT>
-            </En>
-          </DCT>
-        </Obj>
-      </En>
-      <En>
-        <S N="Key">SearchUtils</S>
-        <Obj N="Value" RefId="4">
-          <TNRef RefId="0" />
-          <DCT>
-            <En>
-              <S N="Key">Path</S>
-              <S N="Value">C:\Users\unaiu\OneDrive\Documents\PowerShell\Core\Utils\SearchUtils.ps1</S>
-            </En>
-            <En>
-              <S N="Key">LastWriteTime</S>
-              <DT N="Value">2025-05-12T00:35:50.3850193+02:00</DT>
             </En>
           </DCT>
         </Obj>
