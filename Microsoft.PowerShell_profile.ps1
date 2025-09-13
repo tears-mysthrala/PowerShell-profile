@@ -388,6 +388,13 @@ Measure-Block 'Shell Setup' {
                     Initialize-Starship
                     Start-Sleep -Milliseconds 10
                 }
+                # Enable full PSReadLine features lazily on first prompt
+                if (-not $script:PSReadLineFullEnabled -and (Get-Command -Name Enable-FullPSReadLine -ErrorAction SilentlyContinue)) {
+                    try {
+                        Enable-FullPSReadLine
+                    } catch { }
+                    $script:PSReadLineFullEnabled = $true
+                }
                 $current = Get-Command prompt -CommandType Function -ErrorAction SilentlyContinue
                 if ($current -and $current.ScriptBlock -ne $function:prompt.ScriptBlock) {
                     try {
@@ -406,18 +413,34 @@ Measure-Block 'Shell Setup' {
     }
 
     Measure-Block 'PSReadLine' {
-        # Configure PSReadLine with a lightweight startup to avoid plugin loads
+        # Configure PSReadLine with an ultra-light startup; full features are enabled lazily
         $PSReadLineOptions = @{
-            PredictionSource              = 'History'   # avoid plugin loading at startup
+            PredictionSource              = 'None'   # disable prediction at startup to reduce load
             HistorySearchCursorMovesToEnd = $true
         }
         try {
             Set-PSReadLineOption @PSReadLineOptions
-            Set-PSReadLineKeyHandler -Key Tab -Function MenuComplete
-            Set-PSReadLineKeyHandler -Key UpArrow -Function HistorySearchBackward
-            Set-PSReadLineKeyHandler -Key DownArrow -Function HistorySearchForward
+            # Minimal key handlers to avoid extra initialization
+            Set-PSReadLineKeyHandler -Key Tab -Function Complete
         } catch {
-            Write-Warning "PSReadLine configuration failed: $_"
+            Write-Warning "PSReadLine minimal configuration failed: $_"
+        }
+
+        # Provide a function to enable full PSReadLine features lazily
+        function Enable-FullPSReadLine {
+            try {
+                $fullOptions = @{
+                    PredictionSource = 'History'
+                    HistorySearchCursorMovesToEnd = $true
+                }
+                Set-PSReadLineOption @fullOptions
+                # Restore richer key handlers
+                Set-PSReadLineKeyHandler -Key Tab -Function MenuComplete
+                Set-PSReadLineKeyHandler -Key UpArrow -Function HistorySearchBackward
+                Set-PSReadLineKeyHandler -Key DownArrow -Function HistorySearchForward
+            } catch {
+                Write-Warning "Enabling full PSReadLine options failed: $_"
+            }
         }
     }
 }
