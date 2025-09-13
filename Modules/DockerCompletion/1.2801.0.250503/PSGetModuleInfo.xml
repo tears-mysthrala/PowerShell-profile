@@ -30,7 +30,7 @@
         </MS>
       </Obj>
       <Obj N="UpdatedDate" RefId="3">
-        <DT>2025-05-08T11:34:45.482025+02:00</DT>
+        <DT>2025-08-11T23:30:03.5614076+02:00</DT>
         <MS>
           <Obj N="DisplayHint" RefId="4">
             <TN RefId="2">
@@ -66,7 +66,7 @@
         </TN>
         <DCT>
           <En>
-            <S N="Key">RoleCapability</S>
+            <S N="Key">Cmdlet</S>
             <Obj N="Value" RefId="7">
               <TNRef RefId="3" />
               <LST />
@@ -81,7 +81,7 @@
             <Ref N="Value" RefId="7" />
           </En>
           <En>
-            <S N="Key">Cmdlet</S>
+            <S N="Key">DscResource</S>
             <Ref N="Value" RefId="7" />
           </En>
           <En>
@@ -89,7 +89,7 @@
             <Ref N="Value" RefId="7" />
           </En>
           <En>
-            <S N="Key">DscResource</S>
+            <S N="Key">RoleCapability</S>
             <Ref N="Value" RefId="7" />
           </En>
         </DCT>
@@ -115,15 +115,15 @@
           <S N="releaseNotes">CLI v28.1.0_x000D__x000A_Compose v2.35.1</S>
           <S N="isLatestVersion">True</S>
           <S N="isAbsoluteLatestVersion">True</S>
-          <S N="versionDownloadCount">222</S>
-          <S N="downloadCount">181324</S>
+          <S N="versionDownloadCount">2422</S>
+          <S N="downloadCount">183534</S>
           <S N="packageSize">45979</S>
           <S N="published">03/05/2025 07:55:03 +02:00</S>
           <S N="created">03/05/2025 07:55:03 +02:00</S>
-          <S N="lastUpdated">08/05/2025 09:30:00 +02:00</S>
+          <S N="lastUpdated">11/08/2025 21:00:00 +02:00</S>
           <S N="tags">docker completion PSModule</S>
           <S N="developmentDependency">False</S>
-          <S N="updated">2025-05-08T09:30:00Z</S>
+          <S N="updated">2025-08-11T21:00:00Z</S>
           <S N="NormalizedVersion">1.2801.0.250503</S>
           <S N="Authors">Masatoshi Higuchi</S>
           <S N="IsPrerelease">false</S>

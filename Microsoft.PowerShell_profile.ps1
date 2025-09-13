@@ -317,3 +317,22 @@ $script:profileTiming.GetEnumerator() | Sort-Object Value -Descending | ForEach-
 
 Import-Module -Name Microsoft.WinGet.CommandNotFound
 #f45873b3-b655-43a6-b217-97c00aa0db58
+Import-Module PSReadLine
+Set-PSReadLineKeyHandler -Chord Tab -Function MenuComplete
+$scriptblock = {
+    param($wordToComplete, $commandAst, $cursorPosition)
+    $Env:_MOV_CLI_COMPLETE = "complete_powershell"
+    $Env:_TYPER_COMPLETE_ARGS = $commandAst.ToString()
+    $Env:_TYPER_COMPLETE_WORD_TO_COMPLETE = $wordToComplete
+    mov-cli | ForEach-Object {
+        $commandArray = $_ -Split ":::"
+        $command = $commandArray[0]
+        $helpString = $commandArray[1]
+        [System.Management.Automation.CompletionResult]::new(
+            $command, $command, 'ParameterValue', $helpString)
+    }
+    $Env:_MOV_CLI_COMPLETE = ""
+    $Env:_TYPER_COMPLETE_ARGS = ""
+    $Env:_TYPER_COMPLETE_WORD_TO_COMPLETE = ""
+}
+Register-ArgumentCompleter -Native -CommandName mov-cli -ScriptBlock $scriptblock
