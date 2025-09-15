@@ -24,9 +24,22 @@ foreach ($f in $selected) {
         Write-Output "Failed reading $($f): $($_)"; continue
     }
     # replacement: single-line empty catch blocks like: catch { }  (allow whitespace)
-    $pattern = 'catch\s*\{\s*\}'
-    $replacement = 'catch { Write-Verbose ''Ignored exception: $_'' }'
-    $new = [regex]::Replace($content, $pattern, $replacement)
+        # replacement: match either single-line `catch { }` or multi-line empty catch blocks that contain only whitespace/comments
+        # We'll replace with a conservative body preserving indentation
+        $patternSingle = 'catch\s*\{\s*\}'
+        $contentUpdated = [regex]::Replace($content, $patternSingle, 'catch { Write-Verbose "Ignored exception: $_" }')
+
+        # Multi-line pattern: catch { <optional whitespace/comments/newlines> }
+        $patternMulti = '(?ms)(^\s*catch\s*\{)\s*(?:#.*\r?\n|\s)*?(\})'
+        $new = [regex]::Replace($contentUpdated, $patternMulti, {
+            param($m)
+            $start = $m.Groups[1].Value
+            $end = $m.Groups[2].Value
+            # Determine indentation from the start group's leading whitespace
+            if ($start -match '^(\s*)') { $indent = $matches[1] } else { $indent = '' }
+            $line = $indent + '    Write-Verbose "Ignored exception: `$_"'
+            return $start + "`n" + $line + "`n" + $indent + $end
+        })
     if ($new -ne $content) {
         Copy-Item -Path $path -Destination "$path.bak" -Force
         Set-Content -Path $path -Value $new -Encoding UTF8
