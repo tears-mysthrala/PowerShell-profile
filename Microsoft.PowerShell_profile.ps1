@@ -443,7 +443,7 @@ Measure-Block 'Shell Setup' {
                 if (-not $script:PSReadLineFullEnabled -and (Get-Command -Name Enable-FullPSReadLine -ErrorAction SilentlyContinue)) {
                     try {
                         Enable-FullPSReadLine
-                    } catch { }
+                    } catch { Write-Verbose "Ignored exception in starship global registration: $_" }
                     $script:PSReadLineFullEnabled = $true
                 }
                 $current = Get-Command prompt -CommandType Function -ErrorAction SilentlyContinue
@@ -647,7 +647,7 @@ if ($Host.UI) {
 
         # If PSReadLine is available, redraw the prompt so the new prompt is visible now
         if (Get-Command -Name Set-PSReadLineOption -ErrorAction SilentlyContinue) {
-            try { [Microsoft.PowerShell.PSConsoleReadLine]::InvokePrompt() } catch { }
+            try { [Microsoft.PowerShell.PSConsoleReadLine]::InvokePrompt() } catch { Write-Verbose "PSConsoleReadLine InvokePrompt failed: $_" }
         }
 
         # If explicitly dot-sourced by the user, provide a short confirmation
@@ -695,7 +695,7 @@ try {
                 Set-PSReadLineKeyHandler -Key Tab -Function MenuComplete -ErrorAction SilentlyContinue
                 Set-PSReadLineKeyHandler -Key UpArrow -Function HistorySearchBackward -ErrorAction SilentlyContinue
                 Set-PSReadLineKeyHandler -Key DownArrow -Function HistorySearchForward -ErrorAction SilentlyContinue
-            } catch { }
+            } catch { Write-Verbose "Background PSReadLine pre-warm inner handler failed: $_" }
         } catch {
             # Background pre-warm failed; nothing to do
         }

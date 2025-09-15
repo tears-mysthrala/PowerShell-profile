@@ -1,0 +1,3502 @@
+﻿[
+    {
+        "File":  "Microsoft.PowerShell_profile.ps1",
+        "Rule":  "PSAvoidUsingEmptyCatchBlock",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "Empty catch block is used. Please use Write-Error or throw statements in catch blocks."
+    },
+    {
+        "File":  "Microsoft.PowerShell_profile.ps1",
+        "Rule":  "PSAvoidUsingEmptyCatchBlock",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "Empty catch block is used. Please use Write-Error or throw statements in catch blocks."
+    },
+    {
+        "File":  "Microsoft.PowerShell_profile.ps1",
+        "Rule":  "PSAvoidUsingEmptyCatchBlock",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "Empty catch block is used. Please use Write-Error or throw statements in catch blocks."
+    },
+    {
+        "File":  "Microsoft.PowerShell_profile.ps1",
+        "Rule":  "PSAvoidUsingEmptyCatchBlock",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "Empty catch block is used. Please use Write-Error or throw statements in catch blocks."
+    },
+    {
+        "File":  "Microsoft.PowerShell_profile.ps1",
+        "Rule":  "PSAvoidUsingEmptyCatchBlock",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "Empty catch block is used. Please use Write-Error or throw statements in catch blocks."
+    },
+    {
+        "File":  "Microsoft.PowerShell_profile.ps1",
+        "Rule":  "PSAvoidUsingEmptyCatchBlock",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "Empty catch block is used. Please use Write-Error or throw statements in catch blocks."
+    },
+    {
+        "File":  "Microsoft.PowerShell_profile.ps1",
+        "Rule":  "PSAvoidUsingEmptyCatchBlock",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "Empty catch block is used. Please use Write-Error or throw statements in catch blocks."
+    },
+    {
+        "File":  "Microsoft.PowerShell_profile.ps1",
+        "Rule":  "PSAvoidUsingEmptyCatchBlock",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "Empty catch block is used. Please use Write-Error or throw statements in catch blocks."
+    },
+    {
+        "File":  "Microsoft.PowerShell_profile.ps1",
+        "Rule":  "PSAvoidUsingEmptyCatchBlock",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "Empty catch block is used. Please use Write-Error or throw statements in catch blocks."
+    },
+    {
+        "File":  "starship-init.ps1",
+        "Rule":  "PSAvoidUsingEmptyCatchBlock",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "Empty catch block is used. Please use Write-Error or throw statements in catch blocks."
+    },
+    {
+        "File":  "starship-init.ps1",
+        "Rule":  "PSAvoidUsingEmptyCatchBlock",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "Empty catch block is used. Please use Write-Error or throw statements in catch blocks."
+    },
+    {
+        "File":  "ModuleDependencyManager.ps1",
+        "Rule":  "InvalidVariableReferenceWithDrive",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "Variable reference is not valid. \u0027:\u0027 was not followed by a valid variable name character. Consider using ${} to delimit the name."
+    },
+    {
+        "File":  "ModuleInstaller.ps1",
+        "Rule":  "PSAvoidUsingEmptyCatchBlock",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "Empty catch block is used. Please use Write-Error or throw statements in catch blocks."
+    },
+    {
+        "File":  "ModuleInstaller.ps1",
+        "Rule":  "PSAvoidUsingEmptyCatchBlock",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "Empty catch block is used. Please use Write-Error or throw statements in catch blocks."
+    },
+    {
+        "File":  "ModuleVersionManager.ps1",
+        "Rule":  "InvalidVariableReferenceWithDrive",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "Variable reference is not valid. \u0027:\u0027 was not followed by a valid variable name character. Consider using ${} to delimit the name."
+    },
+    {
+        "File":  "UnifiedModuleManager.ps1",
+        "Rule":  "PSAvoidUsingEmptyCatchBlock",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "Empty catch block is used. Please use Write-Error or throw statements in catch blocks."
+    },
+    {
+        "File":  "UpdateApps.ps1",
+        "Rule":  "MissingEndCurlyBrace",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "Missing closing \u0027}\u0027 in statement block or type definition."
+    },
+    {
+        "File":  "UpdateApps.ps1",
+        "Rule":  "MissingEndCurlyBrace",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "Missing closing \u0027}\u0027 in statement block or type definition."
+    },
+    {
+        "File":  "UpdateApps.ps1",
+        "Rule":  "MissingEndCurlyBrace",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "Missing closing \u0027}\u0027 in statement block or type definition."
+    },
+    {
+        "File":  "UpdateApps.ps1",
+        "Rule":  "MissingEndCurlyBrace",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "Missing closing \u0027}\u0027 in statement block or type definition."
+    },
+    {
+        "File":  "unified_aliases.psd1",
+        "Rule":  "RequiresModuleInvalid",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The argument for the Module parameter is not valid. The hashtable describing a module contains one or more members that are not valid.  The valid members are (ModuleName, ModuleVersion, RequiredVersion, GUID). Remove the members that are not valid (\u0027PrivateData\u0027), then try again."
+    },
+    {
+        "File":  "Utils.ps1",
+        "Rule":  "PSAvoidUsingEmptyCatchBlock",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "Empty catch block is used. Please use Write-Error or throw statements in catch blocks."
+    },
+    {
+        "File":  "Utils.ps1",
+        "Rule":  "PSAvoidUsingEmptyCatchBlock",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "Empty catch block is used. Please use Write-Error or throw statements in catch blocks."
+    },
+    {
+        "File":  "posh-wakatime_20210223112159.ps1",
+        "Rule":  "MissingTypename",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "Missing type name after \u0027[\u0027."
+    },
+    {
+        "File":  "posh-wakatime_20210223112159.ps1",
+        "Rule":  "InvalidEndOfLine",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The token \u0027\u0026\u0026\u0027 is not a valid statement separator in this version."
+    },
+    {
+        "File":  "posh-wakatime_20210223112159.ps1",
+        "Rule":  "ExpectedValueExpression",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "You must provide a value expression following the \u0027\u0026\u0026\u0027 operator."
+    },
+    {
+        "File":  "posh-wakatime_20210223112159.ps1",
+        "Rule":  "UnexpectedToken",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "Unexpected token \u0027local\u0027 in expression or statement."
+    },
+    {
+        "File":  "posh-wakatime_20210223112159.ps1",
+        "Rule":  "InvalidEndOfLine",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The token \u0027||\u0027 is not a valid statement separator in this version."
+    },
+    {
+        "File":  "posh-wakatime_20210223112159.ps1",
+        "Rule":  "AmpersandNotAllowed",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The ampersand (\u0026) character is not allowed. The \u0026 operator is reserved for future use; wrap an ampersand in double quotation marks (\"\u0026\") to pass it as part of a string."
+    },
+    {
+        "File":  "posh-wakatime_20210223112159.ps1",
+        "Rule":  "InvalidEndOfLine",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The token \u0027\u0026\u0026\u0027 is not a valid statement separator in this version."
+    },
+    {
+        "File":  "posh-wakatime_20210223112350.ps1",
+        "Rule":  "MissingTypename",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "Missing type name after \u0027[\u0027."
+    },
+    {
+        "File":  "posh-wakatime_20210223112350.ps1",
+        "Rule":  "InvalidEndOfLine",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The token \u0027\u0026\u0026\u0027 is not a valid statement separator in this version."
+    },
+    {
+        "File":  "posh-wakatime_20210223112350.ps1",
+        "Rule":  "ExpectedValueExpression",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "You must provide a value expression following the \u0027\u0026\u0026\u0027 operator."
+    },
+    {
+        "File":  "posh-wakatime_20210223112350.ps1",
+        "Rule":  "UnexpectedToken",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "Unexpected token \u0027local\u0027 in expression or statement."
+    },
+    {
+        "File":  "posh-wakatime_20210223112350.ps1",
+        "Rule":  "InvalidEndOfLine",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The token \u0027||\u0027 is not a valid statement separator in this version."
+    },
+    {
+        "File":  "posh-wakatime_20210223112350.ps1",
+        "Rule":  "AmpersandNotAllowed",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The ampersand (\u0026) character is not allowed. The \u0026 operator is reserved for future use; wrap an ampersand in double quotation marks (\"\u0026\") to pass it as part of a string."
+    },
+    {
+        "File":  "posh-wakatime_20210223112350.ps1",
+        "Rule":  "InvalidEndOfLine",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The token \u0027\u0026\u0026\u0027 is not a valid statement separator in this version."
+    },
+    {
+        "File":  "posh-wakatime_20210223112400.ps1",
+        "Rule":  "MissingTypename",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "Missing type name after \u0027[\u0027."
+    },
+    {
+        "File":  "posh-wakatime_20210223112400.ps1",
+        "Rule":  "InvalidEndOfLine",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The token \u0027\u0026\u0026\u0027 is not a valid statement separator in this version."
+    },
+    {
+        "File":  "posh-wakatime_20210223112400.ps1",
+        "Rule":  "ExpectedValueExpression",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "You must provide a value expression following the \u0027\u0026\u0026\u0027 operator."
+    },
+    {
+        "File":  "posh-wakatime_20210223112400.ps1",
+        "Rule":  "UnexpectedToken",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "Unexpected token \u0027local\u0027 in expression or statement."
+    },
+    {
+        "File":  "posh-wakatime_20210223112400.ps1",
+        "Rule":  "InvalidEndOfLine",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The token \u0027||\u0027 is not a valid statement separator in this version."
+    },
+    {
+        "File":  "posh-wakatime_20210223112400.ps1",
+        "Rule":  "AmpersandNotAllowed",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The ampersand (\u0026) character is not allowed. The \u0026 operator is reserved for future use; wrap an ampersand in double quotation marks (\"\u0026\") to pass it as part of a string."
+    },
+    {
+        "File":  "posh-wakatime_20210223112400.ps1",
+        "Rule":  "InvalidEndOfLine",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The token \u0027\u0026\u0026\u0027 is not a valid statement separator in this version."
+    },
+    {
+        "File":  "posh-wakatime_20210223112458.ps1",
+        "Rule":  "MissingTypename",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "Missing type name after \u0027[\u0027."
+    },
+    {
+        "File":  "posh-wakatime_20210223112458.ps1",
+        "Rule":  "InvalidEndOfLine",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The token \u0027\u0026\u0026\u0027 is not a valid statement separator in this version."
+    },
+    {
+        "File":  "posh-wakatime_20210223112458.ps1",
+        "Rule":  "ExpectedValueExpression",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "You must provide a value expression following the \u0027\u0026\u0026\u0027 operator."
+    },
+    {
+        "File":  "posh-wakatime_20210223112458.ps1",
+        "Rule":  "UnexpectedToken",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "Unexpected token \u0027local\u0027 in expression or statement."
+    },
+    {
+        "File":  "posh-wakatime_20210223112458.ps1",
+        "Rule":  "InvalidEndOfLine",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The token \u0027||\u0027 is not a valid statement separator in this version."
+    },
+    {
+        "File":  "posh-wakatime_20210223112458.ps1",
+        "Rule":  "AmpersandNotAllowed",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The ampersand (\u0026) character is not allowed. The \u0026 operator is reserved for future use; wrap an ampersand in double quotation marks (\"\u0026\") to pass it as part of a string."
+    },
+    {
+        "File":  "posh-wakatime_20210223112458.ps1",
+        "Rule":  "InvalidEndOfLine",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The token \u0027\u0026\u0026\u0027 is not a valid statement separator in this version."
+    },
+    {
+        "File":  "posh-wakatime_20210223112506.ps1",
+        "Rule":  "MissingTypename",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "Missing type name after \u0027[\u0027."
+    },
+    {
+        "File":  "posh-wakatime_20210223112506.ps1",
+        "Rule":  "InvalidEndOfLine",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The token \u0027\u0026\u0026\u0027 is not a valid statement separator in this version."
+    },
+    {
+        "File":  "posh-wakatime_20210223112506.ps1",
+        "Rule":  "ExpectedValueExpression",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "You must provide a value expression following the \u0027\u0026\u0026\u0027 operator."
+    },
+    {
+        "File":  "posh-wakatime_20210223112506.ps1",
+        "Rule":  "UnexpectedToken",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "Unexpected token \u0027local\u0027 in expression or statement."
+    },
+    {
+        "File":  "posh-wakatime_20210223112506.ps1",
+        "Rule":  "InvalidEndOfLine",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The token \u0027||\u0027 is not a valid statement separator in this version."
+    },
+    {
+        "File":  "posh-wakatime_20210223112506.ps1",
+        "Rule":  "AmpersandNotAllowed",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The ampersand (\u0026) character is not allowed. The \u0026 operator is reserved for future use; wrap an ampersand in double quotation marks (\"\u0026\") to pass it as part of a string."
+    },
+    {
+        "File":  "posh-wakatime_20210223112506.ps1",
+        "Rule":  "InvalidEndOfLine",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The token \u0027\u0026\u0026\u0027 is not a valid statement separator in this version."
+    },
+    {
+        "File":  "posh-wakatime_20210223112612.psm1",
+        "Rule":  "MissingTypename",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "Missing type name after \u0027[\u0027."
+    },
+    {
+        "File":  "posh-wakatime_20210223112612.psm1",
+        "Rule":  "InvalidEndOfLine",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The token \u0027\u0026\u0026\u0027 is not a valid statement separator in this version."
+    },
+    {
+        "File":  "posh-wakatime_20210223112612.psm1",
+        "Rule":  "ExpectedValueExpression",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "You must provide a value expression following the \u0027\u0026\u0026\u0027 operator."
+    },
+    {
+        "File":  "posh-wakatime_20210223112612.psm1",
+        "Rule":  "UnexpectedToken",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "Unexpected token \u0027local\u0027 in expression or statement."
+    },
+    {
+        "File":  "posh-wakatime_20210223112612.psm1",
+        "Rule":  "InvalidEndOfLine",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The token \u0027||\u0027 is not a valid statement separator in this version."
+    },
+    {
+        "File":  "posh-wakatime_20210223112612.psm1",
+        "Rule":  "AmpersandNotAllowed",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The ampersand (\u0026) character is not allowed. The \u0026 operator is reserved for future use; wrap an ampersand in double quotation marks (\"\u0026\") to pass it as part of a string."
+    },
+    {
+        "File":  "posh-wakatime_20210223112612.psm1",
+        "Rule":  "InvalidEndOfLine",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The token \u0027\u0026\u0026\u0027 is not a valid statement separator in this version."
+    },
+    {
+        "File":  "posh-wakatime_20210223112635.psm1",
+        "Rule":  "MissingTypename",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "Missing type name after \u0027[\u0027."
+    },
+    {
+        "File":  "posh-wakatime_20210223112635.psm1",
+        "Rule":  "InvalidEndOfLine",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The token \u0027\u0026\u0026\u0027 is not a valid statement separator in this version."
+    },
+    {
+        "File":  "posh-wakatime_20210223112635.psm1",
+        "Rule":  "ExpectedValueExpression",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "You must provide a value expression following the \u0027\u0026\u0026\u0027 operator."
+    },
+    {
+        "File":  "posh-wakatime_20210223112635.psm1",
+        "Rule":  "UnexpectedToken",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "Unexpected token \u0027local\u0027 in expression or statement."
+    },
+    {
+        "File":  "posh-wakatime_20210223112635.psm1",
+        "Rule":  "InvalidEndOfLine",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The token \u0027||\u0027 is not a valid statement separator in this version."
+    },
+    {
+        "File":  "posh-wakatime_20210223112635.psm1",
+        "Rule":  "AmpersandNotAllowed",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The ampersand (\u0026) character is not allowed. The \u0026 operator is reserved for future use; wrap an ampersand in double quotation marks (\"\u0026\") to pass it as part of a string."
+    },
+    {
+        "File":  "posh-wakatime_20210223112635.psm1",
+        "Rule":  "InvalidEndOfLine",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The token \u0027\u0026\u0026\u0027 is not a valid statement separator in this version."
+    },
+    {
+        "File":  "posh-wakatime_20210223112736.psm1",
+        "Rule":  "MissingTypename",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "Missing type name after \u0027[\u0027."
+    },
+    {
+        "File":  "posh-wakatime_20210223112736.psm1",
+        "Rule":  "InvalidEndOfLine",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The token \u0027\u0026\u0026\u0027 is not a valid statement separator in this version."
+    },
+    {
+        "File":  "posh-wakatime_20210223112736.psm1",
+        "Rule":  "ExpectedValueExpression",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "You must provide a value expression following the \u0027\u0026\u0026\u0027 operator."
+    },
+    {
+        "File":  "posh-wakatime_20210223112736.psm1",
+        "Rule":  "UnexpectedToken",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "Unexpected token \u0027local\u0027 in expression or statement."
+    },
+    {
+        "File":  "posh-wakatime_20210223112736.psm1",
+        "Rule":  "InvalidEndOfLine",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The token \u0027||\u0027 is not a valid statement separator in this version."
+    },
+    {
+        "File":  "posh-wakatime_20210223112736.psm1",
+        "Rule":  "AmpersandNotAllowed",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The ampersand (\u0026) character is not allowed. The \u0026 operator is reserved for future use; wrap an ampersand in double quotation marks (\"\u0026\") to pass it as part of a string."
+    },
+    {
+        "File":  "posh-wakatime_20210223112736.psm1",
+        "Rule":  "InvalidEndOfLine",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The token \u0027\u0026\u0026\u0027 is not a valid statement separator in this version."
+    },
+    {
+        "File":  "posh-wakatime_20210223113035.psm1",
+        "Rule":  "MissingTypename",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "Missing type name after \u0027[\u0027."
+    },
+    {
+        "File":  "posh-wakatime_20210223113035.psm1",
+        "Rule":  "InvalidEndOfLine",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The token \u0027\u0026\u0026\u0027 is not a valid statement separator in this version."
+    },
+    {
+        "File":  "posh-wakatime_20210223113035.psm1",
+        "Rule":  "ExpectedValueExpression",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "You must provide a value expression following the \u0027\u0026\u0026\u0027 operator."
+    },
+    {
+        "File":  "posh-wakatime_20210223113035.psm1",
+        "Rule":  "UnexpectedToken",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "Unexpected token \u0027local\u0027 in expression or statement."
+    },
+    {
+        "File":  "posh-wakatime_20210223113035.psm1",
+        "Rule":  "InvalidEndOfLine",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The token \u0027||\u0027 is not a valid statement separator in this version."
+    },
+    {
+        "File":  "posh-wakatime_20210223113035.psm1",
+        "Rule":  "AmpersandNotAllowed",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The ampersand (\u0026) character is not allowed. The \u0026 operator is reserved for future use; wrap an ampersand in double quotation marks (\"\u0026\") to pass it as part of a string."
+    },
+    {
+        "File":  "posh-wakatime_20210223113035.psm1",
+        "Rule":  "InvalidEndOfLine",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The token \u0027\u0026\u0026\u0027 is not a valid statement separator in this version."
+    },
+    {
+        "File":  "posh-wakatime_20210223113203.psm1",
+        "Rule":  "MissingTypename",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "Missing type name after \u0027[\u0027."
+    },
+    {
+        "File":  "posh-wakatime_20210223113203.psm1",
+        "Rule":  "InvalidEndOfLine",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The token \u0027\u0026\u0026\u0027 is not a valid statement separator in this version."
+    },
+    {
+        "File":  "posh-wakatime_20210223113203.psm1",
+        "Rule":  "ExpectedValueExpression",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "You must provide a value expression following the \u0027\u0026\u0026\u0027 operator."
+    },
+    {
+        "File":  "posh-wakatime_20210223113203.psm1",
+        "Rule":  "UnexpectedToken",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "Unexpected token \u0027local\u0027 in expression or statement."
+    },
+    {
+        "File":  "posh-wakatime_20210223113203.psm1",
+        "Rule":  "InvalidEndOfLine",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The token \u0027||\u0027 is not a valid statement separator in this version."
+    },
+    {
+        "File":  "posh-wakatime_20210223113203.psm1",
+        "Rule":  "AmpersandNotAllowed",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The ampersand (\u0026) character is not allowed. The \u0026 operator is reserved for future use; wrap an ampersand in double quotation marks (\"\u0026\") to pass it as part of a string."
+    },
+    {
+        "File":  "posh-wakatime_20210223113203.psm1",
+        "Rule":  "InvalidEndOfLine",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The token \u0027\u0026\u0026\u0027 is not a valid statement separator in this version."
+    },
+    {
+        "File":  "posh-wakatime_20210223122603.psm1",
+        "Rule":  "MissingTypename",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "Missing type name after \u0027[\u0027."
+    },
+    {
+        "File":  "posh-wakatime_20210223122603.psm1",
+        "Rule":  "InvalidEndOfLine",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The token \u0027\u0026\u0026\u0027 is not a valid statement separator in this version."
+    },
+    {
+        "File":  "posh-wakatime_20210223122603.psm1",
+        "Rule":  "ExpectedValueExpression",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "You must provide a value expression following the \u0027\u0026\u0026\u0027 operator."
+    },
+    {
+        "File":  "posh-wakatime_20210223122603.psm1",
+        "Rule":  "UnexpectedToken",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "Unexpected token \u0027local\u0027 in expression or statement."
+    },
+    {
+        "File":  "posh-wakatime_20210223122603.psm1",
+        "Rule":  "InvalidEndOfLine",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The token \u0027||\u0027 is not a valid statement separator in this version."
+    },
+    {
+        "File":  "posh-wakatime_20210223122603.psm1",
+        "Rule":  "AmpersandNotAllowed",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The ampersand (\u0026) character is not allowed. The \u0026 operator is reserved for future use; wrap an ampersand in double quotation marks (\"\u0026\") to pass it as part of a string."
+    },
+    {
+        "File":  "posh-wakatime_20210223122603.psm1",
+        "Rule":  "InvalidEndOfLine",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The token \u0027\u0026\u0026\u0027 is not a valid statement separator in this version."
+    },
+    {
+        "File":  "posh-wakatime_20210223122706.psm1",
+        "Rule":  "MissingTypename",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "Missing type name after \u0027[\u0027."
+    },
+    {
+        "File":  "posh-wakatime_20210223122706.psm1",
+        "Rule":  "InvalidEndOfLine",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The token \u0027\u0026\u0026\u0027 is not a valid statement separator in this version."
+    },
+    {
+        "File":  "posh-wakatime_20210223122706.psm1",
+        "Rule":  "ExpectedValueExpression",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "You must provide a value expression following the \u0027\u0026\u0026\u0027 operator."
+    },
+    {
+        "File":  "posh-wakatime_20210223122706.psm1",
+        "Rule":  "UnexpectedToken",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "Unexpected token \u0027local\u0027 in expression or statement."
+    },
+    {
+        "File":  "posh-wakatime_20210223122706.psm1",
+        "Rule":  "InvalidEndOfLine",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The token \u0027||\u0027 is not a valid statement separator in this version."
+    },
+    {
+        "File":  "posh-wakatime_20210223122706.psm1",
+        "Rule":  "AmpersandNotAllowed",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The ampersand (\u0026) character is not allowed. The \u0026 operator is reserved for future use; wrap an ampersand in double quotation marks (\"\u0026\") to pass it as part of a string."
+    },
+    {
+        "File":  "posh-wakatime_20210223122706.psm1",
+        "Rule":  "InvalidEndOfLine",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The token \u0027\u0026\u0026\u0027 is not a valid statement separator in this version."
+    },
+    {
+        "File":  "posh-wakatime_20210223122708.psm1",
+        "Rule":  "MissingTypename",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "Missing type name after \u0027[\u0027."
+    },
+    {
+        "File":  "posh-wakatime_20210223122708.psm1",
+        "Rule":  "InvalidEndOfLine",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The token \u0027\u0026\u0026\u0027 is not a valid statement separator in this version."
+    },
+    {
+        "File":  "posh-wakatime_20210223122708.psm1",
+        "Rule":  "ExpectedValueExpression",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "You must provide a value expression following the \u0027\u0026\u0026\u0027 operator."
+    },
+    {
+        "File":  "posh-wakatime_20210223122708.psm1",
+        "Rule":  "UnexpectedToken",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "Unexpected token \u0027local\u0027 in expression or statement."
+    },
+    {
+        "File":  "posh-wakatime_20210223122708.psm1",
+        "Rule":  "InvalidEndOfLine",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The token \u0027||\u0027 is not a valid statement separator in this version."
+    },
+    {
+        "File":  "posh-wakatime_20210223122708.psm1",
+        "Rule":  "AmpersandNotAllowed",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The ampersand (\u0026) character is not allowed. The \u0026 operator is reserved for future use; wrap an ampersand in double quotation marks (\"\u0026\") to pass it as part of a string."
+    },
+    {
+        "File":  "posh-wakatime_20210223122708.psm1",
+        "Rule":  "InvalidEndOfLine",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The token \u0027\u0026\u0026\u0027 is not a valid statement separator in this version."
+    },
+    {
+        "File":  "posh-wakatime_20210223122715.psm1",
+        "Rule":  "MissingTypename",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "Missing type name after \u0027[\u0027."
+    },
+    {
+        "File":  "posh-wakatime_20210223122715.psm1",
+        "Rule":  "InvalidEndOfLine",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The token \u0027\u0026\u0026\u0027 is not a valid statement separator in this version."
+    },
+    {
+        "File":  "posh-wakatime_20210223122715.psm1",
+        "Rule":  "ExpectedValueExpression",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "You must provide a value expression following the \u0027\u0026\u0026\u0027 operator."
+    },
+    {
+        "File":  "posh-wakatime_20210223122715.psm1",
+        "Rule":  "UnexpectedToken",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "Unexpected token \u0027local\u0027 in expression or statement."
+    },
+    {
+        "File":  "posh-wakatime_20210223122715.psm1",
+        "Rule":  "InvalidEndOfLine",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The token \u0027||\u0027 is not a valid statement separator in this version."
+    },
+    {
+        "File":  "posh-wakatime_20210223122715.psm1",
+        "Rule":  "AmpersandNotAllowed",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The ampersand (\u0026) character is not allowed. The \u0026 operator is reserved for future use; wrap an ampersand in double quotation marks (\"\u0026\") to pass it as part of a string."
+    },
+    {
+        "File":  "posh-wakatime_20210223122715.psm1",
+        "Rule":  "InvalidEndOfLine",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The token \u0027\u0026\u0026\u0027 is not a valid statement separator in this version."
+    },
+    {
+        "File":  "posh-wakatime_20210223122724.psm1",
+        "Rule":  "MissingTypename",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "Missing type name after \u0027[\u0027."
+    },
+    {
+        "File":  "posh-wakatime_20210223122724.psm1",
+        "Rule":  "InvalidEndOfLine",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The token \u0027\u0026\u0026\u0027 is not a valid statement separator in this version."
+    },
+    {
+        "File":  "posh-wakatime_20210223122724.psm1",
+        "Rule":  "ExpectedValueExpression",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "You must provide a value expression following the \u0027\u0026\u0026\u0027 operator."
+    },
+    {
+        "File":  "posh-wakatime_20210223122724.psm1",
+        "Rule":  "UnexpectedToken",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "Unexpected token \u0027local\u0027 in expression or statement."
+    },
+    {
+        "File":  "posh-wakatime_20210223122724.psm1",
+        "Rule":  "InvalidEndOfLine",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The token \u0027||\u0027 is not a valid statement separator in this version."
+    },
+    {
+        "File":  "posh-wakatime_20210223122724.psm1",
+        "Rule":  "AmpersandNotAllowed",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The ampersand (\u0026) character is not allowed. The \u0026 operator is reserved for future use; wrap an ampersand in double quotation marks (\"\u0026\") to pass it as part of a string."
+    },
+    {
+        "File":  "posh-wakatime_20210223122724.psm1",
+        "Rule":  "InvalidEndOfLine",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The token \u0027\u0026\u0026\u0027 is not a valid statement separator in this version."
+    },
+    {
+        "File":  "posh-wakatime_20210223124212.psm1",
+        "Rule":  "MissingTypename",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "Missing type name after \u0027[\u0027."
+    },
+    {
+        "File":  "posh-wakatime_20210223124212.psm1",
+        "Rule":  "InvalidEndOfLine",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The token \u0027\u0026\u0026\u0027 is not a valid statement separator in this version."
+    },
+    {
+        "File":  "posh-wakatime_20210223124212.psm1",
+        "Rule":  "ExpectedValueExpression",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "You must provide a value expression following the \u0027\u0026\u0026\u0027 operator."
+    },
+    {
+        "File":  "posh-wakatime_20210223124212.psm1",
+        "Rule":  "UnexpectedToken",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "Unexpected token \u0027local\u0027 in expression or statement."
+    },
+    {
+        "File":  "posh-wakatime_20210223124212.psm1",
+        "Rule":  "InvalidEndOfLine",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The token \u0027||\u0027 is not a valid statement separator in this version."
+    },
+    {
+        "File":  "posh-wakatime_20210223124212.psm1",
+        "Rule":  "AmpersandNotAllowed",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The ampersand (\u0026) character is not allowed. The \u0026 operator is reserved for future use; wrap an ampersand in double quotation marks (\"\u0026\") to pass it as part of a string."
+    },
+    {
+        "File":  "posh-wakatime_20210223124212.psm1",
+        "Rule":  "InvalidEndOfLine",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The token \u0027\u0026\u0026\u0027 is not a valid statement separator in this version."
+    },
+    {
+        "File":  "posh-wakatime_20210223124229.psm1",
+        "Rule":  "MissingTypename",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "Missing type name after \u0027[\u0027."
+    },
+    {
+        "File":  "posh-wakatime_20210223124229.psm1",
+        "Rule":  "InvalidEndOfLine",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The token \u0027\u0026\u0026\u0027 is not a valid statement separator in this version."
+    },
+    {
+        "File":  "posh-wakatime_20210223124229.psm1",
+        "Rule":  "ExpectedValueExpression",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "You must provide a value expression following the \u0027\u0026\u0026\u0027 operator."
+    },
+    {
+        "File":  "posh-wakatime_20210223124229.psm1",
+        "Rule":  "UnexpectedToken",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "Unexpected token \u0027local\u0027 in expression or statement."
+    },
+    {
+        "File":  "posh-wakatime_20210223124229.psm1",
+        "Rule":  "InvalidEndOfLine",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The token \u0027||\u0027 is not a valid statement separator in this version."
+    },
+    {
+        "File":  "posh-wakatime_20210223124229.psm1",
+        "Rule":  "AmpersandNotAllowed",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The ampersand (\u0026) character is not allowed. The \u0026 operator is reserved for future use; wrap an ampersand in double quotation marks (\"\u0026\") to pass it as part of a string."
+    },
+    {
+        "File":  "posh-wakatime_20210223124229.psm1",
+        "Rule":  "InvalidEndOfLine",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The token \u0027\u0026\u0026\u0027 is not a valid statement separator in this version."
+    },
+    {
+        "File":  "posh-wakatime_20210223124235.psm1",
+        "Rule":  "MissingTypename",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "Missing type name after \u0027[\u0027."
+    },
+    {
+        "File":  "posh-wakatime_20210223124235.psm1",
+        "Rule":  "InvalidEndOfLine",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The token \u0027\u0026\u0026\u0027 is not a valid statement separator in this version."
+    },
+    {
+        "File":  "posh-wakatime_20210223124235.psm1",
+        "Rule":  "ExpectedValueExpression",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "You must provide a value expression following the \u0027\u0026\u0026\u0027 operator."
+    },
+    {
+        "File":  "posh-wakatime_20210223124235.psm1",
+        "Rule":  "UnexpectedToken",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "Unexpected token \u0027local\u0027 in expression or statement."
+    },
+    {
+        "File":  "posh-wakatime_20210223124235.psm1",
+        "Rule":  "InvalidEndOfLine",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The token \u0027||\u0027 is not a valid statement separator in this version."
+    },
+    {
+        "File":  "posh-wakatime_20210223124235.psm1",
+        "Rule":  "AmpersandNotAllowed",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The ampersand (\u0026) character is not allowed. The \u0026 operator is reserved for future use; wrap an ampersand in double quotation marks (\"\u0026\") to pass it as part of a string."
+    },
+    {
+        "File":  "posh-wakatime_20210223124235.psm1",
+        "Rule":  "InvalidEndOfLine",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The token \u0027\u0026\u0026\u0027 is not a valid statement separator in this version."
+    },
+    {
+        "File":  "posh-wakatime_20210223124242.psm1",
+        "Rule":  "MissingTypename",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "Missing type name after \u0027[\u0027."
+    },
+    {
+        "File":  "posh-wakatime_20210223124242.psm1",
+        "Rule":  "InvalidEndOfLine",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The token \u0027\u0026\u0026\u0027 is not a valid statement separator in this version."
+    },
+    {
+        "File":  "posh-wakatime_20210223124242.psm1",
+        "Rule":  "ExpectedValueExpression",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "You must provide a value expression following the \u0027\u0026\u0026\u0027 operator."
+    },
+    {
+        "File":  "posh-wakatime_20210223124242.psm1",
+        "Rule":  "UnexpectedToken",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "Unexpected token \u0027local\u0027 in expression or statement."
+    },
+    {
+        "File":  "posh-wakatime_20210223124242.psm1",
+        "Rule":  "InvalidEndOfLine",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The token \u0027||\u0027 is not a valid statement separator in this version."
+    },
+    {
+        "File":  "posh-wakatime_20210223124242.psm1",
+        "Rule":  "AmpersandNotAllowed",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The ampersand (\u0026) character is not allowed. The \u0026 operator is reserved for future use; wrap an ampersand in double quotation marks (\"\u0026\") to pass it as part of a string."
+    },
+    {
+        "File":  "posh-wakatime_20210223124242.psm1",
+        "Rule":  "InvalidEndOfLine",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The token \u0027\u0026\u0026\u0027 is not a valid statement separator in this version."
+    },
+    {
+        "File":  "posh-wakatime_20210223124248.psm1",
+        "Rule":  "MissingTypename",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "Missing type name after \u0027[\u0027."
+    },
+    {
+        "File":  "posh-wakatime_20210223124248.psm1",
+        "Rule":  "InvalidEndOfLine",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The token \u0027\u0026\u0026\u0027 is not a valid statement separator in this version."
+    },
+    {
+        "File":  "posh-wakatime_20210223124248.psm1",
+        "Rule":  "ExpectedValueExpression",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "You must provide a value expression following the \u0027\u0026\u0026\u0027 operator."
+    },
+    {
+        "File":  "posh-wakatime_20210223124248.psm1",
+        "Rule":  "UnexpectedToken",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "Unexpected token \u0027local\u0027 in expression or statement."
+    },
+    {
+        "File":  "posh-wakatime_20210223124248.psm1",
+        "Rule":  "InvalidEndOfLine",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The token \u0027||\u0027 is not a valid statement separator in this version."
+    },
+    {
+        "File":  "posh-wakatime_20210223124248.psm1",
+        "Rule":  "AmpersandNotAllowed",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The ampersand (\u0026) character is not allowed. The \u0026 operator is reserved for future use; wrap an ampersand in double quotation marks (\"\u0026\") to pass it as part of a string."
+    },
+    {
+        "File":  "posh-wakatime_20210223124248.psm1",
+        "Rule":  "InvalidEndOfLine",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The token \u0027\u0026\u0026\u0027 is not a valid statement separator in this version."
+    },
+    {
+        "File":  "posh-wakatime_20210223124337.psm1",
+        "Rule":  "MissingTypename",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "Missing type name after \u0027[\u0027."
+    },
+    {
+        "File":  "posh-wakatime_20210223124337.psm1",
+        "Rule":  "InvalidEndOfLine",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The token \u0027\u0026\u0026\u0027 is not a valid statement separator in this version."
+    },
+    {
+        "File":  "posh-wakatime_20210223124337.psm1",
+        "Rule":  "ExpectedValueExpression",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "You must provide a value expression following the \u0027\u0026\u0026\u0027 operator."
+    },
+    {
+        "File":  "posh-wakatime_20210223124337.psm1",
+        "Rule":  "UnexpectedToken",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "Unexpected token \u0027local\u0027 in expression or statement."
+    },
+    {
+        "File":  "posh-wakatime_20210223124337.psm1",
+        "Rule":  "InvalidEndOfLine",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The token \u0027||\u0027 is not a valid statement separator in this version."
+    },
+    {
+        "File":  "posh-wakatime_20210223124337.psm1",
+        "Rule":  "AmpersandNotAllowed",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The ampersand (\u0026) character is not allowed. The \u0026 operator is reserved for future use; wrap an ampersand in double quotation marks (\"\u0026\") to pass it as part of a string."
+    },
+    {
+        "File":  "posh-wakatime_20210223124337.psm1",
+        "Rule":  "InvalidEndOfLine",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The token \u0027\u0026\u0026\u0027 is not a valid statement separator in this version."
+    },
+    {
+        "File":  "posh-wakatime_20210223124403.psm1",
+        "Rule":  "MissingTypename",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "Missing type name after \u0027[\u0027."
+    },
+    {
+        "File":  "posh-wakatime_20210223124403.psm1",
+        "Rule":  "InvalidEndOfLine",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The token \u0027\u0026\u0026\u0027 is not a valid statement separator in this version."
+    },
+    {
+        "File":  "posh-wakatime_20210223124403.psm1",
+        "Rule":  "ExpectedValueExpression",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "You must provide a value expression following the \u0027\u0026\u0026\u0027 operator."
+    },
+    {
+        "File":  "posh-wakatime_20210223124403.psm1",
+        "Rule":  "UnexpectedToken",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "Unexpected token \u0027local\u0027 in expression or statement."
+    },
+    {
+        "File":  "posh-wakatime_20210223124403.psm1",
+        "Rule":  "InvalidEndOfLine",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The token \u0027||\u0027 is not a valid statement separator in this version."
+    },
+    {
+        "File":  "posh-wakatime_20210223124403.psm1",
+        "Rule":  "AmpersandNotAllowed",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The ampersand (\u0026) character is not allowed. The \u0026 operator is reserved for future use; wrap an ampersand in double quotation marks (\"\u0026\") to pass it as part of a string."
+    },
+    {
+        "File":  "posh-wakatime_20210223124403.psm1",
+        "Rule":  "InvalidEndOfLine",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The token \u0027\u0026\u0026\u0027 is not a valid statement separator in this version."
+    },
+    {
+        "File":  "posh-wakatime_20210223124419.psm1",
+        "Rule":  "MissingTypename",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "Missing type name after \u0027[\u0027."
+    },
+    {
+        "File":  "posh-wakatime_20210223124419.psm1",
+        "Rule":  "InvalidEndOfLine",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The token \u0027\u0026\u0026\u0027 is not a valid statement separator in this version."
+    },
+    {
+        "File":  "posh-wakatime_20210223124419.psm1",
+        "Rule":  "ExpectedValueExpression",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "You must provide a value expression following the \u0027\u0026\u0026\u0027 operator."
+    },
+    {
+        "File":  "posh-wakatime_20210223124419.psm1",
+        "Rule":  "UnexpectedToken",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "Unexpected token \u0027local\u0027 in expression or statement."
+    },
+    {
+        "File":  "posh-wakatime_20210223124419.psm1",
+        "Rule":  "InvalidEndOfLine",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The token \u0027||\u0027 is not a valid statement separator in this version."
+    },
+    {
+        "File":  "posh-wakatime_20210223124419.psm1",
+        "Rule":  "AmpersandNotAllowed",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The ampersand (\u0026) character is not allowed. The \u0026 operator is reserved for future use; wrap an ampersand in double quotation marks (\"\u0026\") to pass it as part of a string."
+    },
+    {
+        "File":  "posh-wakatime_20210223124419.psm1",
+        "Rule":  "InvalidEndOfLine",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The token \u0027\u0026\u0026\u0027 is not a valid statement separator in this version."
+    },
+    {
+        "File":  "posh-wakatime_20210223124426.psm1",
+        "Rule":  "MissingTypename",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "Missing type name after \u0027[\u0027."
+    },
+    {
+        "File":  "posh-wakatime_20210223124426.psm1",
+        "Rule":  "InvalidEndOfLine",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The token \u0027\u0026\u0026\u0027 is not a valid statement separator in this version."
+    },
+    {
+        "File":  "posh-wakatime_20210223124426.psm1",
+        "Rule":  "ExpectedValueExpression",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "You must provide a value expression following the \u0027\u0026\u0026\u0027 operator."
+    },
+    {
+        "File":  "posh-wakatime_20210223124426.psm1",
+        "Rule":  "UnexpectedToken",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "Unexpected token \u0027local\u0027 in expression or statement."
+    },
+    {
+        "File":  "posh-wakatime_20210223124426.psm1",
+        "Rule":  "InvalidEndOfLine",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The token \u0027||\u0027 is not a valid statement separator in this version."
+    },
+    {
+        "File":  "posh-wakatime_20210223124426.psm1",
+        "Rule":  "AmpersandNotAllowed",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The ampersand (\u0026) character is not allowed. The \u0026 operator is reserved for future use; wrap an ampersand in double quotation marks (\"\u0026\") to pass it as part of a string."
+    },
+    {
+        "File":  "posh-wakatime_20210223124426.psm1",
+        "Rule":  "InvalidEndOfLine",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The token \u0027\u0026\u0026\u0027 is not a valid statement separator in this version."
+    },
+    {
+        "File":  "posh-wakatime_20210223124435.psm1",
+        "Rule":  "MissingTypename",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "Missing type name after \u0027[\u0027."
+    },
+    {
+        "File":  "posh-wakatime_20210223124435.psm1",
+        "Rule":  "InvalidEndOfLine",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The token \u0027\u0026\u0026\u0027 is not a valid statement separator in this version."
+    },
+    {
+        "File":  "posh-wakatime_20210223124435.psm1",
+        "Rule":  "ExpectedValueExpression",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "You must provide a value expression following the \u0027\u0026\u0026\u0027 operator."
+    },
+    {
+        "File":  "posh-wakatime_20210223124435.psm1",
+        "Rule":  "UnexpectedToken",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "Unexpected token \u0027local\u0027 in expression or statement."
+    },
+    {
+        "File":  "posh-wakatime_20210223124435.psm1",
+        "Rule":  "InvalidEndOfLine",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The token \u0027||\u0027 is not a valid statement separator in this version."
+    },
+    {
+        "File":  "posh-wakatime_20210223124435.psm1",
+        "Rule":  "AmpersandNotAllowed",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The ampersand (\u0026) character is not allowed. The \u0026 operator is reserved for future use; wrap an ampersand in double quotation marks (\"\u0026\") to pass it as part of a string."
+    },
+    {
+        "File":  "posh-wakatime_20210223124435.psm1",
+        "Rule":  "InvalidEndOfLine",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The token \u0027\u0026\u0026\u0027 is not a valid statement separator in this version."
+    },
+    {
+        "File":  "posh-wakatime_20210223124444.psm1",
+        "Rule":  "MissingTypename",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "Missing type name after \u0027[\u0027."
+    },
+    {
+        "File":  "posh-wakatime_20210223124444.psm1",
+        "Rule":  "InvalidEndOfLine",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The token \u0027\u0026\u0026\u0027 is not a valid statement separator in this version."
+    },
+    {
+        "File":  "posh-wakatime_20210223124444.psm1",
+        "Rule":  "ExpectedValueExpression",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "You must provide a value expression following the \u0027\u0026\u0026\u0027 operator."
+    },
+    {
+        "File":  "posh-wakatime_20210223124444.psm1",
+        "Rule":  "UnexpectedToken",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "Unexpected token \u0027local\u0027 in expression or statement."
+    },
+    {
+        "File":  "posh-wakatime_20210223124444.psm1",
+        "Rule":  "InvalidEndOfLine",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The token \u0027||\u0027 is not a valid statement separator in this version."
+    },
+    {
+        "File":  "posh-wakatime_20210223124444.psm1",
+        "Rule":  "AmpersandNotAllowed",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The ampersand (\u0026) character is not allowed. The \u0026 operator is reserved for future use; wrap an ampersand in double quotation marks (\"\u0026\") to pass it as part of a string."
+    },
+    {
+        "File":  "posh-wakatime_20210223124444.psm1",
+        "Rule":  "InvalidEndOfLine",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The token \u0027\u0026\u0026\u0027 is not a valid statement separator in this version."
+    },
+    {
+        "File":  "posh-wakatime_20210223124624.psm1",
+        "Rule":  "MissingTypename",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "Missing type name after \u0027[\u0027."
+    },
+    {
+        "File":  "posh-wakatime_20210223124624.psm1",
+        "Rule":  "InvalidEndOfLine",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The token \u0027\u0026\u0026\u0027 is not a valid statement separator in this version."
+    },
+    {
+        "File":  "posh-wakatime_20210223124624.psm1",
+        "Rule":  "ExpectedValueExpression",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "You must provide a value expression following the \u0027\u0026\u0026\u0027 operator."
+    },
+    {
+        "File":  "posh-wakatime_20210223124624.psm1",
+        "Rule":  "UnexpectedToken",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "Unexpected token \u0027local\u0027 in expression or statement."
+    },
+    {
+        "File":  "posh-wakatime_20210223124624.psm1",
+        "Rule":  "InvalidEndOfLine",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The token \u0027||\u0027 is not a valid statement separator in this version."
+    },
+    {
+        "File":  "posh-wakatime_20210223124624.psm1",
+        "Rule":  "AmpersandNotAllowed",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The ampersand (\u0026) character is not allowed. The \u0026 operator is reserved for future use; wrap an ampersand in double quotation marks (\"\u0026\") to pass it as part of a string."
+    },
+    {
+        "File":  "posh-wakatime_20210223124624.psm1",
+        "Rule":  "InvalidEndOfLine",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The token \u0027\u0026\u0026\u0027 is not a valid statement separator in this version."
+    },
+    {
+        "File":  "posh-wakatime_20210223125340.psm1",
+        "Rule":  "MissingTypename",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "Missing type name after \u0027[\u0027."
+    },
+    {
+        "File":  "posh-wakatime_20210223125340.psm1",
+        "Rule":  "InvalidEndOfLine",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The token \u0027\u0026\u0026\u0027 is not a valid statement separator in this version."
+    },
+    {
+        "File":  "posh-wakatime_20210223125340.psm1",
+        "Rule":  "ExpectedValueExpression",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "You must provide a value expression following the \u0027\u0026\u0026\u0027 operator."
+    },
+    {
+        "File":  "posh-wakatime_20210223125340.psm1",
+        "Rule":  "UnexpectedToken",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "Unexpected token \u0027local\u0027 in expression or statement."
+    },
+    {
+        "File":  "posh-wakatime_20210223125340.psm1",
+        "Rule":  "InvalidEndOfLine",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The token \u0027||\u0027 is not a valid statement separator in this version."
+    },
+    {
+        "File":  "posh-wakatime_20210223125340.psm1",
+        "Rule":  "AmpersandNotAllowed",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The ampersand (\u0026) character is not allowed. The \u0026 operator is reserved for future use; wrap an ampersand in double quotation marks (\"\u0026\") to pass it as part of a string."
+    },
+    {
+        "File":  "posh-wakatime_20210223125340.psm1",
+        "Rule":  "InvalidEndOfLine",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The token \u0027\u0026\u0026\u0027 is not a valid statement separator in this version."
+    },
+    {
+        "File":  "posh-wakatime_20210223125649.psm1",
+        "Rule":  "MissingTypename",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "Missing type name after \u0027[\u0027."
+    },
+    {
+        "File":  "posh-wakatime_20210223125649.psm1",
+        "Rule":  "InvalidEndOfLine",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The token \u0027\u0026\u0026\u0027 is not a valid statement separator in this version."
+    },
+    {
+        "File":  "posh-wakatime_20210223125649.psm1",
+        "Rule":  "ExpectedValueExpression",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "You must provide a value expression following the \u0027\u0026\u0026\u0027 operator."
+    },
+    {
+        "File":  "posh-wakatime_20210223125649.psm1",
+        "Rule":  "UnexpectedToken",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "Unexpected token \u0027local\u0027 in expression or statement."
+    },
+    {
+        "File":  "posh-wakatime_20210223125649.psm1",
+        "Rule":  "InvalidEndOfLine",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The token \u0027||\u0027 is not a valid statement separator in this version."
+    },
+    {
+        "File":  "posh-wakatime_20210223125649.psm1",
+        "Rule":  "AmpersandNotAllowed",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The ampersand (\u0026) character is not allowed. The \u0026 operator is reserved for future use; wrap an ampersand in double quotation marks (\"\u0026\") to pass it as part of a string."
+    },
+    {
+        "File":  "posh-wakatime_20210223125649.psm1",
+        "Rule":  "InvalidEndOfLine",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The token \u0027\u0026\u0026\u0027 is not a valid statement separator in this version."
+    },
+    {
+        "File":  "posh-wakatime_20210223125729.psm1",
+        "Rule":  "MissingTypename",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "Missing type name after \u0027[\u0027."
+    },
+    {
+        "File":  "posh-wakatime_20210223125729.psm1",
+        "Rule":  "InvalidEndOfLine",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The token \u0027\u0026\u0026\u0027 is not a valid statement separator in this version."
+    },
+    {
+        "File":  "posh-wakatime_20210223125729.psm1",
+        "Rule":  "ExpectedValueExpression",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "You must provide a value expression following the \u0027\u0026\u0026\u0027 operator."
+    },
+    {
+        "File":  "posh-wakatime_20210223125729.psm1",
+        "Rule":  "UnexpectedToken",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "Unexpected token \u0027local\u0027 in expression or statement."
+    },
+    {
+        "File":  "posh-wakatime_20210223125729.psm1",
+        "Rule":  "InvalidEndOfLine",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The token \u0027||\u0027 is not a valid statement separator in this version."
+    },
+    {
+        "File":  "posh-wakatime_20210223125729.psm1",
+        "Rule":  "AmpersandNotAllowed",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The ampersand (\u0026) character is not allowed. The \u0026 operator is reserved for future use; wrap an ampersand in double quotation marks (\"\u0026\") to pass it as part of a string."
+    },
+    {
+        "File":  "posh-wakatime_20210223125729.psm1",
+        "Rule":  "InvalidEndOfLine",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The token \u0027\u0026\u0026\u0027 is not a valid statement separator in this version."
+    },
+    {
+        "File":  "posh-wakatime_20210223125752.psm1",
+        "Rule":  "MissingTypename",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "Missing type name after \u0027[\u0027."
+    },
+    {
+        "File":  "posh-wakatime_20210223125752.psm1",
+        "Rule":  "InvalidEndOfLine",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The token \u0027\u0026\u0026\u0027 is not a valid statement separator in this version."
+    },
+    {
+        "File":  "posh-wakatime_20210223125752.psm1",
+        "Rule":  "ExpectedValueExpression",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "You must provide a value expression following the \u0027\u0026\u0026\u0027 operator."
+    },
+    {
+        "File":  "posh-wakatime_20210223125752.psm1",
+        "Rule":  "UnexpectedToken",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "Unexpected token \u0027local\u0027 in expression or statement."
+    },
+    {
+        "File":  "posh-wakatime_20210223125752.psm1",
+        "Rule":  "InvalidEndOfLine",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The token \u0027||\u0027 is not a valid statement separator in this version."
+    },
+    {
+        "File":  "posh-wakatime_20210223125752.psm1",
+        "Rule":  "AmpersandNotAllowed",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The ampersand (\u0026) character is not allowed. The \u0026 operator is reserved for future use; wrap an ampersand in double quotation marks (\"\u0026\") to pass it as part of a string."
+    },
+    {
+        "File":  "posh-wakatime_20210223125752.psm1",
+        "Rule":  "InvalidEndOfLine",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The token \u0027\u0026\u0026\u0027 is not a valid statement separator in this version."
+    },
+    {
+        "File":  "posh-wakatime_20210223125758.psm1",
+        "Rule":  "MissingTypename",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "Missing type name after \u0027[\u0027."
+    },
+    {
+        "File":  "posh-wakatime_20210223125758.psm1",
+        "Rule":  "InvalidEndOfLine",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The token \u0027\u0026\u0026\u0027 is not a valid statement separator in this version."
+    },
+    {
+        "File":  "posh-wakatime_20210223125758.psm1",
+        "Rule":  "ExpectedValueExpression",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "You must provide a value expression following the \u0027\u0026\u0026\u0027 operator."
+    },
+    {
+        "File":  "posh-wakatime_20210223125758.psm1",
+        "Rule":  "UnexpectedToken",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "Unexpected token \u0027local\u0027 in expression or statement."
+    },
+    {
+        "File":  "posh-wakatime_20210223125758.psm1",
+        "Rule":  "InvalidEndOfLine",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The token \u0027||\u0027 is not a valid statement separator in this version."
+    },
+    {
+        "File":  "posh-wakatime_20210223125758.psm1",
+        "Rule":  "AmpersandNotAllowed",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The ampersand (\u0026) character is not allowed. The \u0026 operator is reserved for future use; wrap an ampersand in double quotation marks (\"\u0026\") to pass it as part of a string."
+    },
+    {
+        "File":  "posh-wakatime_20210223125758.psm1",
+        "Rule":  "InvalidEndOfLine",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The token \u0027\u0026\u0026\u0027 is not a valid statement separator in this version."
+    },
+    {
+        "File":  "posh-wakatime_20210223125807.psm1",
+        "Rule":  "MissingTypename",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "Missing type name after \u0027[\u0027."
+    },
+    {
+        "File":  "posh-wakatime_20210223125807.psm1",
+        "Rule":  "InvalidEndOfLine",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The token \u0027\u0026\u0026\u0027 is not a valid statement separator in this version."
+    },
+    {
+        "File":  "posh-wakatime_20210223125807.psm1",
+        "Rule":  "ExpectedValueExpression",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "You must provide a value expression following the \u0027\u0026\u0026\u0027 operator."
+    },
+    {
+        "File":  "posh-wakatime_20210223125807.psm1",
+        "Rule":  "UnexpectedToken",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "Unexpected token \u0027local\u0027 in expression or statement."
+    },
+    {
+        "File":  "posh-wakatime_20210223125807.psm1",
+        "Rule":  "InvalidEndOfLine",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The token \u0027||\u0027 is not a valid statement separator in this version."
+    },
+    {
+        "File":  "posh-wakatime_20210223125807.psm1",
+        "Rule":  "AmpersandNotAllowed",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The ampersand (\u0026) character is not allowed. The \u0026 operator is reserved for future use; wrap an ampersand in double quotation marks (\"\u0026\") to pass it as part of a string."
+    },
+    {
+        "File":  "posh-wakatime_20210223125807.psm1",
+        "Rule":  "InvalidEndOfLine",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The token \u0027\u0026\u0026\u0027 is not a valid statement separator in this version."
+    },
+    {
+        "File":  "posh-wakatime_20210223130008.psm1",
+        "Rule":  "MissingTypename",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "Missing type name after \u0027[\u0027."
+    },
+    {
+        "File":  "posh-wakatime_20210223130008.psm1",
+        "Rule":  "InvalidEndOfLine",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The token \u0027\u0026\u0026\u0027 is not a valid statement separator in this version."
+    },
+    {
+        "File":  "posh-wakatime_20210223130008.psm1",
+        "Rule":  "ExpectedValueExpression",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "You must provide a value expression following the \u0027\u0026\u0026\u0027 operator."
+    },
+    {
+        "File":  "posh-wakatime_20210223130008.psm1",
+        "Rule":  "UnexpectedToken",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "Unexpected token \u0027local\u0027 in expression or statement."
+    },
+    {
+        "File":  "posh-wakatime_20210223130008.psm1",
+        "Rule":  "InvalidEndOfLine",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The token \u0027||\u0027 is not a valid statement separator in this version."
+    },
+    {
+        "File":  "posh-wakatime_20210223130008.psm1",
+        "Rule":  "AmpersandNotAllowed",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The ampersand (\u0026) character is not allowed. The \u0026 operator is reserved for future use; wrap an ampersand in double quotation marks (\"\u0026\") to pass it as part of a string."
+    },
+    {
+        "File":  "posh-wakatime_20210223130008.psm1",
+        "Rule":  "InvalidEndOfLine",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The token \u0027\u0026\u0026\u0027 is not a valid statement separator in this version."
+    },
+    {
+        "File":  "posh-wakatime_20210223130012.psm1",
+        "Rule":  "MissingTypename",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "Missing type name after \u0027[\u0027."
+    },
+    {
+        "File":  "posh-wakatime_20210223130012.psm1",
+        "Rule":  "InvalidEndOfLine",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The token \u0027\u0026\u0026\u0027 is not a valid statement separator in this version."
+    },
+    {
+        "File":  "posh-wakatime_20210223130012.psm1",
+        "Rule":  "ExpectedValueExpression",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "You must provide a value expression following the \u0027\u0026\u0026\u0027 operator."
+    },
+    {
+        "File":  "posh-wakatime_20210223130012.psm1",
+        "Rule":  "UnexpectedToken",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "Unexpected token \u0027local\u0027 in expression or statement."
+    },
+    {
+        "File":  "posh-wakatime_20210223130012.psm1",
+        "Rule":  "InvalidEndOfLine",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The token \u0027||\u0027 is not a valid statement separator in this version."
+    },
+    {
+        "File":  "posh-wakatime_20210223130012.psm1",
+        "Rule":  "AmpersandNotAllowed",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The ampersand (\u0026) character is not allowed. The \u0026 operator is reserved for future use; wrap an ampersand in double quotation marks (\"\u0026\") to pass it as part of a string."
+    },
+    {
+        "File":  "posh-wakatime_20210223130012.psm1",
+        "Rule":  "InvalidEndOfLine",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The token \u0027\u0026\u0026\u0027 is not a valid statement separator in this version."
+    },
+    {
+        "File":  "posh-wakatime_20210223130207.psm1",
+        "Rule":  "MissingTypename",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "Missing type name after \u0027[\u0027."
+    },
+    {
+        "File":  "posh-wakatime_20210223130207.psm1",
+        "Rule":  "InvalidEndOfLine",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The token \u0027\u0026\u0026\u0027 is not a valid statement separator in this version."
+    },
+    {
+        "File":  "posh-wakatime_20210223130207.psm1",
+        "Rule":  "ExpectedValueExpression",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "You must provide a value expression following the \u0027\u0026\u0026\u0027 operator."
+    },
+    {
+        "File":  "posh-wakatime_20210223130207.psm1",
+        "Rule":  "UnexpectedToken",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "Unexpected token \u0027local\u0027 in expression or statement."
+    },
+    {
+        "File":  "posh-wakatime_20210223130207.psm1",
+        "Rule":  "InvalidEndOfLine",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The token \u0027||\u0027 is not a valid statement separator in this version."
+    },
+    {
+        "File":  "posh-wakatime_20210223130207.psm1",
+        "Rule":  "AmpersandNotAllowed",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The ampersand (\u0026) character is not allowed. The \u0026 operator is reserved for future use; wrap an ampersand in double quotation marks (\"\u0026\") to pass it as part of a string."
+    },
+    {
+        "File":  "posh-wakatime_20210223130207.psm1",
+        "Rule":  "InvalidEndOfLine",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The token \u0027\u0026\u0026\u0027 is not a valid statement separator in this version."
+    },
+    {
+        "File":  "posh-wakatime_20210223130213.psm1",
+        "Rule":  "MissingTypename",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "Missing type name after \u0027[\u0027."
+    },
+    {
+        "File":  "posh-wakatime_20210223130213.psm1",
+        "Rule":  "InvalidEndOfLine",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The token \u0027\u0026\u0026\u0027 is not a valid statement separator in this version."
+    },
+    {
+        "File":  "posh-wakatime_20210223130213.psm1",
+        "Rule":  "ExpectedValueExpression",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "You must provide a value expression following the \u0027\u0026\u0026\u0027 operator."
+    },
+    {
+        "File":  "posh-wakatime_20210223130213.psm1",
+        "Rule":  "UnexpectedToken",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "Unexpected token \u0027local\u0027 in expression or statement."
+    },
+    {
+        "File":  "posh-wakatime_20210223130213.psm1",
+        "Rule":  "InvalidEndOfLine",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The token \u0027||\u0027 is not a valid statement separator in this version."
+    },
+    {
+        "File":  "posh-wakatime_20210223130213.psm1",
+        "Rule":  "AmpersandNotAllowed",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The ampersand (\u0026) character is not allowed. The \u0026 operator is reserved for future use; wrap an ampersand in double quotation marks (\"\u0026\") to pass it as part of a string."
+    },
+    {
+        "File":  "posh-wakatime_20210223130213.psm1",
+        "Rule":  "InvalidEndOfLine",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The token \u0027\u0026\u0026\u0027 is not a valid statement separator in this version."
+    },
+    {
+        "File":  "posh-wakatime_20210223134518.psm1",
+        "Rule":  "UnexpectedToken",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "Unexpected token \u0027$command\" \"\u0027 in expression or statement."
+    },
+    {
+        "File":  "posh-wakatime_20210223134518.psm1",
+        "Rule":  "UnexpectedToken",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "Unexpected token \u0027\" \"\u0027 in expression or statement."
+    },
+    {
+        "File":  "pwsh-wakatime_20210223105108.ps1",
+        "Rule":  "ExpectedExpression",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "An expression was expected after \u0027(\u0027."
+    },
+    {
+        "File":  "pwsh-wakatime_20210223105108.ps1",
+        "Rule":  "MissingTypename",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "Missing type name after \u0027[\u0027."
+    },
+    {
+        "File":  "pwsh-wakatime_20210223105108.ps1",
+        "Rule":  "InvalidEndOfLine",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The token \u0027\u0026\u0026\u0027 is not a valid statement separator in this version."
+    },
+    {
+        "File":  "pwsh-wakatime_20210223105108.ps1",
+        "Rule":  "ExpectedValueExpression",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "You must provide a value expression following the \u0027\u0026\u0026\u0027 operator."
+    },
+    {
+        "File":  "pwsh-wakatime_20210223105108.ps1",
+        "Rule":  "UnexpectedToken",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "Unexpected token \u0027local\u0027 in expression or statement."
+    },
+    {
+        "File":  "pwsh-wakatime_20210223105108.ps1",
+        "Rule":  "InvalidEndOfLine",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The token \u0027||\u0027 is not a valid statement separator in this version."
+    },
+    {
+        "File":  "pwsh-wakatime_20210223105108.ps1",
+        "Rule":  "AmpersandNotAllowed",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The ampersand (\u0026) character is not allowed. The \u0026 operator is reserved for future use; wrap an ampersand in double quotation marks (\"\u0026\") to pass it as part of a string."
+    },
+    {
+        "File":  "pwsh-wakatime_20210223105108.ps1",
+        "Rule":  "InvalidEndOfLine",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The token \u0027\u0026\u0026\u0027 is not a valid statement separator in this version."
+    },
+    {
+        "File":  "pwsh-wakatime_20210223105255.ps1",
+        "Rule":  "ExpectedExpression",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "An expression was expected after \u0027(\u0027."
+    },
+    {
+        "File":  "pwsh-wakatime_20210223105255.ps1",
+        "Rule":  "MissingTypename",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "Missing type name after \u0027[\u0027."
+    },
+    {
+        "File":  "pwsh-wakatime_20210223105255.ps1",
+        "Rule":  "InvalidEndOfLine",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The token \u0027\u0026\u0026\u0027 is not a valid statement separator in this version."
+    },
+    {
+        "File":  "pwsh-wakatime_20210223105255.ps1",
+        "Rule":  "ExpectedValueExpression",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "You must provide a value expression following the \u0027\u0026\u0026\u0027 operator."
+    },
+    {
+        "File":  "pwsh-wakatime_20210223105255.ps1",
+        "Rule":  "UnexpectedToken",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "Unexpected token \u0027local\u0027 in expression or statement."
+    },
+    {
+        "File":  "pwsh-wakatime_20210223105255.ps1",
+        "Rule":  "InvalidEndOfLine",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The token \u0027||\u0027 is not a valid statement separator in this version."
+    },
+    {
+        "File":  "pwsh-wakatime_20210223105255.ps1",
+        "Rule":  "AmpersandNotAllowed",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The ampersand (\u0026) character is not allowed. The \u0026 operator is reserved for future use; wrap an ampersand in double quotation marks (\"\u0026\") to pass it as part of a string."
+    },
+    {
+        "File":  "pwsh-wakatime_20210223105255.ps1",
+        "Rule":  "InvalidEndOfLine",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The token \u0027\u0026\u0026\u0027 is not a valid statement separator in this version."
+    },
+    {
+        "File":  "pwsh-wakatime_20210223105355.ps1",
+        "Rule":  "ExpectedExpression",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "An expression was expected after \u0027(\u0027."
+    },
+    {
+        "File":  "pwsh-wakatime_20210223105355.ps1",
+        "Rule":  "MissingTypename",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "Missing type name after \u0027[\u0027."
+    },
+    {
+        "File":  "pwsh-wakatime_20210223105355.ps1",
+        "Rule":  "InvalidEndOfLine",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The token \u0027\u0026\u0026\u0027 is not a valid statement separator in this version."
+    },
+    {
+        "File":  "pwsh-wakatime_20210223105355.ps1",
+        "Rule":  "ExpectedValueExpression",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "You must provide a value expression following the \u0027\u0026\u0026\u0027 operator."
+    },
+    {
+        "File":  "pwsh-wakatime_20210223105355.ps1",
+        "Rule":  "UnexpectedToken",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "Unexpected token \u0027local\u0027 in expression or statement."
+    },
+    {
+        "File":  "pwsh-wakatime_20210223105355.ps1",
+        "Rule":  "InvalidEndOfLine",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The token \u0027||\u0027 is not a valid statement separator in this version."
+    },
+    {
+        "File":  "pwsh-wakatime_20210223105355.ps1",
+        "Rule":  "AmpersandNotAllowed",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The ampersand (\u0026) character is not allowed. The \u0026 operator is reserved for future use; wrap an ampersand in double quotation marks (\"\u0026\") to pass it as part of a string."
+    },
+    {
+        "File":  "pwsh-wakatime_20210223105355.ps1",
+        "Rule":  "InvalidEndOfLine",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The token \u0027\u0026\u0026\u0027 is not a valid statement separator in this version."
+    },
+    {
+        "File":  "pwsh-wakatime_20210223105501.ps1",
+        "Rule":  "ExpectedExpression",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "An expression was expected after \u0027(\u0027."
+    },
+    {
+        "File":  "pwsh-wakatime_20210223105501.ps1",
+        "Rule":  "MissingTypename",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "Missing type name after \u0027[\u0027."
+    },
+    {
+        "File":  "pwsh-wakatime_20210223105501.ps1",
+        "Rule":  "InvalidEndOfLine",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The token \u0027\u0026\u0026\u0027 is not a valid statement separator in this version."
+    },
+    {
+        "File":  "pwsh-wakatime_20210223105501.ps1",
+        "Rule":  "ExpectedValueExpression",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "You must provide a value expression following the \u0027\u0026\u0026\u0027 operator."
+    },
+    {
+        "File":  "pwsh-wakatime_20210223105501.ps1",
+        "Rule":  "UnexpectedToken",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "Unexpected token \u0027local\u0027 in expression or statement."
+    },
+    {
+        "File":  "pwsh-wakatime_20210223105501.ps1",
+        "Rule":  "InvalidEndOfLine",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The token \u0027||\u0027 is not a valid statement separator in this version."
+    },
+    {
+        "File":  "pwsh-wakatime_20210223105501.ps1",
+        "Rule":  "AmpersandNotAllowed",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The ampersand (\u0026) character is not allowed. The \u0026 operator is reserved for future use; wrap an ampersand in double quotation marks (\"\u0026\") to pass it as part of a string."
+    },
+    {
+        "File":  "pwsh-wakatime_20210223105501.ps1",
+        "Rule":  "InvalidEndOfLine",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The token \u0027\u0026\u0026\u0027 is not a valid statement separator in this version."
+    },
+    {
+        "File":  "pwsh-wakatime_20210223105508.ps1",
+        "Rule":  "ExpectedExpression",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "An expression was expected after \u0027(\u0027."
+    },
+    {
+        "File":  "pwsh-wakatime_20210223105508.ps1",
+        "Rule":  "MissingTypename",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "Missing type name after \u0027[\u0027."
+    },
+    {
+        "File":  "pwsh-wakatime_20210223105508.ps1",
+        "Rule":  "InvalidEndOfLine",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The token \u0027\u0026\u0026\u0027 is not a valid statement separator in this version."
+    },
+    {
+        "File":  "pwsh-wakatime_20210223105508.ps1",
+        "Rule":  "ExpectedValueExpression",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "You must provide a value expression following the \u0027\u0026\u0026\u0027 operator."
+    },
+    {
+        "File":  "pwsh-wakatime_20210223105508.ps1",
+        "Rule":  "UnexpectedToken",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "Unexpected token \u0027local\u0027 in expression or statement."
+    },
+    {
+        "File":  "pwsh-wakatime_20210223105508.ps1",
+        "Rule":  "InvalidEndOfLine",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The token \u0027||\u0027 is not a valid statement separator in this version."
+    },
+    {
+        "File":  "pwsh-wakatime_20210223105508.ps1",
+        "Rule":  "AmpersandNotAllowed",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The ampersand (\u0026) character is not allowed. The \u0026 operator is reserved for future use; wrap an ampersand in double quotation marks (\"\u0026\") to pass it as part of a string."
+    },
+    {
+        "File":  "pwsh-wakatime_20210223105508.ps1",
+        "Rule":  "InvalidEndOfLine",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The token \u0027\u0026\u0026\u0027 is not a valid statement separator in this version."
+    },
+    {
+        "File":  "pwsh-wakatime_20210223105752.ps1",
+        "Rule":  "ExpectedExpression",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "An expression was expected after \u0027(\u0027."
+    },
+    {
+        "File":  "pwsh-wakatime_20210223105752.ps1",
+        "Rule":  "MissingTypename",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "Missing type name after \u0027[\u0027."
+    },
+    {
+        "File":  "pwsh-wakatime_20210223105752.ps1",
+        "Rule":  "InvalidEndOfLine",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The token \u0027\u0026\u0026\u0027 is not a valid statement separator in this version."
+    },
+    {
+        "File":  "pwsh-wakatime_20210223105752.ps1",
+        "Rule":  "ExpectedValueExpression",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "You must provide a value expression following the \u0027\u0026\u0026\u0027 operator."
+    },
+    {
+        "File":  "pwsh-wakatime_20210223105752.ps1",
+        "Rule":  "UnexpectedToken",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "Unexpected token \u0027local\u0027 in expression or statement."
+    },
+    {
+        "File":  "pwsh-wakatime_20210223105752.ps1",
+        "Rule":  "InvalidEndOfLine",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The token \u0027||\u0027 is not a valid statement separator in this version."
+    },
+    {
+        "File":  "pwsh-wakatime_20210223105752.ps1",
+        "Rule":  "AmpersandNotAllowed",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The ampersand (\u0026) character is not allowed. The \u0026 operator is reserved for future use; wrap an ampersand in double quotation marks (\"\u0026\") to pass it as part of a string."
+    },
+    {
+        "File":  "pwsh-wakatime_20210223105752.ps1",
+        "Rule":  "InvalidEndOfLine",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The token \u0027\u0026\u0026\u0027 is not a valid statement separator in this version."
+    },
+    {
+        "File":  "pwsh-wakatime_20210223105755.ps1",
+        "Rule":  "ExpectedExpression",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "An expression was expected after \u0027(\u0027."
+    },
+    {
+        "File":  "pwsh-wakatime_20210223105755.ps1",
+        "Rule":  "MissingTypename",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "Missing type name after \u0027[\u0027."
+    },
+    {
+        "File":  "pwsh-wakatime_20210223105755.ps1",
+        "Rule":  "InvalidEndOfLine",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The token \u0027\u0026\u0026\u0027 is not a valid statement separator in this version."
+    },
+    {
+        "File":  "pwsh-wakatime_20210223105755.ps1",
+        "Rule":  "ExpectedValueExpression",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "You must provide a value expression following the \u0027\u0026\u0026\u0027 operator."
+    },
+    {
+        "File":  "pwsh-wakatime_20210223105755.ps1",
+        "Rule":  "UnexpectedToken",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "Unexpected token \u0027local\u0027 in expression or statement."
+    },
+    {
+        "File":  "pwsh-wakatime_20210223105755.ps1",
+        "Rule":  "InvalidEndOfLine",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The token \u0027||\u0027 is not a valid statement separator in this version."
+    },
+    {
+        "File":  "pwsh-wakatime_20210223105755.ps1",
+        "Rule":  "AmpersandNotAllowed",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The ampersand (\u0026) character is not allowed. The \u0026 operator is reserved for future use; wrap an ampersand in double quotation marks (\"\u0026\") to pass it as part of a string."
+    },
+    {
+        "File":  "pwsh-wakatime_20210223105755.ps1",
+        "Rule":  "InvalidEndOfLine",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The token \u0027\u0026\u0026\u0027 is not a valid statement separator in this version."
+    },
+    {
+        "File":  "pwsh-wakatime_20210223105933.ps1",
+        "Rule":  "ExpectedExpression",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "An expression was expected after \u0027(\u0027."
+    },
+    {
+        "File":  "pwsh-wakatime_20210223105933.ps1",
+        "Rule":  "MissingTypename",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "Missing type name after \u0027[\u0027."
+    },
+    {
+        "File":  "pwsh-wakatime_20210223105933.ps1",
+        "Rule":  "InvalidEndOfLine",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The token \u0027\u0026\u0026\u0027 is not a valid statement separator in this version."
+    },
+    {
+        "File":  "pwsh-wakatime_20210223105933.ps1",
+        "Rule":  "ExpectedValueExpression",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "You must provide a value expression following the \u0027\u0026\u0026\u0027 operator."
+    },
+    {
+        "File":  "pwsh-wakatime_20210223105933.ps1",
+        "Rule":  "UnexpectedToken",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "Unexpected token \u0027local\u0027 in expression or statement."
+    },
+    {
+        "File":  "pwsh-wakatime_20210223105933.ps1",
+        "Rule":  "InvalidEndOfLine",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The token \u0027||\u0027 is not a valid statement separator in this version."
+    },
+    {
+        "File":  "pwsh-wakatime_20210223105933.ps1",
+        "Rule":  "AmpersandNotAllowed",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The ampersand (\u0026) character is not allowed. The \u0026 operator is reserved for future use; wrap an ampersand in double quotation marks (\"\u0026\") to pass it as part of a string."
+    },
+    {
+        "File":  "pwsh-wakatime_20210223105933.ps1",
+        "Rule":  "InvalidEndOfLine",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The token \u0027\u0026\u0026\u0027 is not a valid statement separator in this version."
+    },
+    {
+        "File":  "pwsh-wakatime_20210223105946.ps1",
+        "Rule":  "ExpectedExpression",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "An expression was expected after \u0027(\u0027."
+    },
+    {
+        "File":  "pwsh-wakatime_20210223105946.ps1",
+        "Rule":  "MissingTypename",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "Missing type name after \u0027[\u0027."
+    },
+    {
+        "File":  "pwsh-wakatime_20210223105946.ps1",
+        "Rule":  "InvalidEndOfLine",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The token \u0027\u0026\u0026\u0027 is not a valid statement separator in this version."
+    },
+    {
+        "File":  "pwsh-wakatime_20210223105946.ps1",
+        "Rule":  "ExpectedValueExpression",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "You must provide a value expression following the \u0027\u0026\u0026\u0027 operator."
+    },
+    {
+        "File":  "pwsh-wakatime_20210223105946.ps1",
+        "Rule":  "UnexpectedToken",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "Unexpected token \u0027local\u0027 in expression or statement."
+    },
+    {
+        "File":  "pwsh-wakatime_20210223105946.ps1",
+        "Rule":  "InvalidEndOfLine",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The token \u0027||\u0027 is not a valid statement separator in this version."
+    },
+    {
+        "File":  "pwsh-wakatime_20210223105946.ps1",
+        "Rule":  "AmpersandNotAllowed",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The ampersand (\u0026) character is not allowed. The \u0026 operator is reserved for future use; wrap an ampersand in double quotation marks (\"\u0026\") to pass it as part of a string."
+    },
+    {
+        "File":  "pwsh-wakatime_20210223105946.ps1",
+        "Rule":  "InvalidEndOfLine",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The token \u0027\u0026\u0026\u0027 is not a valid statement separator in this version."
+    },
+    {
+        "File":  "pwsh-wakatime_20210223110018.ps1",
+        "Rule":  "ExpectedExpression",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "An expression was expected after \u0027(\u0027."
+    },
+    {
+        "File":  "pwsh-wakatime_20210223110018.ps1",
+        "Rule":  "MissingTypename",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "Missing type name after \u0027[\u0027."
+    },
+    {
+        "File":  "pwsh-wakatime_20210223110018.ps1",
+        "Rule":  "InvalidEndOfLine",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The token \u0027\u0026\u0026\u0027 is not a valid statement separator in this version."
+    },
+    {
+        "File":  "pwsh-wakatime_20210223110018.ps1",
+        "Rule":  "ExpectedValueExpression",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "You must provide a value expression following the \u0027\u0026\u0026\u0027 operator."
+    },
+    {
+        "File":  "pwsh-wakatime_20210223110018.ps1",
+        "Rule":  "UnexpectedToken",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "Unexpected token \u0027local\u0027 in expression or statement."
+    },
+    {
+        "File":  "pwsh-wakatime_20210223110018.ps1",
+        "Rule":  "InvalidEndOfLine",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The token \u0027||\u0027 is not a valid statement separator in this version."
+    },
+    {
+        "File":  "pwsh-wakatime_20210223110018.ps1",
+        "Rule":  "AmpersandNotAllowed",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The ampersand (\u0026) character is not allowed. The \u0026 operator is reserved for future use; wrap an ampersand in double quotation marks (\"\u0026\") to pass it as part of a string."
+    },
+    {
+        "File":  "pwsh-wakatime_20210223110018.ps1",
+        "Rule":  "InvalidEndOfLine",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The token \u0027\u0026\u0026\u0027 is not a valid statement separator in this version."
+    },
+    {
+        "File":  "pwsh-wakatime_20210223110114.ps1",
+        "Rule":  "ExpectedExpression",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "An expression was expected after \u0027(\u0027."
+    },
+    {
+        "File":  "pwsh-wakatime_20210223110114.ps1",
+        "Rule":  "MissingTypename",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "Missing type name after \u0027[\u0027."
+    },
+    {
+        "File":  "pwsh-wakatime_20210223110114.ps1",
+        "Rule":  "InvalidEndOfLine",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The token \u0027\u0026\u0026\u0027 is not a valid statement separator in this version."
+    },
+    {
+        "File":  "pwsh-wakatime_20210223110114.ps1",
+        "Rule":  "ExpectedValueExpression",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "You must provide a value expression following the \u0027\u0026\u0026\u0027 operator."
+    },
+    {
+        "File":  "pwsh-wakatime_20210223110114.ps1",
+        "Rule":  "UnexpectedToken",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "Unexpected token \u0027local\u0027 in expression or statement."
+    },
+    {
+        "File":  "pwsh-wakatime_20210223110114.ps1",
+        "Rule":  "InvalidEndOfLine",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The token \u0027||\u0027 is not a valid statement separator in this version."
+    },
+    {
+        "File":  "pwsh-wakatime_20210223110114.ps1",
+        "Rule":  "AmpersandNotAllowed",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The ampersand (\u0026) character is not allowed. The \u0026 operator is reserved for future use; wrap an ampersand in double quotation marks (\"\u0026\") to pass it as part of a string."
+    },
+    {
+        "File":  "pwsh-wakatime_20210223110114.ps1",
+        "Rule":  "InvalidEndOfLine",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The token \u0027\u0026\u0026\u0027 is not a valid statement separator in this version."
+    },
+    {
+        "File":  "pwsh-wakatime_20210223110120.ps1",
+        "Rule":  "ExpectedExpression",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "An expression was expected after \u0027(\u0027."
+    },
+    {
+        "File":  "pwsh-wakatime_20210223110120.ps1",
+        "Rule":  "MissingTypename",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "Missing type name after \u0027[\u0027."
+    },
+    {
+        "File":  "pwsh-wakatime_20210223110120.ps1",
+        "Rule":  "InvalidEndOfLine",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The token \u0027\u0026\u0026\u0027 is not a valid statement separator in this version."
+    },
+    {
+        "File":  "pwsh-wakatime_20210223110120.ps1",
+        "Rule":  "ExpectedValueExpression",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "You must provide a value expression following the \u0027\u0026\u0026\u0027 operator."
+    },
+    {
+        "File":  "pwsh-wakatime_20210223110120.ps1",
+        "Rule":  "UnexpectedToken",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "Unexpected token \u0027local\u0027 in expression or statement."
+    },
+    {
+        "File":  "pwsh-wakatime_20210223110120.ps1",
+        "Rule":  "InvalidEndOfLine",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The token \u0027||\u0027 is not a valid statement separator in this version."
+    },
+    {
+        "File":  "pwsh-wakatime_20210223110120.ps1",
+        "Rule":  "AmpersandNotAllowed",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The ampersand (\u0026) character is not allowed. The \u0026 operator is reserved for future use; wrap an ampersand in double quotation marks (\"\u0026\") to pass it as part of a string."
+    },
+    {
+        "File":  "pwsh-wakatime_20210223110120.ps1",
+        "Rule":  "InvalidEndOfLine",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The token \u0027\u0026\u0026\u0027 is not a valid statement separator in this version."
+    },
+    {
+        "File":  "pwsh-wakatime_20210223110147.ps1",
+        "Rule":  "ExpectedExpression",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "An expression was expected after \u0027(\u0027."
+    },
+    {
+        "File":  "pwsh-wakatime_20210223110147.ps1",
+        "Rule":  "MissingTypename",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "Missing type name after \u0027[\u0027."
+    },
+    {
+        "File":  "pwsh-wakatime_20210223110147.ps1",
+        "Rule":  "InvalidEndOfLine",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The token \u0027\u0026\u0026\u0027 is not a valid statement separator in this version."
+    },
+    {
+        "File":  "pwsh-wakatime_20210223110147.ps1",
+        "Rule":  "ExpectedValueExpression",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "You must provide a value expression following the \u0027\u0026\u0026\u0027 operator."
+    },
+    {
+        "File":  "pwsh-wakatime_20210223110147.ps1",
+        "Rule":  "UnexpectedToken",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "Unexpected token \u0027local\u0027 in expression or statement."
+    },
+    {
+        "File":  "pwsh-wakatime_20210223110147.ps1",
+        "Rule":  "InvalidEndOfLine",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The token \u0027||\u0027 is not a valid statement separator in this version."
+    },
+    {
+        "File":  "pwsh-wakatime_20210223110147.ps1",
+        "Rule":  "AmpersandNotAllowed",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The ampersand (\u0026) character is not allowed. The \u0026 operator is reserved for future use; wrap an ampersand in double quotation marks (\"\u0026\") to pass it as part of a string."
+    },
+    {
+        "File":  "pwsh-wakatime_20210223110147.ps1",
+        "Rule":  "InvalidEndOfLine",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The token \u0027\u0026\u0026\u0027 is not a valid statement separator in this version."
+    },
+    {
+        "File":  "pwsh-wakatime_20210223110236.ps1",
+        "Rule":  "MissingTypename",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "Missing type name after \u0027[\u0027."
+    },
+    {
+        "File":  "pwsh-wakatime_20210223110236.ps1",
+        "Rule":  "InvalidEndOfLine",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The token \u0027\u0026\u0026\u0027 is not a valid statement separator in this version."
+    },
+    {
+        "File":  "pwsh-wakatime_20210223110236.ps1",
+        "Rule":  "ExpectedValueExpression",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "You must provide a value expression following the \u0027\u0026\u0026\u0027 operator."
+    },
+    {
+        "File":  "pwsh-wakatime_20210223110236.ps1",
+        "Rule":  "UnexpectedToken",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "Unexpected token \u0027local\u0027 in expression or statement."
+    },
+    {
+        "File":  "pwsh-wakatime_20210223110236.ps1",
+        "Rule":  "InvalidEndOfLine",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The token \u0027||\u0027 is not a valid statement separator in this version."
+    },
+    {
+        "File":  "pwsh-wakatime_20210223110236.ps1",
+        "Rule":  "AmpersandNotAllowed",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The ampersand (\u0026) character is not allowed. The \u0026 operator is reserved for future use; wrap an ampersand in double quotation marks (\"\u0026\") to pass it as part of a string."
+    },
+    {
+        "File":  "pwsh-wakatime_20210223110236.ps1",
+        "Rule":  "InvalidEndOfLine",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The token \u0027\u0026\u0026\u0027 is not a valid statement separator in this version."
+    },
+    {
+        "File":  "pwsh-wakatime_20210223111956.ps1",
+        "Rule":  "MissingTypename",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "Missing type name after \u0027[\u0027."
+    },
+    {
+        "File":  "pwsh-wakatime_20210223111956.ps1",
+        "Rule":  "InvalidEndOfLine",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The token \u0027\u0026\u0026\u0027 is not a valid statement separator in this version."
+    },
+    {
+        "File":  "pwsh-wakatime_20210223111956.ps1",
+        "Rule":  "ExpectedValueExpression",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "You must provide a value expression following the \u0027\u0026\u0026\u0027 operator."
+    },
+    {
+        "File":  "pwsh-wakatime_20210223111956.ps1",
+        "Rule":  "UnexpectedToken",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "Unexpected token \u0027local\u0027 in expression or statement."
+    },
+    {
+        "File":  "pwsh-wakatime_20210223111956.ps1",
+        "Rule":  "InvalidEndOfLine",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The token \u0027||\u0027 is not a valid statement separator in this version."
+    },
+    {
+        "File":  "pwsh-wakatime_20210223111956.ps1",
+        "Rule":  "AmpersandNotAllowed",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The ampersand (\u0026) character is not allowed. The \u0026 operator is reserved for future use; wrap an ampersand in double quotation marks (\"\u0026\") to pass it as part of a string."
+    },
+    {
+        "File":  "pwsh-wakatime_20210223111956.ps1",
+        "Rule":  "InvalidEndOfLine",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The token \u0027\u0026\u0026\u0027 is not a valid statement separator in this version."
+    },
+    {
+        "File":  "pwsh-wakatime_20210223112008.ps1",
+        "Rule":  "MissingTypename",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "Missing type name after \u0027[\u0027."
+    },
+    {
+        "File":  "pwsh-wakatime_20210223112008.ps1",
+        "Rule":  "InvalidEndOfLine",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The token \u0027\u0026\u0026\u0027 is not a valid statement separator in this version."
+    },
+    {
+        "File":  "pwsh-wakatime_20210223112008.ps1",
+        "Rule":  "ExpectedValueExpression",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "You must provide a value expression following the \u0027\u0026\u0026\u0027 operator."
+    },
+    {
+        "File":  "pwsh-wakatime_20210223112008.ps1",
+        "Rule":  "UnexpectedToken",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "Unexpected token \u0027local\u0027 in expression or statement."
+    },
+    {
+        "File":  "pwsh-wakatime_20210223112008.ps1",
+        "Rule":  "InvalidEndOfLine",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The token \u0027||\u0027 is not a valid statement separator in this version."
+    },
+    {
+        "File":  "pwsh-wakatime_20210223112008.ps1",
+        "Rule":  "AmpersandNotAllowed",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The ampersand (\u0026) character is not allowed. The \u0026 operator is reserved for future use; wrap an ampersand in double quotation marks (\"\u0026\") to pass it as part of a string."
+    },
+    {
+        "File":  "pwsh-wakatime_20210223112008.ps1",
+        "Rule":  "InvalidEndOfLine",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The token \u0027\u0026\u0026\u0027 is not a valid statement separator in this version."
+    },
+    {
+        "File":  "pwsh-wakatime_20210223112129.ps1",
+        "Rule":  "MissingTypename",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "Missing type name after \u0027[\u0027."
+    },
+    {
+        "File":  "pwsh-wakatime_20210223112129.ps1",
+        "Rule":  "InvalidEndOfLine",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The token \u0027\u0026\u0026\u0027 is not a valid statement separator in this version."
+    },
+    {
+        "File":  "pwsh-wakatime_20210223112129.ps1",
+        "Rule":  "ExpectedValueExpression",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "You must provide a value expression following the \u0027\u0026\u0026\u0027 operator."
+    },
+    {
+        "File":  "pwsh-wakatime_20210223112129.ps1",
+        "Rule":  "UnexpectedToken",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "Unexpected token \u0027local\u0027 in expression or statement."
+    },
+    {
+        "File":  "pwsh-wakatime_20210223112129.ps1",
+        "Rule":  "InvalidEndOfLine",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The token \u0027||\u0027 is not a valid statement separator in this version."
+    },
+    {
+        "File":  "pwsh-wakatime_20210223112129.ps1",
+        "Rule":  "AmpersandNotAllowed",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The ampersand (\u0026) character is not allowed. The \u0026 operator is reserved for future use; wrap an ampersand in double quotation marks (\"\u0026\") to pass it as part of a string."
+    },
+    {
+        "File":  "pwsh-wakatime_20210223112129.ps1",
+        "Rule":  "InvalidEndOfLine",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The token \u0027\u0026\u0026\u0027 is not a valid statement separator in this version."
+    },
+    {
+        "File":  "pwsh-wakatime_20210223112134.ps1",
+        "Rule":  "MissingTypename",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "Missing type name after \u0027[\u0027."
+    },
+    {
+        "File":  "pwsh-wakatime_20210223112134.ps1",
+        "Rule":  "InvalidEndOfLine",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The token \u0027\u0026\u0026\u0027 is not a valid statement separator in this version."
+    },
+    {
+        "File":  "pwsh-wakatime_20210223112134.ps1",
+        "Rule":  "ExpectedValueExpression",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "You must provide a value expression following the \u0027\u0026\u0026\u0027 operator."
+    },
+    {
+        "File":  "pwsh-wakatime_20210223112134.ps1",
+        "Rule":  "UnexpectedToken",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "Unexpected token \u0027local\u0027 in expression or statement."
+    },
+    {
+        "File":  "pwsh-wakatime_20210223112134.ps1",
+        "Rule":  "InvalidEndOfLine",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The token \u0027||\u0027 is not a valid statement separator in this version."
+    },
+    {
+        "File":  "pwsh-wakatime_20210223112134.ps1",
+        "Rule":  "AmpersandNotAllowed",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The ampersand (\u0026) character is not allowed. The \u0026 operator is reserved for future use; wrap an ampersand in double quotation marks (\"\u0026\") to pass it as part of a string."
+    },
+    {
+        "File":  "pwsh-wakatime_20210223112134.ps1",
+        "Rule":  "InvalidEndOfLine",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The token \u0027\u0026\u0026\u0027 is not a valid statement separator in this version."
+    },
+    {
+        "File":  "pwsh-wakatime_20210223112143.ps1",
+        "Rule":  "MissingTypename",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "Missing type name after \u0027[\u0027."
+    },
+    {
+        "File":  "pwsh-wakatime_20210223112143.ps1",
+        "Rule":  "InvalidEndOfLine",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The token \u0027\u0026\u0026\u0027 is not a valid statement separator in this version."
+    },
+    {
+        "File":  "pwsh-wakatime_20210223112143.ps1",
+        "Rule":  "ExpectedValueExpression",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "You must provide a value expression following the \u0027\u0026\u0026\u0027 operator."
+    },
+    {
+        "File":  "pwsh-wakatime_20210223112143.ps1",
+        "Rule":  "UnexpectedToken",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "Unexpected token \u0027local\u0027 in expression or statement."
+    },
+    {
+        "File":  "pwsh-wakatime_20210223112143.ps1",
+        "Rule":  "InvalidEndOfLine",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The token \u0027||\u0027 is not a valid statement separator in this version."
+    },
+    {
+        "File":  "pwsh-wakatime_20210223112143.ps1",
+        "Rule":  "AmpersandNotAllowed",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The ampersand (\u0026) character is not allowed. The \u0026 operator is reserved for future use; wrap an ampersand in double quotation marks (\"\u0026\") to pass it as part of a string."
+    },
+    {
+        "File":  "pwsh-wakatime_20210223112143.ps1",
+        "Rule":  "InvalidEndOfLine",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "The token \u0027\u0026\u0026\u0027 is not a valid statement separator in this version."
+    },
+    {
+        "File":  "PSModule.psm1",
+        "Rule":  "PSAvoidUsingEmptyCatchBlock",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "Empty catch block is used. Please use Write-Error or throw statements in catch blocks."
+    },
+    {
+        "File":  "PSModule.psm1",
+        "Rule":  "PSAvoidUsingEmptyCatchBlock",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "Empty catch block is used. Please use Write-Error or throw statements in catch blocks."
+    },
+    {
+        "File":  "ProfileCore.psm1",
+        "Rule":  "PSAvoidUsingEmptyCatchBlock",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "Empty catch block is used. Please use Write-Error or throw statements in catch blocks."
+    },
+    {
+        "File":  "PSFzf.Base.ps1",
+        "Rule":  "PSAvoidUsingEmptyCatchBlock",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "Empty catch block is used. Please use Write-Error or throw statements in catch blocks."
+    },
+    {
+        "File":  "PSFzf.Base.ps1",
+        "Rule":  "PSAvoidUsingEmptyCatchBlock",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "Empty catch block is used. Please use Write-Error or throw statements in catch blocks."
+    },
+    {
+        "File":  "PSFzf.Base.ps1",
+        "Rule":  "PSAvoidUsingEmptyCatchBlock",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "Empty catch block is used. Please use Write-Error or throw statements in catch blocks."
+    },
+    {
+        "File":  "PSFzf.Base.ps1",
+        "Rule":  "PSAvoidUsingEmptyCatchBlock",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "Empty catch block is used. Please use Write-Error or throw statements in catch blocks."
+    },
+    {
+        "File":  "PSFzf.Base.ps1",
+        "Rule":  "PSAvoidUsingEmptyCatchBlock",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "Empty catch block is used. Please use Write-Error or throw statements in catch blocks."
+    },
+    {
+        "File":  "PSFzf.Base.ps1",
+        "Rule":  "PSAvoidUsingEmptyCatchBlock",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "Empty catch block is used. Please use Write-Error or throw statements in catch blocks."
+    },
+    {
+        "File":  "PSFzf.Base.ps1",
+        "Rule":  "PSAvoidUsingEmptyCatchBlock",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "Empty catch block is used. Please use Write-Error or throw statements in catch blocks."
+    },
+    {
+        "File":  "PSFzf.Base.ps1",
+        "Rule":  "PSAvoidUsingEmptyCatchBlock",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "Empty catch block is used. Please use Write-Error or throw statements in catch blocks."
+    },
+    {
+        "File":  "PSFzf.Base.ps1",
+        "Rule":  "PSAvoidUsingEmptyCatchBlock",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "Empty catch block is used. Please use Write-Error or throw statements in catch blocks."
+    },
+    {
+        "File":  "PSFzf.Base.ps1",
+        "Rule":  "PSAvoidUsingEmptyCatchBlock",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "Empty catch block is used. Please use Write-Error or throw statements in catch blocks."
+    },
+    {
+        "File":  "PSFzf.Base.ps1",
+        "Rule":  "PSAvoidUsingEmptyCatchBlock",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "Empty catch block is used. Please use Write-Error or throw statements in catch blocks."
+    },
+    {
+        "File":  "PSFzf.Functions.ps1",
+        "Rule":  "PSAvoidUsingEmptyCatchBlock",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "Empty catch block is used. Please use Write-Error or throw statements in catch blocks."
+    },
+    {
+        "File":  "PSFzf.Functions.ps1",
+        "Rule":  "PSAvoidUsingEmptyCatchBlock",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "Empty catch block is used. Please use Write-Error or throw statements in catch blocks."
+    },
+    {
+        "File":  "PSFzf.Functions.ps1",
+        "Rule":  "PSAvoidUsingEmptyCatchBlock",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "Empty catch block is used. Please use Write-Error or throw statements in catch blocks."
+    },
+    {
+        "File":  "PSFzf.Functions.ps1",
+        "Rule":  "PSAvoidUsingEmptyCatchBlock",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "Empty catch block is used. Please use Write-Error or throw statements in catch blocks."
+    },
+    {
+        "File":  "PSFzf.psm1",
+        "Rule":  "PSAvoidUsingEmptyCatchBlock",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "Empty catch block is used. Please use Write-Error or throw statements in catch blocks."
+    },
+    {
+        "File":  "PSFzf.psm1",
+        "Rule":  "PSAvoidUsingEmptyCatchBlock",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "Empty catch block is used. Please use Write-Error or throw statements in catch blocks."
+    },
+    {
+        "File":  "PSFzf.psm1",
+        "Rule":  "PSAvoidUsingEmptyCatchBlock",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "Empty catch block is used. Please use Write-Error or throw statements in catch blocks."
+    },
+    {
+        "File":  "PSFzf.psm1",
+        "Rule":  "PSAvoidUsingEmptyCatchBlock",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "Empty catch block is used. Please use Write-Error or throw statements in catch blocks."
+    },
+    {
+        "File":  "PSFzf.psm1",
+        "Rule":  "PSAvoidUsingEmptyCatchBlock",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "Empty catch block is used. Please use Write-Error or throw statements in catch blocks."
+    },
+    {
+        "File":  "PSFzf.psm1",
+        "Rule":  "PSAvoidUsingEmptyCatchBlock",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "Empty catch block is used. Please use Write-Error or throw statements in catch blocks."
+    },
+    {
+        "File":  "PSFzf.psm1",
+        "Rule":  "PSAvoidUsingEmptyCatchBlock",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "Empty catch block is used. Please use Write-Error or throw statements in catch blocks."
+    },
+    {
+        "File":  "PSFzf.psm1",
+        "Rule":  "PSAvoidUsingEmptyCatchBlock",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "Empty catch block is used. Please use Write-Error or throw statements in catch blocks."
+    },
+    {
+        "File":  "PSFzf.psm1",
+        "Rule":  "PSAvoidUsingEmptyCatchBlock",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "Empty catch block is used. Please use Write-Error or throw statements in catch blocks."
+    },
+    {
+        "File":  "PSFzf.psm1",
+        "Rule":  "PSAvoidUsingEmptyCatchBlock",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "Empty catch block is used. Please use Write-Error or throw statements in catch blocks."
+    },
+    {
+        "File":  "PSFzf.psm1",
+        "Rule":  "PSAvoidUsingEmptyCatchBlock",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "Empty catch block is used. Please use Write-Error or throw statements in catch blocks."
+    },
+    {
+        "File":  "PSFzf.psm1",
+        "Rule":  "PSAvoidUsingEmptyCatchBlock",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "Empty catch block is used. Please use Write-Error or throw statements in catch blocks."
+    },
+    {
+        "File":  "PSFzf.psm1",
+        "Rule":  "PSAvoidUsingEmptyCatchBlock",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "Empty catch block is used. Please use Write-Error or throw statements in catch blocks."
+    },
+    {
+        "File":  "PSFzf.psm1",
+        "Rule":  "PSAvoidUsingEmptyCatchBlock",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "Empty catch block is used. Please use Write-Error or throw statements in catch blocks."
+    },
+    {
+        "File":  "PSFzf.psm1",
+        "Rule":  "PSAvoidUsingEmptyCatchBlock",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "Empty catch block is used. Please use Write-Error or throw statements in catch blocks."
+    },
+    {
+        "File":  "PSFzf.Base.ps1",
+        "Rule":  "PSAvoidUsingEmptyCatchBlock",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "Empty catch block is used. Please use Write-Error or throw statements in catch blocks."
+    },
+    {
+        "File":  "PSFzf.Base.ps1",
+        "Rule":  "PSAvoidUsingEmptyCatchBlock",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "Empty catch block is used. Please use Write-Error or throw statements in catch blocks."
+    },
+    {
+        "File":  "PSFzf.Base.ps1",
+        "Rule":  "PSAvoidUsingEmptyCatchBlock",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "Empty catch block is used. Please use Write-Error or throw statements in catch blocks."
+    },
+    {
+        "File":  "PSFzf.Base.ps1",
+        "Rule":  "PSAvoidUsingEmptyCatchBlock",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "Empty catch block is used. Please use Write-Error or throw statements in catch blocks."
+    },
+    {
+        "File":  "PSFzf.Base.ps1",
+        "Rule":  "PSAvoidUsingEmptyCatchBlock",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "Empty catch block is used. Please use Write-Error or throw statements in catch blocks."
+    },
+    {
+        "File":  "PSFzf.Base.ps1",
+        "Rule":  "PSAvoidUsingEmptyCatchBlock",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "Empty catch block is used. Please use Write-Error or throw statements in catch blocks."
+    },
+    {
+        "File":  "PSFzf.Base.ps1",
+        "Rule":  "PSAvoidUsingEmptyCatchBlock",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "Empty catch block is used. Please use Write-Error or throw statements in catch blocks."
+    },
+    {
+        "File":  "PSFzf.Base.ps1",
+        "Rule":  "PSAvoidUsingEmptyCatchBlock",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "Empty catch block is used. Please use Write-Error or throw statements in catch blocks."
+    },
+    {
+        "File":  "PSFzf.Base.ps1",
+        "Rule":  "PSAvoidUsingEmptyCatchBlock",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "Empty catch block is used. Please use Write-Error or throw statements in catch blocks."
+    },
+    {
+        "File":  "PSFzf.Base.ps1",
+        "Rule":  "PSAvoidUsingEmptyCatchBlock",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "Empty catch block is used. Please use Write-Error or throw statements in catch blocks."
+    },
+    {
+        "File":  "PSFzf.Base.ps1",
+        "Rule":  "PSAvoidUsingEmptyCatchBlock",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "Empty catch block is used. Please use Write-Error or throw statements in catch blocks."
+    },
+    {
+        "File":  "PSFzf.Functions.ps1",
+        "Rule":  "PSAvoidUsingEmptyCatchBlock",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "Empty catch block is used. Please use Write-Error or throw statements in catch blocks."
+    },
+    {
+        "File":  "PSFzf.Functions.ps1",
+        "Rule":  "PSAvoidUsingEmptyCatchBlock",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "Empty catch block is used. Please use Write-Error or throw statements in catch blocks."
+    },
+    {
+        "File":  "PSFzf.Functions.ps1",
+        "Rule":  "PSAvoidUsingEmptyCatchBlock",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "Empty catch block is used. Please use Write-Error or throw statements in catch blocks."
+    },
+    {
+        "File":  "PSFzf.Functions.ps1",
+        "Rule":  "PSAvoidUsingEmptyCatchBlock",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "Empty catch block is used. Please use Write-Error or throw statements in catch blocks."
+    },
+    {
+        "File":  "PSFzf.Functions.ps1",
+        "Rule":  "PSAvoidUsingEmptyCatchBlock",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "Empty catch block is used. Please use Write-Error or throw statements in catch blocks."
+    },
+    {
+        "File":  "PSFzf.Functions.ps1",
+        "Rule":  "PSAvoidUsingEmptyCatchBlock",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "Empty catch block is used. Please use Write-Error or throw statements in catch blocks."
+    },
+    {
+        "File":  "PSFzf.psm1",
+        "Rule":  "PSAvoidUsingEmptyCatchBlock",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "Empty catch block is used. Please use Write-Error or throw statements in catch blocks."
+    },
+    {
+        "File":  "PSFzf.psm1",
+        "Rule":  "PSAvoidUsingEmptyCatchBlock",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "Empty catch block is used. Please use Write-Error or throw statements in catch blocks."
+    },
+    {
+        "File":  "PSFzf.psm1",
+        "Rule":  "PSAvoidUsingEmptyCatchBlock",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "Empty catch block is used. Please use Write-Error or throw statements in catch blocks."
+    },
+    {
+        "File":  "PSFzf.psm1",
+        "Rule":  "PSAvoidUsingEmptyCatchBlock",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "Empty catch block is used. Please use Write-Error or throw statements in catch blocks."
+    },
+    {
+        "File":  "PSFzf.psm1",
+        "Rule":  "PSAvoidUsingEmptyCatchBlock",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "Empty catch block is used. Please use Write-Error or throw statements in catch blocks."
+    },
+    {
+        "File":  "PSFzf.psm1",
+        "Rule":  "PSAvoidUsingEmptyCatchBlock",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "Empty catch block is used. Please use Write-Error or throw statements in catch blocks."
+    },
+    {
+        "File":  "PSFzf.psm1",
+        "Rule":  "PSAvoidUsingEmptyCatchBlock",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "Empty catch block is used. Please use Write-Error or throw statements in catch blocks."
+    },
+    {
+        "File":  "PSFzf.psm1",
+        "Rule":  "PSAvoidUsingEmptyCatchBlock",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "Empty catch block is used. Please use Write-Error or throw statements in catch blocks."
+    },
+    {
+        "File":  "PSFzf.psm1",
+        "Rule":  "PSAvoidUsingEmptyCatchBlock",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "Empty catch block is used. Please use Write-Error or throw statements in catch blocks."
+    },
+    {
+        "File":  "PSFzf.psm1",
+        "Rule":  "PSAvoidUsingEmptyCatchBlock",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "Empty catch block is used. Please use Write-Error or throw statements in catch blocks."
+    },
+    {
+        "File":  "PSFzf.psm1",
+        "Rule":  "PSAvoidUsingEmptyCatchBlock",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "Empty catch block is used. Please use Write-Error or throw statements in catch blocks."
+    },
+    {
+        "File":  "PSFzf.psm1",
+        "Rule":  "PSAvoidUsingEmptyCatchBlock",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "Empty catch block is used. Please use Write-Error or throw statements in catch blocks."
+    },
+    {
+        "File":  "PSFzf.psm1",
+        "Rule":  "PSAvoidUsingEmptyCatchBlock",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "Empty catch block is used. Please use Write-Error or throw statements in catch blocks."
+    },
+    {
+        "File":  "PSFzf.psm1",
+        "Rule":  "PSAvoidUsingEmptyCatchBlock",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "Empty catch block is used. Please use Write-Error or throw statements in catch blocks."
+    },
+    {
+        "File":  "PSFzf.psm1",
+        "Rule":  "PSAvoidUsingEmptyCatchBlock",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "Empty catch block is used. Please use Write-Error or throw statements in catch blocks."
+    },
+    {
+        "File":  "PSFzf.psm1",
+        "Rule":  "PSAvoidUsingEmptyCatchBlock",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "Empty catch block is used. Please use Write-Error or throw statements in catch blocks."
+    },
+    {
+        "File":  "PSFzf.psm1",
+        "Rule":  "PSAvoidUsingEmptyCatchBlock",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "Empty catch block is used. Please use Write-Error or throw statements in catch blocks."
+    },
+    {
+        "File":  "scoop-completion.psm1",
+        "Rule":  "PSAvoidUsingEmptyCatchBlock",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "Empty catch block is used. Please use Write-Error or throw statements in catch blocks."
+    },
+    {
+        "File":  "z.psm1",
+        "Rule":  "PSAvoidUsingEmptyCatchBlock",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "Empty catch block is used. Please use Write-Error or throw statements in catch blocks."
+    },
+    {
+        "File":  "UnifiedModuleManager.ps1",
+        "Rule":  "PSAvoidUsingEmptyCatchBlock",
+        "StartLine":  null,
+        "EndLine":  null,
+        "Message":  "Empty catch block is used. Please use Write-Error or throw statements in catch blocks."
+    }
+]
