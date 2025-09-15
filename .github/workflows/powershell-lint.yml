@@ -1,5 +1,6 @@
 name: Lint PowerShell and Markdown
 
+
 on:
   push:
     branches: [ main ]
@@ -12,8 +13,6 @@ jobs:
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Setup PowerShell
-        uses: actions/setup-powershell@v2
       - name: Install PSScriptAnalyzer
         shell: pwsh
         run: |
@@ -21,7 +20,8 @@ jobs:
       - name: Run PSScriptAnalyzer
         shell: pwsh
         run: |
-          $settings = Resolve-Path -Path ./.psscriptanalyzersettings.psd1
+          $settings = Resolve-Path -Path ./.psscriptanalyzersettings.psd1 -ErrorAction SilentlyContinue
+          if (-not $settings) { Write-Host 'No .psscriptanalyzersettings.psd1 found; continuing with defaults' }
           $files = Get-ChildItem -Path . -Include *.ps1,*.psm1,*.psd1 -Recurse | ForEach-Object { $_.FullName }
           if ($files.Count -eq 0) { Write-Host 'No PowerShell files found'; exit 0 }
           foreach ($f in $files) {
@@ -34,6 +34,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - name: Run Super-Linter
         uses: github/super-linter@v5
         env:
@@ -46,7 +48,28 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Run markdownlint
-        uses: davidanson/markdownlint-cli-action@v3
         with:
-          args: '**/*.md'
+          fetch-depth: 0
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Cache npm
+        uses: actions/cache@v4
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-20-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+      - name: Install markdownlint-cli2
+        run: |
+          npm ci --silent || true
+          npm install -g markdownlint-cli2
+      - name: Run markdownlint
+        run: |
+          files=$(git ls-files "**/*.md") || true
+          if [ -z "$files" ]; then
+            echo "No markdown files to lint"
+            exit 0
+          fi
+          markdownlint "**/*.md"
