@@ -1,0 +1,39 @@
+name: Lint PowerShell and Markdown
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  powershell-lint:
+    name: PSScriptAnalyzer
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup PowerShell
+        uses: actions/setup-powershell@v2
+      - name: Install PSScriptAnalyzer
+        shell: pwsh
+        run: |
+          Install-Module -Name PSScriptAnalyzer -Force -Scope CurrentUser
+      - name: Run PSScriptAnalyzer
+        shell: pwsh
+        run: |
+          $files = Get-ChildItem -Path . -Include *.ps1,*.psm1,*.psd1 -Recurse | ForEach-Object { $_.FullName }
+          if ($files.Count -eq 0) { Write-Host 'No PowerShell files found'; exit 0 }
+          foreach ($f in $files) {
+            Write-Host "Analyzing $f"
+            Invoke-ScriptAnalyzer -Path $f -Recurse -Severity Warning -EnableExit
+          }
+
+  markdown-lint:
+    name: markdownlint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run markdownlint
+        uses: davidanson/markdownlint-cli-action@v3
+        with:
+          args: '**/*.md'

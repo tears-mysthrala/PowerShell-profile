@@ -18,7 +18,7 @@ using module @{
 @{
 
 # Script module or binary module file associated with this manifest.
-RootModule = 'unified_aliases.ps1'
+RootModule = 'unified_aliases.psm1'
 
 # Version number of this module.
 ModuleVersion = '1.0.0'

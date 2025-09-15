@@ -19,3 +19,27 @@ Modules/*
 # Windows specific
 Thumb.db
 desktop.ini
+
+# Ignore common backup/temp artifacts and caches
+# Temporary files created during development or by tools
+*.tmp
+.tmp*
+.tmp-*
+
+# Generic backup/old files
+*.new
+*.bak
+*.old
+
+# PowerShell cache files (do not track runtime caches)
+Config/*.clixml
+env-cache.clixml
+utils-cache.clixml
+ModuleCache/
+
+# Starship runtime folder (generated)
+.starship/
+
+# Ignore editor/OS files
+.DS_Store
+Thumbs.db
