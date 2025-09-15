@@ -1,4 +1,4 @@
-$resourceModuleRoot = Split-Path -Path (Split-Path -Path $PSScriptRoot -Parent) -Parent
+﻿$resourceModuleRoot = Split-Path -Path (Split-Path -Path $PSScriptRoot -Parent) -Parent
 
 # Import localization helper functions.
 $helperName = 'PowerShellGet.LocalizationHelper'

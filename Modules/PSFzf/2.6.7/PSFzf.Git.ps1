@@ -1,4 +1,4 @@
-
+﻿
 $script:GitKeyHandlers = @()
 
 $script:foundGit = $false

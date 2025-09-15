@@ -1,4 +1,4 @@
-function Test-WinGetExists() {
+﻿function Test-WinGetExists() {
     $package = Get-Command winget -ErrorAction SilentlyContinue;
     return $package -ne $null;
 }

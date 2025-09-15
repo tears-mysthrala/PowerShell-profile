@@ -1,4 +1,4 @@
-#
+﻿#
 # Module manifest for module 'Microsoft.WinGet.Client'
 #
 # Created by: Microsoft Corporation

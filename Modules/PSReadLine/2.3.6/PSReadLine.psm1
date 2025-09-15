@@ -1,4 +1,4 @@
-function PSConsoleHostReadLine
+﻿function PSConsoleHostReadLine
 {
     [System.Diagnostics.DebuggerHidden()]
     param()

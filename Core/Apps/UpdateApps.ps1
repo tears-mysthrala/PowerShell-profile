@@ -1,4 +1,4 @@
-# Script to update all installed applications
+﻿# Script to update all installed applications
 $ErrorActionPreference = 'Continue'
 $ProgressPreference = 'Continue'
 

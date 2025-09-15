@@ -1,4 +1,4 @@
-# Sorce: https://github.com/gokcehan/lf/blob/master/etc/lfcd.ps1
+﻿# Sorce: https://github.com/gokcehan/lf/blob/master/etc/lfcd.ps1
 
 function lfcd
 {

@@ -1,4 +1,4 @@
-# Docker Compose version v2.35.1
+﻿# Docker Compose version v2.35.1
 Register-Completer docker_compose {
 	COMPGEN alpha SubCommand 'Experimental commands'
 	COMPGEN attach SubCommand 'Attach local standard input, output, and error streams to a service''s running container'

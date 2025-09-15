@@ -1,4 +1,4 @@
-function df
+﻿function df
 {
     git --git-dir=$env:USERPROFILE/KevinNitro-Dotfiles/ --work-tree=$env:USERPROFILE $args
 }

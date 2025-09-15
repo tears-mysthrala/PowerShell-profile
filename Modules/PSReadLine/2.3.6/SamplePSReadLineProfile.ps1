@@ -1,4 +1,4 @@
-using namespace System.Management.Automation
+﻿using namespace System.Management.Automation
 using namespace System.Management.Automation.Language
 
 # This is an example profile for PSReadLine.

@@ -1,4 +1,4 @@
-$ProfileDir = Split-Path -Parent $PROFILE
+﻿$ProfileDir = Split-Path -Parent $PROFILE
 $starshipConfigPath = Join-Path $ProfileDir 'Config\starship.toml'
 $env:STARSHIP_CONFIG = $starshipConfigPath
 $outFile = Join-Path $env:TEMP 'starship_probe_out.txt'

@@ -1,4 +1,4 @@
-@{
+﻿@{
 Author = 'ala'
 Description = 'A Scoop tab completion module for PowerShell.'
 

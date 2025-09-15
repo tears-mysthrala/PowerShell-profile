@@ -1,4 +1,4 @@
-if (!(Get-Command -Name "eza" -ErrorAction SilentlyContinue)) {
+﻿if (!(Get-Command -Name "eza" -ErrorAction SilentlyContinue)) {
   return
 }
 

@@ -1,4 +1,4 @@
-$profileAll = {
+﻿$profileAll = {
 	param ($WordToComplete, $CommandAst)
 
 	$commandTextsOriginal = Get-ComposeCommandText -CommandAst $CommandAst

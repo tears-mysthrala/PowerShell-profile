@@ -1,4 +1,4 @@
-# Profile management module
+﻿# Profile management module
 
 $script:moduleRoot = Split-Path -Parent $PSCommandPath
 

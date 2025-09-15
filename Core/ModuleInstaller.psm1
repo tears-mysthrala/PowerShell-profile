@@ -1,4 +1,4 @@
-# Module Installer for PowerShell Profile
+﻿# Module Installer for PowerShell Profile
 # This script ensures all required modules are installed
 
 $script:moduleRoot = Split-Path -Parent $PSCommandPath

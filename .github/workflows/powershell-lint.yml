@@ -21,12 +21,25 @@ jobs:
       - name: Run PSScriptAnalyzer
         shell: pwsh
         run: |
+          $settings = Resolve-Path -Path ./.psscriptanalyzersettings.psd1
           $files = Get-ChildItem -Path . -Include *.ps1,*.psm1,*.psd1 -Recurse | ForEach-Object { $_.FullName }
           if ($files.Count -eq 0) { Write-Host 'No PowerShell files found'; exit 0 }
           foreach ($f in $files) {
             Write-Host "Analyzing $f"
-            Invoke-ScriptAnalyzer -Path $f -Recurse -Severity Warning -EnableExit
+            Invoke-ScriptAnalyzer -Path $f -Recurse -Severity Warning -SettingsPath $settings -EnableExit
           }
+
+  super-linter:
+    name: Super-Linter
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run Super-Linter
+        uses: github/super-linter@v5
+        env:
+          VALIDATE_ALL_CODEBASE: false
+          DEFAULT_BRANCH: main
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   markdown-lint:
     name: markdownlint

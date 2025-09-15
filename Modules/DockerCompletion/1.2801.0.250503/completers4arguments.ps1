@@ -1,4 +1,4 @@
-$configAll = { Get-Config }
+﻿$configAll = { Get-Config }
 
 $containerAll = { Get-Container }
 $containerRunning = { Get-Container -Status running }

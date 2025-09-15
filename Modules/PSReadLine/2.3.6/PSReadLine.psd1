@@ -1,4 +1,4 @@
-@{
+﻿@{
 RootModule = 'PSReadLine.psm1'
 NestedModules = @("Microsoft.PowerShell.PSReadLine2.dll")
 ModuleVersion = '2.3.6'

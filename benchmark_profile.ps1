@@ -1,4 +1,4 @@
-$profilePath = 'C:\Users\unaiu\OneDrive\Documents\PowerShell\Microsoft.PowerShell_profile.ps1'
+﻿$profilePath = 'C:\Users\unaiu\OneDrive\Documents\PowerShell\Microsoft.PowerShell_profile.ps1'
 $runs = 6
 $results = @()
 

@@ -1,4 +1,4 @@
-# TortoiseGit
+﻿# TortoiseGit
 
 function private:Get-TortoiseGitPath {
     if ((Test-Path "C:\Program Files\TortoiseGit\bin\TortoiseGitProc.exe") -eq $true) {

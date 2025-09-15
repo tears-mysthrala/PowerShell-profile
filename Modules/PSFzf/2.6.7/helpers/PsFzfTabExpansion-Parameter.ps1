@@ -1,4 +1,4 @@
-# Can't use named parameters
+﻿# Can't use named parameters
 $command = $args[0]
 $parameter = $args[1]
 $parameter = $parameter.replace('-', '')

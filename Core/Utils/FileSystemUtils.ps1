@@ -1,4 +1,4 @@
-# File system utilities for PowerShell profile
+﻿# File system utilities for PowerShell profile
 
 function New-DirectoryAndEnter {
     param([string]$dir)

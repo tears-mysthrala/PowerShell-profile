@@ -1,4 +1,4 @@
-# Diagnostic script — dot-source the interactive profile and report Starship state
+﻿# Diagnostic script — dot-source the interactive profile and report Starship state
 . $PROFILE
 Write-Output '--- PROFILE SOURCED ---'
 Get-Command Initialize-Starship -ErrorAction SilentlyContinue | Format-List

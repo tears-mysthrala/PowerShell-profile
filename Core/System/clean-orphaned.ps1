@@ -1,4 +1,4 @@
-# Script to clean orphaned files in PowerShell directory
+﻿# Script to clean orphaned files in PowerShell directory
 
 function Write-Log {
     param(

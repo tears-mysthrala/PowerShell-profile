@@ -1,4 +1,4 @@
-using namespace System.Collections.Generic
+﻿using namespace System.Collections.Generic
 using namespace System.Management.Automation
 
 # Core module for PowerShell profile

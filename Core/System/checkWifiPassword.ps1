@@ -1,4 +1,4 @@
-function Get-WiFiPassword {
+﻿function Get-WiFiPassword {
     param(
         [string]$name = $null
     )

@@ -1,4 +1,4 @@
-# Module manifest for ProfileManagement
+﻿# Module manifest for ProfileManagement
 @{
     # Script module or binary module file associated with this manifest.
     RootModule = 'ProfileManagement.psm1'

@@ -1,4 +1,4 @@
-# Unified Module Manager for PowerShell Profile
+﻿# Unified Module Manager for PowerShell Profile
 
 $script:moduleRegistry = @{}
 $script:loadedModules = @{}

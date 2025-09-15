@@ -1,4 +1,4 @@
-# borrowed from https://devblogs.microsoft.com/powershell/using-psscriptanalyzer-to-check-powershell-version-compatibility/
+﻿# borrowed from https://devblogs.microsoft.com/powershell/using-psscriptanalyzer-to-check-powershell-version-compatibility/
 @{
     Rules = @{
         PSUseCompatibleSyntax = @{

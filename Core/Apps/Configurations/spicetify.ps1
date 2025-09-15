@@ -1,4 +1,4 @@
-# C:\Users\trann\AppData\Local\spicetify
+﻿# C:\Users\trann\AppData\Local\spicetify
 # C:/ProgramData/chocolatey/lib/spicetify-cli/tools/bin
 
 $SpicetifyPath = spicetify path

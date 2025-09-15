@@ -1,4 +1,4 @@
-New-Module -Name AppsManage -ScriptBlock {
+﻿New-Module -Name AppsManage -ScriptBlock {
 $CHOCO_APPS_TO_UPGRADE = @(
 )
 

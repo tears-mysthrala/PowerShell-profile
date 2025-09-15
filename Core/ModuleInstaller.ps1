@@ -1,4 +1,4 @@
-# Module Installer for PowerShell Profile
+﻿# Module Installer for PowerShell Profile
 # This script ensures all required modules are installed
 # Optimization: read/write a single cache and install missing modules in a background job
 

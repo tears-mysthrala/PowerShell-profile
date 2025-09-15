@@ -1,4 +1,4 @@
-using namespace System.Threading
+﻿using namespace System.Threading
 using namespace System.Collections.Concurrent
 
 # Unified system update module

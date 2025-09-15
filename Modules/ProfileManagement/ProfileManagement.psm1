@@ -1,4 +1,4 @@
-# Module to manage PowerShell profile updates and reloading
+﻿# Module to manage PowerShell profile updates and reloading
 # Initialize variables
 $script:profileTiming = @{}
 $script:backgroundJobs = @()

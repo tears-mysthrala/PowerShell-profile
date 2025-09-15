@@ -1,4 +1,4 @@
-function Start-GPG
+﻿function Start-GPG
 {
   gpg-connect-agent reloadagent /bye
 }

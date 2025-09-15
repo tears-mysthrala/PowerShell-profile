@@ -1,4 +1,4 @@
-# Initialize profiling
+﻿# Initialize profiling
 $script:profileTiming = @{}
 $globalStopwatch = [System.Diagnostics.Stopwatch]::StartNew()
 

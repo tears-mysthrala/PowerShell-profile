@@ -1,4 +1,4 @@
-# Initial implementation by Jeremy Skinner
+﻿# Initial implementation by Jeremy Skinner
 # http://www.jeremyskinner.co.uk/2010/03/07/using-git-with-windows-powershell/
 
 $Global:GitTabSettings = New-Object PSObject -Property @{

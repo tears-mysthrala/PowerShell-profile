@@ -1,4 +1,4 @@
-$ProfileDir = Split-Path -Parent $PROFILE
+﻿$ProfileDir = Split-Path -Parent $PROFILE
 $env:STARSHIP_CONFIG = '#file:starship.toml'
 $env:STARSHIP_CACHE = Join-Path $ProfileDir '.starship\cache'
 $cacheDir = Join-Path $ProfileDir '.starship'

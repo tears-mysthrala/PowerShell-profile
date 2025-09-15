@@ -1,4 +1,4 @@
-Set-Alias -Name cm -Value chezmoi -Option AllScope
+﻿Set-Alias -Name cm -Value chezmoi -Option AllScope
 
 if (Get-Command "chezmoi" -ErrorAction SilentlyContinue)
 {

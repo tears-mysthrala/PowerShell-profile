@@ -1,4 +1,4 @@
-# File system utilities for PowerShell profile
+﻿# File system utilities for PowerShell profile
 
 $script:moduleRoot = Split-Path -Parent $PSCommandPath
 

@@ -1,4 +1,4 @@
-function GetProcessesList() {
+﻿function GetProcessesList() {
     Get-Process | `
         Where-Object { ![string]::IsNullOrEmpty($_.ProcessName) } | `
         ForEach-Object {

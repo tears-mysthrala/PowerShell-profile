@@ -1,4 +1,4 @@
-[CmdletBinding()]
+﻿[CmdletBinding()]
 param ($DirName, $Item)
 
 # trim quote strings:

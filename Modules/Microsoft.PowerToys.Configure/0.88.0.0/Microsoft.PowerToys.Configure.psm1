@@ -1,4 +1,4 @@
-#region enums
+﻿#region enums
 enum PowerToysConfigureEnsure {
     Absent
     Present

@@ -1,4 +1,4 @@
-function Get-Config {
+﻿function Get-Config {
 	docker config ls --format '{{.Name}}'
 }
 

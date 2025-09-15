@@ -1,4 +1,4 @@
-# Hack! https://gist.github.com/lzybkr/f2059cb2ee8d0c13c65ab933b75e998c
+﻿# Hack! https://gist.github.com/lzybkr/f2059cb2ee8d0c13c65ab933b75e998c
 
 # Always skip setting the console mode on non-Windows platforms.
 if (($PSVersionTable.PSVersion.Major -ge 6) -and !$IsWindows) {

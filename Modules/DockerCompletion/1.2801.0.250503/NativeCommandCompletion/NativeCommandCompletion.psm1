@@ -1,4 +1,4 @@
-class NativeCommandCompletionResult : System.Management.Automation.CompletionResult {
+﻿class NativeCommandCompletionResult : System.Management.Automation.CompletionResult {
 	[string]$TextType
 
 	NativeCommandCompletionResult(

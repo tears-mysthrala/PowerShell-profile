@@ -1,4 +1,4 @@
-# Source: https://www.geeksforgeeks.org/disk-cleanup-using-powershell-scripts/
+﻿# Source: https://www.geeksforgeeks.org/disk-cleanup-using-powershell-scripts/
 
 function Clean-RecycleBin {
   #1# Removing recycle bin files

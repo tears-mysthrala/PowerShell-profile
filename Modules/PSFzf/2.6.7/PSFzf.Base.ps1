@@ -1,4 +1,4 @@
-param(
+﻿param(
 	[parameter(Position=0,Mandatory=$false)][string]$PSReadlineChordProvider = 'Ctrl+t',
 	[parameter(Position=1,Mandatory=$false)][string]$PSReadlineChordReverseHistory = 'Ctrl+r',
 	[parameter(Position=2,Mandatory=$false)][string]$PSReadlineChordSetLocation = 'Alt+c',

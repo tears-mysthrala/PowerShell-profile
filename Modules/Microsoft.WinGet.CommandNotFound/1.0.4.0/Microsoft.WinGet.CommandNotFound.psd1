@@ -1,4 +1,4 @@
-@{
+﻿@{
     ModuleVersion = '1.0.4.0'
     GUID = '7936322d-30fe-410f-b681-114fe84a65d4'
     Author = 'Microsoft Corporation'

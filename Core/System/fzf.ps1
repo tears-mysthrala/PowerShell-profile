@@ -1,4 +1,4 @@
-Import-Module Catppuccin
+﻿Import-Module Catppuccin
 
 # Ref: https://github.com/catppuccin/powershell#profile-usage 
 # https://github.com/catppuccin/fzf - not use background for transparent

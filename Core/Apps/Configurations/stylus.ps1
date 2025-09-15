@@ -1,4 +1,4 @@
-# Update catppuccin stylus themes
+﻿# Update catppuccin stylus themes
 
 function Update-CatppuccinStylus
 {

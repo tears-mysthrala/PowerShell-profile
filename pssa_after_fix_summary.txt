@@ -1,0 +1,10 @@
+﻿InvalidEndOfLine: 168
+PSAvoidUsingCmdletAliases: 111
+UnexpectedToken: 58
+MissingTypename: 56
+ExpectedValueExpression: 56
+AmpersandNotAllowed: 56
+ExpectedExpression: 13
+MissingEndCurlyBrace: 4
+InvalidVariableReferenceWithDrive: 2
+RequiresModuleInvalid: 1

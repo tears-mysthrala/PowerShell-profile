@@ -1,4 +1,4 @@
-#!/usr/bin/env pwsh
+﻿#!/usr/bin/env pwsh
 
 # Create a new dynamic module so we don't pollute the global namespace with our functions and
 # variables

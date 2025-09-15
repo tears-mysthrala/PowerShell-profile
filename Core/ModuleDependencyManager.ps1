@@ -1,4 +1,4 @@
-# Module Dependency Manager for PowerShell Profile
+﻿# Module Dependency Manager for PowerShell Profile
 
 $script:moduleDependencies = @{}
 $script:moduleVersions = @{}

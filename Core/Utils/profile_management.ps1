@@ -1,4 +1,4 @@
-function Reset-ProfileState {
+﻿function Reset-ProfileState {
     [CmdletBinding()]
     param(
         [switch]$Quiet

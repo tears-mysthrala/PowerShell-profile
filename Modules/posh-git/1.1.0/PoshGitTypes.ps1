@@ -1,4 +1,4 @@
-enum BranchBehindAndAheadDisplayOptions { Full; Compact; Minimal }
+﻿enum BranchBehindAndAheadDisplayOptions { Full; Compact; Minimal }
 enum UntrackedFilesMode { Default; No; Normal; All }
 
 class PoshGitCellColor {

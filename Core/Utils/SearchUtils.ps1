@@ -1,4 +1,4 @@
-# Search utilities for PowerShell profile
+﻿# Search utilities for PowerShell profile
 
 function Find-Files {
     param(

@@ -1,4 +1,4 @@
-# Color codes from https://msdn.microsoft.com/en-us/library/windows/desktop/mt638032(v=vs.85).aspx
+﻿# Color codes from https://msdn.microsoft.com/en-us/library/windows/desktop/mt638032(v=vs.85).aspx
 $ConsoleColorToAnsi = @(
     30 # Black
     34 # DarkBlue

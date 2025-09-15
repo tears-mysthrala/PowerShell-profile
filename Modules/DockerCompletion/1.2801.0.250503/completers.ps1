@@ -1,4 +1,4 @@
-# docker/cli v28.1.0 https://github.com/docker/cli/tree/v28.1.0
+﻿# docker/cli v28.1.0 https://github.com/docker/cli/tree/v28.1.0
 Register-Completer docker {
 	COMPGEN builder ManagementCommand 'Manage builds'
 	COMPGEN checkpoint ManagementCommand 'Manage checkpoints'

@@ -1,4 +1,4 @@
-$HostSupportsSettingWindowTitle = $null
+﻿$HostSupportsSettingWindowTitle = $null
 $OriginalWindowTitle = $null
 
 function Test-WindowTitleIsWriteable {

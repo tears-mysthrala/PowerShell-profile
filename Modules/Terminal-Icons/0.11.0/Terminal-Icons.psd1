@@ -1,4 +1,4 @@
-@{
+﻿@{
     RootModule        = 'Terminal-Icons.psm1'
     ModuleVersion     = '0.11.0'
     GUID              = '4419ddb6-3528-47cd-baf3-7fb9d8566620'

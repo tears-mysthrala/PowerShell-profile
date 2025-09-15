@@ -1,4 +1,4 @@
-@{
+﻿@{
   Name  = 'devblackops_light'
   Types = @{
     Directories = @{

@@ -1,4 +1,4 @@
-# PowerShell Unified Alias Configuration
+﻿# PowerShell Unified Alias Configuration
 
 $script:moduleRoot = Split-Path -Parent $PSCommandPath
 

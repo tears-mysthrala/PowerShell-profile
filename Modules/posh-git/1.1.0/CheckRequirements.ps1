@@ -1,4 +1,4 @@
-$global:GitMissing = $false
+﻿$global:GitMissing = $false
 $script:GitCygwin = $false
 $script:GitVersion = $requiredVersion = [System.Version]'2.15'
 

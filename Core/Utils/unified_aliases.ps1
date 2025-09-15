@@ -1,4 +1,4 @@
-# PowerShell Unified Alias Configuration
+﻿# PowerShell Unified Alias Configuration
 
 # Ensure Test-CommandExists is available
 function Test-CommandExists {

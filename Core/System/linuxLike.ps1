@@ -1,4 +1,4 @@
-# FROM https://github.com/ChrisTitusTech/powershell-profile/
+﻿# FROM https://github.com/ChrisTitusTech/powershell-profile/
 # If so and the current host is a command line, then change to red color 
 # as warning to user that they are operating in an elevated context
 # Useful shortcuts for traversing directories

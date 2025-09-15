@@ -1,4 +1,4 @@
-$CLOUDFLAREWARP_SERVICE_NAME = "CloudflareWARP"
+﻿$CLOUDFLAREWARP_SERVICE_NAME = "CloudflareWARP"
 
 function Start-CloudFlareWarp
 {

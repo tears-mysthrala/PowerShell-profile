@@ -1,4 +1,4 @@
-function Get-BatteryReport {
+﻿function Get-BatteryReport {
     Set-Location
     powercfg /batteryreport
     & "$env:USERPROFILE\battery-report.html"

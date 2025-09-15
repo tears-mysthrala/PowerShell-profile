@@ -1,4 +1,4 @@
-# Module Registry Configuration
+﻿# Module Registry Configuration
 $script:moduleAliases = @{
     'CheckWifiPassword' = @{ Description = 'Network tools'; Category = 'Network' }
     'Chtsh' = @{ Description = 'Developer tools'; Category = 'Dev' }

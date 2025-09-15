@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
 
 Appends the existing Windows PowerShell PSModulePath to existing PSModulePath

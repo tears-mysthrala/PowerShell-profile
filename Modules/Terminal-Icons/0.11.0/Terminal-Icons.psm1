@@ -1,4 +1,4 @@
-
+﻿
 using namespace System.Management.Automation
 using namespace System.Collections.ObjectModel
 function Add-Theme {

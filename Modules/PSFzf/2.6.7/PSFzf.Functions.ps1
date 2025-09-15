@@ -1,4 +1,4 @@
-#.ExternalHelp PSFzf.psm1-help.xml
+﻿#.ExternalHelp PSFzf.psm1-help.xml
 
 $addedAliases = @()
 

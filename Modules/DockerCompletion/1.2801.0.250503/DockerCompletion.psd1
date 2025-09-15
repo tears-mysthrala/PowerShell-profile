@@ -1,4 +1,4 @@
-@{
+﻿@{
 
 RootModule        = 'DockerCompletion.psm1'
 ModuleVersion     = '1.2801.0.250503'

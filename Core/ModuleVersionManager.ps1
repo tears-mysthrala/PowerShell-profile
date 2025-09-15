@@ -1,4 +1,4 @@
-# Module Version Manager for PowerShell Profile
+﻿# Module Version Manager for PowerShell Profile
 
 $script:moduleVersions = @{}
 $script:moduleLoadAttempts = @{}

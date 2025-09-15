@@ -1,4 +1,4 @@
-# Module manifest for module 'ProfileCore'
+﻿# Module manifest for module 'ProfileCore'
 @{
     ModuleVersion = '1.0.0'
     GUID = '12345678-1234-5678-1234-567812345678'

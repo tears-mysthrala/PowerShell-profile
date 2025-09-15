@@ -1,4 +1,4 @@
-# Common utility functions used across the PowerShell profile
+﻿# Common utility functions used across the PowerShell profile
 
 # Create module scope
 $script:moduleRoot = Split-Path -Parent $PSCommandPath
