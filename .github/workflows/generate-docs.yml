@@ -16,6 +16,11 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          # Fetch full history to make branch comparisons and PR creation robust
+          fetch-depth: 0
+          # If your repository uses submodules, enable this so the generator can see them
+          submodules: recursive
 
       - name: Setup PowerShell
         run: |
@@ -32,13 +37,28 @@ jobs:
           fi
           pwsh -NoProfile -Command 'Write-Output ("pwsh version: " + (pwsh -v))'
 
+      - name: Ensure PERSONAL_TOKEN secret is set
+        if: ${{ github.event_name != 'workflow_dispatch' }}
+        env:
+          PERSONAL_TOKEN: ${{ secrets.PERSONAL_TOKEN }}
+        run: |
+          if [ -z "$PERSONAL_TOKEN" ]; then
+            echo "PERSONAL_TOKEN secret is not set. Please add it to repository secrets as 'PERSONAL_TOKEN'." >&2
+            exit 1
+          fi
+
       - name: Run generator
         run: pwsh -NoProfile -ExecutionPolicy Bypass -File tools/generate_function_docs.ps1
 
       - name: Commit and create PR if docs changed
         uses: peter-evans/create-pull-request@v5
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          # NOTE: the default GITHUB_TOKEN cannot create PRs across forks or in some repo permission
+          # configurations and may trigger 'Resource not accessible by integration'.
+          # Create a personal access token (PAT) with 'repo' scopes and add it to the repository
+          # secrets as `PERSONAL_TOKEN`, then the workflow can use it here. Example:
+          #   token: ${{ secrets.PERSONAL_TOKEN }}
+          token: ${{ secrets.PERSONAL_TOKEN }}
           commit-message: 'chore(docs): regenerate FunctionReference.md'
           title: 'chore(docs): regenerate FunctionReference.md'
           body: 'Automated docs regeneration by workflow'
