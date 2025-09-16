@@ -19,12 +19,10 @@ jobs:
         with:
           # Fetch full history to make branch comparisons and PR creation robust
           fetch-depth: 0
-          # NOTE: submodules are disabled here to avoid CI failing when submodule URLs
-          # are missing from .gitmodules (the repo currently has references to
-          # Modules/Catppuccin in the working tree but no .gitmodules entry). If you
-          # want submodules enabled, set `submodules: recursive` and ensure .gitmodules
-          # contains valid entries.
-          submodules: false
+          # NOTE: submodules were temporarily disabled while the missing .gitmodules
+          # entry was repaired. Re-enable submodule checkout so the runner fetches
+          # repository submodules (required for Modules/Catppuccin).
+          submodules: recursive
 
       - name: Setup PowerShell
         run: |
