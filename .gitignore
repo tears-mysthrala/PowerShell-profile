@@ -43,3 +43,8 @@ ModuleCache/
 # Ignore editor/OS files
 .DS_Store
 Thumbs.db
+
+# Ignore all modules folder contents by default, but keep ProfileCore which is maintained in-repo
+Modules/
+!Modules/ProfileCore/
+!Modules/ProfileCore/**
