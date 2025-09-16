@@ -8,7 +8,7 @@ Signature:
 
 function _fzf_get_path_using_fd
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Core\System\fzf.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Core/System/fzf.ps1
 
 ## _fzf_get_path_using_rg
 
@@ -16,7 +16,7 @@ Signature:
 
 function _fzf_get_path_using_rg
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Core\System\fzf.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Core/System/fzf.ps1
 
 ## _fzf_open_path
 
@@ -25,7 +25,7 @@ Signature:
 function _fzf_open_path 
 {
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Core\System\fzf.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Core/System/fzf.ps1
 
 ## _ls
 
@@ -33,7 +33,7 @@ Signature:
 
 function _ls {
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Core\Utils\Development\eza.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Core/Utils/Development/eza.ps1
 
 ## Add-ArgumentCompleter
 
@@ -46,7 +46,7 @@ Short description:
 
 region Private Functions
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\PowerShellGet\2.2.5\PSModule.psm1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/PowerShellGet/2.2.5/PSModule.psm1
 
 ## Add-PackageSource
 
@@ -55,7 +55,7 @@ Signature:
 function Add-PackageSource 
 {
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\PowerShellGet\2.2.5\PSModule.psm1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/PowerShellGet/2.2.5/PSModule.psm1
 
 ## Add-PoshGitToProfile
 
@@ -68,7 +68,7 @@ Short description:
 
 .SYNOPSIS
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\posh-git\1.1.0\Utils.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/posh-git/1.1.0/Utils.ps1
 
 ## Add-TerminalIconsColorTheme
 
@@ -76,7 +76,7 @@ Signature:
 
 function Add-TerminalIconsColorTheme {
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\Terminal-Icons\0.11.0\Terminal-Icons.psm1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/Terminal-Icons/0.11.0/Terminal-Icons.psm1
 
 ## Add-TerminalIconsIconTheme
 
@@ -84,7 +84,7 @@ Signature:
 
 function Add-TerminalIconsIconTheme {
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\Terminal-Icons\0.11.0\Terminal-Icons.psm1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/Terminal-Icons/0.11.0/Terminal-Icons.psm1
 
 ## Add-Theme
 
@@ -93,7 +93,7 @@ Signature:
 function Add-Theme { 
 [cmdletbinding(DefaultParameterSetName = 'Path', SupportsShouldProcess)]
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\Terminal-Icons\0.11.0\Terminal-Icons.psm1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/Terminal-Icons/0.11.0/Terminal-Icons.psm1
 
 ## Add-WindowsPSModulePath
 
@@ -105,29 +105,16 @@ Short description:
 
 .SYNOPSIS
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\WindowsPSModulePath\1.0.0\WindowsPSModulePath.psm1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/WindowsPSModulePath/1.0.0/WindowsPSModulePath.psm1
 
 ## branches
 
 Signature:
 
 function branches() { 
-param($All = "")
+param($All="")
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\PSFzf\2.6.14\helpers\PSFzfGitBranches.ps1
-
-## cdX
-
-Signature:
-
-function cdX 
-{
-
-Short description:
-
-A wrapper function around the existing Set-Location Cmdlet.
-
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\z\1.1.14\z.psm1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/PSFzf/2.6.7/helpers/PSFzfGitBranches.ps1
 
 ## CheckFzfTrigger
 
@@ -136,7 +123,7 @@ Signature:
 function CheckFzfTrigger { 
 param($commandName, $parameterName, $wordToComplete, $commandAst, $cursorPosition, $action)
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\PSFzf\2.6.14\PSFzf.psm1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/PSFzf/2.6.7/PSFzf.psm1
 
 ## chtsh
 
@@ -144,7 +131,7 @@ Signature:
 
 function chtsh
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Core\Utils\Development\chtsh.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Core/Utils/Development/chtsh.ps1
 
 ## Clean-All
 
@@ -152,7 +139,7 @@ Signature:
 
 function Clean-All {
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Core\System\clean.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Core/System/clean.ps1
 
 ## Clean-Disk
 
@@ -160,7 +147,7 @@ Signature:
 
 function Clean-Disk {
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Core\System\clean.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Core/System/clean.ps1
 
 ## Clean-RecycleBin
 
@@ -172,7 +159,7 @@ Short description:
 
 Source: https://www.geeksforgeeks.org/disk-cleanup-using-powershell-scripts/
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Core\System\clean.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Core/System/clean.ps1
 
 ## Clean-TempData
 
@@ -180,15 +167,7 @@ Signature:
 
 function Clean-TempData {
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Core\System\clean.ps1
-
-## Cleanup-CdCommandHistory
-
-Signature:
-
-function Cleanup-CdCommandHistory() {
-
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\z\1.1.14\z.psm1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Core/System/clean.ps1
 
 ## Clear-DnsCache
 
@@ -200,7 +179,7 @@ Short description:
 
 Networking Utilities
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Core\Utils\unified_aliases.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Core/Utils/unified_aliases.ps1
 
 ## cma
 
@@ -209,7 +188,7 @@ Signature:
 function cma 
 {
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Core\System\chezmoi.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Core/System/chezmoi.ps1
 
 ## cmc
 
@@ -218,7 +197,7 @@ Signature:
 function cmc 
 {
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Core\System\chezmoi.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Core/System/chezmoi.ps1
 
 ## cmp
 
@@ -226,7 +205,7 @@ Signature:
 
 function cmp
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Core\System\chezmoi.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Core/System/chezmoi.ps1
 
 ## cms
 
@@ -234,7 +213,7 @@ Signature:
 
 function cms
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Core\System\chezmoi.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Core/System/chezmoi.ps1
 
 ## Compare-PrereleaseVersions
 
@@ -243,7 +222,7 @@ Signature:
 function Compare-PrereleaseVersions 
 {
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\PowerShellGet\2.2.5\PSModule.psm1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/PowerShellGet/2.2.5/PSModule.psm1
 
 ## ConvertFrom-ColorEscapeSequence
 
@@ -252,7 +231,7 @@ Signature:
 function ConvertFrom-ColorEscapeSequence { 
 [OutputType([string])]
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\Terminal-Icons\0.11.0\Terminal-Icons.psm1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/Terminal-Icons/0.11.0/Terminal-Icons.psm1
 
 ## ConvertFrom-RGBColor
 
@@ -261,7 +240,7 @@ Signature:
 function ConvertFrom-RGBColor { 
 [OutputType([string])]
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\Terminal-Icons\0.11.0\Terminal-Icons.psm1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/Terminal-Icons/0.11.0/Terminal-Icons.psm1
 
 ## ConvertTo-ColorSequence
 
@@ -270,32 +249,7 @@ Signature:
 function ConvertTo-ColorSequence { 
 [cmdletbinding()]
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\Terminal-Icons\0.11.0\Terminal-Icons.psm1
-
-## ConvertTo-DirectoryEntry
-
-Signature:
-
-function ConvertTo-DirectoryEntry { 
-Param(
-        [Parameter(
-        Position=0,
-        Mandatory=$true,
-        ValueFromPipeline=$true,
-        ValueFromPipelineByPropertyName=$true)]
-        [String]$line
-    )
-
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\z\1.1.14\z.psm1
-
-## ConvertTo-TextualHistoryEntry
-
-Signature:
-
-function ConvertTo-TextualHistoryEntry($rank, $directory, $lastAccessedTicks) { 
-if ($lastAccessedTicks -eq $null) {
-
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\z\1.1.14\z.psm1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/Terminal-Icons/0.11.0/Terminal-Icons.psm1
 
 ## Copy-Module
 
@@ -304,7 +258,7 @@ Signature:
 function Copy-Module 
 {
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\PowerShellGet\2.2.5\PSModule.psm1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/PowerShellGet/2.2.5/PSModule.psm1
 
 ## Copy-ScriptFile
 
@@ -313,7 +267,7 @@ Signature:
 function Copy-ScriptFile 
 {
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\PowerShellGet\2.2.5\PSModule.psm1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/PowerShellGet/2.2.5/PSModule.psm1
 
 ## dbg
 
@@ -321,7 +275,7 @@ Signature:
 
 function dbg($Message, [Diagnostics.Stopwatch]$Stopwatch) {
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\posh-git\1.1.0\Utils.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/posh-git/1.1.0/Utils.ps1
 
 ## DeSerialize-PSObject
 
@@ -330,7 +284,7 @@ Signature:
 function DeSerialize-PSObject 
 {
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\PowerShellGet\2.2.5\PSModule.psm1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/PowerShellGet/2.2.5/PSModule.psm1
 
 ## df
 
@@ -338,7 +292,7 @@ Signature:
 
 function df
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Core\Utils\Development\dotfiles.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Core/Utils/Development/dotfiles.ps1
 
 ## df-submodule-update
 
@@ -346,7 +300,7 @@ Signature:
 
 function df-submodule-update
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Core\Utils\Development\dotfiles.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Core/Utils/Development/dotfiles.ps1
 
 ## dfa
 
@@ -354,7 +308,7 @@ Signature:
 
 function dfa
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Core\Utils\Development\dotfiles.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Core/Utils/Development/dotfiles.ps1
 
 ## dfs
 
@@ -362,7 +316,7 @@ Signature:
 
 function dfs
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Core\Utils\Development\dotfiles.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Core/Utils/Development/dotfiles.ps1
 
 ## dirs
 
@@ -374,15 +328,7 @@ Short description:
 
 Does the the rough equivalent of dir /s /b. For example, dirs *.png is dir /s /b *.png
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Core\System\linuxLike.ps1
-
-## Disable-TransientPrompt
-
-Signature:
-
-function Disable-TransientPrompt {
-
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\.starship\starship-init.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Core/System/linuxLike.ps1
 
 ## Download-Package
 
@@ -391,7 +337,7 @@ Signature:
 function Download-Package 
 {
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\PowerShellGet\2.2.5\PSModule.psm1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/PowerShellGet/2.2.5/PSModule.psm1
 
 ## Edit-FileContent
 
@@ -399,7 +345,7 @@ Signature:
 
 function Edit-FileContent($file, $find, $replace) {
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Core\Utils\unified_aliases.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Core/Utils/unified_aliases.ps1
 
 ## Enable-FullPSReadLine
 
@@ -411,7 +357,7 @@ Short description:
 
 Provide a function to enable full PSReadLine features lazily
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Microsoft.PowerShell_profile.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Microsoft.PowerShell_profile.ps1
 
 ## Enable-PsFzfAliases
 
@@ -419,7 +365,7 @@ Signature:
 
 function Enable-PsFzfAliases() {
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\PSFzf\2.6.14\PSFzf.Functions.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/PSFzf/2.6.7/PSFzf.Functions.ps1
 
 ## Enable-TerminalIcons
 
@@ -434,15 +380,7 @@ Short description:
 
 Provide an explicit enable function for Terminal-Icons so nothing related to it is created at startup
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Microsoft.PowerShell_profile.ps1
-
-## Enable-TransientPrompt
-
-Signature:
-
-function Enable-TransientPrompt {
-
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\.starship\starship-init.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Microsoft.PowerShell_profile.ps1
 
 ## Ensure-ProfileCore
 
@@ -450,7 +388,7 @@ Signature:
 
 function Ensure-ProfileCore {
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Microsoft.PowerShell_profile.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Microsoft.PowerShell_profile.ps1
 
 ## Ensure-ProfileManagement
 
@@ -462,7 +400,7 @@ Short description:
 
 Defer importing heavy profile modules until first use
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Microsoft.PowerShell_profile.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Microsoft.PowerShell_profile.ps1
 
 ## Env
 
@@ -470,7 +408,7 @@ Signature:
 
 function Env:
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Core\System\linuxLike.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Core/System/linuxLike.ps1
 
 ## EscapeAnsiString
 
@@ -478,7 +416,7 @@ Signature:
 
 function EscapeAnsiString([string]$AnsiString) {
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\posh-git\1.1.0\AnsiUtils.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/posh-git/1.1.0/AnsiUtils.ps1
 
 ## Expand-CustomArchive
 
@@ -491,7 +429,7 @@ param (
         [string]$Folder
     )
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Core\Utils\FileSystemUtils.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Core/Utils/FileSystemUtils.ps1
 
 ## Expand-CustomArchives
 
@@ -500,7 +438,7 @@ Signature:
 function Expand-CustomArchives { 
 param([string[]]$Files)
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Core\Utils\FileSystemUtils.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Core/Utils/FileSystemUtils.ps1
 
 ## Expand-FileDirectoryPath
 
@@ -508,7 +446,7 @@ Signature:
 
 function Expand-FileDirectoryPath($lastWord) {
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\PSFzf\2.6.14\PSFzf.psm1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/PSFzf/2.6.7/PSFzf.psm1
 
 ## Expand-GitCommand
 
@@ -516,7 +454,7 @@ Signature:
 
 function Expand-GitCommand($Command) {
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\posh-git\1.1.0\GitTabExpansion.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/posh-git/1.1.0/GitTabExpansion.ps1
 
 ## Expand-GitCommandPsFzf
 
@@ -524,7 +462,7 @@ Signature:
 
 function Expand-GitCommandPsFzf($lastWord) {
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\PSFzf\2.6.14\PSFzf.psm1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/PSFzf/2.6.7/PSFzf.psm1
 
 ## Expand-GitProxyFunction
 
@@ -532,7 +470,7 @@ Signature:
 
 function Expand-GitProxyFunction($command) {
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\posh-git\1.1.0\GitTabExpansion.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/posh-git/1.1.0/GitTabExpansion.ps1
 
 ## Expand-GitWithFzf
 
@@ -540,7 +478,7 @@ Signature:
 
 function Expand-GitWithFzf($lastBlock) {
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\PSFzf\2.6.14\PSFzf.psm1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/PSFzf/2.6.7/PSFzf.psm1
 
 ## Expand-MultipleArchives
 
@@ -548,7 +486,7 @@ Signature:
 
 function Expand-MultipleArchives {
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Core\Utils\unified_aliases.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Core/Utils/unified_aliases.ps1
 
 ## Expand-ZipFile
 
@@ -556,7 +494,7 @@ Signature:
 
 function Expand-ZipFile($file) {
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Core\Utils\unified_aliases.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Core/Utils/unified_aliases.ps1
 
 ## export
 
@@ -564,7 +502,7 @@ Signature:
 
 function export($name, $value) {
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Core\Utils\unified_aliases.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Core/Utils/unified_aliases.ps1
 
 ## fdg
 
@@ -572,7 +510,7 @@ Signature:
 
 function fdg
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Core\System\fzf.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Core/System/fzf.ps1
 
 ## Find-Command
 
@@ -581,16 +519,16 @@ Signature:
 function Find-Command { 
 param([string]$name)
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Core\Utils\SearchUtils.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Core/Utils/SearchUtils.ps1
 
 ## Find-CurrentPath
 
 Signature:
 
 function Find-CurrentPath { 
-param([string]$line, [int]$cursor, [ref]$leftCursor, [ref]$rightCursor)
+param([string]$line,[int]$cursor,[ref]$leftCursor,[ref]$rightCursor)
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\PSFzf\2.6.14\PSFzf.Base.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/PSFzf/2.6.7/PSFzf.Base.ps1
 
 ## Find-DscResource
 
@@ -599,7 +537,7 @@ Signature:
 function Find-DscResource 
 {
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\PowerShellGet\2.2.5\PSModule.psm1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/PowerShellGet/2.2.5/PSModule.psm1
 
 ## find-file
 
@@ -611,7 +549,7 @@ Short description:
 
 Search and find utilities
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Core\Utils\unified_aliases.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Core/Utils/unified_aliases.ps1
 
 ## Find-Files
 
@@ -629,7 +567,7 @@ Short description:
 
 Search utilities for PowerShell profile
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Core\Utils\SearchUtils.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Core/Utils/SearchUtils.ps1
 
 ## Find-Module
 
@@ -638,7 +576,7 @@ Signature:
 function Find-Module { 
 <#
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\PowerShellGet\2.2.5\PSModule.psm1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/PowerShellGet/2.2.5/PSModule.psm1
 
 ## Find-Package
 
@@ -647,7 +585,7 @@ Signature:
 function Find-Package 
 {
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\PowerShellGet\2.2.5\PSModule.psm1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/PowerShellGet/2.2.5/PSModule.psm1
 
 ## Find-RoleCapability
 
@@ -656,7 +594,7 @@ Signature:
 function Find-RoleCapability 
 {
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\PowerShellGet\2.2.5\PSModule.psm1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/PowerShellGet/2.2.5/PSModule.psm1
 
 ## Find-Script
 
@@ -665,7 +603,7 @@ Signature:
 function Find-Script { 
 <#
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\PowerShellGet\2.2.5\PSModule.psm1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/PowerShellGet/2.2.5/PSModule.psm1
 
 ## Find-String
 
@@ -673,15 +611,15 @@ Signature:
 
 function Find-String($regex, $dir) {
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Core\Utils\unified_aliases.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Core/Utils/unified_aliases.ps1
 
 ## FindFzf
 
 Signature:
 
-function FindFzf() {
+function FindFzf()
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\PSFzf\2.6.14\PSFzf.Base.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/PSFzf/2.6.7/PSFzf.Base.ps1
 
 ## FindToken
 
@@ -690,15 +628,15 @@ Signature:
 function FindToken 
 {
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\PSReadLine\2.3.6\SamplePSReadLineProfile.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/PSReadLine/2.3.6/SamplePSReadLineProfile.ps1
 
 ## FixCompletionResult
 
 Signature:
 
-function FixCompletionResult($str) {
+function FixCompletionResult($str)
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\PSFzf\2.6.14\PSFzf.Base.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/PSFzf/2.6.7/PSFzf.Base.ps1
 
 ## Format-GitBranchName
 
@@ -717,15 +655,7 @@ Short description:
 
 .SYNOPSIS
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\posh-git\1.1.0\GitPrompt.ps1
-
-## Format-Rank
-
-Signature:
-
-function Format-Rank($rank) {
-
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\z\1.1.14\z.psm1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/posh-git/1.1.0/GitPrompt.ps1
 
 ## Format-TerminalIcons
 
@@ -733,7 +663,7 @@ Signature:
 
 function Format-TerminalIcons {
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\Terminal-Icons\0.11.0\Terminal-Icons.psm1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/Terminal-Icons/0.11.0/Terminal-Icons.psm1
 
 ## Get-AliasPattern
 
@@ -741,22 +671,7 @@ Signature:
 
 function Get-AliasPattern($cmd) {
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\posh-git\1.1.0\GitUtils.ps1
-
-## Get-ArgsFilter
-
-Signature:
-
-function Get-ArgsFilter { 
-Param(
-        [Parameter(ValueFromPipeline=$true)]
-        [Hashtable]$historyEntry,
-
-        [string]
-        $Option = 'Frecency'
-    )
-
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\z\1.1.14\z.psm1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/posh-git/1.1.0/GitUtils.ps1
 
 ## Get-AuthenticodePublisher
 
@@ -765,7 +680,7 @@ Signature:
 function Get-AuthenticodePublisher 
 {
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\PowerShellGet\2.2.5\PSModule.psm1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/PowerShellGet/2.2.5/PSModule.psm1
 
 ## Get-AvailableModules
 
@@ -777,7 +692,7 @@ Short description:
 
 ref: https://github.com/ChrisTitusTech/powershell-profile/blob/main/Microsoft.PowerShell_profile.ps1
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Core\Utils\unified_aliases.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Core/Utils/unified_aliases.ps1
 
 ## Get-AvailableRoleCapabilityName
 
@@ -786,7 +701,7 @@ Signature:
 function Get-AvailableRoleCapabilityName 
 {
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\PowerShellGet\2.2.5\PSModule.psm1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/PowerShellGet/2.2.5/PSModule.psm1
 
 ## Get-AvailableScriptFilePath
 
@@ -795,7 +710,7 @@ Signature:
 function Get-AvailableScriptFilePath 
 {
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\PowerShellGet\2.2.5\PSModule.psm1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/PowerShellGet/2.2.5/PSModule.psm1
 
 ## Get-BackgroundVirtualTerminalSequence
 
@@ -803,7 +718,7 @@ Signature:
 
 function Get-BackgroundVirtualTerminalSequence($Color) {
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\posh-git\1.1.0\AnsiUtils.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/posh-git/1.1.0/AnsiUtils.ps1
 
 ## Get-BatteryReport
 
@@ -811,7 +726,7 @@ Signature:
 
 function Get-BatteryReport {
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Core\System\checkBattery.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Core/System/checkBattery.ps1
 
 ## Get-BatThemes
 
@@ -819,7 +734,7 @@ Signature:
 
 function Get-BatThemes {
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Core\Utils\Development\bat.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Core/Utils/Development/bat.ps1
 
 ## Get-ChocoApps
 
@@ -828,7 +743,7 @@ Signature:
 function Get-ChocoApps { 
 $apps = $(choco list --id-only --no-color).Split("\n")
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Core\Apps\appsManage.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Core/Apps/appsManage.ps1
 
 ## Get-ClipboardContent
 
@@ -836,7 +751,7 @@ Signature:
 
 function Get-ClipboardContent {
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Core\Utils\unified_aliases.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Core/Utils/unified_aliases.ps1
 
 ## Get-ColorAlways
 
@@ -844,7 +759,7 @@ Signature:
 
 function Get-ColorAlways($setting = ' --color=always') {
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\PSFzf\2.6.14\PSFzf.Git.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/PSFzf/2.6.7/PSFzf.Git.ps1
 
 ## Get-CommandPath
 
@@ -852,7 +767,7 @@ Signature:
 
 function Get-CommandPath($command) {
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Core\Utils\unified_aliases.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Core/Utils/unified_aliases.ps1
 
 ## Get-Completer
 
@@ -866,7 +781,7 @@ param (
 		[switch]$Parameter
 	)
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\DockerCompletion\1.2704.0.241216\NativeCommandCompletion\NativeCommandCompletion.psm1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/DockerCompletion/1.2704.0.241216/NativeCommandCompletion/NativeCommandCompletion.psm1
 
 ## Get-ComposeCommandText
 
@@ -877,7 +792,7 @@ param (
 		$CommandAst
 	)
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\DockerCompletion\1.2704.0.241216\DockerCompletion.psm1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/DockerCompletion/1.2704.0.241216/DockerCompletion.psm1
 
 ## Get-Config
 
@@ -886,7 +801,7 @@ Signature:
 function Get-Config { 
 docker config ls --format '{{.Name}}'
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\DockerCompletion\1.2704.0.241216\DockerCompletionUtility\DockerCompletionUtility.psm1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/DockerCompletion/1.2704.0.241216/DockerCompletionUtility/DockerCompletionUtility.psm1
 
 ## Get-Container
 
@@ -898,7 +813,7 @@ Param(
 		[string[]]$Status
 	)
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\DockerCompletion\1.2704.0.241216\DockerCompletionUtility\DockerCompletionUtility.psm1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/DockerCompletion/1.2704.0.241216/DockerCompletionUtility/DockerCompletionUtility.psm1
 
 ## Get-Context
 
@@ -907,7 +822,7 @@ Signature:
 function Get-Context { 
 docker context ls --quiet
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\DockerCompletion\1.2704.0.241216\DockerCompletionUtility\DockerCompletionUtility.psm1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/DockerCompletion/1.2704.0.241216/DockerCompletionUtility/DockerCompletionUtility.psm1
 
 ## Get-CredsFromCredentialProvider
 
@@ -916,44 +831,7 @@ Signature:
 function Get-CredsFromCredentialProvider { 
 [CmdletBinding()]
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\PowerShellGet\2.2.5\PSModule.psm1
-
-## Get-CurrentSessionProviderDrives
-
-Signature:
-
-function Get-CurrentSessionProviderDrives([System.Collections.ArrayList] $ProviderDrives) {
-
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\z\1.1.14\z.psm1
-
-## Get-Cwd
-
-Signature:
-
-function Get-Cwd {
-
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\.starship\starship-init.ps1
-
-## Get-DirectoryEntryMatchPredicate
-
-Signature:
-
-function Get-DirectoryEntryMatchPredicate { 
-Param(
-        [Parameter(
-        ValueFromPipeline=$true,
-        ValueFromPipelineByPropertyName=$true)]
-        $Path,
-
-        [Parameter(
-        ValueFromPipeline=$true,
-        ValueFromPipelineByPropertyName=$true)]
-        [string] $JumpPath,
-
-        $ProviderRegex
-    )
-
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\z\1.1.14\z.psm1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/PowerShellGet/2.2.5/PSModule.psm1
 
 ## Get-DynamicOptions
 
@@ -962,7 +840,7 @@ Signature:
 function Get-DynamicOptions 
 {
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\PowerShellGet\2.2.5\PSModule.psm1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/PowerShellGet/2.2.5/PSModule.psm1
 
 ## Get-DynamicParameters
 
@@ -971,7 +849,7 @@ Signature:
 function Get-DynamicParameters 
 {
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\PowerShellGet\2.2.5\PSModule.psm1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/PowerShellGet/2.2.5/PSModule.psm1
 
 ## Get-EditorLaunch
 
@@ -980,7 +858,7 @@ Signature:
 function Get-EditorLaunch() { 
 param($FileList, $LineNum = 0)
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\PSFzf\2.6.14\PSFzf.Functions.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/PSFzf/2.6.7/PSFzf.Functions.ps1
 
 ## Get-EntityName
 
@@ -989,7 +867,7 @@ Signature:
 function Get-EntityName 
 {
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\PowerShellGet\2.2.5\PSModule.psm1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/PowerShellGet/2.2.5/PSModule.psm1
 
 ## Get-EnvironmentVariable
 
@@ -998,7 +876,7 @@ Signature:
 function Get-EnvironmentVariable 
 {
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\PowerShellGet\2.2.5\PSModule.psm1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/PowerShellGet/2.2.5/PSModule.psm1
 
 ## Get-EscapedString
 
@@ -1007,7 +885,7 @@ Signature:
 function Get-EscapedString 
 {
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\PowerShellGet\2.2.5\PSModule.psm1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/PowerShellGet/2.2.5/PSModule.psm1
 
 ## Get-ExportedDscResources
 
@@ -1016,7 +894,7 @@ Signature:
 function Get-ExportedDscResources 
 {
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\PowerShellGet\2.2.5\PSModule.psm1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/PowerShellGet/2.2.5/PSModule.psm1
 
 ## Get-ExternalModuleDependencies
 
@@ -1025,7 +903,7 @@ Signature:
 function Get-ExternalModuleDependencies 
 {
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\PowerShellGet\2.2.5\PSModule.psm1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/PowerShellGet/2.2.5/PSModule.psm1
 
 ## Get-Feature
 
@@ -1034,7 +912,7 @@ Signature:
 function Get-Feature 
 {
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\PowerShellGet\2.2.5\PSModule.psm1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/PowerShellGet/2.2.5/PSModule.psm1
 
 ## Get-FileEncoding
 
@@ -1046,7 +924,7 @@ Short description:
 
 .SYNOPSIS
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\posh-git\1.1.0\Utils.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/posh-git/1.1.0/Utils.ps1
 
 ## Get-FileSystemCmd
 
@@ -1055,7 +933,7 @@ Signature:
 function Get-FileSystemCmd { 
 param($dir, [switch]$dirOnly = $false)
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\PSFzf\2.6.14\PSFzf.Base.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/PSFzf/2.6.7/PSFzf.Base.ps1
 
 ## Get-First
 
@@ -1064,7 +942,7 @@ Signature:
 function Get-First 
 {
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\PowerShellGet\2.2.5\PSModule.psm1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/PowerShellGet/2.2.5/PSModule.psm1
 
 ## Get-Fonts
 
@@ -1075,7 +953,7 @@ param (
     $regex
   )
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Core\Utils\unified_aliases.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Core/Utils/unified_aliases.ps1
 
 ## Get-ForegroundVirtualTerminalSequence
 
@@ -1083,7 +961,7 @@ Signature:
 
 function Get-ForegroundVirtualTerminalSequence($Color) {
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\posh-git\1.1.0\AnsiUtils.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/posh-git/1.1.0/AnsiUtils.ps1
 
 ## Get-FormatedUptime
 
@@ -1091,23 +969,7 @@ Signature:
 
 function Get-FormatedUptime {
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Core\Utils\CommonUtils.ps1
-
-## Get-FormattedLocation
-
-Signature:
-
-function Get-FormattedLocation() {
-
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\z\1.1.14\z.psm1
-
-## Get-Frecency
-
-Signature:
-
-function Get-Frecency($rank, $time) {
-
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\z\1.1.14\z.psm1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Core/Utils/CommonUtils.ps1
 
 ## Get-GitBranch
 
@@ -1115,7 +977,7 @@ Signature:
 
 function Get-GitBranch($branch = $null, $gitDir = $(Get-GitDirectory), [switch]$isDotGitOrBare, [Diagnostics.Stopwatch]$sw) {
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\posh-git\1.1.0\GitUtils.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/posh-git/1.1.0/GitUtils.ps1
 
 ## Get-GitBranchStatusColor
 
@@ -1133,7 +995,7 @@ Short description:
 
 .SYNOPSIS
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\posh-git\1.1.0\GitPrompt.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/posh-git/1.1.0/GitPrompt.ps1
 
 ## Get-GitDirectory
 
@@ -1145,7 +1007,7 @@ Short description:
 
 .SYNOPSIS
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\posh-git\1.1.0\GitUtils.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/posh-git/1.1.0/GitUtils.ps1
 
 ## Get-GitFzfArguments
 
@@ -1153,7 +1015,7 @@ Signature:
 
 function Get-GitFzfArguments() {
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\PSFzf\2.6.14\PSFzf.Git.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/PSFzf/2.6.7/PSFzf.Git.ps1
 
 ## Get-GitStatus
 
@@ -1169,12 +1031,13 @@ param(
         # If specified, overrides $GitPromptSettings.EnableFileStatus and
         # $GitPromptSettings.EnablePromptStatus when they are set to $false.
         [Parameter()]
+        [swit
 
 Short description:
 
 .SYNOPSIS
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\posh-git\1.1.0\GitUtils.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/posh-git/1.1.0/GitUtils.ps1
 
 ## Get-Hash
 
@@ -1183,7 +1046,7 @@ Signature:
 function Get-Hash 
 # Returns a SHA1 hash of the specified string
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\PowerShellGet\2.2.5\PSModule.psm1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/PowerShellGet/2.2.5/PSModule.psm1
 
 ## Get-HeaderStrings
 
@@ -1191,7 +1054,7 @@ Signature:
 
 function Get-HeaderStrings() {
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\PSFzf\2.6.14\PSFzf.Git.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/PSFzf/2.6.7/PSFzf.Git.ps1
 
 ## Get-Image
 
@@ -1202,7 +1065,7 @@ Param(
 		[switch]$WithTag
 	)
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\DockerCompletion\1.2704.0.241216\DockerCompletionUtility\DockerCompletionUtility.psm1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/DockerCompletion/1.2704.0.241216/DockerCompletionUtility/DockerCompletionUtility.psm1
 
 ## Get-ImageRepository
 
@@ -1211,7 +1074,7 @@ Signature:
 function Get-ImageRepository { 
 $sorted = docker image ls --format '{{.Repository}}:{{.Tag}}' | Sort-Object
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\DockerCompletion\1.2704.0.241216\DockerCompletionUtility\DockerCompletionUtility.psm1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/DockerCompletion/1.2704.0.241216/DockerCompletionUtility/DockerCompletionUtility.psm1
 
 ## Get-InstallationPolicy
 
@@ -1224,7 +1087,7 @@ Short description:
 
 Helper functions for PowerShellGet DSC Resources.
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\PowerShellGet\2.2.5\Modules\PowerShellGet.ResourceHelper\PowerShellGet.ResourceHelper.psm1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/PowerShellGet/2.2.5/Modules/PowerShellGet.ResourceHelper/PowerShellGet.ResourceHelper.psm1
 
 ## Get-InstallationScope
 
@@ -1237,7 +1100,7 @@ Short description:
 
 Determine scope. We prefer CurrentUser scope even if the older module is installed for AllUsers, unless:
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\PowerShellGet\2.2.5\PSModule.psm1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/PowerShellGet/2.2.5/PSModule.psm1
 
 ## Get-InstalledModule
 
@@ -1246,7 +1109,7 @@ Signature:
 function Get-InstalledModule 
 {
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\PowerShellGet\2.2.5\PSModule.psm1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/PowerShellGet/2.2.5/PSModule.psm1
 
 ## Get-InstalledModuleAuthenticodeSignature
 
@@ -1255,7 +1118,7 @@ Signature:
 function Get-InstalledModuleAuthenticodeSignature 
 {
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\PowerShellGet\2.2.5\PSModule.psm1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/PowerShellGet/2.2.5/PSModule.psm1
 
 ## Get-InstalledModuleDetails
 
@@ -1264,7 +1127,7 @@ Signature:
 function Get-InstalledModuleDetails 
 {
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\PowerShellGet\2.2.5\PSModule.psm1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/PowerShellGet/2.2.5/PSModule.psm1
 
 ## Get-InstalledPackage
 
@@ -1273,7 +1136,7 @@ Signature:
 function Get-InstalledPackage 
 {
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\PowerShellGet\2.2.5\PSModule.psm1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/PowerShellGet/2.2.5/PSModule.psm1
 
 ## Get-InstalledScript
 
@@ -1282,7 +1145,7 @@ Signature:
 function Get-InstalledScript 
 {
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\PowerShellGet\2.2.5\PSModule.psm1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/PowerShellGet/2.2.5/PSModule.psm1
 
 ## Get-InstalledScriptDetails
 
@@ -1291,7 +1154,7 @@ Signature:
 function Get-InstalledScriptDetails 
 {
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\PowerShellGet\2.2.5\PSModule.psm1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/PowerShellGet/2.2.5/PSModule.psm1
 
 ## Get-InstalledScriptFilePath
 
@@ -1300,7 +1163,7 @@ Signature:
 function Get-InstalledScriptFilePath 
 {
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\PowerShellGet\2.2.5\PSModule.psm1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/PowerShellGet/2.2.5/PSModule.psm1
 
 ## Get-LocalizedData
 
@@ -1313,7 +1176,7 @@ Short description:
 
 .SYNOPSIS
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\PowerShellGet\2.2.5\Modules\PowerShellGet.LocalizationHelper\PowerShellGet.LocalizationHelper.psm1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/PowerShellGet/2.2.5/Modules/PowerShellGet.LocalizationHelper/PowerShellGet.LocalizationHelper.psm1
 
 ## Get-LocationString
 
@@ -1322,7 +1185,7 @@ Signature:
 function Get-LocationString 
 {
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\PowerShellGet\2.2.5\PSModule.psm1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/PowerShellGet/2.2.5/PSModule.psm1
 
 ## Get-ManifestHashTable
 
@@ -1331,7 +1194,7 @@ Signature:
 function Get-ManifestHashTable 
 {
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\PowerShellGet\2.2.5\PSModule.psm1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/PowerShellGet/2.2.5/PSModule.psm1
 
 ## Get-ModuleDependencies
 
@@ -1340,7 +1203,7 @@ Signature:
 function Get-ModuleDependencies 
 {
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\PowerShellGet\2.2.5\PSModule.psm1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/PowerShellGet/2.2.5/PSModule.psm1
 
 ## Get-ModuleRepositoryName
 
@@ -1352,16 +1215,7 @@ Short description:
 
 .SYNOPSIS
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\PowerShellGet\2.2.5\DscResources\MSFT_PSModule\MSFT_PSModule.psm1
-
-## Get-MostRecentDirectoryEntries
-
-Signature:
-
-function Get-MostRecentDirectoryEntries { 
-
-
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\z\1.1.14\z.psm1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/PowerShellGet/2.2.5/DscResources/MSFT_PSModule/MSFT_PSModule.psm1
 
 ## Get-Network
 
@@ -1373,7 +1227,7 @@ Param(
 		[string[]]$Type
 	)
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\DockerCompletion\1.2704.0.241216\DockerCompletionUtility\DockerCompletionUtility.psm1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/DockerCompletion/1.2704.0.241216/DockerCompletionUtility/DockerCompletionUtility.psm1
 
 ## Get-Node
 
@@ -1385,7 +1239,7 @@ Param(
 		[string[]]$Role
 	)
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\DockerCompletion\1.2704.0.241216\DockerCompletionUtility\DockerCompletionUtility.psm1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/DockerCompletion/1.2704.0.241216/DockerCompletionUtility/DockerCompletionUtility.psm1
 
 ## Get-NormalizedVersionString
 
@@ -1394,7 +1248,7 @@ Signature:
 function Get-NormalizedVersionString 
 {
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\PowerShellGet\2.2.5\PSModule.psm1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/PowerShellGet/2.2.5/PSModule.psm1
 
 ## Get-OrderedPSScriptInfoObject
 
@@ -1403,7 +1257,7 @@ Signature:
 function Get-OrderedPSScriptInfoObject 
 {
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\PowerShellGet\2.2.5\PSModule.psm1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/PowerShellGet/2.2.5/PSModule.psm1
 
 ## Get-OrphanedFiles
 
@@ -1414,7 +1268,7 @@ param(
         [string]$PowerShellPath = $env:USERPROFILE + '\OneDrive\Documents\PowerShell'
     )
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Core\System\clean-orphaned.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Core/System/clean-orphaned.ps1
 
 ## Get-PackageManagementProviderName
 
@@ -1423,7 +1277,7 @@ Signature:
 function Get-PackageManagementProviderName 
 {
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\PowerShellGet\2.2.5\PSModule.psm1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/PowerShellGet/2.2.5/PSModule.psm1
 
 ## Get-PackageProviderName
 
@@ -1432,7 +1286,7 @@ Signature:
 function Get-PackageProviderName 
 {
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\PowerShellGet\2.2.5\PSModule.psm1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/PowerShellGet/2.2.5/PSModule.psm1
 
 ## Get-ParametersHashtable
 
@@ -1441,7 +1295,7 @@ Signature:
 function Get-ParametersHashtable 
 {
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\PowerShellGet\2.2.5\PSModule.psm1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/PowerShellGet/2.2.5/PSModule.psm1
 
 ## Get-PathStringComparison
 
@@ -1453,7 +1307,7 @@ Short description:
 
 .SYNOPSIS
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\posh-git\1.1.0\Utils.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/posh-git/1.1.0/Utils.ps1
 
 ## Get-PickedHistory
 
@@ -1461,7 +1315,7 @@ Signature:
 
 function Get-PickedHistory($Query = '', [switch]$UsePSReadLineHistory) {
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\PSFzf\2.6.14\PSFzf.Base.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/PSFzf/2.6.7/PSFzf.Base.ps1
 
 ## Get-Plugin
 
@@ -1469,7 +1323,15 @@ Signature:
 
 function Get-Plugin {
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\DockerCompletion\1.2704.0.241216\DockerCompletionUtility\DockerCompletionUtility.psm1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/DockerCompletion/1.2704.0.241216/DockerCompletionUtility/DockerCompletionUtility.psm1
+
+## Get-PrecedingCommentBlock
+
+Signature:
+
+function Get-PrecedingCommentBlock($text, $startIndex) {
+
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/tools/generate_function_docs.ps1
 
 ## Get-PrivateData
 
@@ -1478,7 +1340,7 @@ Signature:
 function Get-PrivateData 
 #Utility function to help form the content string for PrivateData
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\PowerShellGet\2.2.5\PSModule.psm1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/PowerShellGet/2.2.5/PSModule.psm1
 
 ## Get-ProcessByName
 
@@ -1486,7 +1348,7 @@ Signature:
 
 function Get-ProcessByName($name) { Get-Process $name }
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Core\Utils\unified_aliases.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Core/Utils/unified_aliases.ps1
 
 ## Get-PromptConnectionInfo
 
@@ -1498,7 +1360,7 @@ Short description:
 
 .SYNOPSIS
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\posh-git\1.1.0\Utils.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/posh-git/1.1.0/Utils.ps1
 
 ## Get-PromptPath
 
@@ -1506,15 +1368,7 @@ Signature:
 
 function Get-PromptPath {
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\posh-git\1.1.0\Utils.ps1
-
-## Get-ProviderDrivesRegex
-
-Signature:
-
-function Get-ProviderDrivesRegex([System.Collections.ArrayList] $ProviderDrives) {
-
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\z\1.1.14\z.psm1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/posh-git/1.1.0/Utils.ps1
 
 ## Get-ProviderName
 
@@ -1523,20 +1377,7 @@ Signature:
 function Get-ProviderName 
 {
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\PowerShellGet\2.2.5\PSModule.psm1
-
-## Get-PSConsoleReadLineBufferState
-
-Signature:
-
-function Get-PSConsoleReadLineBufferState { 
-[CmdletBinding()]
-
-Short description:
-
-PSConsoleReadLineWrappers.ps1
-
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\PSFzf\2.6.14\PSFzf.PSConsoleReadLineWrappers.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/PowerShellGet/2.2.5/PSModule.psm1
 
 ## Get-PSModulePath
 
@@ -1545,7 +1386,7 @@ Signature:
 function Get-PSModulePath { 
 $modulePaths = $Env:PSModulePath -split ';'
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\posh-git\1.1.0\Utils.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/posh-git/1.1.0/Utils.ps1
 
 ## Get-PSModules
 
@@ -1553,7 +1394,7 @@ Signature:
 
 function Get-PSModules {
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\ProfileCore\ProfileCore.psm1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/ProfileCore/ProfileCore.psm1
 
 ## Get-PSRepository
 
@@ -1562,7 +1403,7 @@ Signature:
 function Get-PSRepository { 
 <#
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\PowerShellGet\2.2.5\PSModule.psm1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/PowerShellGet/2.2.5/PSModule.psm1
 
 ## Get-PSScriptInfoString
 
@@ -1571,7 +1412,7 @@ Signature:
 function Get-PSScriptInfoString 
 {
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\PowerShellGet\2.2.5\PSModule.psm1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/PowerShellGet/2.2.5/PSModule.psm1
 
 ## Get-PubIP
 
@@ -1579,7 +1420,7 @@ Signature:
 
 function Get-PubIP {
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Core\Utils\CommonUtils.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Core/Utils/CommonUtils.ps1
 
 ## Get-PublishLocation
 
@@ -1588,7 +1429,7 @@ Signature:
 function Get-PublishLocation 
 {
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\PowerShellGet\2.2.5\PSModule.psm1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/PowerShellGet/2.2.5/PSModule.psm1
 
 ## Get-PwshInstalled
 
@@ -1600,7 +1441,7 @@ Short description:
 
 Function to check if pwsh is installed
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Core\Utils\unified_aliases.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Core/Utils/unified_aliases.ps1
 
 ## Get-RequiresString
 
@@ -1609,7 +1450,7 @@ Signature:
 function Get-RequiresString 
 {
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\PowerShellGet\2.2.5\PSModule.psm1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/PowerShellGet/2.2.5/PSModule.psm1
 
 ## Get-RightModule
 
@@ -1621,7 +1462,7 @@ Short description:
 
 .SYNOPSIS
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\PowerShellGet\2.2.5\DscResources\MSFT_PSModule\MSFT_PSModule.psm1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/PowerShellGet/2.2.5/DscResources/MSFT_PSModule/MSFT_PSModule.psm1
 
 ## Get-ScoopApps
 
@@ -1630,7 +1471,7 @@ Signature:
 function Get-ScoopApps { 
 $apps = $(scoop list | Select-Object -ExpandProperty "Name").Split("\n")
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Core\Apps\appsManage.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Core/Apps/appsManage.ps1
 
 ## Get-ScriptCommentHelpInfoString
 
@@ -1639,7 +1480,7 @@ Signature:
 function Get-ScriptCommentHelpInfoString 
 {
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\PowerShellGet\2.2.5\PSModule.psm1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/PowerShellGet/2.2.5/PSModule.psm1
 
 ## Get-ScriptSourceLocation
 
@@ -1648,7 +1489,7 @@ Signature:
 function Get-ScriptSourceLocation 
 {
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\PowerShellGet\2.2.5\PSModule.psm1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/PowerShellGet/2.2.5/PSModule.psm1
 
 ## Get-Secret
 
@@ -1656,7 +1497,7 @@ Signature:
 
 function Get-Secret {
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\DockerCompletion\1.2704.0.241216\DockerCompletionUtility\DockerCompletionUtility.psm1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/DockerCompletion/1.2704.0.241216/DockerCompletionUtility/DockerCompletionUtility.psm1
 
 ## Get-Service
 
@@ -1664,7 +1505,16 @@ Signature:
 
 function Get-Service {
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\DockerCompletion\1.2704.0.241216\DockerCompletionUtility\DockerCompletionUtility.psm1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/DockerCompletion/1.2704.0.241216/DockerCompletionUtility/DockerCompletionUtility.psm1
+
+## Get-Signature
+
+Signature:
+
+function Get-Signature($text, $matchIndex) { 
+# Grab the function declaration line and any following param block up to the closing ')'
+
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/tools/generate_function_docs.ps1
 
 ## Get-SourceLocation
 
@@ -1673,7 +1523,7 @@ Signature:
 function Get-SourceLocation 
 {
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\PowerShellGet\2.2.5\PSModule.psm1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/PowerShellGet/2.2.5/PSModule.psm1
 
 ## Get-SourceName
 
@@ -1682,7 +1532,7 @@ Signature:
 function Get-SourceName { 
 [CmdletBinding()]
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\PowerShellGet\2.2.5\PSModule.psm1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/PowerShellGet/2.2.5/PSModule.psm1
 
 ## Get-TargetResource
 
@@ -1694,7 +1544,7 @@ Short description:
 
 .SYNOPSIS
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\PowerShellGet\2.2.5\DscResources\MSFT_PSModule\MSFT_PSModule.psm1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/PowerShellGet/2.2.5/DscResources/MSFT_PSModule/MSFT_PSModule.psm1
 
 ## Get-TerminalIconsColorTheme
 
@@ -1702,7 +1552,7 @@ Signature:
 
 function Get-TerminalIconsColorTheme {
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\Terminal-Icons\0.11.0\Terminal-Icons.psm1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/Terminal-Icons/0.11.0/Terminal-Icons.psm1
 
 ## Get-TerminalIconsGlyphs
 
@@ -1710,7 +1560,7 @@ Signature:
 
 function Get-TerminalIconsGlyphs {
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\Terminal-Icons\0.11.0\Terminal-Icons.psm1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/Terminal-Icons/0.11.0/Terminal-Icons.psm1
 
 ## Get-TerminalIconsIconTheme
 
@@ -1718,7 +1568,7 @@ Signature:
 
 function Get-TerminalIconsIconTheme {
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\Terminal-Icons\0.11.0\Terminal-Icons.psm1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/Terminal-Icons/0.11.0/Terminal-Icons.psm1
 
 ## Get-TerminalIconsTheme
 
@@ -1726,7 +1576,7 @@ Signature:
 
 function Get-TerminalIconsTheme {
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\Terminal-Icons\0.11.0\Terminal-Icons.psm1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/Terminal-Icons/0.11.0/Terminal-Icons.psm1
 
 ## Get-ThemeStoragePath
 
@@ -1735,7 +1585,7 @@ Signature:
 function Get-ThemeStoragePath { 
 [OutputType([string])]
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\Terminal-Icons\0.11.0\Terminal-Icons.psm1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/Terminal-Icons/0.11.0/Terminal-Icons.psm1
 
 ## Get-UnifiedModuleStatus
 
@@ -1743,7 +1593,7 @@ Signature:
 
 function Get-UnifiedModuleStatus {
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Core\UnifiedModuleManager.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Core/UnifiedModuleManager.ps1
 
 ## Get-UnifiedToolStatus
 
@@ -1752,7 +1602,7 @@ Signature:
 function Get-UnifiedToolStatus { 
 $script:loadedTools.GetEnumerator() | ForEach-Object {
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Core\UnifiedModuleManager.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Core/UnifiedModuleManager.ps1
 
 ## Get-UrlFromSwid
 
@@ -1761,7 +1611,7 @@ Signature:
 function Get-UrlFromSwid 
 {
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\PowerShellGet\2.2.5\PSModule.psm1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/PowerShellGet/2.2.5/PSModule.psm1
 
 ## Get-ValidModuleLocation
 
@@ -1770,7 +1620,7 @@ Signature:
 function Get-ValidModuleLocation 
 {
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\PowerShellGet\2.2.5\PSModule.psm1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/PowerShellGet/2.2.5/PSModule.psm1
 
 ## Get-VirtualTerminalSequence
 
@@ -1778,7 +1628,7 @@ Signature:
 
 function Get-VirtualTerminalSequence ($color, [int]$offset = 0) {
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\posh-git\1.1.0\AnsiUtils.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/posh-git/1.1.0/AnsiUtils.ps1
 
 ## Get-Volume
 
@@ -1786,7 +1636,7 @@ Signature:
 
 function Get-Volume {
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\DockerCompletion\1.2704.0.241216\DockerCompletionUtility\DockerCompletionUtility.psm1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/DockerCompletion/1.2704.0.241216/DockerCompletionUtility/DockerCompletionUtility.psm1
 
 ## Get-WiFiPassword
 
@@ -1797,15 +1647,7 @@ param(
         [string]$name = $null
     )
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Core\System\checkWifiPassword.ps1
-
-## GetAllHistoryAsText
-
-Signature:
-
-function GetAllHistoryAsText($history) {
-
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\z\1.1.14\z.psm1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Core/System/checkWifiPassword.ps1
 
 ## GetProcessesList
 
@@ -1813,7 +1655,7 @@ Signature:
 
 function GetProcessesList() {
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\PSFzf\2.6.14\helpers\GetProcessesList.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/PSFzf/2.6.7/helpers/GetProcessesList.ps1
 
 ## GetProcessSelection
 
@@ -1825,15 +1667,7 @@ param(
         $ResultAction
     )
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\PSFzf\2.6.14\PSFzf.Functions.ps1
-
-## GetRankFromLine
-
-Signature:
-
-function GetRankFromLine([String]$line) {
-
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\z\1.1.14\z.psm1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/PSFzf/2.6.7/PSFzf.Functions.ps1
 
 ## GetServiceSelection
 
@@ -1845,7 +1679,7 @@ param(
         $ResultAction
     )
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\PSFzf\2.6.14\PSFzf.psm1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/PSFzf/2.6.7/PSFzf.psm1
 
 ## GetUniquePaths
 
@@ -1853,7 +1687,7 @@ Signature:
 
 function GetUniquePaths($pathCollections) {
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\posh-git\1.1.0\GitUtils.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/posh-git/1.1.0/GitUtils.ps1
 
 ## git-pull
 
@@ -1861,7 +1695,7 @@ Signature:
 
 function git-pull { git pull }
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Core\Utils\unified_aliases.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Core/Utils/unified_aliases.ps1
 
 ## git-push
 
@@ -1869,7 +1703,7 @@ Signature:
 
 function git-push { git push }
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Core\Utils\unified_aliases.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Core/Utils/unified_aliases.ps1
 
 ## git-status
 
@@ -1877,7 +1711,7 @@ Signature:
 
 function git-status { git status }
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Core\Utils\unified_aliases.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Core/Utils/unified_aliases.ps1
 
 ## GitTabExpansionInternal
 
@@ -1885,15 +1719,19 @@ Signature:
 
 function GitTabExpansionInternal($lastBlock, $GitStatus = $null) {
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\posh-git\1.1.0\GitTabExpansion.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/posh-git/1.1.0/GitTabExpansion.ps1
 
-## global
+## Global
 
 Signature:
 
-function global:prompt {
+function Global:Write-VcsStatus {
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\.starship\starship-init.ps1
+Short description:
+
+.SYNOPSIS
+
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/posh-git/1.1.0/GitPrompt.ps1
 
 ## grep
 
@@ -1901,7 +1739,7 @@ Signature:
 
 function grep($regex, $dir) {
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Core\Utils\unified_aliases.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Core/Utils/unified_aliases.ps1
 
 ## Handle-Error
 
@@ -1914,7 +1752,7 @@ Short description:
 
 Function to handle errors
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Core\Apps\UpdateApps.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Core/Apps/UpdateApps.ps1
 
 ## Handle-UpdateError
 
@@ -1927,7 +1765,7 @@ Short description:
 
 Error handling function
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Core\Apps\Updates\SystemUpdater.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Core/Apps/Updates/SystemUpdater.ps1
 
 ## hb
 
@@ -1935,7 +1773,7 @@ Signature:
 
 function hb {
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Core\Utils\unified_aliases.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Core/Utils/unified_aliases.ps1
 
 ## head
 
@@ -1944,7 +1782,7 @@ Signature:
 function head { 
 param($Path, $n = 10)
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Core\Utils\unified_aliases.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Core/Utils/unified_aliases.ps1
 
 ## HKCU
 
@@ -1952,7 +1790,7 @@ Signature:
 
 function HKCU:
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Core\System\linuxLike.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Core/System/linuxLike.ps1
 
 ## HKLM
 
@@ -1964,7 +1802,7 @@ Short description:
 
 Drive shortcuts
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Core\System\linuxLike.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Core/System/linuxLike.ps1
 
 ## HttpClientApisAvailable
 
@@ -1973,7 +1811,7 @@ Signature:
 function HttpClientApisAvailable 
 {
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\PowerShellGet\2.2.5\PSModule.psm1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/PowerShellGet/2.2.5/PSModule.psm1
 
 ## Import-ColorTheme
 
@@ -1982,7 +1820,7 @@ Signature:
 function Import-ColorTheme { 
 [OutputType([hashtable])]
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\Terminal-Icons\0.11.0\Terminal-Icons.psm1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/Terminal-Icons/0.11.0/Terminal-Icons.psm1
 
 ## Import-IconTheme
 
@@ -1991,7 +1829,7 @@ Signature:
 function Import-IconTheme { 
 [OutputType([hashtable])]
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\Terminal-Icons\0.11.0\Terminal-Icons.psm1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/Terminal-Icons/0.11.0/Terminal-Icons.psm1
 
 ## Import-LazyModule
 
@@ -2004,7 +1842,7 @@ Short description:
 
 Lazy loading functionality from LazyModuleManager
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Core\UnifiedModuleManager.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Core/UnifiedModuleManager.ps1
 
 ## Import-ModuleWithDependencies
 
@@ -2016,7 +1854,7 @@ param(
         [switch]$Force
     )
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Core\ModuleDependencyManager.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Core/ModuleDependencyManager.ps1
 
 ## Import-ModuleWithVersion
 
@@ -2029,7 +1867,7 @@ param(
         [switch]$Force
     )
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Core\ModuleVersionManager.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Core/ModuleVersionManager.ps1
 
 ## Import-Preferences
 
@@ -2038,7 +1876,7 @@ Signature:
 function Import-Preferences { 
 [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSUseShouldProcessForStateChangingFunctions', '')]
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\Terminal-Icons\0.11.0\Terminal-Icons.psm1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/Terminal-Icons/0.11.0/Terminal-Icons.psm1
 
 ## Import-PSModule
 
@@ -2047,7 +1885,7 @@ Signature:
 function Import-PSModule {    param( 
 [Parameter(Mandatory=$true)]
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\ProfileCore\ProfileCore.psm1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/ProfileCore/ProfileCore.psm1
 
 ## Import-UnifiedModule
 
@@ -2056,7 +1894,7 @@ Signature:
 function Import-UnifiedModule { 
 [CmdletBinding(SupportsShouldProcess)]
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Core\UnifiedModuleManager.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Core/UnifiedModuleManager.ps1
 
 ## Import-UnifiedTool
 
@@ -2065,7 +1903,7 @@ Signature:
 function Import-UnifiedTool { 
 param([string]$Name)
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Core\UnifiedModuleManager.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Core/UnifiedModuleManager.ps1
 
 ## InDisabledRepository
 
@@ -2073,7 +1911,7 @@ Signature:
 
 function InDisabledRepository {
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\posh-git\1.1.0\GitUtils.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/posh-git/1.1.0/GitUtils.ps1
 
 ## InDotGitOrBareRepoDir
 
@@ -2081,7 +1919,7 @@ Signature:
 
 function InDotGitOrBareRepoDir([string][ValidateNotNullOrEmpty()]$GitDir) {
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\posh-git\1.1.0\GitUtils.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/posh-git/1.1.0/GitUtils.ps1
 
 ## Initialize-EditorConfig
 
@@ -2093,7 +1931,7 @@ Short description:
 
 Editor detection and configuration
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Core\Utils\unified_aliases.psm1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Core/Utils/unified_aliases.psm1
 
 ## Initialize-EncodingConfig
 
@@ -2101,7 +1939,7 @@ Signature:
 
 function Initialize-EncodingConfig {
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Core\Utils\CommonUtils.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Core/Utils/CommonUtils.ps1
 
 ## Initialize-Provider
 
@@ -2110,7 +1948,7 @@ Signature:
 function Initialize-Provider 
 {
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\PowerShellGet\2.2.5\PSModule.psm1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/PowerShellGet/2.2.5/PSModule.psm1
 
 ## Initialize-PSModules
 
@@ -2118,7 +1956,7 @@ Signature:
 
 function Initialize-PSModules {
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\ProfileCore\ProfileCore.psm1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/ProfileCore/ProfileCore.psm1
 
 ## Initialize-StartupModules
 
@@ -2126,7 +1964,7 @@ Signature:
 
 function Initialize-StartupModules {
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Core\UnifiedModuleManager.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Core/UnifiedModuleManager.ps1
 
 ## Initialize-StartupTools
 
@@ -2134,7 +1972,7 @@ Signature:
 
 function Initialize-StartupTools {
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Core\UnifiedModuleManager.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Core/UnifiedModuleManager.ps1
 
 ## Initialize-UpdateLog
 
@@ -2147,16 +1985,7 @@ Short description:
 
 Initialize logging
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Core\Apps\Updates\SystemUpdater.ps1
-
-## Insert-PSConsoleReadLineText
-
-Signature:
-
-function Insert-PSConsoleReadLineText { 
-[CmdletBinding()]
-
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\PSFzf\2.6.14\PSFzf.PSConsoleReadLineWrappers.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Core/Apps/Updates/SystemUpdater.ps1
 
 ## Install-Module
 
@@ -2165,7 +1994,7 @@ Signature:
 function Install-Module { 
 <#
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\PowerShellGet\2.2.5\PSModule.psm1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/PowerShellGet/2.2.5/PSModule.psm1
 
 ## Install-NuGetClientBinaries
 
@@ -2174,7 +2003,7 @@ Signature:
 function Install-NuGetClientBinaries 
 {
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\PowerShellGet\2.2.5\PSModule.psm1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/PowerShellGet/2.2.5/PSModule.psm1
 
 ## Install-Package
 
@@ -2183,7 +2012,7 @@ Signature:
 function Install-Package 
 {
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\PowerShellGet\2.2.5\PSModule.psm1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/PowerShellGet/2.2.5/PSModule.psm1
 
 ## Install-PackageUtility
 
@@ -2192,7 +2021,7 @@ Signature:
 function Install-PackageUtility 
 {
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\PowerShellGet\2.2.5\PSModule.psm1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/PowerShellGet/2.2.5/PSModule.psm1
 
 ## Install-Pwsh
 
@@ -2204,7 +2033,7 @@ Short description:
 
 Function to install PowerShell 7 using winget
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Core\Utils\unified_aliases.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Core/Utils/unified_aliases.ps1
 
 ## Install-RequiredModules
 
@@ -2213,7 +2042,7 @@ Signature:
 function Install-RequiredModules { 
 [CmdletBinding()]
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Core\ModuleInstaller.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Core/ModuleInstaller.ps1
 
 ## Install-Script
 
@@ -2222,7 +2051,7 @@ Signature:
 function Install-Script { 
 <#
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\PowerShellGet\2.2.5\PSModule.psm1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/PowerShellGet/2.2.5/PSModule.psm1
 
 ## instead
 
@@ -2230,7 +2059,7 @@ Signature:
 
 function instead of this one.
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\posh-git\1.1.0\GitPrompt.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/posh-git/1.1.0/GitPrompt.ps1
 
 ## Invoke-Completer
 
@@ -2248,7 +2077,7 @@ param (
 		[Object[]]$ArgumentList
 	)
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\DockerCompletion\1.2704.0.241216\NativeCommandCompletion\NativeCommandCompletion.psm1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/DockerCompletion/1.2704.0.241216/NativeCommandCompletion/NativeCommandCompletion.psm1
 
 ## Invoke-CompletionCustomScript
 
@@ -2260,7 +2089,7 @@ Param(
 		[string[]]$Path
 	)
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\DockerCompletion\1.2704.0.241216\DockerCompletion.psm1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/DockerCompletion/1.2704.0.241216/DockerCompletion.psm1
 
 ## Invoke-FuzzyEdit
 
@@ -2269,7 +2098,7 @@ Signature:
 function Invoke-FuzzyEdit() { 
 param($Directory = ".", [switch]$Wait)
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\PSFzf\2.6.14\PSFzf.Functions.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/PSFzf/2.6.7/PSFzf.Functions.ps1
 
 ## Invoke-FuzzyFasd
 
@@ -2281,7 +2110,7 @@ Short description:
 
 .ExternalHelp PSFzf.psm1-help.xml
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\PSFzf\2.6.14\PSFzf.Functions.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/PSFzf/2.6.7/PSFzf.Functions.ps1
 
 ## Invoke-FuzzyGitStatus
 
@@ -2294,7 +2123,7 @@ Short description:
 
 .ExternalHelp PSFzf.psm1-help.xml
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\PSFzf\2.6.14\PSFzf.Functions.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/PSFzf/2.6.7/PSFzf.Functions.ps1
 
 ## Invoke-FuzzyHistory
 
@@ -2306,7 +2135,7 @@ Short description:
 
 .ExternalHelp PSFzf.psm1-help.xml
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\PSFzf\2.6.14\PSFzf.Functions.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/PSFzf/2.6.7/PSFzf.Functions.ps1
 
 ## Invoke-FuzzyKillProcess
 
@@ -2319,7 +2148,7 @@ Short description:
 
 .ExternalHelp PSFzf.psm1-help.xml
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\PSFzf\2.6.14\PSFzf.Functions.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/PSFzf/2.6.7/PSFzf.Functions.ps1
 
 ## Invoke-FuzzyScoop
 
@@ -2335,7 +2164,7 @@ Short description:
 
 .ExternalHelp PSFzf.psm1-help.xml
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\PSFzf\2.6.14\PSFzf.Functions.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/PSFzf/2.6.7/PSFzf.Functions.ps1
 
 ## Invoke-FuzzySetLocation
 
@@ -2348,22 +2177,19 @@ Short description:
 
 .ExternalHelp PSFzf.psm1-help.xml
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\PSFzf\2.6.14\PSFzf.Functions.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/PSFzf/2.6.7/PSFzf.Functions.ps1
 
 ## Invoke-FuzzyZLocation
 
 Signature:
 
-function Invoke-FuzzyZLocation() { 
-param(
-        [string]$Query = $null
-    )
+function Invoke-FuzzyZLocation() {
 
 Short description:
 
 .ExternalHelp PSFzf.psm1-help.xml
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\PSFzf\2.6.14\PSFzf.Functions.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/PSFzf/2.6.7/PSFzf.Functions.ps1
 
 ## Invoke-Fzf
 
@@ -2371,35 +2197,34 @@ Signature:
 
 function Invoke-Fzf { 
 param(
-		# Search
-		[Alias("x")]
-		[switch]$Extended,
-		[Alias('e')]
-		[switch]$Exact,
-		[Alias('i')]
-		[switch]$CaseInsensitive,
-		[switch]$CaseSensitive,
-		[ValidateSet('default', 'path', 'history')]
-		[string]
-		$Scheme = $null,
-		[Alias('d')]
-		[string]$Delimiter,
-		[switch]$NoSort,
-		[Alias('tac')]
-		[switch]$ReverseInput,
-		[switch]$Phony,
-		[Validat
+            # Search
+			[Alias("x")]
+			[switch]$Extended,
+			[Alias('e')]
+		  	[switch]$Exact,
+			[Alias('i')]
+		  	[switch]$CaseInsensitive,
+		  	[switch]$CaseSensitive,
+			[ValidateSet('default','path','history')]
+		  	[string]
+		  	$Scheme = $null,
+		  	[Alias('d')]
+		  	[string]$Delimiter,
+		  	[switch]$NoSort,
+			[Alias('tac')]
+			[switch]$ReverseInput,
+			[swit
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\PSFzf\2.6.14\PSFzf.Base.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/PSFzf/2.6.7/PSFzf.Base.ps1
 
 ## Invoke-FzfDefaultSystem
 
 Signature:
 
 function Invoke-FzfDefaultSystem { 
-param($ProviderPath, $DefaultOpts)
+param($ProviderPath,$DefaultOpts)
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\PSFzf\2.6.14\PSFzf.Base.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/PSFzf/2.6.7/PSFzf.Base.ps1
 
 ## Invoke-FzfPsReadlineHandlerHistory
 
@@ -2407,7 +2232,7 @@ Signature:
 
 function Invoke-FzfPsReadlineHandlerHistory {
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\PSFzf\2.6.14\PSFzf.Base.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/PSFzf/2.6.7/PSFzf.Base.ps1
 
 ## Invoke-FzfPsReadlineHandlerHistoryArgs
 
@@ -2415,7 +2240,7 @@ Signature:
 
 function Invoke-FzfPsReadlineHandlerHistoryArgs {
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\PSFzf\2.6.14\PSFzf.Base.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/PSFzf/2.6.7/PSFzf.Base.ps1
 
 ## Invoke-FzfPsReadlineHandlerProvider
 
@@ -2423,7 +2248,7 @@ Signature:
 
 function Invoke-FzfPsReadlineHandlerProvider {
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\PSFzf\2.6.14\PSFzf.Base.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/PSFzf/2.6.7/PSFzf.Base.ps1
 
 ## Invoke-FzfPsReadlineHandlerSetLocation
 
@@ -2431,7 +2256,7 @@ Signature:
 
 function Invoke-FzfPsReadlineHandlerSetLocation {
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\PSFzf\2.6.14\PSFzf.Base.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/PSFzf/2.6.7/PSFzf.Base.ps1
 
 ## Invoke-FzfTabCompletion
 
@@ -2439,16 +2264,7 @@ Signature:
 
 function Invoke-FzfTabCompletion() {
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\PSFzf\2.6.14\PSFzf.psm1
-
-## Invoke-Native
-
-Signature:
-
-function Invoke-Native { 
-param($Executable, $Arguments)
-
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\.starship\starship-init.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/PSFzf/2.6.7/PSFzf.psm1
 
 ## Invoke-NullCoalescing
 
@@ -2460,25 +2276,7 @@ Short description:
 
 General Utility Functions
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\posh-git\1.1.0\Utils.ps1
-
-## Invoke-PSConsoleReadLineAcceptLine
-
-Signature:
-
-function Invoke-PSConsoleReadLineAcceptLine { 
-[CmdletBinding()]
-
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\PSFzf\2.6.14\PSFzf.PSConsoleReadLineWrappers.ps1
-
-## Invoke-PSConsoleReadLinePrompt
-
-Signature:
-
-function Invoke-PSConsoleReadLinePrompt { 
-[CmdletBinding()]
-
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\PSFzf\2.6.14\PSFzf.PSConsoleReadLineWrappers.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/posh-git/1.1.0/Utils.ps1
 
 ## Invoke-PsFzfGitBranches
 
@@ -2486,7 +2284,7 @@ Signature:
 
 function Invoke-PsFzfGitBranches() {
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\PSFzf\2.6.14\PSFzf.Git.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/PSFzf/2.6.7/PSFzf.Git.ps1
 
 ## Invoke-PsFzfGitFiles
 
@@ -2494,7 +2292,7 @@ Signature:
 
 function Invoke-PsFzfGitFiles() {
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\PSFzf\2.6.14\PSFzf.Git.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/PSFzf/2.6.7/PSFzf.Git.ps1
 
 ## Invoke-PsFzfGitHashes
 
@@ -2502,7 +2300,7 @@ Signature:
 
 function Invoke-PsFzfGitHashes() {
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\PSFzf\2.6.14\PSFzf.Git.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/PSFzf/2.6.7/PSFzf.Git.ps1
 
 ## Invoke-PsFzfGitPullRequests
 
@@ -2510,7 +2308,7 @@ Signature:
 
 function Invoke-PsFzfGitPullRequests() {
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\PSFzf\2.6.14\PSFzf.Git.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/PSFzf/2.6.7/PSFzf.Git.ps1
 
 ## Invoke-PsFzfGitStashes
 
@@ -2518,7 +2316,7 @@ Signature:
 
 function Invoke-PsFzfGitStashes() {
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\PSFzf\2.6.14\PSFzf.Git.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/PSFzf/2.6.7/PSFzf.Git.ps1
 
 ## Invoke-PsFzfGitTags
 
@@ -2526,7 +2324,7 @@ Signature:
 
 function Invoke-PsFzfGitTags() {
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\PSFzf\2.6.14\PSFzf.Git.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/PSFzf/2.6.7/PSFzf.Git.ps1
 
 ## Invoke-PsFzfRipgrep
 
@@ -2535,7 +2333,7 @@ Signature:
 function Invoke-PsFzfRipgrep() { 
 # this function is adapted from https://github.com/junegunn/fzf/blob/master/ADVANCED.md#switching-between-ripgrep-mode-and-fzf-mode
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\PSFzf\2.6.14\PSFzf.Functions.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/PSFzf/2.6.7/PSFzf.Functions.ps1
 
 ## Invoke-TerminalIconsThemeMigration
 
@@ -2543,7 +2341,7 @@ Signature:
 
 function Invoke-TerminalIconsThemeMigration {
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\Terminal-Icons\0.11.0\Terminal-Icons.psm1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/Terminal-Icons/0.11.0/Terminal-Icons.psm1
 
 ## Invoke-Utf8ConsoleCommand
 
@@ -2551,19 +2349,19 @@ Signature:
 
 function Invoke-Utf8ConsoleCommand([ScriptBlock]$cmd) {
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\posh-git\1.1.0\Utils.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/posh-git/1.1.0/Utils.ps1
 
 ## InvokePromptHack
 
 Signature:
 
-function InvokePromptHack() {
+function InvokePromptHack()
 
 Short description:
 
 HACK: workaround for fact that PSReadLine seems to clear screen
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\PSFzf\2.6.14\PSFzf.Base.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/PSFzf/2.6.7/PSFzf.Base.ps1
 
 ## IsInGitRepo
 
@@ -2571,7 +2369,7 @@ Signature:
 
 function IsInGitRepo() {
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\PSFzf\2.6.14\PSFzf.Git.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/PSFzf/2.6.7/PSFzf.Git.ps1
 
 ## ix
 
@@ -2579,7 +2377,7 @@ Signature:
 
 function ix ($file) {
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Core\Utils\unified_aliases.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Core/Utils/unified_aliases.ps1
 
 ## Join-PathUtility
 
@@ -2588,7 +2386,7 @@ Signature:
 function Join-PathUtility 
 {
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\PowerShellGet\2.2.5\PSModule.psm1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/PowerShellGet/2.2.5/PSModule.psm1
 
 ## l
 
@@ -2596,7 +2394,7 @@ Signature:
 
 function l {
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Core\Utils\Development\eza.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Core/Utils/Development/eza.ps1
 
 ## ld
 
@@ -2604,7 +2402,7 @@ Signature:
 
 function ld {
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Core\Utils\Development\eza.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Core/Utils/Development/eza.ps1
 
 ## lfcd
 
@@ -2616,7 +2414,7 @@ Short description:
 
 Sorce: https://github.com/gokcehan/lf/blob/master/etc/lfcd.ps1
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Core\Utils\Development\lf.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Core/Utils/Development/lf.ps1
 
 ## ll
 
@@ -2624,7 +2422,7 @@ Signature:
 
 function ll {
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Core\Utils\Development\eza.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Core/Utils/Development/eza.ps1
 
 ## ll_with_exa
 
@@ -2632,7 +2430,7 @@ Signature:
 
 function ll_with_exa {
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Core\Utils\unified_aliases.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Core/Utils/unified_aliases.ps1
 
 ## llt
 
@@ -2640,7 +2438,7 @@ Signature:
 
 function llt {
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Core\Utils\Development\eza.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Core/Utils/Development/eza.ps1
 
 ## Log-ArtifactNotFoundInPSGallery
 
@@ -2649,7 +2447,7 @@ Signature:
 function Log-ArtifactNotFoundInPSGallery 
 {
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\PowerShellGet\2.2.5\PSModule.psm1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/PowerShellGet/2.2.5/PSModule.psm1
 
 ## Log-NonPSGalleryRegistration
 
@@ -2658,7 +2456,7 @@ Signature:
 function Log-NonPSGalleryRegistration 
 # Function to record non-PSGallery registration for telemetry
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\PowerShellGet\2.2.5\PSModule.psm1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/PowerShellGet/2.2.5/PSModule.psm1
 
 ## ls_with_exa
 
@@ -2667,7 +2465,7 @@ Signature:
 function ls_with_exa { 
 param([Parameter(ValueFromRemainingArguments = $true)]$params)
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Core\Utils\unified_aliases.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Core/Utils/unified_aliases.ps1
 
 ## lt
 
@@ -2675,7 +2473,7 @@ Signature:
 
 function lt {
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Core\Utils\Development\eza.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Core/Utils/Development/eza.ps1
 
 ## md5
 
@@ -2687,7 +2485,7 @@ Short description:
 
 FROM https://github.com/ChrisTitusTech/powershell-profile/
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Core\System\linuxLike.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Core/System/linuxLike.ps1
 
 ## Measure-Block
 
@@ -2700,7 +2498,7 @@ param(
             [switch]$Async
         )
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\ProfileCore\ProfileCore.psm1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/ProfileCore/ProfileCore.psm1
 
 ## mkcd
 
@@ -2713,7 +2511,7 @@ Short description:
 
 File and directory management
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Core\Utils\unified_aliases.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Core/Utils/unified_aliases.ps1
 
 ## n
 
@@ -2725,7 +2523,7 @@ Short description:
 
 Quick shortcut to start notepad
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Core\System\linuxLike.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Core/System/linuxLike.ps1
 
 ## New-CompletionResult
 
@@ -2741,7 +2539,7 @@ param (
 		[System.Management.Automation.CompletionResultType]$ResultType
 	)
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\DockerCompletion\1.2704.0.241216\NativeCommandCompletion\NativeCommandCompletion.psm1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/DockerCompletion/1.2704.0.241216/NativeCommandCompletion/NativeCommandCompletion.psm1
 
 ## New-DirectoryAndEnter
 
@@ -2754,7 +2552,7 @@ Short description:
 
 File system utilities for PowerShell profile
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Core\Utils\FileSystemUtils.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Core/Utils/FileSystemUtils.ps1
 
 ## New-EmptyColorTheme
 
@@ -2763,7 +2561,7 @@ Signature:
 function New-EmptyColorTheme { 
 [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSUseShouldProcessForStateChangingFunctions', '')]
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\Terminal-Icons\0.11.0\Terminal-Icons.psm1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/Terminal-Icons/0.11.0/Terminal-Icons.psm1
 
 ## New-FastPackageReference
 
@@ -2772,7 +2570,7 @@ Signature:
 function New-FastPackageReference 
 {
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\PowerShellGet\2.2.5\PSModule.psm1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/PowerShellGet/2.2.5/PSModule.psm1
 
 ## New-File
 
@@ -2780,7 +2578,7 @@ Signature:
 
 function New-File($file) { "" | Out-File $file -Encoding ASCII }
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Core\Utils\unified_aliases.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Core/Utils/unified_aliases.ps1
 
 ## New-GitPromptSettings
 
@@ -2792,7 +2590,7 @@ Short description:
 
 .SYNOPSIS
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\posh-git\1.1.0\GitPrompt.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/posh-git/1.1.0/GitPrompt.ps1
 
 ## New-InvalidArgumentException
 
@@ -2805,7 +2603,7 @@ Short description:
 
 .SYNOPSIS
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\PowerShellGet\2.2.5\Modules\PowerShellGet.LocalizationHelper\PowerShellGet.LocalizationHelper.psm1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/PowerShellGet/2.2.5/Modules/PowerShellGet.LocalizationHelper/PowerShellGet.LocalizationHelper.psm1
 
 ## New-InvalidOperationException
 
@@ -2818,7 +2616,7 @@ Short description:
 
 .SYNOPSIS
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\PowerShellGet\2.2.5\Modules\PowerShellGet.LocalizationHelper\PowerShellGet.LocalizationHelper.psm1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/PowerShellGet/2.2.5/Modules/PowerShellGet.LocalizationHelper/PowerShellGet.LocalizationHelper.psm1
 
 ## New-InvalidResultException
 
@@ -2831,7 +2629,7 @@ Short description:
 
 .SYNOPSIS
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\PowerShellGet\2.2.5\Modules\PowerShellGet.LocalizationHelper\PowerShellGet.LocalizationHelper.psm1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/PowerShellGet/2.2.5/Modules/PowerShellGet.LocalizationHelper/PowerShellGet.LocalizationHelper.psm1
 
 ## New-ModuleSourceFromPackageSource
 
@@ -2840,7 +2638,7 @@ Signature:
 function New-ModuleSourceFromPackageSource 
 {
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\PowerShellGet\2.2.5\PSModule.psm1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/PowerShellGet/2.2.5/PSModule.psm1
 
 ## New-NugetPackage
 
@@ -2849,7 +2647,7 @@ Signature:
 function New-NugetPackage { 
 [CmdletBinding()]
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\PowerShellGet\2.2.5\PSModule.psm1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/PowerShellGet/2.2.5/PSModule.psm1
 
 ## New-NuspecFile
 
@@ -2858,7 +2656,7 @@ Signature:
 function New-NuspecFile { 
 [CmdletBinding()]
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\PowerShellGet\2.2.5\PSModule.psm1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/PowerShellGet/2.2.5/PSModule.psm1
 
 ## New-ObjectNotFoundException
 
@@ -2871,7 +2669,7 @@ Short description:
 
 .SYNOPSIS
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\PowerShellGet\2.2.5\Modules\PowerShellGet.LocalizationHelper\PowerShellGet.LocalizationHelper.psm1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/PowerShellGet/2.2.5/Modules/PowerShellGet.LocalizationHelper/PowerShellGet.LocalizationHelper.psm1
 
 ## New-PackageSourceFromModuleSource
 
@@ -2880,7 +2678,7 @@ Signature:
 function New-PackageSourceFromModuleSource 
 {
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\PowerShellGet\2.2.5\PSModule.psm1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/PowerShellGet/2.2.5/PSModule.psm1
 
 ## New-PSGetItemInfo
 
@@ -2889,7 +2687,7 @@ Signature:
 function New-PSGetItemInfo 
 {
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\PowerShellGet\2.2.5\PSModule.psm1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/PowerShellGet/2.2.5/PSModule.psm1
 
 ## New-PSScriptInfoObject
 
@@ -2898,7 +2696,7 @@ Signature:
 function New-PSScriptInfoObject 
 {
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\PowerShellGet\2.2.5\PSModule.psm1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/PowerShellGet/2.2.5/PSModule.psm1
 
 ## New-ScriptFileInfo
 
@@ -2907,7 +2705,7 @@ Signature:
 function New-ScriptFileInfo 
 {
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\PowerShellGet\2.2.5\PSModule.psm1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/PowerShellGet/2.2.5/PSModule.psm1
 
 ## New-SoftwareIdentityFromPackage
 
@@ -2916,7 +2714,7 @@ Signature:
 function New-SoftwareIdentityFromPackage 
 {
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\PowerShellGet\2.2.5\PSModule.psm1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/PowerShellGet/2.2.5/PSModule.psm1
 
 ## New-SoftwareIdentityFromPSGetItemInfo
 
@@ -2925,7 +2723,7 @@ Signature:
 function New-SoftwareIdentityFromPSGetItemInfo 
 {
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\PowerShellGet\2.2.5\PSModule.psm1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/PowerShellGet/2.2.5/PSModule.psm1
 
 ## New-SplatParameterHashTable
 
@@ -2938,7 +2736,7 @@ Short description:
 
 Helper functions for PowerShellGet DSC Resources.
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\PowerShellGet\2.2.5\Modules\PowerShellGet.ResourceHelper\PowerShellGet.ResourceHelper.psm1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/PowerShellGet/2.2.5/Modules/PowerShellGet.ResourceHelper/PowerShellGet.ResourceHelper.psm1
 
 ## PackageManagementMessageResolver
 
@@ -2946,7 +2744,7 @@ Signature:
 
 function PackageManagementMessageResolver($MsgID, $Message) {
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\PowerShellGet\2.2.5\PSModule.psm1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/PowerShellGet/2.2.5/PSModule.psm1
 
 ## PackageManagementMessageResolverForScripts
 
@@ -2954,7 +2752,7 @@ Signature:
 
 function PackageManagementMessageResolverForScripts($MsgID, $Message) {
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\PowerShellGet\2.2.5\PSModule.psm1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/PowerShellGet/2.2.5/PSModule.psm1
 
 ## pgrep
 
@@ -2962,7 +2760,7 @@ Signature:
 
 function pgrep($name) {
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Core\Utils\unified_aliases.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Core/Utils/unified_aliases.ps1
 
 ## Ping-Endpoint
 
@@ -2971,7 +2769,7 @@ Signature:
 function Ping-Endpoint 
 {
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\PowerShellGet\2.2.5\PSModule.psm1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/PowerShellGet/2.2.5/PSModule.psm1
 
 ## pkill
 
@@ -2979,16 +2777,7 @@ Signature:
 
 function pkill($name) {
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Core\Utils\unified_aliases.ps1
-
-## popdX
-
-Signature:
-
-function popdX { 
-[CmdletBinding(SupportsTransactions=$true, HelpUri='http://go.microsoft.com/fwlink/?LinkID=113369')]
-
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\z\1.1.14\z.psm1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Core/Utils/unified_aliases.ps1
 
 ## pretty_git_branch
 
@@ -2996,7 +2785,7 @@ Signature:
 
 function pretty_git_branch
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Core\System\gitHelpers.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Core/System/gitHelpers.ps1
 
 ## pretty_git_branch_sorted
 
@@ -3004,7 +2793,7 @@ Signature:
 
 function pretty_git_branch_sorted
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Core\System\gitHelpers.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Core/System/gitHelpers.ps1
 
 ## pretty_git_format
 
@@ -3012,7 +2801,7 @@ Signature:
 
 function pretty_git_format
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Core\System\gitHelpers.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Core/System/gitHelpers.ps1
 
 ## pretty_git_log
 
@@ -3020,7 +2809,7 @@ Signature:
 
 function pretty_git_log
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Core\System\gitHelpers.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Core/System/gitHelpers.ps1
 
 ## private
 
@@ -3032,7 +2821,7 @@ Short description:
 
 TortoiseGit
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\posh-git\1.1.0\TortoiseGit.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/posh-git/1.1.0/TortoiseGit.ps1
 
 ## prompt
 
@@ -3040,7 +2829,7 @@ Signature:
 
 function prompt {
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Microsoft.PowerShell_profile.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Microsoft.PowerShell_profile.ps1
 
 ## PSConsoleHostReadLine
 
@@ -3049,7 +2838,7 @@ Signature:
 function PSConsoleHostReadLine 
 {
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\PSReadLine\2.3.6\PSReadLine.psm1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/PSReadLine/2.3.6/PSReadLine.psm1
 
 ## Publish-Module
 
@@ -3058,7 +2847,7 @@ Signature:
 function Publish-Module { 
 <#
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\PowerShellGet\2.2.5\PSModule.psm1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/PowerShellGet/2.2.5/PSModule.psm1
 
 ## Publish-NugetPackage
 
@@ -3067,7 +2856,7 @@ Signature:
 function Publish-NugetPackage { 
 [CmdletBinding()]
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\PowerShellGet\2.2.5\PSModule.psm1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/PowerShellGet/2.2.5/PSModule.psm1
 
 ## Publish-PSArtifactUtility
 
@@ -3076,7 +2865,7 @@ Signature:
 function Publish-PSArtifactUtility { 
 [CmdletBinding(PositionalBinding = $false)]
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\PowerShellGet\2.2.5\PSModule.psm1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/PowerShellGet/2.2.5/PSModule.psm1
 
 ## Publish-Script
 
@@ -3085,16 +2874,7 @@ Signature:
 function Publish-Script { 
 <#
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\PowerShellGet\2.2.5\PSModule.psm1
-
-## pushdX
-
-Signature:
-
-function pushdX 
-{
-
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\z\1.1.14\z.psm1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/PowerShellGet/2.2.5/PSModule.psm1
 
 ## Register-ChocolateyProfile
 
@@ -3102,7 +2882,7 @@ Signature:
 
 function Register-ChocolateyProfile {
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Core\UnifiedModuleManager.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Core/UnifiedModuleManager.ps1
 
 ## Register-Completer
 
@@ -3117,7 +2897,7 @@ param (
 		$Parameter
 	)
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\DockerCompletion\1.2704.0.241216\NativeCommandCompletion\NativeCommandCompletion.psm1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/DockerCompletion/1.2704.0.241216/NativeCommandCompletion/NativeCommandCompletion.psm1
 
 ## Register-ModuleDependency
 
@@ -3131,7 +2911,7 @@ param(
         [scriptblock]$OnFailure
     )
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Core\ModuleDependencyManager.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Core/ModuleDependencyManager.ps1
 
 ## Register-ModuleVersion
 
@@ -3144,7 +2924,7 @@ param(
         [scriptblock]$OnVersionMismatch
     )
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Core\ModuleVersionManager.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Core/ModuleVersionManager.ps1
 
 ## Register-NativeCommandArgumentCompleter
 
@@ -3158,7 +2938,7 @@ param (
 		[scriptblock]$ScriptBlock
 	)
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\DockerCompletion\1.2704.0.241216\NativeCommandCompletion\NativeCommandCompletion.psm1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/DockerCompletion/1.2704.0.241216/NativeCommandCompletion/NativeCommandCompletion.psm1
 
 ## Register-PSModule
 
@@ -3180,7 +2960,7 @@ param(
         
         [bool]$LoadOnStartup = $false,
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\ProfileCore\ProfileCore.psm1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/ProfileCore/ProfileCore.psm1
 
 ## Register-PSRepository
 
@@ -3189,7 +2969,7 @@ Signature:
 function Register-PSRepository { 
 <#
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\PowerShellGet\2.2.5\PSModule.psm1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/PowerShellGet/2.2.5/PSModule.psm1
 
 ## Register-UnifiedModule
 
@@ -3198,7 +2978,7 @@ Signature:
 function Register-UnifiedModule { 
 [CmdletBinding(SupportsShouldProcess)]
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Core\UnifiedModuleManager.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Core/UnifiedModuleManager.ps1
 
 ## Register-UnifiedTool
 
@@ -3215,7 +2995,7 @@ Short description:
 
 Tool management functionality from LazyToolManager
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Core\UnifiedModuleManager.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Core/UnifiedModuleManager.ps1
 
 ## RegisterBuiltinCompleters
 
@@ -3224,7 +3004,7 @@ Signature:
 function RegisterBuiltinCompleters { 
 $processIdOrNameScriptBlock = {
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\PSFzf\2.6.14\PSFzf.psm1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/PSFzf/2.6.7/PSFzf.psm1
 
 ## Remove-GitBranch
 
@@ -3237,15 +3017,7 @@ Short description:
 
 .SYNOPSIS
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\posh-git\1.1.0\GitUtils.ps1
-
-## Remove-Old-History
-
-Signature:
-
-function Remove-Old-History() {
-
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\z\1.1.14\z.psm1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/posh-git/1.1.0/GitUtils.ps1
 
 ## Remove-OrphanedFiles
 
@@ -3257,7 +3029,7 @@ param(
         [switch]$WhatIf
     )
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Core\System\clean-orphaned.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Core/System/clean-orphaned.ps1
 
 ## Remove-PackageSource
 
@@ -3266,7 +3038,7 @@ Signature:
 function Remove-PackageSource 
 {
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\PowerShellGet\2.2.5\PSModule.psm1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/PowerShellGet/2.2.5/PSModule.psm1
 
 ## Remove-PoshGitFromProfile
 
@@ -3279,7 +3051,7 @@ Short description:
 
 .SYNOPSIS
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\posh-git\1.1.0\Utils.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/posh-git/1.1.0/Utils.ps1
 
 ## Remove-TerminalIconsTheme
 
@@ -3287,7 +3059,7 @@ Signature:
 
 function Remove-TerminalIconsTheme {
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\Terminal-Icons\0.11.0\Terminal-Icons.psm1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/Terminal-Icons/0.11.0/Terminal-Icons.psm1
 
 ## RemoveGitKeyBindings
 
@@ -3295,16 +3067,7 @@ Signature:
 
 function RemoveGitKeyBindings() {
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\PSFzf\2.6.14\PSFzf.Git.ps1
-
-## Replace-PSConsoleReadLineText
-
-Signature:
-
-function Replace-PSConsoleReadLineText { 
-[CmdletBinding()]
-
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\PSFzf\2.6.14\PSFzf.PSConsoleReadLineWrappers.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/PSFzf/2.6.7/PSFzf.Git.ps1
 
 ## Reset-ProfileState
 
@@ -3313,7 +3076,7 @@ Signature:
 function Reset-ProfileState { 
 [CmdletBinding()]
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Core\Utils\profile_management.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Core/Utils/profile_management.ps1
 
 ## Reset-WindowTitle
 
@@ -3322,7 +3085,7 @@ Signature:
 function Reset-WindowTitle { 
 [Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSUseShouldProcessForStateChangingFunctions", "")]
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\posh-git\1.1.0\WindowTitle.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/posh-git/1.1.0/WindowTitle.ps1
 
 ## Resolve-Icon
 
@@ -3331,7 +3094,7 @@ Signature:
 function Resolve-Icon { 
 [OutputType([hashtable])]
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\Terminal-Icons\0.11.0\Terminal-Icons.psm1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/Terminal-Icons/0.11.0/Terminal-Icons.psm1
 
 ## Resolve-Location
 
@@ -3340,7 +3103,7 @@ Signature:
 function Resolve-Location 
 {
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\PowerShellGet\2.2.5\PSModule.psm1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/PowerShellGet/2.2.5/PSModule.psm1
 
 ## Resolve-PackageSource
 
@@ -3348,7 +3111,7 @@ Signature:
 
 function Resolve-PackageSource
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\PowerShellGet\2.2.5\PSModule.psm1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/PowerShellGet/2.2.5/PSModule.psm1
 
 ## Resolve-PathHelper
 
@@ -3357,7 +3120,7 @@ Signature:
 function Resolve-PathHelper 
 {
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\PowerShellGet\2.2.5\PSModule.psm1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/PowerShellGet/2.2.5/PSModule.psm1
 
 ## Restart-BIOS
 
@@ -3365,7 +3128,7 @@ Signature:
 
 function Restart-BIOS {
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Core\Utils\unified_aliases.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Core/Utils/unified_aliases.ps1
 
 ## Restart-GPG
 
@@ -3373,7 +3136,7 @@ Signature:
 
 function Restart-GPG
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Core\Utils\Development\gpg.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Core/Utils/Development/gpg.ps1
 
 ## rgg
 
@@ -3381,23 +3144,7 @@ Signature:
 
 function rgg
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Core\System\fzf.ps1
-
-## Save-CdCommandHistory
-
-Signature:
-
-function Save-CdCommandHistory($removeCurrentDirectory = $false) {
-
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\z\1.1.14\z.psm1
-
-## Save-HistoryEntry
-
-Signature:
-
-function Save-HistoryEntry($rank, $directory) {
-
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\z\1.1.14\z.psm1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Core/System/fzf.ps1
 
 ## Save-Module
 
@@ -3406,7 +3153,7 @@ Signature:
 function Save-Module { 
 <#
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\PowerShellGet\2.2.5\PSModule.psm1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/PowerShellGet/2.2.5/PSModule.psm1
 
 ## Save-ModuleSources
 
@@ -3414,7 +3161,7 @@ Signature:
 
 function Save-ModuleSources
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\PowerShellGet\2.2.5\PSModule.psm1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/PowerShellGet/2.2.5/PSModule.psm1
 
 ## Save-Preferences
 
@@ -3423,7 +3170,7 @@ Signature:
 function Save-Preferences { 
 [cmdletbinding()]
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\Terminal-Icons\0.11.0\Terminal-Icons.psm1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/Terminal-Icons/0.11.0/Terminal-Icons.psm1
 
 ## Save-PSGetSettings
 
@@ -3431,7 +3178,7 @@ Signature:
 
 function Save-PSGetSettings
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\PowerShellGet\2.2.5\PSModule.psm1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/PowerShellGet/2.2.5/PSModule.psm1
 
 ## Save-Script
 
@@ -3440,7 +3187,7 @@ Signature:
 function Save-Script { 
 <#
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\PowerShellGet\2.2.5\PSModule.psm1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/PowerShellGet/2.2.5/PSModule.psm1
 
 ## Save-Theme
 
@@ -3449,7 +3196,7 @@ Signature:
 function Save-Theme { 
 [CmdletBinding()]
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\Terminal-Icons\0.11.0\Terminal-Icons.psm1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/Terminal-Icons/0.11.0/Terminal-Icons.psm1
 
 ## script
 
@@ -3457,7 +3204,7 @@ Signature:
 
 function script:gitCmdOperations($commands, $command, $filter) {
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\posh-git\1.1.0\GitTabExpansion.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/posh-git/1.1.0/GitTabExpansion.ps1
 
 ## Search-FileContent
 
@@ -3472,7 +3219,7 @@ param(
         [switch]$caseSensitive
     )
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Core\Utils\SearchUtils.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Core/Utils/SearchUtils.ps1
 
 ## Select-Apps
 
@@ -3483,7 +3230,7 @@ param (
     [string[]] $apps
   )
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Core\Apps\appsManage.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Core/Apps/appsManage.ps1
 
 ## Select-CompletionResult
 
@@ -3499,7 +3246,7 @@ Param(
 		[switch]$ManagementCommand
 	)
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\DockerCompletion\1.2704.0.241216\DockerCompletion.psm1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/DockerCompletion/1.2704.0.241216/DockerCompletion.psm1
 
 ## Send-EnvironmentChangeMessage
 
@@ -3507,7 +3254,7 @@ Signature:
 
 function Send-EnvironmentChangeMessage
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\PowerShellGet\2.2.5\PSModule.psm1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/PowerShellGet/2.2.5/PSModule.psm1
 
 ## Set-ClipboardContent
 
@@ -3519,7 +3266,7 @@ Short description:
 
 Clipboard Utilities
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Core\Utils\unified_aliases.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Core/Utils/unified_aliases.ps1
 
 ## Set-ConsoleMode
 
@@ -3528,7 +3275,7 @@ Signature:
 function Set-ConsoleMode { 
 [Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSUseShouldProcessForStateChangingFunctions", "")]
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\posh-git\1.1.0\ConsoleMode.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/posh-git/1.1.0/ConsoleMode.ps1
 
 ## Set-EnvironmentVariable
 
@@ -3536,7 +3283,7 @@ Signature:
 
 function Set-EnvironmentVariable($name, $value) { set-item -force -path "env:$name" -value $value }
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Core\Utils\unified_aliases.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Core/Utils/unified_aliases.ps1
 
 ## Set-InstalledModulesVariable
 
@@ -3544,7 +3291,7 @@ Signature:
 
 function Set-InstalledModulesVariable
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\PowerShellGet\2.2.5\PSModule.psm1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/PowerShellGet/2.2.5/PSModule.psm1
 
 ## Set-InstalledScriptsVariable
 
@@ -3552,7 +3299,7 @@ Signature:
 
 function Set-InstalledScriptsVariable
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\PowerShellGet\2.2.5\PSModule.psm1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/PowerShellGet/2.2.5/PSModule.psm1
 
 ## Set-LocationFuzzyEverything
 
@@ -3565,7 +3312,7 @@ Short description:
 
 .ExternalHelp PSFzf.psm1-help.xml
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\PSFzf\2.6.14\PSFzf.Functions.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/PSFzf/2.6.7/PSFzf.Functions.ps1
 
 ## Set-LocationUp
 
@@ -3577,7 +3324,7 @@ Short description:
 
 Navigation aliases and utilities
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Core\Utils\unified_aliases.psm1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Core/Utils/unified_aliases.psm1
 
 ## Set-LocationUp2
 
@@ -3585,7 +3332,7 @@ Signature:
 
 function Set-LocationUp2 { Set-Location .\..\..\ }
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Core\Utils\unified_aliases.psm1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Core/Utils/unified_aliases.psm1
 
 ## Set-LocationUp3
 
@@ -3593,7 +3340,7 @@ Signature:
 
 function Set-LocationUp3 { Set-Location .\..\..\..\.. }
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Core\Utils\unified_aliases.psm1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Core/Utils/unified_aliases.psm1
 
 ## Set-LocationUp4
 
@@ -3601,7 +3348,7 @@ Signature:
 
 function Set-LocationUp4 { Set-Location .\..\..\..\..\.. }
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Core\Utils\unified_aliases.psm1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Core/Utils/unified_aliases.psm1
 
 ## Set-LocationUp5
 
@@ -3609,7 +3356,7 @@ Signature:
 
 function Set-LocationUp5 { Set-Location .\..\..\..\..\..\.. }
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Core\Utils\unified_aliases.psm1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Core/Utils/unified_aliases.psm1
 
 ## Set-ModuleSourcesVariable
 
@@ -3618,13 +3365,13 @@ Signature:
 function Set-ModuleSourcesVariable 
 {
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\PowerShellGet\2.2.5\PSModule.psm1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/PowerShellGet/2.2.5/PSModule.psm1
 
 ## Set-PsFzfOption
 
 Signature:
 
-function Set-PsFzfOption { 
+function Set-PsFzfOption{ 
 param(
 		[switch]
 		$TabExpansion,
@@ -3644,8 +3391,10 @@ param(
 		$EnableAliasFuzzyFasd,
 		[switch]
 		$EnableAliasFuzzyHistory,
+		[switch]
+		$EnableAl
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\PSFzf\2.6.14\PSFzf.Base.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/PSFzf/2.6.7/PSFzf.Base.ps1
 
 ## Set-PSGalleryRepository
 
@@ -3654,7 +3403,7 @@ Signature:
 function Set-PSGalleryRepository 
 {
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\PowerShellGet\2.2.5\PSModule.psm1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/PowerShellGet/2.2.5/PSModule.psm1
 
 ## Set-PSGetSettingsVariable
 
@@ -3663,7 +3412,7 @@ Signature:
 function Set-PSGetSettingsVariable 
 {
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\PowerShellGet\2.2.5\PSModule.psm1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/PowerShellGet/2.2.5/PSModule.psm1
 
 ## Set-PSRepository
 
@@ -3672,7 +3421,7 @@ Signature:
 function Set-PSRepository { 
 <#
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\PowerShellGet\2.2.5\PSModule.psm1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/PowerShellGet/2.2.5/PSModule.psm1
 
 ## Set-TargetResource
 
@@ -3684,7 +3433,7 @@ Short description:
 
 .SYNOPSIS
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\PowerShellGet\2.2.5\DscResources\MSFT_PSModule\MSFT_PSModule.psm1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/PowerShellGet/2.2.5/DscResources/MSFT_PSModule/MSFT_PSModule.psm1
 
 ## Set-TerminalIconsIcon
 
@@ -3692,7 +3441,7 @@ Signature:
 
 function Set-TerminalIconsIcon {
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\Terminal-Icons\0.11.0\Terminal-Icons.psm1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/Terminal-Icons/0.11.0/Terminal-Icons.psm1
 
 ## Set-TerminalIconsTheme
 
@@ -3700,7 +3449,7 @@ Signature:
 
 function Set-TerminalIconsTheme {
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\Terminal-Icons\0.11.0\Terminal-Icons.psm1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/Terminal-Icons/0.11.0/Terminal-Icons.psm1
 
 ## Set-Theme
 
@@ -3709,7 +3458,7 @@ Signature:
 function Set-Theme { 
 [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSUseShouldProcessForStateChangingFunctions', '')]
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\Terminal-Icons\0.11.0\Terminal-Icons.psm1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/Terminal-Icons/0.11.0/Terminal-Icons.psm1
 
 ## Set-WindowTitle
 
@@ -3718,7 +3467,7 @@ Signature:
 function Set-WindowTitle { 
 [Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSUseShouldProcessForStateChangingFunctions", "")]
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\posh-git\1.1.0\WindowTitle.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/posh-git/1.1.0/WindowTitle.ps1
 
 ## SetGitKeyBindings
 
@@ -3726,15 +3475,15 @@ Signature:
 
 function SetGitKeyBindings($enable) {
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\PSFzf\2.6.14\PSFzf.Git.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/PSFzf/2.6.7/PSFzf.Git.ps1
 
 ## SetPsReadlineShortcut
 
 Signature:
 
-function SetPsReadlineShortcut($Chord, [switch]$Override, $BriefDesc, $Desc, [scriptblock]$scriptBlock) {
+function SetPsReadlineShortcut($Chord,[switch]$Override,$BriefDesc,$Desc,[scriptblock]$scriptBlock)
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\PSFzf\2.6.14\PSFzf.Base.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/PSFzf/2.6.7/PSFzf.Base.ps1
 
 ## SetTabExpansion
 
@@ -3742,7 +3491,7 @@ Signature:
 
 function SetTabExpansion($enable) {
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\PSFzf\2.6.14\PSFzf.psm1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/PSFzf/2.6.7/PSFzf.psm1
 
 ## SetupGitPaths
 
@@ -3750,7 +3499,7 @@ Signature:
 
 function SetupGitPaths() {
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\PSFzf\2.6.14\PSFzf.Git.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/PSFzf/2.6.7/PSFzf.Git.ps1
 
 ## sha1
 
@@ -3758,7 +3507,7 @@ Signature:
 
 function sha1
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Core\System\linuxLike.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Core/System/linuxLike.ps1
 
 ## sha256
 
@@ -3766,7 +3515,7 @@ Signature:
 
 function sha256
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Core\System\linuxLike.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Core/System/linuxLike.ps1
 
 ## show_git_head
 
@@ -3774,7 +3523,7 @@ Signature:
 
 function show_git_head
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Core\System\gitHelpers.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Core/System/gitHelpers.ps1
 
 ## Show-TerminalIconsTheme
 
@@ -3782,7 +3531,7 @@ Signature:
 
 function Show-TerminalIconsTheme {
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\Terminal-Icons\0.11.0\Terminal-Icons.psm1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/Terminal-Icons/0.11.0/Terminal-Icons.psm1
 
 ## Start-BackgroundJob
 
@@ -3794,7 +3543,7 @@ param(
         [Parameter(ValueFromRemainingArguments=$true)] $ArgumentList
     )
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Microsoft.PowerShell_profile.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Microsoft.PowerShell_profile.ps1
 
 ## Start-CloudFlareWarp
 
@@ -3802,7 +3551,7 @@ Signature:
 
 function Start-CloudFlareWarp
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Core\System\cloudflareWARP.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Core/System/cloudflareWARP.ps1
 
 ## Start-GPG
 
@@ -3810,7 +3559,7 @@ Signature:
 
 function Start-GPG
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Core\Utils\Development\gpg.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Core/Utils/Development/gpg.ps1
 
 ## Stop-CloudFlareWarp
 
@@ -3818,7 +3567,7 @@ Signature:
 
 function Stop-CloudFlareWarp
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Core\System\cloudflareWARP.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Core/System/cloudflareWARP.ps1
 
 ## Stop-GPG
 
@@ -3826,7 +3575,7 @@ Signature:
 
 function Stop-GPG
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Core\Utils\Development\gpg.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Core/Utils/Development/gpg.ps1
 
 ## Stop-Pipeline
 
@@ -3834,7 +3583,7 @@ Signature:
 
 function Stop-Pipeline {
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\PSFzf\2.6.14\PSFzf.Base.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/PSFzf/2.6.7/PSFzf.Base.ps1
 
 ## Stop-ProcessByName
 
@@ -3842,7 +3591,7 @@ Signature:
 
 function Stop-ProcessByName($name) { Get-Process $name -ErrorAction SilentlyContinue | Stop-Process }
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Core\Utils\unified_aliases.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Core/Utils/unified_aliases.ps1
 
 ## sysinfo
 
@@ -3854,7 +3603,7 @@ Short description:
 
 Quick Access to System Information
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Core\Utils\unified_aliases.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Core/Utils/unified_aliases.ps1
 
 ## TabExpansion
 
@@ -3862,7 +3611,7 @@ Signature:
 
 function TabExpansion($line, $lastWord) {
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\posh-git\1.1.0\GitTabExpansion.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/posh-git/1.1.0/GitTabExpansion.ps1
 
 ## tail
 
@@ -3871,7 +3620,7 @@ Signature:
 function tail { 
 param($Path, $n = 10)
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Core\Utils\unified_aliases.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Core/Utils/unified_aliases.ps1
 
 ## Test-Administrator
 
@@ -3879,7 +3628,7 @@ Signature:
 
 function Test-Administrator {
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\posh-git\1.1.0\Utils.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/posh-git/1.1.0/Utils.ps1
 
 ## Test-CatppuccinPresent
 
@@ -3891,7 +3640,7 @@ Short description:
 
 --- Catppuccin Theme Setup ---
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Microsoft.PowerShell_profile.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Microsoft.PowerShell_profile.ps1
 
 ## Test-CommandExists
 
@@ -3904,7 +3653,7 @@ Short description:
 
 Command existence check
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Core\Apps\Updates\SystemUpdater.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Core/Apps/Updates/SystemUpdater.ps1
 
 ## Test-DscParameterState
 
@@ -3917,7 +3666,7 @@ Short description:
 
 Helper functions for PowerShellGet DSC Resources.
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\PowerShellGet\2.2.5\Modules\PowerShellGet.ResourceHelper\PowerShellGet.ResourceHelper.psm1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/PowerShellGet/2.2.5/Modules/PowerShellGet.ResourceHelper/PowerShellGet.ResourceHelper.psm1
 
 ## Test-EquivalentLocation
 
@@ -3930,7 +3679,7 @@ Short description:
 
 Compare 2 strings, ignoring any trailing slashes or backslashes.
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\PowerShellGet\2.2.5\PSModule.psm1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/PowerShellGet/2.2.5/PSModule.psm1
 
 ## Test-FileInUse
 
@@ -3939,15 +3688,7 @@ Signature:
 function Test-FileInUse 
 {
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\PowerShellGet\2.2.5\PSModule.psm1
-
-## Test-Function
-
-Signature:
-
-function Test-Function { Write-Host 'Test function works!' }
-
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\TestModule\TestModule.psm1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/PowerShellGet/2.2.5/PSModule.psm1
 
 ## Test-GitVersion
 
@@ -3955,7 +3696,7 @@ Signature:
 
 function Test-GitVersion ($version = $([string](git --version 2> $null))) {
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\posh-git\1.1.0\CheckRequirements.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/posh-git/1.1.0/CheckRequirements.ps1
 
 ## Test-InPSModulePath
 
@@ -3969,7 +3710,7 @@ param (
         $Path
     )
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\posh-git\1.1.0\Utils.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/posh-git/1.1.0/Utils.ps1
 
 ## Test-IsAdmin
 
@@ -3977,7 +3718,7 @@ Signature:
 
 function Test-IsAdmin {
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Core\Utils\CommonUtils.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Core/Utils/CommonUtils.ps1
 
 ## Test-ItemPrereleaseVersionRequirements
 
@@ -3986,7 +3727,7 @@ Signature:
 function Test-ItemPrereleaseVersionRequirements 
 # Returns true if it meets the Required, Minimum, and Maximum version bounds.
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\PowerShellGet\2.2.5\PSModule.psm1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/PowerShellGet/2.2.5/PSModule.psm1
 
 ## Test-MicrosoftCertificate
 
@@ -3995,7 +3736,7 @@ Signature:
 function Test-MicrosoftCertificate 
 {
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\PowerShellGet\2.2.5\PSModule.psm1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/PowerShellGet/2.2.5/PSModule.psm1
 
 ## Test-ModuleInstalled
 
@@ -4007,7 +3748,7 @@ param(
         [string]$MinVersion
     )
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Core\ModuleInstaller.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Core/ModuleInstaller.ps1
 
 ## Test-ModuleInUse
 
@@ -4016,7 +3757,7 @@ Signature:
 function Test-ModuleInUse 
 {
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\PowerShellGet\2.2.5\PSModule.psm1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/PowerShellGet/2.2.5/PSModule.psm1
 
 ## Test-ModuleRequirements
 
@@ -4025,7 +3766,7 @@ Signature:
 function Test-ModuleRequirements { 
 param([string]$ModuleName)
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Core\ModuleDependencyManager.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Core/ModuleDependencyManager.ps1
 
 ## Test-ModuleSxSVersionSupport
 
@@ -4033,7 +3774,7 @@ Signature:
 
 function Test-ModuleSxSVersionSupport
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\PowerShellGet\2.2.5\PSModule.psm1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/PowerShellGet/2.2.5/PSModule.psm1
 
 ## Test-ModuleVersion
 
@@ -4042,7 +3783,7 @@ Signature:
 function Test-ModuleVersion { 
 param([string]$ModuleName)
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Core\ModuleVersionManager.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Core/ModuleVersionManager.ps1
 
 ## Test-ParameterValue
 
@@ -4055,7 +3796,7 @@ Short description:
 
 Helper functions for PowerShellGet DSC Resources.
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\PowerShellGet\2.2.5\Modules\PowerShellGet.ResourceHelper\PowerShellGet.ResourceHelper.psm1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/PowerShellGet/2.2.5/Modules/PowerShellGet.ResourceHelper/PowerShellGet.ResourceHelper.psm1
 
 ## Test-PoshGitImportedInScript
 
@@ -4068,7 +3809,7 @@ param (
         $Path
     )
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\posh-git\1.1.0\Utils.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/posh-git/1.1.0/Utils.ps1
 
 ## Test-RunningAsElevated
 
@@ -4077,7 +3818,7 @@ Signature:
 function Test-RunningAsElevated 
 # Check if current user is running with elevated privileges
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\PowerShellGet\2.2.5\PSModule.psm1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/PowerShellGet/2.2.5/PSModule.psm1
 
 ## Test-ScriptFileInfo
 
@@ -4086,7 +3827,7 @@ Signature:
 function Test-ScriptFileInfo { 
 <#
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\PowerShellGet\2.2.5\PSModule.psm1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/PowerShellGet/2.2.5/PSModule.psm1
 
 ## Test-ScriptInstalled
 
@@ -4095,7 +3836,7 @@ Signature:
 function Test-ScriptInstalled 
 {
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\PowerShellGet\2.2.5\PSModule.psm1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/PowerShellGet/2.2.5/PSModule.psm1
 
 ## Test-TargetResource
 
@@ -4107,7 +3848,7 @@ Short description:
 
 .SYNOPSIS
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\PowerShellGet\2.2.5\DscResources\MSFT_PSModule\MSFT_PSModule.psm1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/PowerShellGet/2.2.5/DscResources/MSFT_PSModule/MSFT_PSModule.psm1
 
 ## Test-UnifiedModuleRequirements
 
@@ -4116,7 +3857,7 @@ Signature:
 function Test-UnifiedModuleRequirements { 
 [CmdletBinding(SupportsShouldProcess)]
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Core\UnifiedModuleManager.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Core/UnifiedModuleManager.ps1
 
 ## Test-ValidManifestModule
 
@@ -4125,7 +3866,7 @@ Signature:
 function Test-ValidManifestModule 
 {
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\PowerShellGet\2.2.5\PSModule.psm1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/PowerShellGet/2.2.5/PSModule.psm1
 
 ## Test-VersionParameter
 
@@ -4138,7 +3879,7 @@ Short description:
 
 Helper functions for PowerShellGet DSC Resources.
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\PowerShellGet\2.2.5\Modules\PowerShellGet.ResourceHelper\PowerShellGet.ResourceHelper.psm1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/PowerShellGet/2.2.5/Modules/PowerShellGet.ResourceHelper/PowerShellGet.ResourceHelper.psm1
 
 ## Test-VirtualTerminalSequece
 
@@ -4146,7 +3887,7 @@ Signature:
 
 function Test-VirtualTerminalSequece([psobject[]]$Object, [switch]$Force) {
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\posh-git\1.1.0\AnsiUtils.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/posh-git/1.1.0/AnsiUtils.ps1
 
 ## Test-WebUri
 
@@ -4155,7 +3896,7 @@ Signature:
 function Test-WebUri 
 {
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\PowerShellGet\2.2.5\PSModule.psm1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/PowerShellGet/2.2.5/PSModule.psm1
 
 ## Test-WildcardPattern
 
@@ -4164,7 +3905,7 @@ Signature:
 function Test-WildcardPattern 
 {
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\PowerShellGet\2.2.5\PSModule.psm1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/PowerShellGet/2.2.5/PSModule.psm1
 
 ## Test-WindowTitleIsWriteable
 
@@ -4172,7 +3913,7 @@ Signature:
 
 function Test-WindowTitleIsWriteable {
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\posh-git\1.1.0\WindowTitle.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/posh-git/1.1.0/WindowTitle.ps1
 
 ## Test-WinGetExists
 
@@ -4180,7 +3921,7 @@ Signature:
 
 function Test-WinGetExists() {
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\Microsoft.WinGet.CommandNotFound\1.0.4.0\ValidateOS.psm1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/Microsoft.WinGet.CommandNotFound/1.0.4.0/ValidateOS.psm1
 
 ## tgit
 
@@ -4188,7 +3929,7 @@ Signature:
 
 function tgit {
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\posh-git\1.1.0\TortoiseGit.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/posh-git/1.1.0/TortoiseGit.ps1
 
 ## ThrowError
 
@@ -4197,7 +3938,7 @@ Signature:
 function ThrowError 
 # Utility to throw an errorrecord
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\PowerShellGet\2.2.5\PSModule.psm1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/PowerShellGet/2.2.5/PSModule.psm1
 
 ## touch
 
@@ -4205,7 +3946,7 @@ Signature:
 
 function touch($file) {
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Core\Utils\unified_aliases.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Core/Utils/unified_aliases.ps1
 
 ## Uninstall-ChocoApps
 
@@ -4213,7 +3954,7 @@ Signature:
 
 function Uninstall-ChocoApps {
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Core\Apps\appsManage.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Core/Apps/appsManage.ps1
 
 ## Uninstall-Module
 
@@ -4222,7 +3963,7 @@ Signature:
 function Uninstall-Module 
 {
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\PowerShellGet\2.2.5\PSModule.psm1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/PowerShellGet/2.2.5/PSModule.psm1
 
 ## Uninstall-Package
 
@@ -4231,7 +3972,7 @@ Signature:
 function Uninstall-Package 
 {
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\PowerShellGet\2.2.5\PSModule.psm1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/PowerShellGet/2.2.5/PSModule.psm1
 
 ## Uninstall-ScoopApps
 
@@ -4239,7 +3980,7 @@ Signature:
 
 function Uninstall-ScoopApps {
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Core\Apps\appsManage.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Core/Apps/appsManage.ps1
 
 ## Uninstall-Script
 
@@ -4248,7 +3989,7 @@ Signature:
 function Uninstall-Script 
 {
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\PowerShellGet\2.2.5\PSModule.psm1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/PowerShellGet/2.2.5/PSModule.psm1
 
 ## Unregister-PSRepository
 
@@ -4257,7 +3998,7 @@ Signature:
 function Unregister-PSRepository { 
 <#
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\PowerShellGet\2.2.5\PSModule.psm1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/PowerShellGet/2.2.5/PSModule.psm1
 
 ## Update-AllApps
 
@@ -4265,7 +4006,7 @@ Signature:
 
 function Update-AllApps {
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Core\Apps\appsManage.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Core/Apps/appsManage.ps1
 
 ## Update-AllBranches
 
@@ -4273,7 +4014,7 @@ Signature:
 
 function Update-AllBranches($Upstream = 'master', [switch]$Quiet) {
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\posh-git\1.1.0\GitUtils.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/posh-git/1.1.0/GitUtils.ps1
 
 ## Update-CatppuccinStylus
 
@@ -4285,7 +4026,7 @@ Short description:
 
 Update catppuccin stylus themes
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Core\Apps\Configurations\stylus.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Core/Apps/Configurations/stylus.ps1
 
 ## Update-ChocoApps
 
@@ -4293,7 +4034,7 @@ Signature:
 
 function Update-ChocoApps {
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Core\Apps\appsManage.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Core/Apps/appsManage.ps1
 
 ## Update-CmdLine
 
@@ -4301,7 +4042,7 @@ Signature:
 
 function Update-CmdLine($result) {
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\PSFzf\2.6.14\PSFzf.Git.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/PSFzf/2.6.7/PSFzf.Git.ps1
 
 ## Update-Extension
 
@@ -4315,15 +4056,7 @@ param(
         [string]$extensionURL
     )
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Core\Apps\Configurations\spicetify.ps1
-
-## Update-HistoryEntryUsageTime
-
-Signature:
-
-function Update-HistoryEntryUsageTime($historyEntry) {
-
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\z\1.1.14\z.psm1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Core/Apps/Configurations/spicetify.ps1
 
 ## Update-Module
 
@@ -4332,7 +4065,7 @@ Signature:
 function Update-Module { 
 <#
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\PowerShellGet\2.2.5\PSModule.psm1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/PowerShellGet/2.2.5/PSModule.psm1
 
 ## Update-ModuleManifest
 
@@ -4341,7 +4074,7 @@ Signature:
 function Update-ModuleManifest 
 {
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\PowerShellGet\2.2.5\PSModule.psm1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/PowerShellGet/2.2.5/PSModule.psm1
 
 ## Update-NpmApps
 
@@ -4349,7 +4082,7 @@ Signature:
 
 function Update-NpmApps {
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Core\Apps\appsManage.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Core/Apps/appsManage.ps1
 
 ## Update-PipApps
 
@@ -4357,7 +4090,7 @@ Signature:
 
 function Update-PipApps {
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Core\Apps\appsManage.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Core/Apps/appsManage.ps1
 
 ## Update-PowerShell
 
@@ -4365,7 +4098,7 @@ Signature:
 
 function Update-PowerShell {
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Core\Utils\unified_aliases.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Core/Utils/unified_aliases.ps1
 
 ## Update-PowerShellModules
 
@@ -4377,7 +4110,7 @@ Short description:
 
 PowerShell module update function
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Core\Apps\Updates\SystemUpdater.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Core/Apps/Updates/SystemUpdater.ps1
 
 ## Update-Profile
 
@@ -4386,7 +4119,7 @@ Signature:
 function Update-Profile { 
 [CmdletBinding()]
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\ProfileManagement\ProfileManagement.psm1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/ProfileManagement/ProfileManagement.psm1
 
 ## Update-ScoopApps
 
@@ -4394,7 +4127,7 @@ Signature:
 
 function Update-ScoopApps {
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Core\Apps\appsManage.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Core/Apps/appsManage.ps1
 
 ## Update-Script
 
@@ -4403,7 +4136,7 @@ Signature:
 function Update-Script { 
 <#
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\PowerShellGet\2.2.5\PSModule.psm1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/PowerShellGet/2.2.5/PSModule.psm1
 
 ## Update-ScriptFileInfo
 
@@ -4412,7 +4145,7 @@ Signature:
 function Update-ScriptFileInfo { 
 <#
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\PowerShellGet\2.2.5\PSModule.psm1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/PowerShellGet/2.2.5/PSModule.psm1
 
 ## Update-System
 
@@ -4425,7 +4158,7 @@ Short description:
 
 Main update function with progress display
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Core\Apps\Updates\SystemUpdater.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Core/Apps/Updates/SystemUpdater.ps1
 
 ## Upgrade
 
@@ -4433,7 +4166,7 @@ Signature:
 
 function Upgrade {
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Core\Utils\unified_aliases.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Core/Utils/unified_aliases.ps1
 
 ## uptime
 
@@ -4441,7 +4174,7 @@ Signature:
 
 function uptime {
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Core\Utils\unified_aliases.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Core/Utils/unified_aliases.ps1
 
 ## Validate-ModuleAuthenticodeSignature
 
@@ -4450,7 +4183,7 @@ Signature:
 function Validate-ModuleAuthenticodeSignature 
 {
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\PowerShellGet\2.2.5\PSModule.psm1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/PowerShellGet/2.2.5/PSModule.psm1
 
 ## Validate-ModuleCommandAlreadyAvailable
 
@@ -4459,7 +4192,7 @@ Signature:
 function Validate-ModuleCommandAlreadyAvailable 
 {
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\PowerShellGet\2.2.5\PSModule.psm1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/PowerShellGet/2.2.5/PSModule.psm1
 
 ## Validate-ScriptFileInfoParameters
 
@@ -4468,7 +4201,7 @@ Signature:
 function Validate-ScriptFileInfoParameters 
 {
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\PowerShellGet\2.2.5\PSModule.psm1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/PowerShellGet/2.2.5/PSModule.psm1
 
 ## Validate-VersionParameters
 
@@ -4477,7 +4210,7 @@ Signature:
 function Validate-VersionParameters 
 {
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\PowerShellGet\2.2.5\PSModule.psm1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/PowerShellGet/2.2.5/PSModule.psm1
 
 ## ValidateAndAdd-PSScriptInfoEntry
 
@@ -4486,7 +4219,7 @@ Signature:
 function ValidateAndAdd-PSScriptInfoEntry 
 {
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\PowerShellGet\2.2.5\PSModule.psm1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/PowerShellGet/2.2.5/PSModule.psm1
 
 ## ValidateAndGet-AuthenticodeSignature
 
@@ -4495,7 +4228,7 @@ Signature:
 function ValidateAndGet-AuthenticodeSignature 
 {
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\PowerShellGet\2.2.5\PSModule.psm1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/PowerShellGet/2.2.5/PSModule.psm1
 
 ## ValidateAndGet-NuspecVersionString
 
@@ -4504,7 +4237,7 @@ Signature:
 function ValidateAndGet-NuspecVersionString 
 {
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\PowerShellGet\2.2.5\PSModule.psm1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/PowerShellGet/2.2.5/PSModule.psm1
 
 ## ValidateAndGet-RequiredModuleDetails
 
@@ -4513,7 +4246,7 @@ Signature:
 function ValidateAndGet-RequiredModuleDetails 
 {
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\PowerShellGet\2.2.5\PSModule.psm1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/PowerShellGet/2.2.5/PSModule.psm1
 
 ## ValidateAndGet-ScriptDependencies
 
@@ -4522,7 +4255,7 @@ Signature:
 function ValidateAndGet-ScriptDependencies 
 {
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\PowerShellGet\2.2.5\PSModule.psm1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/PowerShellGet/2.2.5/PSModule.psm1
 
 ## ValidateAndGet-VersionPrereleaseStrings
 
@@ -4531,7 +4264,7 @@ Signature:
 function ValidateAndGet-VersionPrereleaseStrings 
 # Separates Version from Prerelease string (if needed) and validates each.
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\PowerShellGet\2.2.5\PSModule.psm1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/PowerShellGet/2.2.5/PSModule.psm1
 
 ## ValidateAndSet-PATHVariableIfUserAccepts
 
@@ -4540,7 +4273,7 @@ Signature:
 function ValidateAndSet-PATHVariableIfUserAccepts 
 {
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\PowerShellGet\2.2.5\PSModule.psm1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/PowerShellGet/2.2.5/PSModule.psm1
 
 ## which
 
@@ -4548,7 +4281,7 @@ Signature:
 
 function which($name) { Get-Command $name | Select-Object -ExpandProperty Definition }
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Core\Utils\unified_aliases.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Core/Utils/unified_aliases.ps1
 
 ## Write-GitBranchName
 
@@ -4563,13 +4296,13 @@ param(
 
         # If specified the branch name is written into the provided StringBuilder object.
         [Parameter(ValueFromPipeline = $true)]
-        [S
+        [System.Tex
 
 Short description:
 
 .SYNOPSIS
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\posh-git\1.1.0\GitPrompt.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/posh-git/1.1.0/GitPrompt.ps1
 
 ## Write-GitBranchStatus
 
@@ -4584,12 +4317,13 @@ param(
 
         # If specified the branch status is written into the provided StringBuilder object.
         [Parameter(ValueFromPipeline = $true)]
+        [System
 
 Short description:
 
 .SYNOPSIS
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\posh-git\1.1.0\GitPrompt.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/posh-git/1.1.0/GitPrompt.ps1
 
 ## Write-GitIndexStatus
 
@@ -4604,12 +4338,13 @@ param(
 
         # If specified the index status is written into the provided StringBuilder object.
         [Parameter(ValueFromPipeline = $true)]
+        [System.T
 
 Short description:
 
 .SYNOPSIS
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\posh-git\1.1.0\GitPrompt.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/posh-git/1.1.0/GitPrompt.ps1
 
 ## Write-GitStashCount
 
@@ -4623,13 +4358,13 @@ param(
         $Status,
 
         # If specified the working dir local status is written into the provided StringBuilder object.
-        [Parameter(ValueFromPipeline = $true)
+        [Parameter(ValueFromPipeline = $true)]
 
 Short description:
 
 .SYNOPSIS
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\posh-git\1.1.0\GitPrompt.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/posh-git/1.1.0/GitPrompt.ps1
 
 ## Write-GitStatus
 
@@ -4647,7 +4382,7 @@ Short description:
 
 .SYNOPSIS
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\posh-git\1.1.0\GitPrompt.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/posh-git/1.1.0/GitPrompt.ps1
 
 ## Write-GitWorkingDirStatus
 
@@ -4661,13 +4396,13 @@ param(
         $Status,
 
         # If specified the working dir status is written into the provided StringBuilder object.
-        [Parameter(ValueFromPipeline = $true)
+        [Parameter(ValueFromPipeline = $true)]
 
 Short description:
 
 .SYNOPSIS
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\posh-git\1.1.0\GitPrompt.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/posh-git/1.1.0/GitPrompt.ps1
 
 ## Write-GitWorkingDirStatusSummary
 
@@ -4681,13 +4416,13 @@ param(
         $Status,
 
         # If specified the working dir local status is written into the provided StringBuilder object.
-        [Parameter(ValueFromPipe
+        [Parameter(ValueFromPipeline = $
 
 Short description:
 
 .SYNOPSIS
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\posh-git\1.1.0\GitPrompt.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/posh-git/1.1.0/GitPrompt.ps1
 
 ## Write-Log
 
@@ -4696,7 +4431,7 @@ Signature:
 function Write-Log { 
 param($Message)
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Core\Apps\UpdateApps.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Core/Apps/UpdateApps.ps1
 
 ## Write-Prompt
 
@@ -4709,7 +4444,7 @@ Short description:
 
 .SYNOPSIS
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\posh-git\1.1.0\GitPrompt.ps1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/posh-git/1.1.0/GitPrompt.ps1
 
 ## Write-UpdateLog
 
@@ -4722,15 +4457,7 @@ Short description:
 
 Logging function
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Core\Apps\Updates\SystemUpdater.ps1
-
-## WriteHistoryToDisk
-
-Signature:
-
-function WriteHistoryToDisk() {
-
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\z\1.1.14\z.psm1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Core/Apps/Updates/SystemUpdater.ps1
 
 ## WriteTabExpLog
 
@@ -4738,13 +4465,5 @@ Signature:
 
 function WriteTabExpLog([string] $Message) {
 
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\posh-git\1.1.0\GitTabExpansion.ps1
-
-## z
-
-Signature:
-
-function z {
-
-Source: C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\z\1.1.14\z.psm1
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/posh-git/1.1.0/GitTabExpansion.ps1
 
