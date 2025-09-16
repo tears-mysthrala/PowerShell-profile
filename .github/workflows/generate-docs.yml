@@ -19,8 +19,12 @@ jobs:
         with:
           # Fetch full history to make branch comparisons and PR creation robust
           fetch-depth: 0
-          # If your repository uses submodules, enable this so the generator can see them
-          submodules: recursive
+          # NOTE: submodules are disabled here to avoid CI failing when submodule URLs
+          # are missing from .gitmodules (the repo currently has references to
+          # Modules/Catppuccin in the working tree but no .gitmodules entry). If you
+          # want submodules enabled, set `submodules: recursive` and ensure .gitmodules
+          # contains valid entries.
+          submodules: false
 
       - name: Setup PowerShell
         run: |
