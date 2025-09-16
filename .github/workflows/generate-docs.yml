@@ -1,0 +1,46 @@
+name: Generate Function Docs
+
+on:
+  schedule:
+    - cron: '0 3 * * *' # daily at 03:00 UTC
+  workflow_dispatch: {}
+  push:
+    branches: [ main ]
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup PowerShell
+        run: |
+          # If pwsh is already available on the runner, use it. Otherwise install PowerShell.
+          if ! command -v pwsh >/dev/null 2>&1; then
+            echo "pwsh not found — installing PowerShell 7..."
+            sudo apt-get update
+            sudo apt-get install -y wget apt-transport-https software-properties-common ca-certificates gnupg
+            DISTRO="$(. /etc/os-release && echo $ID$VERSION_ID)"
+            wget -q "https://packages.microsoft.com/config/ubuntu/$(lsb_release -rs)/packages-microsoft-prod.deb"
+            sudo dpkg -i packages-microsoft-prod.deb
+            sudo apt-get update
+            sudo apt-get install -y powershell
+          fi
+          pwsh -NoProfile -Command 'Write-Output ("pwsh version: " + (pwsh -v))'
+
+      - name: Run generator
+        run: pwsh -NoProfile -ExecutionPolicy Bypass -File tools/generate_function_docs.ps1
+
+      - name: Commit and create PR if docs changed
+        uses: peter-evans/create-pull-request@v5
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: 'chore(docs): regenerate FunctionReference.md'
+          title: 'chore(docs): regenerate FunctionReference.md'
+          body: 'Automated docs regeneration by workflow'
+          base: main
+          branch: docs/regenerate-function-reference
