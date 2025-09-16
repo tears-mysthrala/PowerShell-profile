@@ -1,3 +1,0 @@
-Archived placeholder for Modules/ProfileCore/Config/ModuleConfig.psd1.bak
-
-This was a backup artifact removed from the main tree.

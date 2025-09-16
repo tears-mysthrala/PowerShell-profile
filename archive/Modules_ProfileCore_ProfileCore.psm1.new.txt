@@ -1,4 +1,0 @@
-This is an archived placeholder for the removed file:
-Modules/ProfileCore/ProfileCore.psm1.new
-
-Original file appeared empty/was a development artifact and was removed from the main tree.

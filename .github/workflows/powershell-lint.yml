@@ -1,6 +1,5 @@
 name: Lint PowerShell and Markdown
 
-
 on:
   push:
     branches: [ main ]
@@ -9,7 +8,6 @@ on:
 
 jobs:
   powershell-lint:
-    name: PSScriptAnalyzer
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v4
@@ -26,50 +24,36 @@ jobs:
           if ($files.Count -eq 0) { Write-Host 'No PowerShell files found'; exit 0 }
           foreach ($f in $files) {
             Write-Host "Analyzing $f"
-            Invoke-ScriptAnalyzer -Path $f -Recurse -Severity Warning -SettingsPath $settings -EnableExit
+            if ($settings) {
+              Invoke-ScriptAnalyzer -Path $f -Recurse -Severity Warning -SettingsPath $settings -EnableExit
+            } else {
+              Invoke-ScriptAnalyzer -Path $f -Recurse -Severity Warning -EnableExit
+            }
           }
 
   super-linter:
-    name: Super-Linter
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
       - name: Run Super-Linter
         uses: github/super-linter@v5
         env:
           VALIDATE_ALL_CODEBASE: false
           DEFAULT_BRANCH: main
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          LOG_LEVEL: debug
 
   markdown-lint:
-    name: markdownlint
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
-      - name: Cache npm
-        uses: actions/cache@v4
-        with:
-          path: ~/.npm
-          key: ${{ runner.os }}-node-20-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-node-
-      - name: Install markdownlint-cli2
-        run: |
-          npm ci --silent || true
-          npm install -g markdownlint-cli2
+          node-version: '18'
       - name: Run markdownlint
         run: |
-          files=$(git ls-files "**/*.md") || true
-          if [ -z "$files" ]; then
-            echo "No markdown files to lint"
-            exit 0
-          fi
-          markdownlint "**/*.md"
+          npm install -g markdownlint-cli
+          markdownlint '**/*.md'
+
+

@@ -1,0 +1,6 @@
+C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\ProfileCore\ProfileCore.psm1.new
+C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\ProfileCore\Config\ModuleConfig.psd1.new
+C:\Users\unaiu\OneDrive\Documents\PowerShell\Microsoft.PowerShell_profile.ps1.bak
+C:\Users\unaiu\OneDrive\Documents\PowerShell\Modules\ProfileCore\Config\ModuleConfig.psd1.bak
+C:\Users\unaiu\OneDrive\Documents\PowerShell\.starship\cache\session_5HQVUM3bio7PJrRN.log
+C:\Users\unaiu\OneDrive\Documents\PowerShell\.starship\cache\session_KClvoqnIA16JreL9.log
