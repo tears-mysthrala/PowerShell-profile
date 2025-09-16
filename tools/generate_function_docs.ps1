@@ -34,7 +34,14 @@ function Get-PrecedingCommentBlock($text, $startIndex) {
             else { continue }
         } else { break }
     }
-    if ($descLines.Count -gt 0) { return ($descLines | Select-Object -Last 50 | [array]::Reverse; ($descLines -join "`n")) -join "`n" }
+    if ($descLines.Count -gt 0) {
+        # We collected lines from bottom-to-top; take the last 50 (closest to the function),
+        # reverse them back to original top-down order, then join. Avoid inline static method
+        # calls inside pipelines which can cause parser errors on some pwsh versions.
+        $tail = $descLines | Select-Object -Last 50
+        [array]::Reverse($tail)
+        return ($tail -join "`n")
+    }
     return ''
 }
 
@@ -67,6 +74,8 @@ foreach ($f in $files) {
     try {
         $text = Get-Content -Raw -LiteralPath $f.FullName -ErrorAction Stop
     } catch { continue }
+    # Skip files where reading returned nothing (avoid null-valued calls later)
+    if (-not $text) { continue }
 
     $pattern = '(?m)^[ \t]*function[ \t]+([A-Za-z0-9_\-]+)\b.*'
     $matches = [regex]::Matches($text, $pattern)
