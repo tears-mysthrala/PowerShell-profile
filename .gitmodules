@@ -1,0 +1,3 @@
+[submodule "Modules/Catppuccin"]
+	path = Modules/Catppuccin
+	url = https://github.com/catppuccin/powershell.git
