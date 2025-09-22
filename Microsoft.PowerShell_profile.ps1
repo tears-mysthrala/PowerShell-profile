@@ -1,3 +1,5 @@
+# Load aliases by default
+. "$PSScriptRoot/Core/Utils/unified_aliases.ps1"
 # Initialize profiling
 $script:profileTiming = @{}
 $globalStopwatch = [System.Diagnostics.Stopwatch]::StartNew()
