@@ -373,117 +373,13 @@ Measure-Block 'Shell Setup' {
 
     # Initialize shell enhancements
 
-    # Lazy-initialize starship at first prompt to avoid blocking startup
-    $starshipCmd = Get-Command starship -ErrorAction SilentlyContinue
-    if ($starshipCmd) {
-          # Use the '#file:' selector but point it at the absolute config path so Starship
-          # can always find the file regardless of the current working directory.
-          $starshipConfigPath = Join-Path $ProfileDir 'Config\starship.toml'
-          # Use the absolute path to the config file so Starship can read it directly.
-          $ENV:STARSHIP_CONFIG = $starshipConfigPath
-          $ENV:STARSHIP_CACHE = Join-Path $ProfileDir '.starship\cache'
-        $script:StarshipInitialized = $false
-
-        Measure-Block 'Prompt:InitFunc' {
-            # Create Initialize-Starship as a real function in the Function: provider so it exists
-            # in the interactive scope instead of being local to this Measure-Block.
-            $initSb = {
-                if ($script:StarshipInitialized) { return }
-                try {
-                    $cacheDir = Join-Path $ProfileDir '.starship'
-                    $cacheFile = Join-Path $cacheDir 'starship-init.ps1'
-
-                    if (Test-Path $cacheFile) {
-                        # Use cached init script when available (written by background pre-warm)
-                        try {
-                            $initText = Get-Content -Path $cacheFile -Raw -ErrorAction Stop
-                            if ($initText) { Invoke-Expression $initText }
-                        } catch {
-                            # Fallback to live init if cache read fails
-                            $init = & starship init powershell --print-full-init 2>$null
-                            if ($init) { $initText = if ($init -is [System.Array]) { $init -join "`n" } else { $init.ToString() }; Invoke-Expression $initText }
-                        }
-                    } else {
-                        # No cache yet — run live init and continue
-                        $init = & starship init powershell --print-full-init 2>$null
-                        if ($init) { $initText = if ($init -is [System.Array]) { $init -join "`n" } else { $init.ToString() }; Invoke-Expression $initText }
-                    }
-
-                    $script:StarshipInitialized = $true
-                } catch {
-                    Write-Warning ("Starship init failed: {0}" -f $_)
-                }
-            }
-            try {
-                # Define the function at global scope so it's visible to the interactive session.
-                try {
-                    Set-Item -Path 'Function:Global:Initialize-Starship' -Value $initSb -Force -ErrorAction Stop
-                } catch {
-                    # Fallback: define a global function that invokes the scriptblock
-                    Set-Item -Path 'Function:Global:Initialize-Starship' -Value { & $initSb } -Force -ErrorAction SilentlyContinue
-                }
-            } catch {
-                Write-Warning ("Failed to register Initialize-Starship function globally: {0}" -f $_)
-                # Fallback: define the function normally if provider-based set fails
-                function global:Initialize-Starship { & $initSb }
-            }
-        }
-
-        # Define a lightweight prompt that initializes starship on first run
-        Measure-Block 'Prompt:PromptWrapper' {
-            $script:OriginalPrompt = $null
-            if ($function:prompt) { $script:OriginalPrompt = $function:prompt }
-
-            function prompt {
-                if (-not $script:StarshipInitialized) {
-                    Initialize-Starship
-                    Start-Sleep -Milliseconds 10
-                }
-                # Enable full PSReadLine features lazily on first prompt
-                if (-not $script:PSReadLineFullEnabled -and (Get-Command -Name Enable-FullPSReadLine -ErrorAction SilentlyContinue)) {
-                    try {
-                        Enable-FullPSReadLine
-                    } catch { Write-Verbose "Ignored exception in starship global registration: $_" }
-                    $script:PSReadLineFullEnabled = $true
-                }
-                $current = Get-Command prompt -CommandType Function -ErrorAction SilentlyContinue
-                if ($current -and $current.ScriptBlock -ne $function:prompt.ScriptBlock) {
-                    try {
-                        return & $current.ScriptBlock
-                    } catch {
-                        # fallthrough to basic prompt
-                    }
-                }
-                return "PS $($executionContext.SessionState.Path.CurrentLocation)> "
-            }
-        }
-
-        # Background pre-warm: write the starship init script to a cache file so Initialize-Starship
-        # can quickly load it without invoking the starship binary in the interactive runspace.
-        try {
-            $prewarmSb = {
-                param($ProfileDir)
-                try {
-                    $cacheDir = Join-Path $ProfileDir '.starship'
-                    if (-not (Test-Path $cacheDir)) { New-Item -ItemType Directory -Path $cacheDir -Force | Out-Null }
-                    $cacheFile = Join-Path $cacheDir 'starship-init.ps1'
-                    $init = & starship init powershell --print-full-init 2>$null
-                    if ($init) {
-                        $initText = if ($init -is [System.Array]) { $init -join "`n" } else { $init.ToString() }
-                        Set-Content -Path $cacheFile -Value $initText -Encoding UTF8 -Force
-                    }
-                } catch {
-                    # ignore pre-warm failures
-                }
-            }
-            Start-BackgroundJob -ScriptBlock $prewarmSb -ArgumentList $ProfileDir | Out-Null
-        } catch {
-            # if background jobs not permitted, skip pre-warm
-        }
+    # Simple Starship prompt initialization with config file
+    $starshipConfigPath = Join-Path $ProfileDir 'Config\starship.toml'
+    if (Get-Command starship -ErrorAction SilentlyContinue) {
+        $ENV:STARSHIP_CONFIG = $starshipConfigPath
+        Invoke-Expression (&starship init powershell)
     } else {
-        if (-not $global:ProfileSuppressInfoLogs) {
-            Write-Host "[INFO] Starship not found, skipping prompt initialization." -ForegroundColor Yellow
-        }
+        Write-Host "[INFO] Starship not found, skipping prompt initialization." -ForegroundColor Yellow
     }
 
     Measure-Block 'PSReadLine' {
@@ -571,4 +467,4 @@ if (-not (Test-CatppuccinPresent)) {
     catch {
         Write-Verbose "Ignored exception: `$_"
     }
-
+}
