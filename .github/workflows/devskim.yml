@@ -1,0 +1,86 @@
+# This workflow uses actions that are not certified by GitHub.
+# They are provided by a third-party and are governed by
+# separate terms of service, privacy policy, and support
+# documentation.
+
+name: DevSkim
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+  schedule:
+    - cron: "33 23 * * 0"
+
+jobs:
+  lint:
+    name: DevSkim
+    runs-on: ubuntu-latest
+    permissions:
+      actions: read
+      contents: write
+      security-events: write
+      pull-requests: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.PAT_TOKEN }}
+          submodules: false
+
+      - name: Run DevSkim scanner
+        uses: microsoft/DevSkim-Action@v1
+        with:
+          output-directory: .
+          output-filename: devskim-results.sarif
+          directory-to-scan: .
+          ignore-globs: "**/.git/**,**/bin/**"
+
+      - name: Validate SARIF file
+        run: |
+          if [ ! -f devskim-results.sarif ]; then
+            echo "SARIF file not found!"
+            exit 1
+          fi
+          # Basic SARIF validation
+          if ! jq empty devskim-results.sarif 2>/dev/null; then
+            echo "Invalid SARIF file format"
+            exit 1
+          fi
+
+      - name: Upload DevSkim scan results to GitHub Security tab
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: devskim-results.sarif
+        continue-on-error: true
+
+      - name: Configure Git
+        run: |
+          git config --global user.name "GitHub Actions"
+          git config --global user.email "actions@github.com"
+
+      - name: Handle Git State
+        run: |
+          # Clean up any existing conflicts
+          git reset --hard HEAD
+          git clean -fd
+
+          # Ensure we're on the right branch
+          git checkout main
+          git pull origin main
+
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v5
+        with:
+          token: ${{ secrets.PAT_TOKEN }}
+          commit-message: "chore: update security fixes from DevSkim scan"
+          title: "Security: DevSkim scan updates"
+          body: |
+            This PR contains security updates from the latest DevSkim scan.
+
+            Please review the changes carefully before merging.
+          branch: security/devskim-updates
+          base: main
+          delete-branch: true
+          add-paths: |
+            devskim-results.sarif

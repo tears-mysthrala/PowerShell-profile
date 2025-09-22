@@ -1,0 +1,50 @@
+# PowerShell specific directories
+Help/
+
+# PowerShell logs and temporary files
+*.log
+*.tmp
+
+# Module exceptions - don't ignore our custom modules
+!Modules/ProfileCore/
+!Modules/ProfileCore/**
+
+# But still ignore other modules
+Modules/*
+!Modules/ProfileCore/
+
+# VS Code workspace settings
+.vscode/
+
+# Windows specific
+Thumb.db
+desktop.ini
+
+# Ignore common backup/temp artifacts and caches
+# Temporary files created during development or by tools
+*.tmp
+.tmp*
+.tmp-*
+
+# Generic backup/old files
+*.new
+*.bak
+*.old
+
+# PowerShell cache files (do not track runtime caches)
+Config/*.clixml
+env-cache.clixml
+utils-cache.clixml
+ModuleCache/
+
+# Starship runtime folder (generated)
+.starship/
+
+# Ignore editor/OS files
+.DS_Store
+Thumbs.db
+
+# Ignore all modules folder contents by default, but keep ProfileCore which is maintained in-repo
+Modules/
+!Modules/ProfileCore/
+!Modules/ProfileCore/**
