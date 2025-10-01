@@ -2,7 +2,6 @@
 . "$PSScriptRoot/Core/Utils/unified_aliases.ps1"
 # Initialize profiling
 $script:profileTiming = @{}
-$globalStopwatch = [System.Diagnostics.Stopwatch]::StartNew()
 
 function Measure-Block {
     param(
@@ -32,13 +31,14 @@ function Measure-Block {
 function Start-BackgroundJob {
     param(
         [scriptblock]$ScriptBlock,
-        [Parameter(ValueFromRemainingArguments=$true)] $ArgumentList
+        [Parameter(ValueFromRemainingArguments = $true)] $ArgumentList
     )
     try {
         if (Get-Command -Name Start-ThreadJob -ErrorAction SilentlyContinue) {
             return Start-ThreadJob -ScriptBlock $ScriptBlock -ArgumentList $ArgumentList
         }
-    } catch {
+    }
+    catch {
         # fall back
     }
     return Start-Job -ScriptBlock $ScriptBlock -ArgumentList $ArgumentList
@@ -88,11 +88,11 @@ Measure-Block 'Environment Setup' {
         
         # Cache the environment settings
         $envToCache = @{
-            PYTHONIOENCODING = $env:PYTHONIOENCODING
-            EDITOR = $env:EDITOR
-            VISUAL = $env:VISUAL
+            PYTHONIOENCODING            = $env:PYTHONIOENCODING
+            EDITOR                      = $env:EDITOR
+            VISUAL                      = $env:VISUAL
             POWERSHELL_TELEMETRY_OPTOUT = $env:POWERSHELL_TELEMETRY_OPTOUT
-            POWERSHELL_UPDATECHECK = $env:POWERSHELL_UPDATECHECK
+            POWERSHELL_UPDATECHECK      = $env:POWERSHELL_UPDATECHECK
         }
         $envToCache | Export-Clixml -Path $envCachePath
     }
@@ -142,18 +142,17 @@ Measure-Block 'Core Setup' {
             # Create lazy-loading proxy functions for commonly used module commands
             $lazyLoadCommands = @{
                 'Get-GitStatus' = 'posh-git'
-                'Invoke-Fzf' = 'PSFzf'
+                'Invoke-Fzf'    = 'PSFzf'
             }
             foreach ($command in $lazyLoadCommands.Keys) {
                 $moduleName = $lazyLoadCommands[$command]
                 $sb = {
-                    param($cmd, $module)
                     # Remove the proxy function
-                    Remove-Item "Function:\$cmd"
+                    Remove-Item "Function:\$command"
                     # Load the actual module
-                    Import-Module $module -ErrorAction Stop
+                    Import-Module $moduleName -ErrorAction Stop
                     # Call the original command with the same arguments
-                    $commandInfo = Get-Command $cmd
+                    $commandInfo = Get-Command $command
                     & $commandInfo @args
                 }.GetNewClosure()
                 Set-Item "Function:\$command" -Value $sb
@@ -168,7 +167,8 @@ Measure-Block 'Core Setup' {
             $sb = {
                 try {
                     Import-Module 'Terminal-Icons' -ErrorAction Stop
-                } catch {
+                }
+                catch {
                     Write-Warning "Terminal-Icons could not be loaded: $_"
                     return
                 }
@@ -180,24 +180,26 @@ Measure-Block 'Core Setup' {
             if ($Async) {
                 if (Get-Command -Name Start-ThreadJob -ErrorAction SilentlyContinue) {
                     Start-ThreadJob -ScriptBlock $sb | Out-Null
-                } else {
+                }
+                else {
                     Start-Job -ScriptBlock $sb | Out-Null
                 }
-            } else {
+            }
+            else {
                 & $sb
             }
         }
 
         Measure-Block 'ImportProfileModules' {
             # Defer importing heavy profile modules until first use
-            function Ensure-ProfileManagement {
+            function Initialize-ProfileManagement {
                 if (-not (Get-Module -Name ProfileManagement -ListAvailable)) { 
                     $path = Join-Path $ProfileDir 'Modules\ProfileManagement\ProfileManagement.psm1'
                     if (Test-Path $path) { Import-Module $path -Force -ErrorAction SilentlyContinue }
                 }
             }
 
-            function Ensure-ProfileCore {
+            function Initialize-ProfileCore {
                 if (-not (Get-Module -Name ProfileCore -ListAvailable)) {
                     $path = Join-Path $ProfileDir 'Modules\ProfileCore\ProfileCore.psm1'
                     if (Test-Path $path) { Import-Module $path -Force -ErrorAction SilentlyContinue }
@@ -247,10 +249,8 @@ Measure-Block 'Core Setup' {
                 $utilsCache = Import-Clixml -Path $utilsCachePath
             }
 
-            # Enumerate utility files (measured)
-            Measure-Block 'Utils:Enumerate' {
-                $utilsFiles = Get-ChildItem -Path $utilsPath -Filter "*.ps1"
-            }
+            # Enumerate utility files
+            $utilsFiles = Get-ChildItem -Path $utilsPath -Filter "*.ps1"
 
             # Enqueue background jobs for utils that need loading (measured)
             Measure-Block 'Utils:EnqueueJobs' {
@@ -268,7 +268,8 @@ Measure-Block 'Core Setup' {
                                 $cachedModule = Get-Module -Name $moduleName -ErrorAction SilentlyContinue
                                 if ($cachedModule) { $needsLoading = $false }
                             }
-                        } catch {
+                        }
+                        catch {
                             $needsLoading = $true
                         }
                     }
@@ -286,8 +287,9 @@ Measure-Block 'Core Setup' {
                                         . $ScriptPath
                                     }
                                     New-Module -Name $Name -ScriptBlock $scriptBlock -ArgumentList $Path |
-                                        Import-Module -Global -WarningAction SilentlyContinue
-                                } catch {
+                                    Import-Module -Global -WarningAction SilentlyContinue
+                                }
+                                catch {
                                     Write-Error ("Utility module import failed for {0}: {1}" -f $Name, $_)
                                 }
                             } -ArgumentList $filePath, $moduleName
@@ -298,9 +300,10 @@ Measure-Block 'Core Setup' {
                             # Update cache in main session
                             $utilsCache[$moduleName] = @{
                                 LastWriteTime = (Get-Item $filePath).LastWriteTime
-                                Path = $filePath
+                                Path          = $filePath
                             }
-                        } catch {
+                        }
+                        catch {
                             Write-Warning "Failed to enqueue utility module $moduleName`: $_"
                         }
                     }
@@ -311,12 +314,14 @@ Measure-Block 'Core Setup' {
             Measure-Block 'Utils:SaveCache' {
                 try {
                     $utilsCache | Export-Clixml -Path $utilsCachePath
-                } catch {
+                }
+                catch {
                     # ignore cache write errors
                 }
             }
         }
-    } catch {
+    }
+    catch {
         Write-Host "Failed to load core modules: $_" -ForegroundColor Red
         Write-Host "Some features may not be available" -ForegroundColor Yellow
     }
@@ -331,16 +336,17 @@ Start-Job -ScriptBlock {
                 $functionName = "Use-$name"
                 if (-not (Get-Command -Name $functionName -ErrorAction SilentlyContinue)) {
                     Set-Item -Path "Function:$functionName" -Value {
-                        param($args)
+                        param($arguments)
                         # Replace this proxy with a real loader and invoke it
                         Remove-Item "Function:$functionName" -ErrorAction SilentlyContinue
                         Import-PSModule $name
-                        & (Get-Command -Name $functionName -ErrorAction SilentlyContinue) @args
+                        & (Get-Command -Name $functionName -ErrorAction SilentlyContinue) @arguments
                     }.GetNewClosure()
                 }
             }
         }
-    } catch {
+    }
+    catch {
         # non-fatal
     }
 } | Out-Null
@@ -380,7 +386,8 @@ Measure-Block 'Shell Setup' {
     if (Get-Command starship -ErrorAction SilentlyContinue) {
         $ENV:STARSHIP_CONFIG = $starshipConfigPath
         Invoke-Expression (&starship init powershell)
-    } else {
+    }
+    else {
         Write-Host "[INFO] Starship not found, skipping prompt initialization." -ForegroundColor Yellow
     }
 
@@ -396,7 +403,8 @@ Measure-Block 'Shell Setup' {
             Set-PSReadLineKeyHandler -Key Tab -Function MenuComplete
             Set-PSReadLineKeyHandler -Key UpArrow -Function HistorySearchBackward
             Set-PSReadLineKeyHandler -Key DownArrow -Function HistorySearchForward
-        } catch {
+        }
+        catch {
             Write-Warning "PSReadLine configuration failed: $_"
         }
 
@@ -404,13 +412,14 @@ Measure-Block 'Shell Setup' {
         function Disable-FullPSReadLine {
             try {
                 $minimalOptions = @{
-                    PredictionSource = 'None'
+                    PredictionSource              = 'None'
                     HistorySearchCursorMovesToEnd = $true
                 }
                 Set-PSReadLineOption @minimalOptions
                 # Minimal key handlers
                 Set-PSReadLineKeyHandler -Key Tab -Function Complete
-            } catch {
+            }
+            catch {
                 Write-Warning "Disabling full PSReadLine options failed: $_"
             }
         }
