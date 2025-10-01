@@ -385,33 +385,33 @@ Measure-Block 'Shell Setup' {
     }
 
     Measure-Block 'PSReadLine' {
-        # Configure PSReadLine with an ultra-light startup; full features are enabled lazily
+        # Configure PSReadLine with full features enabled
         $PSReadLineOptions = @{
-            PredictionSource              = 'None'   # disable prediction at startup to reduce load
+            PredictionSource              = 'History'   # enable history prediction
             HistorySearchCursorMovesToEnd = $true
         }
         try {
             Set-PSReadLineOption @PSReadLineOptions
-            # Minimal key handlers to avoid extra initialization
-            Set-PSReadLineKeyHandler -Key Tab -Function Complete
+            # Set key handlers for better autocomplete
+            Set-PSReadLineKeyHandler -Key Tab -Function MenuComplete
+            Set-PSReadLineKeyHandler -Key UpArrow -Function HistorySearchBackward
+            Set-PSReadLineKeyHandler -Key DownArrow -Function HistorySearchForward
         } catch {
-            Write-Warning "PSReadLine minimal configuration failed: $_"
+            Write-Warning "PSReadLine configuration failed: $_"
         }
 
-        # Provide a function to enable full PSReadLine features lazily
-        function Enable-FullPSReadLine {
+        # Provide a function to disable PSReadLine features if needed
+        function Disable-FullPSReadLine {
             try {
-                $fullOptions = @{
-                    PredictionSource = 'History'
+                $minimalOptions = @{
+                    PredictionSource = 'None'
                     HistorySearchCursorMovesToEnd = $true
                 }
-                Set-PSReadLineOption @fullOptions
-                # Restore richer key handlers
-                Set-PSReadLineKeyHandler -Key Tab -Function MenuComplete
-                Set-PSReadLineKeyHandler -Key UpArrow -Function HistorySearchBackward
-                Set-PSReadLineKeyHandler -Key DownArrow -Function HistorySearchForward
+                Set-PSReadLineOption @minimalOptions
+                # Minimal key handlers
+                Set-PSReadLineKeyHandler -Key Tab -Function Complete
             } catch {
-                Write-Warning "Enabling full PSReadLine options failed: $_"
+                Write-Warning "Disabling full PSReadLine options failed: $_"
             }
         }
     }
