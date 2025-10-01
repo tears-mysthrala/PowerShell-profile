@@ -2823,14 +2823,6 @@ TortoiseGit
 
 Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/posh-git/1.1.0/TortoiseGit.ps1
 
-## prompt
-
-Signature:
-
-function prompt {
-
-Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Microsoft.PowerShell_profile.ps1
-
 ## PSConsoleHostReadLine
 
 Signature:
