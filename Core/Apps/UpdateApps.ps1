@@ -57,6 +57,7 @@ if (Test-CommandExists 'winget') {
     } -Name 'WingetUpdate'
     Write-Log "Started Winget update job"
 }
+}
 
 # Scoop updates
 if (Test-CommandExists 'scoop') {
@@ -70,6 +71,7 @@ if (Test-CommandExists 'scoop') {
         }
     } -Name 'ScoopUpdate'
     Write-Log "Started Scoop update job"
+}
 }
 
 # Chocolatey updates
@@ -85,6 +87,7 @@ if (Test-CommandExists 'choco') {
     } -Name 'ChocolateyUpdate'
     Write-Log "Started Chocolatey update job"
 }
+}
 
 # NPM global updates
 if (Test-CommandExists 'npm') {
@@ -98,6 +101,7 @@ if (Test-CommandExists 'npm') {
         }
     } -Name 'NpmUpdate'
     Write-Log "Started NPM update job"
+}
 }
 
 # PowerShell module updates
