@@ -48,60 +48,60 @@ $jobs = @()
 if (Test-CommandExists 'winget') {
     if (Get-Command -Name Start-ThreadJob -ErrorAction SilentlyContinue) {
         $jobs += Start-ThreadJob -ScriptBlock {
-        try {
-            winget upgrade -rhu --accept-source-agreements --accept-package-agreements --disable-interactivity
-        }
-        catch {
-            Write-Output "ERROR: Winget update failed - $($_.Exception.Message)"
-        }
-    } -Name 'WingetUpdate'
-    Write-Log "Started Winget update job"
-}
+            try {
+                winget upgrade -rhu --accept-source-agreements --accept-package-agreements --disable-interactivity
+            }
+            catch {
+                Write-Output "ERROR: Winget update failed - $($_.Exception.Message)"
+            }
+        } -Name 'WingetUpdate'
+        Write-Log "Started Winget update job"
+    }
 }
 
 # Scoop updates
 if (Test-CommandExists 'scoop') {
-        if (Get-Command -Name Start-ThreadJob -ErrorAction SilentlyContinue) {
-            $jobs += Start-ThreadJob -ScriptBlock {
-        try {
-            scoop update *
-        }
-        catch {
-            Write-Output "ERROR: Scoop update failed - $($_.Exception.Message)"
-        }
-    } -Name 'ScoopUpdate'
-    Write-Log "Started Scoop update job"
-}
+    if (Get-Command -Name Start-ThreadJob -ErrorAction SilentlyContinue) {
+        $jobs += Start-ThreadJob -ScriptBlock {
+            try {
+                scoop update *
+            }
+            catch {
+                Write-Output "ERROR: Scoop update failed - $($_.Exception.Message)"
+            }
+        } -Name 'ScoopUpdate'
+        Write-Log "Started Scoop update job"
+    }
 }
 
 # Chocolatey updates
 if (Test-CommandExists 'choco') {
-        if (Get-Command -Name Start-ThreadJob -ErrorAction SilentlyContinue) {
-            $jobs += Start-ThreadJob -ScriptBlock {
-        try {
-            choco upgrade all -y --no-progress
-        }
-        catch {
-            Write-Output "ERROR: Chocolatey update failed - $($_.Exception.Message)"
-        }
-    } -Name 'ChocolateyUpdate'
-    Write-Log "Started Chocolatey update job"
-}
+    if (Get-Command -Name Start-ThreadJob -ErrorAction SilentlyContinue) {
+        $jobs += Start-ThreadJob -ScriptBlock {
+            try {
+                choco upgrade all -y --no-progress
+            }
+            catch {
+                Write-Output "ERROR: Chocolatey update failed - $($_.Exception.Message)"
+            }
+        } -Name 'ChocolateyUpdate'
+        Write-Log "Started Chocolatey update job"
+    }
 }
 
 # NPM global updates
 if (Test-CommandExists 'npm') {
-        if (Get-Command -Name Start-ThreadJob -ErrorAction SilentlyContinue) {
-            $jobs += Start-ThreadJob -ScriptBlock {
-        try {
-            npm update -g --silent
-        }
-        catch {
-            Write-Output "ERROR: NPM update failed - $($_.Exception.Message)"
-        }
-    } -Name 'NpmUpdate'
-    Write-Log "Started NPM update job"
-}
+    if (Get-Command -Name Start-ThreadJob -ErrorAction SilentlyContinue) {
+        $jobs += Start-ThreadJob -ScriptBlock {
+            try {
+                npm update -g --silent
+            }
+            catch {
+                Write-Output "ERROR: NPM update failed - $($_.Exception.Message)"
+            }
+        } -Name 'NpmUpdate'
+        Write-Log "Started NPM update job"
+    }
 }
 
 # PowerShell module updates
@@ -140,7 +140,8 @@ try {
                 try {
                     Remove-Module -Name $moduleName -Force -ErrorAction Stop
                     Write-Log "INFO: Successfully unloaded module '$moduleName'"
-                } catch {
+                }
+                catch {
                     $modulesToRetry += $moduleName
                     Write-Log "WARNING: Could not unload module '$moduleName'. Will update after restart: $($_.Exception.Message)"
                     continue
@@ -155,15 +156,18 @@ try {
                 try {
                     Import-Module -Name $moduleName -Force -ErrorAction Stop
                     Write-Log "INFO: Successfully reloaded module '$moduleName' with new version"
-                } catch {
+                }
+                catch {
                     Write-Log "WARNING: Could not reload module '$moduleName': $($_.Exception.Message)"
                 }
             }
-        } catch {
+        }
+        catch {
             if ($_.Exception.Message -match 'is currently in use') {
                 $modulesToRetry += $moduleName
                 Write-Log "WARNING: Module '$moduleName' is in use. Will update from $($moduleInfo.CurrentVersion) to $($moduleInfo.NewVersion) after restart."
-            } else {
+            }
+            else {
                 Handle-Error "Failed to update module '$moduleName': $($_.Exception.Message)"
             }
         }
@@ -176,10 +180,12 @@ try {
             Write-Log "  - $_ (Current: $($info.CurrentVersion) → New: $($info.NewVersion))"
         }
         Write-Log "\nPlease restart PowerShell to complete these updates."
-    } elseif ($modulesToUpdate.Count -eq 0) {
+    }
+    elseif ($modulesToUpdate.Count -eq 0) {
         Write-Log "All PowerShell modules are up to date."
     }
-} catch {
+}
+catch {
     Handle-Error "Failed to process PowerShell module updates: $($_.Exception.Message)"
 }
 
@@ -204,7 +210,8 @@ foreach ($job in $jobs) {
     Write-Host ("Results from $($job.Name):") -ForegroundColor $color
     if ($result) {
         $result | ForEach-Object { Write-Host $_ -ForegroundColor $color }
-    } else {
+    }
+    else {
         Write-Host "(No output)" -ForegroundColor $color
     }
     Remove-Job -Job $job
