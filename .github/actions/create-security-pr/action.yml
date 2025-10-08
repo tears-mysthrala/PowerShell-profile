@@ -1,0 +1,57 @@
+name: 'Create Security PR'
+description: 'Creates a pull request for security scan results'
+inputs:
+  token:
+    description: 'GitHub token for authentication'
+    required: true
+  commit-message:
+    description: 'Commit message for the PR'
+    required: true
+  title:
+    description: 'PR title'
+    required: true
+  body:
+    description: 'PR body description'
+    required: true
+  branch:
+    description: 'Branch name for the PR'
+    required: true
+  base:
+    description: 'Base branch (usually main)'
+    required: false
+    default: 'main'
+  add-paths:
+    description: 'Paths to add to the PR (space-separated)'
+    required: false
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Configure Git
+      shell: bash
+      run: |
+        git config --global user.name "GitHub Actions"
+        git config --global user.email "actions@github.com"
+
+    - name: Handle Git State
+      shell: bash
+      run: |
+        # Clean up any existing conflicts
+        git reset --hard HEAD
+        git clean -fd
+
+        # Ensure we're on the right branch
+        git checkout ${{ inputs.base }}
+        git pull origin ${{ inputs.base }}
+
+    - name: Create Pull Request
+      uses: peter-evans/create-pull-request@v5
+      with:
+        token: ${{ inputs.token }}
+        commit-message: ${{ inputs.commit-message }}
+        title: ${{ inputs.title }}
+        body: ${{ inputs.body }}
+        branch: ${{ inputs.branch }}
+        base: ${{ inputs.base }}
+        delete-branch: true
+        add-paths: ${{ inputs.add-paths }}

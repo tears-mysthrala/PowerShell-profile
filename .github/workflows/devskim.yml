@@ -71,26 +71,9 @@ jobs:
           echo "issues_found=$issue_count" >> $GITHUB_OUTPUT
           echo "Found $issue_count issues"
 
-      - name: Configure Git
-        if: github.event_name != 'pull_request' && steps.check-issues.outputs.issues_found != '0'
-        run: |
-          git config --global user.name "GitHub Actions"
-          git config --global user.email "actions@github.com"
-
-      - name: Handle Git State
-        if: github.event_name != 'pull_request' && steps.check-issues.outputs.issues_found != '0'
-        run: |
-          # Clean up any existing conflicts
-          git reset --hard HEAD
-          git clean -fd
-
-          # Ensure we're on the right branch
-          git checkout main
-          git pull origin main
-
       - name: Create Pull Request
         if: github.event_name != 'pull_request' && steps.check-issues.outputs.issues_found != '0'
-        uses: peter-evans/create-pull-request@v5
+        uses: ./.github/actions/create-security-pr
         with:
           token: ${{ secrets.PAT_TOKEN }}
           commit-message: "chore: update security fixes from DevSkim scan"
@@ -101,6 +84,4 @@ jobs:
             Please review the changes carefully before merging.
           branch: security/devskim-updates
           base: main
-          delete-branch: true
-          add-paths: |
-            devskim-results.sarif
+          add-paths: devskim-results.sarif

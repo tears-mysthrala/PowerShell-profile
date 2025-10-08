@@ -1,18 +1,9 @@
 # Dependabot configuration for PowerShell Profile Repository
-# This configuration enables automated dependency updates for:
-# - GitHub Actions workflows
-# - PowerShell Gallery modules
-# - Security updates
-#
-# Recent features included:
-# - Grouping updates for cleaner PRs
-# - Separate security update schedules
-# - Commit message customization
-# - Open PR limits to prevent spam
+# Optimized for automated dependency updates with minimal noise
 
 version: 2
 updates:
-  # GitHub Actions
+  # GitHub Actions - Primary updates
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
@@ -32,7 +23,7 @@ updates:
         update-types:
           - "major"
 
-  # PowerShell Gallery modules
+  # PowerShell Gallery modules - Core dependencies
   - package-ecosystem: "nuget"
     directory: "/"
     schedule:
@@ -43,13 +34,11 @@ updates:
     commit-message:
       prefix: "deps"
       include: "scope"
-    # Only update PowerShell modules, not .NET packages
     allow:
       - dependency-name: "Terminal-Icons"
       - dependency-name: "PSScriptAnalyzer"
       - dependency-name: "ConvertToSARIF"
     ignore:
-      # Ignore major version updates for now
       - dependency-name: "*"
         update-types: ["version-update:semver-major"]
     groups:
@@ -57,7 +46,7 @@ updates:
         patterns:
           - "*"
 
-  # Security updates for all ecosystems
+  # Security updates for all ecosystems (daily, separate from regular updates)
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
@@ -65,5 +54,18 @@ updates:
     commit-message:
       prefix: "security"
       include: "scope"
-    # Only security updates
     open-pull-requests-limit: 20
+
+  # Security updates for PowerShell modules
+  - package-ecosystem: "nuget"
+    directory: "/"
+    schedule:
+      interval: "daily"
+    commit-message:
+      prefix: "security"
+      include: "scope"
+    open-pull-requests-limit: 10
+    allow:
+      - dependency-name: "Terminal-Icons"
+      - dependency-name: "PSScriptAnalyzer"
+      - dependency-name: "ConvertToSARIF"
