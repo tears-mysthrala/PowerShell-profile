@@ -484,23 +484,65 @@ function Test-CatppuccinPresent {
     return $false
 }
 
-if (-not (Test-CatppuccinPresent)) {
-    # Clone Catppuccin theme in background to avoid blocking startup
-    Start-Job -ScriptBlock {
-        try {
-            if (Get-Command git -ErrorAction SilentlyContinue) {
-                $modulePath = "$HOME\Documents\PowerShell\Modules\Catppuccin"
-                if (-not (Test-Path $modulePath)) {
-                    git clone https://github.com/catppuccin/powershell.git $modulePath
-                    Write-Host "Catppuccin module cloned successfully." -ForegroundColor Green
-                }
-            }
-            else {
-                Write-Host "Git is not installed. Please install Git to clone Catppuccin module." -ForegroundColor Yellow
-            }
-        }
-        catch {
-            Write-Verbose "Ignored exception cloning Catppuccin: $_"
-        }
-    } | Out-Null
+# Dependency installer functions
+function Install-Dependencies {
+    <#
+    .SYNOPSIS
+        Install PowerShell profile dependencies
+    .DESCRIPTION
+        Installs package managers and CLI tools required by the PowerShell profile
+    .PARAMETER All
+        Install all dependencies (package managers + CLI tools)
+    .PARAMETER PackageManagers
+        Install only package managers (Chocolatey, Scoop)
+    .PARAMETER CliTools
+        Install only CLI tools (git, fzf, bat, eza, etc.)
+    .PARAMETER Tool
+        Install a specific tool by name
+    .EXAMPLE
+        Install-Dependencies -All
+    .EXAMPLE
+        Install-Dependencies -PackageManagers
+    .EXAMPLE
+        Install-Dependencies -Tool git
+    #>
+    param(
+        [switch]$All,
+        [switch]$PackageManagers,
+        [switch]$CliTools,
+        [string]$Tool
+    )
+
+    $installerPath = "$PSScriptRoot\tools\DependencyInstaller.ps1"
+
+    if (-not (Test-Path $installerPath)) {
+        Write-Error "Dependency installer not found at: $installerPath"
+        return
+    }
+
+    $args = @()
+
+    if ($All) { $args += "-InstallAll" }
+    elseif ($PackageManagers) { $args += "-PackageManagers" }
+    elseif ($CliTools) { $args += "-CliTools" }
+    elseif ($Tool) { $args += "-Tool", $Tool }
+    else {
+        Write-Host "PowerShell Profile Dependency Installer" -ForegroundColor Cyan
+        Write-Host "=====================================" -ForegroundColor Cyan
+        Write-Host ""
+        Write-Host "USAGE:" -ForegroundColor Yellow
+        Write-Host "    Install-Dependencies [-All|-PackageManagers|-CliTools|-Tool <name>]"
+        Write-Host ""
+        Write-Host "EXAMPLES:" -ForegroundColor Yellow
+        Write-Host "    Install-Dependencies -All"
+        Write-Host "    Install-Dependencies -PackageManagers"
+        Write-Host "    Install-Dependencies -CliTools"
+        Write-Host "    Install-Dependencies -Tool git"
+        Write-Host ""
+        Write-Host "Run 'Install-Dependencies -List' to see available tools."
+        return
+    }
+
+    # Execute the installer
+    & $installerPath @args
 }

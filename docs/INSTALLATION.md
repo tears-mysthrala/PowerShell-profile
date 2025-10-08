@@ -14,6 +14,57 @@ Initialize the environment:
 . $PROFILE
 ```
 
+## Quick Setup (Recommended)
+
+For a new system, you can automatically install all recommended dependencies using the provided installer script:
+
+```powershell
+# Install all dependencies (package managers + CLI tools)
+.\tools\install-dependencies.ps1 -All
+
+# Or install just package managers first
+.\tools\install-dependencies.ps1 -PackageManagers
+
+# Then install CLI tools individually
+.\tools\install-dependencies.ps1 -Git -Fzf -Bat -Eza
+```
+
+### What Gets Installed
+
+The `-All` option installs:
+
+- **Package Managers**: Chocolatey, Scoop, Winget (checks availability)
+- **CLI Tools**: Git, fzf, bat, eza, lazygit, zoxide, ripgrep, fd
+
+### Selective Installation
+
+Install specific tools individually:
+
+```powershell
+# Essential tools
+.\tools\install-dependencies.ps1 -Git -Fzf
+
+# File utilities
+.\tools\install-dependencies.ps1 -Bat -Eza -Ripgrep -Fd
+
+# Git tools
+.\tools\install-dependencies.ps1 -Lazygit -Git
+
+# Navigation
+.\tools\install-dependencies.ps1 -Zoxide
+
+# Package managers only
+.\tools\install-dependencies.ps1 -PackageManagers
+```
+
+### Dry Run
+
+See what would be installed without actually installing:
+
+```powershell
+.\tools\install-dependencies.ps1 -All -WhatIf
+```
+
 ## Requirements
 
 ### Required
@@ -33,9 +84,11 @@ Initialize the environment:
 
 ### Package Managers
 
+The dependency installer supports multiple package managers:
+
 - **Chocolatey**: Windows package manager
 - **Scoop**: Alternative Windows package manager
-- **Winget**: Microsoft's official package manager
+- **Winget**: Microsoft's official package manager (built-in on Windows 10/11)
 
 ## Performance
 

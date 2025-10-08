@@ -8,6 +8,9 @@ A comprehensive PowerShell environment setup with various utilities, aliases, an
 # Clone the repository
 git clone https://github.com/tears-mysthrala/PowerShell-profile.git $HOME\Documents\PowerShell
 
+# Install all dependencies (optional, but recommended)
+.\tools\install-dependencies.ps1 -All
+
 # Initialize the environment
 . $PROFILE
 ```
@@ -43,3 +46,12 @@ This project uses automated documentation generation. When adding new functions:
 3. Run the docs generator: `.\tools\generate_function_docs.ps1`
 
 The documentation will be automatically updated and committed via GitHub Actions.
+
+### Adding New Dependencies
+
+When adding new tools or dependencies:
+
+1. Update `tools/DependencyInstaller.ps1` with the new tool definition
+2. Add installation methods for supported package managers (winget, choco, scoop)
+3. Update the documentation in `docs/INSTALLATION.md`
+4. Test the installation: `Install-Dependencies -Tool <toolname>`
