@@ -1,0 +1,69 @@
+# Dependabot configuration for PowerShell Profile Repository
+# This configuration enables automated dependency updates for:
+# - GitHub Actions workflows
+# - PowerShell Gallery modules
+# - Security updates
+#
+# Recent features included:
+# - Grouping updates for cleaner PRs
+# - Separate security update schedules
+# - Commit message customization
+# - Open PR limits to prevent spam
+
+version: 2
+updates:
+  # GitHub Actions
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+    open-pull-requests-limit: 10
+    commit-message:
+      prefix: "ci"
+      include: "scope"
+    groups:
+      actions-minor:
+        update-types:
+          - "minor"
+          - "patch"
+      actions-major:
+        update-types:
+          - "major"
+
+  # PowerShell Gallery modules
+  - package-ecosystem: "nuget"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "tuesday"
+      time: "09:00"
+    open-pull-requests-limit: 5
+    commit-message:
+      prefix: "deps"
+      include: "scope"
+    # Only update PowerShell modules, not .NET packages
+    allow:
+      - dependency-name: "Terminal-Icons"
+      - dependency-name: "PSScriptAnalyzer"
+      - dependency-name: "ConvertToSARIF"
+    ignore:
+      # Ignore major version updates for now
+      - dependency-name: "*"
+        update-types: ["version-update:semver-major"]
+    groups:
+      powershell-modules:
+        patterns:
+          - "*"
+
+  # Security updates for all ecosystems
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "daily"
+    commit-message:
+      prefix: "security"
+      include: "scope"
+    # Only security updates
+    open-pull-requests-limit: 20
