@@ -91,3 +91,4 @@ pwsh -NoProfile -ExecutionPolicy Bypass -File .\tools\generate_function_docs.ps1
 This script performs heuristic extraction of functions and nearby comment blocks. It is best-effort — if you want it to include examples from comment-based help, I can extend it to parse advanced comment formats.
 
 
+
