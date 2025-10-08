@@ -11,6 +11,8 @@ jobs:
   test:
     name: Test on ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
+    permissions:
+      contents: read
 
     strategy:
       fail-fast: false
@@ -21,6 +23,39 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+
+      - name: Setup PowerShell
+        run: |
+          # PowerShell should be available on all platforms, but let's verify
+          if ! command -v pwsh >/dev/null 2>&1; then
+            echo "PowerShell not found, installing..."
+            if [[ "$RUNNER_OS" == "Linux" ]]; then
+              # Install PowerShell on Ubuntu
+              if command -v sudo >/dev/null 2>&1; then
+                sudo apt-get update
+                wget -q https://packages.microsoft.com/config/ubuntu/20.04/packages-microsoft-prod.deb
+                sudo dpkg -i packages-microsoft-prod.deb
+                sudo apt-get update
+                sudo apt-get install -y powershell
+              else
+                echo "sudo not available, trying without sudo..."
+                apt-get update
+                wget -q https://packages.microsoft.com/config/ubuntu/20.04/packages-microsoft-prod.deb
+                dpkg -i packages-microsoft-prod.deb
+                apt-get update
+                apt-get install -y powershell
+              fi
+            elif [[ "$RUNNER_OS" == "macOS" ]]; then
+              # Install PowerShell on macOS
+              if command -v brew >/dev/null 2>&1; then
+                brew install --cask powershell
+              else
+                echo "Homebrew not available, PowerShell installation failed"
+                exit 1
+              fi
+            fi
+          fi
+          pwsh --version
 
       - name: Install required modules
         shell: pwsh

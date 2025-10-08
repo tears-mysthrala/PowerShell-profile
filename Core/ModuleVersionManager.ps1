@@ -66,7 +66,8 @@ function Import-ModuleWithVersion {
         $script:moduleLoadAttempts[$ModuleName] = 0
         return $true
     } catch {
-        Write-Warning "Failed to import module $ModuleName: $_"
+        $errorMessage = $_.Exception.Message
+        Write-Warning "Failed to import module $ModuleName`: $errorMessage"
         return $false
     }
 }

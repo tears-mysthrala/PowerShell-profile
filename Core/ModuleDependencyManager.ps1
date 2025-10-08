@@ -64,7 +64,8 @@ function Import-ModuleWithDependencies {
         Import-Module $ModuleName -Force:$Force -ErrorAction Stop
         return $true
     } catch {
-        Write-Warning "Failed to import module $ModuleName: $_"
+        $errorMessage = $_.Exception.Message
+        Write-Warning "Failed to import module $ModuleName`: $errorMessage"
         return $false
     }
 }
