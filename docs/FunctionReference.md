@@ -330,6 +330,18 @@ Does the the rough equivalent of dir /s /b. For example, dirs *.png is dir /s /b
 
 Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Core/System/linuxLike.ps1
 
+## Disable-FullPSReadLine
+
+Signature:
+
+function Disable-FullPSReadLine {
+
+Short description:
+
+Provide a function to disable PSReadLine features if needed
+
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Microsoft.PowerShell_profile.ps1
+
 ## Download-Package
 
 Signature:
@@ -346,18 +358,6 @@ Signature:
 function Edit-FileContent($file, $find, $replace) {
 
 Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Core/Utils/unified_aliases.ps1
-
-## Enable-FullPSReadLine
-
-Signature:
-
-function Enable-FullPSReadLine {
-
-Short description:
-
-Provide a function to enable full PSReadLine features lazily
-
-Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Microsoft.PowerShell_profile.ps1
 
 ## Enable-PsFzfAliases
 
@@ -379,26 +379,6 @@ param(
 Short description:
 
 Provide an explicit enable function for Terminal-Icons so nothing related to it is created at startup
-
-Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Microsoft.PowerShell_profile.ps1
-
-## Ensure-ProfileCore
-
-Signature:
-
-function Ensure-ProfileCore {
-
-Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Microsoft.PowerShell_profile.ps1
-
-## Ensure-ProfileManagement
-
-Signature:
-
-function Ensure-ProfileManagement {
-
-Short description:
-
-Defer importing heavy profile modules until first use
 
 Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Microsoft.PowerShell_profile.ps1
 
@@ -1921,6 +1901,18 @@ function InDotGitOrBareRepoDir([string][ValidateNotNullOrEmpty()]$GitDir) {
 
 Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Modules/posh-git/1.1.0/GitUtils.ps1
 
+## Initialize-Editor
+
+Signature:
+
+function Initialize-Editor {
+
+Short description:
+
+Editor detection and configuration - lazy loaded
+
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Core/Utils/unified_aliases.ps1
+
 ## Initialize-EditorConfig
 
 Signature:
@@ -1940,6 +1932,26 @@ Signature:
 function Initialize-EncodingConfig {
 
 Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Core/Utils/CommonUtils.ps1
+
+## Initialize-ProfileCore
+
+Signature:
+
+function Initialize-ProfileCore {
+
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Microsoft.PowerShell_profile.ps1
+
+## Initialize-ProfileManagement
+
+Signature:
+
+function Initialize-ProfileManagement {
+
+Short description:
+
+Defer importing heavy profile modules until first use
+
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Microsoft.PowerShell_profile.ps1
 
 ## Initialize-Provider
 
@@ -3532,7 +3544,7 @@ Signature:
 function Start-BackgroundJob { 
 param(
         [scriptblock]$ScriptBlock,
-        [Parameter(ValueFromRemainingArguments=$true)] $ArgumentList
+        [Parameter(ValueFromRemainingArguments = $true)] $ArgumentList
     )
 
 Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Microsoft.PowerShell_profile.ps1
@@ -4165,6 +4177,18 @@ Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Core/Utils/unifi
 Signature:
 
 function uptime {
+
+Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Core/Utils/unified_aliases.ps1
+
+## v
+
+Signature:
+
+function v {
+
+Short description:
+
+Lazy editor alias that initializes on first use
 
 Source: /home/runner/work/PowerShell-profile/PowerShell-profile/Core/Utils/unified_aliases.ps1
 
