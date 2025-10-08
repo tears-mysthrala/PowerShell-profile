@@ -258,6 +258,9 @@ Measure-Block 'Core Setup' {
                     $moduleName = [System.IO.Path]::GetFileNameWithoutExtension($file.Name)
                     $filePath = $file.FullName
 
+                    # Skip unified_aliases.ps1 as it's already loaded synchronously at startup
+                    if ($moduleName -eq 'unified_aliases') { continue }
+
                     # Check if module needs loading based on cache
                     $needsLoading = $true
                     if ($utilsCache.ContainsKey($moduleName)) {
@@ -426,24 +429,40 @@ Measure-Block 'Shell Setup' {
     }
 }
 
-# Initialize shell tools (synchronous measurement pass)
-Measure-Block 'Zoxide' -Async {
-    if (Get-Command zoxide -ErrorAction SilentlyContinue) {
-        $env:_ZO_DATA_DIR = "$ProfileDir\.zo"
-        Invoke-Expression (& { (zoxide init powershell --cmd cd | Out-String) })
-    }
+# Initialize shell tools (asynchronous to avoid blocking startup)
+Measure-Block 'ShellToolsInit' {
+    Start-Job -ScriptBlock {
+        # Initialize Zoxide asynchronously
+        if (Get-Command zoxide -ErrorAction SilentlyContinue) {
+            try {
+                $env:_ZO_DATA_DIR = "$using:ProfileDir\.zo"
+                $zoxideInit = & { (zoxide init powershell --cmd cd | Out-String) }
+                Invoke-Expression $zoxideInit
+            } catch {
+                Write-Verbose "Zoxide initialization failed: $_"
+            }
+        }
+
+        # Initialize GitHub CLI completion asynchronously
+        if (Get-Command gh -ErrorAction SilentlyContinue) {
+            try {
+                $ghCompletion = & { (gh completion -s powershell | Out-String) }
+                Invoke-Expression $ghCompletion
+            } catch {
+                Write-Verbose "GitHub CLI completion initialization failed: $_"
+            }
+        }
+    } | Out-Null
 }
 
-Measure-Block 'GHCompletion' -Async {
-    if (Get-Command gh -ErrorAction SilentlyContinue) {
-        Invoke-Expression (& { (gh completion -s powershell | Out-String) })
+# Initialize startup modules asynchronously
+Start-Job -ScriptBlock {
+    try {
+        Initialize-PSModules
+    } catch {
+        Write-Verbose "Module initialization failed: $_"
     }
-}
-
-# Initialize startup modules
-Measure-Block 'Module Initialization' {
-    Initialize-PSModules
-}
+} | Out-Null
 
 # --- Catppuccin Theme Setup ---
 function Test-CatppuccinPresent {
@@ -466,16 +485,22 @@ function Test-CatppuccinPresent {
 }
 
 if (-not (Test-CatppuccinPresent)) {
-    try {
-        if (Get-Command git -ErrorAction SilentlyContinue) {
-            git clone https://github.com/catppuccin/powershell.git "$HOME\Documents\PowerShell\Modules\Catppuccin"
-            Write-Host "Catppuccin module cloned successfully." -ForegroundColor Green
+    # Clone Catppuccin theme in background to avoid blocking startup
+    Start-Job -ScriptBlock {
+        try {
+            if (Get-Command git -ErrorAction SilentlyContinue) {
+                $modulePath = "$HOME\Documents\PowerShell\Modules\Catppuccin"
+                if (-not (Test-Path $modulePath)) {
+                    git clone https://github.com/catppuccin/powershell.git $modulePath
+                    Write-Host "Catppuccin module cloned successfully." -ForegroundColor Green
+                }
+            }
+            else {
+                Write-Host "Git is not installed. Please install Git to clone Catppuccin module." -ForegroundColor Yellow
+            }
         }
-        else {
-            Write-Host "Git is not installed. Please install Git to clone Catppuccin module." -ForegroundColor Yellow
+        catch {
+            Write-Verbose "Ignored exception cloning Catppuccin: $_"
         }
-    }
-    catch {
-        Write-Verbose "Ignored exception: `$_"
-    }
+    } | Out-Null
 }
