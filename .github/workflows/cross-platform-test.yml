@@ -97,7 +97,7 @@ jobs:
           # Test profile loading without actually executing it
           try {
             # Create a minimal test environment
-            $testProfile = Join-Path $env:TEMP "test_profile.ps1"
+            $testProfile = Join-Path ([System.IO.Path]::GetTempPath()) "test_profile.ps1"
             
             # Create test profile content without using here-strings with backticks
             $profileContent = @(
