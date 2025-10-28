@@ -11,9 +11,10 @@ on:
   pull_request:
   schedule:
     - cron: "33 23 * * 0"
+  workflow_dispatch: {}
 
 jobs:
-  lint:
+  scan:
     name: DevSkim
     runs-on: ubuntu-latest
     permissions:
@@ -27,6 +28,7 @@ jobs:
         with:
           token: ${{ secrets.PAT_TOKEN }}
           submodules: false
+          fetch-depth: 0
 
       - name: Run DevSkim scanner
         uses: microsoft/DevSkim-Action@v1
@@ -35,6 +37,17 @@ jobs:
           output-filename: devskim-results.sarif
           directory-to-scan: .
           ignore-globs: "**/.git/**,**/bin/**"
+
+      - name: Install jq
+        run: |
+          if ! command -v jq >/dev/null 2>&1; then
+            echo "Installing jq..."
+            if command -v sudo >/dev/null 2>&1; then
+              sudo apt-get update && sudo apt-get install -y jq
+            else
+              apt-get update && apt-get install -y jq
+            fi
+          fi
 
       - name: Validate SARIF file
         run: |
@@ -54,23 +67,17 @@ jobs:
           sarif_file: devskim-results.sarif
         continue-on-error: true
 
-      - name: Configure Git
+      - name: Check for issues
+        id: check-issues
         run: |
-          git config --global user.name "GitHub Actions"
-          git config --global user.email "actions@github.com"
-
-      - name: Handle Git State
-        run: |
-          # Clean up any existing conflicts
-          git reset --hard HEAD
-          git clean -fd
-
-          # Ensure we're on the right branch
-          git checkout main
-          git pull origin main
+          # Check if SARIF file contains any actual issues
+          issue_count=$(jq '.runs[0].results | length' devskim-results.sarif 2>/dev/null || echo "0")
+          echo "issues_found=$issue_count" >> $GITHUB_OUTPUT
+          echo "Found $issue_count issues"
 
       - name: Create Pull Request
-        uses: peter-evans/create-pull-request@v5
+        if: github.event_name != 'pull_request' && steps.check-issues.outputs.issues_found != '0'
+        uses: ./.github/actions/create-security-pr
         with:
           token: ${{ secrets.PAT_TOKEN }}
           commit-message: "chore: update security fixes from DevSkim scan"
@@ -81,6 +88,4 @@ jobs:
             Please review the changes carefully before merging.
           branch: security/devskim-updates
           base: main
-          delete-branch: true
-          add-paths: |
-            devskim-results.sarif
+          add-paths: devskim-results.sarif

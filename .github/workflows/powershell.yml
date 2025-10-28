@@ -15,14 +15,10 @@ on:
   pull_request:
   schedule:
     - cron: "42 14 * * 5"
-
-permissions:
-  contents: write
-  security-events: write
-  pull-requests: write
+  workflow_dispatch: {}
 
 jobs:
-  build:
+  scan:
     permissions:
       contents: write
       security-events: write
@@ -35,14 +31,34 @@ jobs:
         with:
           token: ${{ secrets.PAT_TOKEN }}
           submodules: false
+          fetch-depth: 0
+
+      - name: Cache PowerShell modules
+        uses: actions/cache@v4
+        with:
+          path: ~/.local/share/powershell/Modules
+          key: powershell-modules-${{ runner.os }}-${{ hashFiles('**/*.psd1') }}
+          restore-keys: |
+            powershell-modules-${{ runner.os }}-
 
       - name: Run PSScriptAnalyzer
-        uses: microsoft/psscriptanalyzer-action@6b2948b1944407914a58661c49941824d149734f
+        uses: microsoft/psscriptanalyzer-action@v1.1
         with:
           path: .\
           recurse: true
           includeRule: '"PSAvoidGlobalAliases", "PSAvoidUsingConvertToSecureStringWithPlainText"'
           output: results.sarif
+
+      - name: Install jq
+        run: |
+          if ! command -v jq >/dev/null 2>&1; then
+            echo "Installing jq..."
+            if command -v sudo >/dev/null 2>&1; then
+              sudo apt-get update && sudo apt-get install -y jq
+            else
+              apt-get update && apt-get install -y jq
+            fi
+          fi
 
       - name: Validate SARIF file
         run: |
@@ -62,23 +78,17 @@ jobs:
           sarif_file: results.sarif
         continue-on-error: true
 
-      - name: Configure Git
+      - name: Check for issues
+        id: check-issues
         run: |
-          git config --global user.name "GitHub Actions"
-          git config --global user.email "actions@github.com"
-
-      - name: Handle Git State
-        run: |
-          # Clean up any existing conflicts
-          git reset --hard HEAD
-          git clean -fd
-
-          # Ensure we're on the right branch
-          git checkout main
-          git pull origin main
+          # Check if SARIF file contains any actual issues
+          issue_count=$(jq '.runs[0].results | length' results.sarif 2>/dev/null || echo "0")
+          echo "issues_found=$issue_count" >> $GITHUB_OUTPUT
+          echo "Found $issue_count issues"
 
       - name: Create Pull Request
-        uses: peter-evans/create-pull-request@v5
+        if: github.event_name != 'pull_request' && steps.check-issues.outputs.issues_found != '0'
+        uses: ./.github/actions/create-security-pr
         with:
           token: ${{ secrets.PAT_TOKEN }}
           commit-message: "chore: update security fixes from PSScriptAnalyzer scan"
@@ -89,6 +99,4 @@ jobs:
             Please review the changes carefully before merging.
           branch: security/psscriptanalyzer-updates
           base: main
-          delete-branch: true
-          add-paths: |
-            results.sarif
+          add-paths: results.sarif

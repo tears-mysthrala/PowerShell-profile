@@ -1,0 +1,159 @@
+name: PR Validation
+
+on:
+  pull_request:
+    branches: ["main"]
+    types: [opened, synchronize, reopened, ready_for_review]
+
+jobs:
+  validate:
+    name: Validate PR
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+    if: github.event.pull_request.draft == false
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup PowerShell
+        run: |
+          # PowerShell 7 should be available on Ubuntu runners
+          pwsh --version
+
+      - name: Check for large files
+        run: |
+          # Check for files larger than 10MB
+          LARGE_FILES=$(find . -type f -size +10M -not -path "./.git/*" -not -path "./Modules/*" 2>/dev/null)
+          if [ ! -z "$LARGE_FILES" ]; then
+            echo "[ERROR] Large files found (>10MB):"
+            echo "$LARGE_FILES"
+            echo ""
+            echo "Consider using Git LFS for large files or removing them from the repository."
+            exit 1
+          else
+            echo "[OK] No large files found"
+          fi
+
+      - name: Check PowerShell syntax
+        shell: pwsh
+        run: |
+          # Find all PowerShell files
+          $psFiles = Get-ChildItem -Recurse -Include *.ps1,*.psm1,*.psd1 -File |
+                    Where-Object { $_.FullName -notmatch '\\.git\\' -and
+                                   $_.FullName -notmatch '\\Modules\\' -and
+                                   $_.FullName -notmatch '\\Help\\' }
+
+          $errors = @()
+          foreach ($file in $psFiles) {
+            try {
+              $content = Get-Content -Path $file.FullName -Raw
+              $null = [scriptblock]::Create($content)
+              Write-Host "[OK] $($file.Name) - syntax OK"
+            } catch {
+              $errors += "$($file.FullName): $_"
+              Write-Host "[ERROR] $($file.Name) - syntax error: $_"
+            }
+          }
+
+          if ($errors.Count -gt 0) {
+            Write-Error "PowerShell syntax errors found:`n$($errors -join "`n")"
+            exit 1
+          }
+
+      - name: Check for sensitive data
+        run: |
+          # Check for potential secrets or sensitive data
+          SENSITIVE_PATTERNS=(
+            "password.*="
+            "secret.*="
+            "token.*="
+            "key.*="
+            "api.*key"
+            "apikey"
+          )
+
+          FOUND_ISSUES=0
+
+          for pattern in "${SENSITIVE_PATTERNS[@]}"; do
+            # Search in PowerShell files, excluding known safe files
+            RESULTS=$(grep -r -i "$pattern" --include="*.ps1" --include="*.psm1" --include="*.psd1" \
+                     --exclude-dir=".git" --exclude-dir="Modules" --exclude-dir="Help" . 2>/dev/null || true)
+
+            if [ ! -z "$RESULTS" ]; then
+              echo "[WARNING] Potential sensitive data pattern found: $pattern"
+              echo "$RESULTS"
+              echo ""
+              FOUND_ISSUES=$((FOUND_ISSUES + 1))
+            fi
+          done
+
+          if [ $FOUND_ISSUES -gt 0 ]; then
+            echo "[WARNING] Found $FOUND_ISSUES potential sensitive data patterns."
+            echo "Please review and ensure no actual secrets are committed."
+          else
+            echo "[OK] No obvious sensitive data patterns found"
+          fi
+
+      - name: Validate file encodings
+        shell: pwsh
+        run: |
+          # Check that PowerShell files are UTF-8 encoded
+          $psFiles = Get-ChildItem -Recurse -Include *.ps1,*.psm1,*.psd1 -File |
+                    Where-Object { $_.FullName -notmatch '\\.git\\' }
+
+          $encodingErrors = @()
+          foreach ($file in $psFiles) {
+            try {
+              $content = Get-Content -Path $file.FullName -Raw -Encoding UTF8
+              # Try to re-encode to check for issues
+              $bytes = [System.Text.Encoding]::UTF8.GetBytes($content)
+              $reencoded = [System.Text.Encoding]::UTF8.GetString($bytes)
+
+              if ($content -ne $reencoded) {
+                $encodingErrors += $file.FullName
+                Write-Host "[ERROR] $($file.Name) - encoding issues"
+              } else {
+                Write-Host "[OK] $($file.Name) - UTF-8 encoding OK"
+              }
+            } catch {
+              $encodingErrors += $file.FullName
+              Write-Host "[ERROR] $($file.Name) - encoding error: $_"
+            }
+          }
+
+          if ($encodingErrors.Count -gt 0) {
+            Write-Error "Files with encoding issues:`n$($encodingErrors -join "`n")"
+            exit 1
+          }
+
+      - name: Check PR size
+        run: |
+          # Check if PR has too many changed files
+          CHANGED_FILES=$(git diff --name-only HEAD~1 2>/dev/null | wc -l)
+          if [ "$CHANGED_FILES" -gt 50 ]; then
+            echo "[WARNING] Large PR detected: $CHANGED_FILES files changed"
+            echo "Consider breaking this into smaller PRs for easier review."
+          else
+            echo "[OK] PR size OK: $CHANGED_FILES files changed"
+          fi
+
+      - name: Comment on PR
+        uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: '[OK] PR validation completed successfully!\n\n' +
+                    '- PowerShell syntax validation passed\n' +
+                    '- No large files detected\n' +
+                    '- File encodings validated\n' +
+                    '- Sensitive data check completed\n\n' +
+                    'Ready for review! :rocket:'
+            })

@@ -29,13 +29,24 @@ jobs:
           # If pwsh is already available on the runner, use it. Otherwise install PowerShell.
           if ! command -v pwsh >/dev/null 2>&1; then
             echo "pwsh not found — installing PowerShell 7..."
-            sudo apt-get update
-            sudo apt-get install -y wget apt-transport-https software-properties-common ca-certificates gnupg
-            DISTRO="$(. /etc/os-release && echo $ID$VERSION_ID)"
-            wget -q "https://packages.microsoft.com/config/ubuntu/$(lsb_release -rs)/packages-microsoft-prod.deb"
-            sudo dpkg -i packages-microsoft-prod.deb
-            sudo apt-get update
-            sudo apt-get install -y powershell
+            if command -v sudo >/dev/null 2>&1; then
+              sudo apt-get update
+              sudo apt-get install -y wget apt-transport-https software-properties-common ca-certificates gnupg
+              DISTRO="$(. /etc/os-release && echo $ID$VERSION_ID)"
+              wget -q "https://packages.microsoft.com/config/ubuntu/$(lsb_release -rs)/packages-microsoft-prod.deb"
+              sudo dpkg -i packages-microsoft-prod.deb
+              sudo apt-get update
+              sudo apt-get install -y powershell
+            else
+              echo "sudo not available, trying without sudo..."
+              apt-get update
+              apt-get install -y wget apt-transport-https software-properties-common ca-certificates gnupg
+              DISTRO="$(. /etc/os-release && echo $ID$VERSION_ID)"
+              wget -q "https://packages.microsoft.com/config/ubuntu/$(lsb_release -rs)/packages-microsoft-prod.deb"
+              dpkg -i packages-microsoft-prod.deb
+              apt-get update
+              apt-get install -y powershell
+            fi
           fi
           pwsh -NoProfile -Command 'Write-Output ("pwsh version: " + (pwsh -v))'
 

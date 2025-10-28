@@ -1,0 +1,90 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*.*.*"
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    name: Create Release
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Get version from tag
+        id: get_version
+        run: |
+          VERSION=${GITHUB_REF#refs/tags/v}
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "Version: $VERSION"
+
+      - name: Generate changelog
+        id: changelog
+        run: |
+          # Get the previous tag
+          PREVIOUS_TAG=$(git describe --tags --abbrev=0 HEAD~1 2>/dev/null || echo "")
+          if [ -z "$PREVIOUS_TAG" ]; then
+            PREVIOUS_TAG=$(git rev-list --max-parents=0 HEAD)
+          fi
+
+          # Generate changelog from commits since last tag
+          CHANGELOG=$(git log --pretty=format:"%h %s" --no-merges ${PREVIOUS_TAG}..HEAD)
+          if [ -z "$CHANGELOG" ]; then
+            CHANGELOG="No changes since last release"
+          fi
+
+          # Escape newlines for GitHub output
+          CHANGELOG="${CHANGELOG//'%'/'%25'}"
+          CHANGELOG="${CHANGELOG//$'\n'/'%0A'}"
+          CHANGELOG="${CHANGELOG//$'\r'/'%0D'}"
+
+          echo "changelog<<EOF" >> $GITHUB_OUTPUT
+          echo "$CHANGELOG" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+      - name: Create archive
+        run: |
+          # Create a clean archive of the profile
+          tar -czf powershell-profile-${{ steps.get_version.outputs.version }}.tar.gz \
+            --exclude='.git' \
+            --exclude='.github' \
+            --exclude='docs' \
+            --exclude='tools' \
+            --exclude='*.md' \
+            --exclude='SECURITY.md' \
+            --exclude='.gitignore' \
+            --exclude='.gitmodules' \
+            .
+
+      - name: Create Release
+        id: create_release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ github.ref }}
+          name: PowerShell Profile v${{ steps.get_version.outputs.version }}
+          body: |
+            ## Changes in v${{ steps.get_version.outputs.version }}
+
+            ${{ steps.changelog.outputs.changelog }}
+
+            ## Installation
+
+            Download the `powershell-profile-${{ steps.get_version.outputs.version }}.tar.gz` archive and extract it to your PowerShell profile directory.
+
+            ## What's Included
+
+            - PowerShell profile script (`Microsoft.PowerShell_profile.ps1`)
+            - Core modules and utilities
+            - Configuration files
+            - Custom functions and aliases
+          draft: false
+          prerelease: false
+          files: ./powershell-profile-${{ steps.get_version.outputs.version }}.tar.gz

@@ -5,9 +5,6 @@ function Test-CommandExists {
   param($command)
   $oldPreference = $ErrorActionPreference
   # Suppress errors for command existence check (log this action)
-  if (-not $global:ProfileSuppressInfoLogs) {
-    Write-Host "[INFO] Suppressing errors for Get-Command in Test-CommandExists..." -ForegroundColor Yellow
-  }
   $ErrorActionPreference = 'SilentlyContinue'
   try {
     if (Get-Command $command) {
@@ -30,37 +27,31 @@ function .3 { Set-Location .\..\..\..\.. }
 function .4 { Set-Location .\..\..\..\..\ }
 function .5 { Set-Location .\..\..\..\..\..\.. }
 
-# Editor detection and configuration
-if (Test-CommandExists nvim) {
-  if (Test-Path "$env:LOCALAPPDATA/$env:DEFAULT_NVIM_CONFIG" -PathType Container) {
-    $env:NVIM_APPNAME = $env:DEFAULT_NVIM_CONFIG
-  }
-  $EDITOR = 'nvim'
+# Editor detection and configuration - lazy loaded
+function Initialize-Editor {
+    if ($script:EditorInitialized) { return }
+    $script:EditorInitialized = $true
+    
+    $editors = @('nvim', 'code', 'notepad', 'pvim', 'vim', 'vi', 'notepad++', 'sublime_text')
+    foreach ($editor in $editors) {
+        if (Test-CommandExists $editor) {
+            $script:EDITOR = $editor
+            if ($editor -eq 'nvim' -and (Test-Path "$env:LOCALAPPDATA/$env:DEFAULT_NVIM_CONFIG" -PathType Container)) {
+                $env:NVIM_APPNAME = $env:DEFAULT_NVIM_CONFIG
+            }
+            break
+        }
+    }
 }
-elseif (Test-CommandExists code) {
-  $EDITOR = 'code'
-}
-elseif (Test-CommandExists notepad) {
-  $EDITOR = 'notepad'
-}
-elseif (Test-CommandExists pvim) {
-  $EDITOR = 'pvim'
-}
-elseif (Test-CommandExists vim) {
-  $EDITOR = 'vim'
-}
-elseif (Test-CommandExists vi) {
-  $EDITOR = 'vi'
-}
-elseif (Test-CommandExists 'notepad++') {
-  $EDITOR = 'notepad++'
-}
-elseif (Test-CommandExists sublime_text) {
-  $EDITOR = 'sublime_text'
+
+# Lazy editor alias that initializes on first use
+function v {
+    if (-not $script:EditorInitialized) { Initialize-Editor }
+    if ($script:EDITOR) { & $script:EDITOR @args } else { Write-Host "No editor found" }
 }
 
 # System aliases
-Set-Alias -Name v -Value $EDITOR
+# Note: 'v' alias is now a function that lazy-loads the editor
 Set-Alias -Name e -Value explorer.exe
 Set-Alias -Name c -Value cls
 Set-Alias -Name csl -Value cls
