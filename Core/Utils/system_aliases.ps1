@@ -7,7 +7,7 @@ function .5 { Set-Location .\..\..\..\..\..\.. }
 
 # File and directory management
 function mkcd { param($dir) mkdir $dir -Force; Set-Location $dir }
-function New-File($file) { 
+function New-File { 
     [CmdletBinding(SupportsShouldProcess)]
     param($file)
     if ($PSCmdlet.ShouldProcess($file, "Create file")) {
@@ -48,7 +48,7 @@ Set-Alias -Name pst -Value Get-ClipboardContent
 # System utilities
 function df { get-volume }
 function which($name) { Get-Command $name | Select-Object -ExpandProperty Definition }
-function Set-EnvironmentVariable($name, $value) { 
+function Set-EnvironmentVariable { 
     [CmdletBinding(SupportsShouldProcess)]
     param($name, $value)
     if ($PSCmdlet.ShouldProcess("Environment variable $name", "Set value")) {
@@ -57,7 +57,7 @@ function Set-EnvironmentVariable($name, $value) {
 }
 Set-Alias -Name export -Value Set-EnvironmentVariable
 
-function Stop-ProcessByName($name) { 
+function Stop-ProcessByName { 
     [CmdletBinding(SupportsShouldProcess)]
     param($name)
     if ($PSCmdlet.ShouldProcess("Process $name", "Stop")) {

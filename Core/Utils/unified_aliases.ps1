@@ -103,7 +103,7 @@ else {
 
 # File and directory management
 function mkcd { param($dir) mkdir $dir -Force; Set-Location $dir }
-function New-File($file) { 
+function New-File { 
     [CmdletBinding(SupportsShouldProcess)]
     param($file)
     if ($PSCmdlet.ShouldProcess($file, "Create file")) {

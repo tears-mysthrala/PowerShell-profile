@@ -6,6 +6,30 @@
 
 # Initialize profiling
 $script:profileTiming = @{}
+$script:backgroundJobs = @()
+
+function Start-BackgroundJob {
+    [CmdletBinding(SupportsShouldProcess)]
+    param(
+        [scriptblock]$ScriptBlock,
+        [Parameter(ValueFromRemainingArguments = $true)] $ArgumentList
+    )
+    if ($PSCmdlet.ShouldProcess("Background job", "Start")) {
+        try {
+            if (Get-Command -Name Start-ThreadJob -ErrorAction SilentlyContinue) {
+                return Start-ThreadJob -ScriptBlock $ScriptBlock -ArgumentList $ArgumentList
+            }
+            else {
+                return Start-Job -ScriptBlock $ScriptBlock -ArgumentList $ArgumentList
+            }
+        }
+        catch {
+            Write-Verbose "Start-ThreadJob failed, falling back to Start-Job: $_"
+            # fall back
+            return Start-Job -ScriptBlock $ScriptBlock -ArgumentList $ArgumentList
+        }
+    }
+}
 
 function Measure-Block {
     param(
@@ -30,25 +54,6 @@ function Measure-Block {
             $script:profileTiming[$Name] = $sw.ElapsedMilliseconds
         }
     }
-}
-
-function Start-BackgroundJob {
-    [CmdletBinding(SupportsShouldProcess)]
-    param(
-        [scriptblock]$ScriptBlock,
-        [Parameter(ValueFromRemainingArguments = $true)] $ArgumentList
-    )
-    if ($PSCmdlet.ShouldProcess("Background job", "Start")) {
-        try {
-            if (Get-Command -Name Start-ThreadJob -ErrorAction SilentlyContinue) {
-                return Start-ThreadJob -ScriptBlock $ScriptBlock -ArgumentList $ArgumentList
-            }
-        }
-        catch {
-        Write-Verbose "Start-ThreadJob failed, falling back to Start-Job: $_"
-        # fall back
-    }
-    return Start-Job -ScriptBlock $ScriptBlock -ArgumentList $ArgumentList
 }
 
 # Set essential environment variables
