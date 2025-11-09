@@ -414,37 +414,14 @@ Measure-Block 'Shell Setup' {
         # Import PSFzf for enhanced history search with fzf
         try {
             Import-Module PSFzf -ErrorAction SilentlyContinue
-            # Import Catppuccin for fzf colors
-            Import-Module Catppuccin -ErrorAction SilentlyContinue
-            # Configure fzf colors using Catppuccin theme
-            $Flavor = $Catppuccin['Mocha']
-            $env:FZF_DEFAULT_OPTS = @"
---color=hl:$($Flavor.Red),fg:$($Flavor.Text),header:$($Flavor.Red)
---color=info:$($Flavor.Mauve),pointer:$($Flavor.Rosewater),marker:$($Flavor.Rosewater)
---color=fg+:$($Flavor.Text),prompt:$($Flavor.Mauve),hl+:$($Flavor.Red)
---color=border:$($Flavor.Surface2)
---layout=reverse
---cycle
---scroll-off=5
---border
---preview-window=right,60%,border-left
---bind ctrl-u:preview-half-page-up
---bind ctrl-d:preview-half-page-down
---bind ctrl-f:preview-page-down
---bind ctrl-b:preview-page-up
---bind ctrl-g:preview-top
---bind ctrl-h:preview-bottom
---bind alt-w:toggle-preview-wrap
---bind ctrl-e:toggle-preview
-"@
-            # Configure PSFzf options
-            $commandOverride = [ScriptBlock]{ param($Location) Write-Host $Location }
-            Set-PsFzfOption -AltCCommand $commandOverride -PSReadlineChordReverseHistory "Ctrl+r" -TabExpansion
-            # Set key handler for Tab completion with fzf
-            Set-PSReadLineKeyHandler -Key Tab -ScriptBlock { Invoke-FzfTabCompletion }
+            # Load fzf configurations
+            $fzfPath = "$ProfileDir\Core\System\fzf.ps1"
+            if (Test-Path $fzfPath) {
+                . $fzfPath
+            }
         }
         catch {
-            Write-Warning "PSFzf or Catppuccin could not be loaded: $_"
+            Write-Warning "PSFzf could not be loaded: $_"
         }
 
         # Provide a function to disable PSReadLine features if needed
