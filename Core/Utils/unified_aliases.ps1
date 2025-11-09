@@ -187,6 +187,7 @@ function Test-IsAdmin {
 
 function Restart-BIOS {
     [CmdletBinding(SupportsShouldProcess)]
+    param()
     if ($PSCmdlet.ShouldProcess("System", "Restart to BIOS")) {
         if (Test-IsAdmin) {
             shutdown /r /fw /f /t 0

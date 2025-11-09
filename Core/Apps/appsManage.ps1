@@ -3,16 +3,19 @@ $CHOCO_APPS_TO_UPGRADE = @(
 )
 
 function Update-AllApp {
-    Write-Verbose "Starting system-wide update..." -ForegroundColor Cyan
+    [CmdletBinding(SupportsShouldProcess)]
+    param()
+    if ($PSCmdlet.ShouldProcess("All applications", "Update")) {
+        Write-Verbose "Starting system-wide update..." -ForegroundColor Cyan
 
-    # Execute the update script
-    try {
-        . "$ProfileDir\Scripts\powershell-config\UpdateApps.ps1"
-        Write-Verbose "Update completed successfully." -ForegroundColor Green
-    }
-    catch {
-        Write-Error "Failed to update: $_"
-    }
+        # Execute the update script
+        try {
+            . "$ProfileDir\Scripts\powershell-config\UpdateApps.ps1"
+            Write-Verbose "Update completed successfully." -ForegroundColor Green
+        }
+        catch {
+            Write-Error "Failed to update: $_"
+        }
 }
 
 # Export the function
@@ -89,6 +92,9 @@ function Select-App {
 }
 
 function Update-ChocoApp {
+    [CmdletBinding(SupportsShouldProcess)]
+    param()
+    if ($PSCmdlet.ShouldProcess("Chocolatey apps", "Update")) {
   $apps_set = New-Object System.Collections.Generic.HashSet[[String]]
   $installed_apps = Get-ChocoApp
   foreach ($app in Select-App $installed_apps) {
@@ -114,6 +120,9 @@ function Update-ChocoApp {
 }
 
 function Update-ScoopApp {
+    [CmdletBinding(SupportsShouldProcess)]
+    param()
+    if ($PSCmdlet.ShouldProcess("Scoop apps", "Update")) {
   $apps_set = New-Object System.Collections.Generic.HashSet[[String]]
   $installed_apps = List-ScoopApps
   foreach ($app in Select-App $installed_apps) {
@@ -136,16 +145,25 @@ function Update-ScoopApp {
   }
 }
 function Update-NpmApp {
+    [CmdletBinding(SupportsShouldProcess)]
+    param()
+    if ($PSCmdlet.ShouldProcess("NPM apps", "Update")) {
   $apps_string = $NPM_APPS_TO_UPGRADE -join " "
   npm upgrade $apps_string
 }
 
 function Update-PipApp {
+    [CmdletBinding(SupportsShouldProcess)]
+    param()
+    if ($PSCmdlet.ShouldProcess("PIP apps", "Update")) {
   $apps_string = $PIP_APPS_TO_UPGRADE -join " "
   pip install --upgrade $apps_string
 }
 
 function Update-PowershellModule {
+    [CmdletBinding(SupportsShouldProcess)]
+    param()
+    if ($PSCmdlet.ShouldProcess("PowerShell modules", "Update")) {
   # Use the variable in the command
   Update-Module -Name $POWERSHELL_MODULES_TO_UPDATE -AcceptLicense -Force
 }

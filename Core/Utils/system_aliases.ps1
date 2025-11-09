@@ -33,7 +33,13 @@ function Clear-DnsCache { Clear-DnsClientCache }
 Set-Alias -Name flushdns -Value Clear-DnsCache
 
 # Clipboard Utilities
-function Set-ClipboardContent { Set-Clipboard $args[0] }
+function Set-ClipboardContent { 
+    [CmdletBinding(SupportsShouldProcess)]
+    param($content)
+    if ($PSCmdlet.ShouldProcess("Clipboard", "Set content")) {
+        Set-Clipboard $content 
+    }
+}
 Set-Alias -Name cpy -Value Set-ClipboardContent
 
 function Get-ClipboardContent { Get-Clipboard }
@@ -42,10 +48,22 @@ Set-Alias -Name pst -Value Get-ClipboardContent
 # System utilities
 function df { get-volume }
 function which($name) { Get-Command $name | Select-Object -ExpandProperty Definition }
-function Set-EnvironmentVariable($name, $value) { set-item -force -path "env:$name" -value $value }
+function Set-EnvironmentVariable($name, $value) { 
+    [CmdletBinding(SupportsShouldProcess)]
+    param($name, $value)
+    if ($PSCmdlet.ShouldProcess("Environment variable $name", "Set value")) {
+        set-item -force -path "env:$name" -value $value 
+    }
+}
 Set-Alias -Name export -Value Set-EnvironmentVariable
 
-function Stop-ProcessByName($name) { Get-Process $name -ErrorAction SilentlyContinue | Stop-Process }
+function Stop-ProcessByName($name) { 
+    [CmdletBinding(SupportsShouldProcess)]
+    param($name)
+    if ($PSCmdlet.ShouldProcess("Process $name", "Stop")) {
+        Get-Process $name -ErrorAction SilentlyContinue | Stop-Process 
+    }
+}
 Set-Alias -Name pkill -Value Stop-ProcessByName
 
 function Get-ProcessByName($name) { Get-Process $name }

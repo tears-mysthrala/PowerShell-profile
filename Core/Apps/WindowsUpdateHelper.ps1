@@ -1,11 +1,12 @@
 function Update-WindowsUpdate {
+    [CmdletBinding(SupportsShouldProcess)]
     param(
         [switch]$UseLog
     )
+    if ($PSCmdlet.ShouldProcess("Windows updates", "Install")) {
+        $logFunction = if ($UseLog) { ${function:Write-Log} } else { ${function:Write-Host} }
 
-    $logFunction = if ($UseLog) { ${function:Write-Log} } else { ${function:Write-Host} }
-
-    try {
+        try {
         # Use native Windows Update API via COM objects
         $UpdateSession = New-Object -ComObject Microsoft.Update.Session
         $UpdateSearcher = $UpdateSession.CreateUpdateSearcher()

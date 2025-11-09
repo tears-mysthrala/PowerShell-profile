@@ -33,16 +33,18 @@ function Measure-Block {
 }
 
 function Start-BackgroundJob {
+    [CmdletBinding(SupportsShouldProcess)]
     param(
         [scriptblock]$ScriptBlock,
         [Parameter(ValueFromRemainingArguments = $true)] $ArgumentList
     )
-    try {
-        if (Get-Command -Name Start-ThreadJob -ErrorAction SilentlyContinue) {
-            return Start-ThreadJob -ScriptBlock $ScriptBlock -ArgumentList $ArgumentList
+    if ($PSCmdlet.ShouldProcess("Background job", "Start")) {
+        try {
+            if (Get-Command -Name Start-ThreadJob -ErrorAction SilentlyContinue) {
+                return Start-ThreadJob -ScriptBlock $ScriptBlock -ArgumentList $ArgumentList
+            }
         }
-    }
-    catch {
+        catch {
         Write-Verbose "Start-ThreadJob failed, falling back to Start-Job: $_"
         # fall back
     }
@@ -331,30 +333,6 @@ Measure-Block 'Core Setup' {
         Write-Warning "Some features may not be available"
     }
 }
-
-# Create lightweight Use-* functions lazily in the background to avoid startup cost
-Start-Job -ScriptBlock {
-    Start-Sleep -Milliseconds 200
-    try {
-        if ($using:moduleAliases) {
-            foreach ($name in $using:moduleAliases.Keys) {
-                $functionName = "Use-$name"
-                if (-not (Get-Command -Name $functionName -ErrorAction SilentlyContinue)) {
-                    Set-Item -Path "Function:$functionName" -Value {
-                        param($arguments)
-                        # Replace this proxy with a real loader and invoke it
-                        Remove-Item "Function:$using:name" -ErrorAction SilentlyContinue
-                        Import-PSModule $using:name
-                        & (Get-Command -Name $using:functionName -ErrorAction SilentlyContinue) @arguments
-                    }.GetNewClosure()
-                }
-            }
-        }
-    }
-    catch {
-        Write-Verbose "Failed to create lazy Use-* functions: $_"
-    }
-} | Out-Null
 
 # Configure shell environment
 Measure-Block 'Shell Setup' {

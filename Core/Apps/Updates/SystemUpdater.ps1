@@ -28,10 +28,9 @@ function Write-UpdateErrorLog {
 
 # Main update function with progress display
 function Update-System {
-    [CmdletBinding()]
+    [CmdletBinding(SupportsShouldProcess)]
     param()
-
-    $progressParams = @{
+    if ($PSCmdlet.ShouldProcess("System", "Update")) {
         Activity         = 'System Upgrade'
         CurrentOperation = 'Initializing'
     }
@@ -84,6 +83,9 @@ function Update-System {
 
 # PowerShell module update function
 function Update-PowerShellModule {
+    [CmdletBinding(SupportsShouldProcess)]
+    param()
+    if ($PSCmdlet.ShouldProcess("PowerShell modules", "Update")) {
     $modulesToRetry = @()
     $modulesToUpdate = @{}
 
