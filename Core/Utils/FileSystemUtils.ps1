@@ -1,4 +1,4 @@
-﻿# File system utilities for PowerShell profile
+# File system utilities for PowerShell profile
 
 function New-DirectoryAndEnter {
     param([string]$dir)
@@ -43,11 +43,11 @@ function Expand-CustomArchive {
 
 function Expand-CustomArchives {
     param([string[]]$Files)
-    
+
     $CurrentDate = (Get-Date).ToString("yyyy-MM-dd_HH-mm-ss")
     $BaseFolder = "expanded_$CurrentDate"
     New-Item -Path $BaseFolder -ItemType Directory | Out-Null
-    
+
     foreach ($File in $Files) {
         Expand-CustomArchive -File $File -Folder "$BaseFolder\$([System.IO.Path]::GetFileNameWithoutExtension($File))"
     }

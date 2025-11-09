@@ -1,4 +1,4 @@
-﻿# Ref: https://github.com/garybernhardt/dotfiles/blob/main/.githelpers
+# Ref: https://github.com/garybernhardt/dotfiles/blob/main/.githelpers
 #
 # The time massaging regexes start with ^[^<]* because that ensures that they
 # only operate before the first "<". That "<" will be the beginning of the

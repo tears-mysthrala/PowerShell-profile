@@ -1,9 +1,10 @@
-﻿Set-Alias -Name cm -Value chezmoi -Option AllScope
+Set-Alias -Name cm -Value chezmoi -Option AllScope
 
-Write-Host "[INFO] Checking for chezmoi command with ErrorAction SilentlyContinue (errors will be suppressed)" -ForegroundColor Yellow
+Write-Verbose "[INFO] Checking for chezmoi command with ErrorAction SilentlyContinue (errors will be suppressed)"
 if (Get-Command "chezmoi" -ErrorAction SilentlyContinue)
 {
-  Invoke-Expression (& { (chezmoi completion powershell | Out-String) })
+  $completionScript = chezmoi completion powershell | Out-String
+  . ([scriptblock]::Create($completionScript))
 }
 
 function cmc
@@ -14,7 +15,7 @@ function cmc
   if ($msg)
   {
     chezmoi git commit -m "$msg"
-  } else 
+  } else
   {
     chezmoi git commit
   }

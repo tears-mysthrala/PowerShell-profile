@@ -1,4 +1,4 @@
-﻿# PowerShell Unified Alias Configuration
+# PowerShell Unified Alias Configuration
 
 # Navigation aliases and utilities
 function .. { Set-Location .\.. }
@@ -11,7 +11,7 @@ function .5 { Set-Location .\..\..\..\..\..\.. }
 function Initialize-Editor {
     if ($script:EditorInitialized) { return }
     $script:EditorInitialized = $true
-    
+
     $editors = @('nvim', 'code', 'notepad', 'pvim', 'vim', 'vi', 'notepad++', 'sublime_text')
     foreach ($editor in $editors) {
         if (Test-CommandExists $editor) {
@@ -216,16 +216,16 @@ function Expand-CustomArchive {
   if (Test-Path -Path "$File" -PathType Leaf) {
     switch ($File.Split(".") | Select-Object -Last 1) {
       "rar" {
-        Start-Process -FilePath "UnRar.exe" -ArgumentList "x", "-op'$Folder'", "-y", "$File" -WorkingDirectory "$Env:ProgramFiles\WinRAR\" -Wait | Out-Null 
+        Start-Process -FilePath "UnRar.exe" -ArgumentList "x", "-op'$Folder'", "-y", "$File" -WorkingDirectory "$Env:ProgramFiles\WinRAR\" -Wait | Out-Null
       }
       "zip" {
-        7z x -o"$Folder" -y "$File" | Out-Null 
+        7z x -o"$Folder" -y "$File" | Out-Null
       }
       "7z" {
-        7z x -o"$Folder" -y "$File" | Out-Null 
+        7z x -o"$Folder" -y "$File" | Out-Null
       }
       "exe" {
-        7z x -o"$Folder" -y "$File" | Out-Null 
+        7z x -o"$Folder" -y "$File" | Out-Null
       }
       Default {
         Write-Error "No way to Extract $File !!!"; return;

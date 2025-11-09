@@ -53,7 +53,7 @@ $ProfileDir = $PSScriptRoot
 Measure-Block 'Environment Setup' {
     # Use cached environment settings if available
     $envCachePath = "$ProfileDir\Config\env-cache.clixml"
-    
+
     if (Test-Path $envCachePath) {
         $cachedEnv = Import-Clixml $envCachePath
         foreach ($key in $cachedEnv.Keys) {
@@ -65,31 +65,31 @@ Measure-Block 'Environment Setup' {
         # Encoding settings
         $env:PYTHONIOENCODING = 'utf-8'
         [System.Console]::OutputEncoding = [System.Text.UTF8Encoding]::new()
-        
+
         # Module path
         $customModulePath = "$ProfileDir\Modules"
         if ($env:PSModulePath -notlike "*$customModulePath*") {
             $env:PSModulePath = "$customModulePath;" + $env:PSModulePath
         }
-        
+
         # Editor preferences with fallbacks
         $editors = @(
             @{ Command = 'nvim'; EnvVar = 'EDITOR' },
             @{ Command = 'code'; EnvVar = 'VISUAL' },
             @{ Command = 'notepad'; EnvVar = 'EDITOR' }
         )
-        
+
         foreach ($editor in $editors) {
             if (Get-Command $editor.Command -ErrorAction SilentlyContinue) {
                 Set-Item "env:$($editor.EnvVar)" -Value $editor.Command
                 break
             }
         }
-        
+
         # Performance optimizations
         $env:POWERSHELL_TELEMETRY_OPTOUT = 1
         $env:POWERSHELL_UPDATECHECK = 'Off'
-        
+
         # Cache the environment settings
         $envToCache = @{
             PYTHONIOENCODING            = $env:PYTHONIOENCODING
@@ -197,7 +197,7 @@ Measure-Block 'Core Setup' {
         Measure-Block 'ImportProfileModules' {
             # Defer importing heavy profile modules until first use
             function Initialize-ProfileManagement {
-                if (-not (Get-Module -Name ProfileManagement -ListAvailable)) { 
+                if (-not (Get-Module -Name ProfileManagement -ListAvailable)) {
                     $path = Join-Path $ProfileDir 'Modules\ProfileManagement\ProfileManagement.psm1'
                     if (Test-Path $path) { Import-Module $path -Force -ErrorAction SilentlyContinue }
                 }
@@ -329,8 +329,8 @@ Measure-Block 'Core Setup' {
         }
     }
     catch {
-        Write-Host "Failed to load core modules: $_" -ForegroundColor Red
-        Write-Host "Some features may not be available" -ForegroundColor Yellow
+        Write-Error "Failed to load core modules: $_"
+        Write-Warning "Some features may not be available"
     }
 }
 
@@ -392,10 +392,11 @@ Measure-Block 'Shell Setup' {
     $starshipConfigPath = Join-Path $ProfileDir 'Config\starship.toml'
     if (Get-Command starship -ErrorAction SilentlyContinue) {
         $ENV:STARSHIP_CONFIG = $starshipConfigPath
-        Invoke-Expression (&starship init powershell)
+        $starshipInit = &starship init powershell
+        . ([scriptblock]::Create($starshipInit))
     }
     else {
-        Write-Host "[INFO] Starship not found, skipping prompt initialization." -ForegroundColor Yellow
+        Write-Verbose "[INFO] Starship not found, skipping prompt initialization."
     }
 
     Measure-Block 'PSReadLine' {
@@ -454,7 +455,7 @@ Measure-Block 'ShellToolsInit' {
             try {
                 $env:_ZO_DATA_DIR = "$using:ProfileDir\.zo"
                 $zoxideInit = & { (zoxide init powershell --cmd cd | Out-String) }
-                Invoke-Expression $zoxideInit
+                . ([scriptblock]::Create($zoxideInit))
             } catch {
                 Write-Verbose "Zoxide initialization failed: $_"
             }
@@ -464,7 +465,7 @@ Measure-Block 'ShellToolsInit' {
         if (Get-Command gh -ErrorAction SilentlyContinue) {
             try {
                 $ghCompletion = & { (gh completion -s powershell | Out-String) }
-                Invoke-Expression $ghCompletion
+                . ([scriptblock]::Create($ghCompletion))
             } catch {
                 Write-Verbose "GitHub CLI completion initialization failed: $_"
             }
@@ -517,29 +518,29 @@ function Install-Dependencies {
         return
     }
 
-    $args = @()
+    $installerArgs = @()
 
-    if ($All) { $args += "-InstallAll" }
-    elseif ($PackageManagers) { $args += "-PackageManagers" }
-    elseif ($CliTools) { $args += "-CliTools" }
-    elseif ($Tool) { $args += "-Tool", $Tool }
+    if ($All) { $installerArgs += "-InstallAll" }
+    elseif ($PackageManagers) { $installerArgs += "-PackageManagers" }
+    elseif ($CliTools) { $installerArgs += "-CliTools" }
+    elseif ($Tool) { $installerArgs += "-Tool", $Tool }
     else {
-        Write-Host "PowerShell Profile Dependency Installer" -ForegroundColor Cyan
-        Write-Host "=====================================" -ForegroundColor Cyan
-        Write-Host ""
-        Write-Host "USAGE:" -ForegroundColor Yellow
-        Write-Host "    Install-Dependencies [-All|-PackageManagers|-CliTools|-Tool <name>]"
-        Write-Host ""
-        Write-Host "EXAMPLES:" -ForegroundColor Yellow
-        Write-Host "    Install-Dependencies -All"
-        Write-Host "    Install-Dependencies -PackageManagers"
-        Write-Host "    Install-Dependencies -CliTools"
-        Write-Host "    Install-Dependencies -Tool git"
-        Write-Host ""
-        Write-Host "Run 'Install-Dependencies -List' to see available tools."
+        Write-Verbose "PowerShell Profile Dependency Installer"
+        Write-Verbose "====================================="
+        Write-Verbose ""
+        Write-Verbose "USAGE:"
+        Write-Verbose "    Install-Dependencies [-All|-PackageManagers|-CliTools|-Tool <name>]"
+        Write-Verbose ""
+        Write-Verbose "EXAMPLES:"
+        Write-Verbose "    Install-Dependencies -All"
+        Write-Verbose "    Install-Dependencies -PackageManagers"
+        Write-Verbose "    Install-Dependencies -CliTools"
+        Write-Verbose "    Install-Dependencies -Tool git"
+        Write-Verbose ""
+        Write-Verbose "Run 'Install-Dependencies -List' to see available tools."
         return
     }
 
     # Execute the installer
-    & $installerPath @args
+    & $installerPath @installerArgs
 }

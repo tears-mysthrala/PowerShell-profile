@@ -1,4 +1,4 @@
-﻿# Source: https://www.geeksforgeeks.org/disk-cleanup-using-powershell-scripts/
+# Source: https://www.geeksforgeeks.org/disk-cleanup-using-powershell-scripts/
 
 function Clean-RecycleBin {
   #1# Removing recycle bin files
@@ -14,20 +14,20 @@ function Clean-RecycleBin {
 }
 
 function Clean-TempData {
-  #2# Remove Temp files from various locations 
-  write-Host "Erasing temporary files from various locations" -ForegroundColor Yellow  
+  #2# Remove Temp files from various locations
+  write-Host "Erasing temporary files from various locations" -ForegroundColor Yellow
   # Specify the path where temporary files are stored in the Windows Temp folder
-  $Path1 = 'C' + ':\Windows\Temp' 
+  $Path1 = 'C' + ':\Windows\Temp'
   # Remove all items (files and directories) from the Windows Temp folder
   Write-Host "[INFO] Cleaning Windows Temp folder with ErrorAction SilentlyContinue (errors will be suppressed)" -ForegroundColor Yellow
-  Get-ChildItem $Path1 -Force -Recurse -ErrorAction SilentlyContinue | Remove-Item -Recurse -Force -ErrorAction SilentlyContinue  
+  Get-ChildItem $Path1 -Force -Recurse -ErrorAction SilentlyContinue | Remove-Item -Recurse -Force -ErrorAction SilentlyContinue
   # Specify the path where temporary files are stored in the Windows Prefetch folder
-  $Path2 = 'C' + ':\Windows\Prefetch' 
+  $Path2 = 'C' + ':\Windows\Prefetch'
   # Remove all items (files and directories) from the Windows Prefetch folder
   Write-Host "[INFO] Cleaning Windows Prefetch folder with ErrorAction SilentlyContinue (errors will be suppressed)" -ForegroundColor Yellow
-  Get-ChildItem $Path2 -Force -Recurse -ErrorAction SilentlyContinue | Remove-Item -Recurse -Force -ErrorAction SilentlyContinue  
+  Get-ChildItem $Path2 -Force -Recurse -ErrorAction SilentlyContinue | Remove-Item -Recurse -Force -ErrorAction SilentlyContinue
   # Specify the path where temporary files are stored in the user's AppData\Local\Temp folder
-  $Path3 = 'C' + ':\Users\*\AppData\Local\Temp' 
+  $Path3 = 'C' + ':\Users\*\AppData\Local\Temp'
   # Remove all items (files and directories) from the specified user's Temp folder
   Write-Host "[INFO] Cleaning user Temp folder with ErrorAction SilentlyContinue (errors will be suppressed)" -ForegroundColor Yellow
   Get-ChildItem $Path3 -Force -Recurse -ErrorAction SilentlyContinue | Remove-Item -Recurse -Force -ErrorAction SilentlyContinue
@@ -36,15 +36,15 @@ function Clean-TempData {
 }
 
 function Clean-Disk {
-  #3# Using Disk cleanup Tool  
+  #3# Using Disk cleanup Tool
   # Display a message indicating the usage of the Disk Cleanup tool
-  write-Host "Using Disk cleanup Tool" -ForegroundColor Yellow  
+  write-Host "Using Disk cleanup Tool" -ForegroundColor Yellow
   # Run the Disk Cleanup tool with the specified sagerun parameter
-  cleanmgr /sagerun:1 | out-Null  
+  cleanmgr /sagerun:1 | out-Null
   # Emit a beep sound using ASCII code 7
-  Write-Host "$([char]7)"  
+  Write-Host "$([char]7)"
   # Display a success message indicating that Disk Cleanup was successfully done
-  write-Host "Disk Cleanup Successfully done" -ForegroundColor Green  
+  write-Host "Disk Cleanup Successfully done" -ForegroundColor Green
 }
 
 function Clean-All {

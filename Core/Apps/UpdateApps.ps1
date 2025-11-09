@@ -1,4 +1,4 @@
-﻿# Script to update all installed applications
+# Script to update all installed applications
 $ErrorActionPreference = 'Continue'
 $ProgressPreference = 'Continue'
 
@@ -98,7 +98,7 @@ try {
     Write-Log "Updating PowerShell modules..."
     $modulesToRetry = @()
     $modulesToUpdate = @{}
-    
+
     # First, get all modules that need updates
     Get-Module -ListAvailable | ForEach-Object {
         $currentModule = $_
@@ -116,7 +116,7 @@ try {
             Write-Log "WARNING: Could not check online version for module '$($currentModule.Name)': $($_.Exception.Message)"
         }
     }
-    
+
     # Then attempt to update each module
     foreach ($moduleName in $modulesToUpdate.Keys) {
         $moduleInfo = $modulesToUpdate[$moduleName]
@@ -136,10 +136,10 @@ try {
                     continue
                 }
             }
-            
+
             Update-Module -Name $moduleName -AcceptLicense -Force -ErrorAction Stop
             Write-Log "SUCCESS: Updated module '$moduleName' from version $($moduleInfo.CurrentVersion) to $($moduleInfo.NewVersion)"
-            
+
             # Attempt to reload the module if it was previously loaded
             if ($loadedModule) {
                 try {
@@ -161,7 +161,7 @@ try {
             }
         }
     }
-    
+
     if ($modulesToRetry.Count -gt 0) {
         Write-Log "\nModules requiring restart to update:"
         $modulesToRetry | ForEach-Object {

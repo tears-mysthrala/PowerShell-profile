@@ -1,4 +1,4 @@
-﻿# Unified Module Manager for PowerShell Profile
+# Unified Module Manager for PowerShell Profile
 
 $script:moduleRegistry = @{}
 $script:loadedModules = @{}
@@ -24,14 +24,14 @@ function Register-UnifiedModule {
         [switch]$IgnoreIfMissing,
         [string]$ModulePath
     )
-    
+
     $originalPreferences = @{
         Verbose = $VerbosePreference
         Debug = $DebugPreference
         Warning = $WarningPreference
         Information = $InformationPreference
     }
-    
+
     # Suppress all non-critical messages (log this action)
     Write-Host "[INFO] Suppressing Verbose, Debug, Warning, and Information output temporarily..." -ForegroundColor Yellow
     $oldVerbose = $VerbosePreference
@@ -42,7 +42,7 @@ function Register-UnifiedModule {
     $DebugPreference = 'SilentlyContinue'
     $WarningPreference = 'SilentlyContinue'
     $InformationPreference = 'SilentlyContinue'
-    
+
     # Check if module exists before registration
     # Restore previous preferences after block
     $VerbosePreference = $oldVerbose
@@ -53,11 +53,11 @@ function Register-UnifiedModule {
     $moduleInfo = $null
     $moduleSearchPaths = @($env:PSModulePath -split ';')
     $customPaths = @()
-    
+
     if ($ModulePath) {
         $customPaths += $ModulePath
     }
-    
+
     # Add common module locations
     $commonPaths = @(
         "$env:USERPROFILE\scoop\modules",
@@ -65,7 +65,7 @@ function Register-UnifiedModule {
         "$PSScriptRoot\..\..\Modules"
     )
     $customPaths += $commonPaths | Where-Object { Test-Path $_ }
-    
+
     foreach ($searchPath in ($customPaths + $moduleSearchPaths)) {
         $potentialPath = Join-Path $searchPath $Name
         if (Test-Path $potentialPath) {
@@ -82,12 +82,12 @@ function Register-UnifiedModule {
             }
         }
     }
-    
+
     if (-not $moduleExists) {
         # Suppress errors when checking for module (log this action)
         Write-Host "[INFO] Checking for module $Name with ErrorAction SilentlyContinue (errors will be suppressed)" -ForegroundColor Yellow
-        $moduleInfo = Get-Module -ListAvailable $Name -ErrorAction SilentlyContinue | 
-                     Sort-Object Version -Descending | 
+        $moduleInfo = Get-Module -ListAvailable $Name -ErrorAction SilentlyContinue |
+                     Sort-Object Version -Descending |
                      Select-Object -First 1
         $moduleExists = $null -ne $moduleInfo
     }
@@ -132,7 +132,7 @@ function Register-UnifiedModule {
 function Import-LazyModule {
     param([string]$Name)
     if ($script:loadedModules[$Name]) { return $true }
-    
+
     if ($script:moduleRegistry.ContainsKey($Name)) {
         try {
             Import-UnifiedModule $Name
@@ -161,7 +161,7 @@ function Register-UnifiedTool {
 function Import-UnifiedTool {
     param([string]$Name)
     if ($script:loadedTools[$Name]) { return $true }
-    
+
     if ($script:toolRegistry.ContainsKey($Name)) {
         try {
             & $script:toolRegistry[$Name].Block
@@ -193,12 +193,12 @@ function Get-UnifiedToolStatus {
 function Test-UnifiedModuleRequirements {
     [CmdletBinding(SupportsShouldProcess)]
     param([string]$Name)
-    
+
     if (-not $script:moduleRegistry.ContainsKey($Name)) { return $true }
-    
+
     $moduleInfo = $script:moduleRegistry[$Name]
     $module = $null
-    
+
     if ($moduleInfo.ModulePath -and (Test-Path $moduleInfo.ModulePath)) {
         try {
             $module = Test-ModuleManifest -Path $moduleInfo.ModulePath -ErrorAction Stop
@@ -206,18 +206,18 @@ function Test-UnifiedModuleRequirements {
             # Silently continue on manifest validation failure
         }
     }
-    
+
     if (-not $module) {
         $module = Get-Module -ListAvailable $Name | Sort-Object Version -Descending | Select-Object -First 1
     }
-    
+
     if (-not $module) {
         if ($moduleInfo.IgnoreIfMissing) {
             return $true
         }
         return $null
     }
-    
+
     # Version checks
     if ($moduleInfo.RequiredVersion -and ($module.Version -ne $moduleInfo.RequiredVersion)) {
         if ($moduleInfo.OnVersionMismatch) {
@@ -225,18 +225,18 @@ function Test-UnifiedModuleRequirements {
         }
         return $null
     }
-    
+
     if ($moduleInfo.MinVersion -and ($module.Version -lt $moduleInfo.MinVersion)) {
         return $null
     }
-    
+
     # Dependency checks
     foreach ($dep in $moduleInfo.Dependencies) {
         if (-not (Test-UnifiedModuleRequirements $dep)) {
             return $null
         }
     }
-    
+
     return $true
 }
 
@@ -247,20 +247,20 @@ function Import-UnifiedModule {
         [switch]$Force,
         [switch]$Silent
     )
-    
+
     if ($script:loadedModules[$Name] -and -not $Force) { return $null }
-    
+
     $moduleInfo = $script:moduleRegistry[$Name]
     if (-not $moduleInfo) {
         return $null
     }
-    
+
     if ($moduleInfo.LoadAttempts -ge $moduleInfo.MaxAttempts) {
         return $null
     }
-    
+
     $moduleInfo.LoadAttempts++
-    
+
     if (-not (Test-UnifiedModuleRequirements $Name)) {
         if ($moduleInfo.OnFailure) {
             & $moduleInfo.OnFailure
@@ -271,7 +271,7 @@ function Import-UnifiedModule {
         }
         return $null
     }
-    
+
     try {
         $sw = [System.Diagnostics.Stopwatch]::StartNew()
         $originalPreferences = @{
@@ -280,7 +280,7 @@ function Import-UnifiedModule {
             Warning = $WarningPreference
             Information = $InformationPreference
         }
-        
+
         # Suppress all non-critical messages (log this action)
         Write-Host "[INFO] Suppressing Verbose, Debug, Warning, and Information output temporarily..." -ForegroundColor Yellow
         $oldVerbose = $VerbosePreference
@@ -291,7 +291,7 @@ function Import-UnifiedModule {
         $DebugPreference = 'SilentlyContinue'
         $WarningPreference = 'SilentlyContinue'
         $InformationPreference = 'SilentlyContinue'
-        
+
         try {
             # Restore previous preferences after block
             $VerbosePreference = $oldVerbose
@@ -311,7 +311,7 @@ function Import-UnifiedModule {
             $WarningPreference = $originalPreferences.Warning
             $InformationPreference = $originalPreferences.Information
         }
-        
+
         $sw.Stop()
         $script:loadedModules[$Name] = $true
         return $null
@@ -325,16 +325,16 @@ function Import-UnifiedModule {
 
 function Initialize-StartupModules {
     [CmdletBinding(SupportsShouldProcess)]
-    $startupModules = $script:moduleRegistry.GetEnumerator() | 
-        Where-Object { $_.Value.LoadOnStartup } | 
+    $startupModules = $script:moduleRegistry.GetEnumerator() |
+        Where-Object { $_.Value.LoadOnStartup } |
         ForEach-Object { $_.Key }
-    
+
     if ($startupModules.Count -eq 0) { return @{} }
 
     $loadTimes = @{}
     $totalTimer = [System.Diagnostics.Stopwatch]::StartNew()
     $jobs = @()
-    
+
     # Suppress all non-critical messages (log this action)
     Write-Host "[INFO] Suppressing Verbose, Debug, Warning, and Information output temporarily..." -ForegroundColor Yellow
     $oldVerbose = $VerbosePreference
@@ -345,7 +345,7 @@ function Initialize-StartupModules {
     $DebugPreference = 'SilentlyContinue'
     $WarningPreference = 'SilentlyContinue'
     $InformationPreference = 'SilentlyContinue'
-    
+
     try {
         # Restore previous preferences after block
         $VerbosePreference = $oldVerbose
@@ -354,16 +354,16 @@ function Initialize-StartupModules {
         $InformationPreference = $oldInformation
         # Create a hashtable to store module initialization scriptblocks
         $moduleJobs = @{}
-        
+
         foreach ($moduleName in $startupModules) {
             $moduleInfo = $script:moduleRegistry[$moduleName]
-            
+
             # Create a job for each module
             $job = Start-Job -ScriptBlock {
                 param($moduleName, $moduleInfo)
-                
+
                 $sw = [System.Diagnostics.Stopwatch]::StartNew()
-                
+
                 try {
                     if ($moduleInfo.InitializerBlock) {
                         & $moduleInfo.InitializerBlock
@@ -372,7 +372,7 @@ function Initialize-StartupModules {
                     } else {
                         Import-Module $moduleName -Force
                     }
-                    
+
                     $sw.Stop()
                     return @{
                         Name = $moduleName
@@ -390,13 +390,13 @@ function Initialize-StartupModules {
                     }
                 }
             } -ArgumentList $moduleName, $moduleInfo
-            
+
             $jobs += $job
         }
-        
+
         # Wait for all jobs to complete
         $results = $jobs | Wait-Job | Receive-Job
-        
+
         # Process results
         foreach ($result in $results) {
             if ($result.Success) {
@@ -410,7 +410,7 @@ function Initialize-StartupModules {
         # Cleanup jobs
         $jobs | Remove-Job -Force
     }
-    
+
     #return $loadTimes
 }
 
@@ -432,12 +432,12 @@ function Get-UnifiedModuleStatus {
 function Register-ChocolateyProfile {
     $chocoModule = "chocolatey-profile"
     $chocoPath = "$env:ChocolateyInstall\helpers\chocolateyProfile.psm1"
-    
+
     if (-not $env:ChocolateyInstall) {
         Write-Debug "Chocolatey is not installed - skipping profile registration"
         return
     }
-    
+
     # Suppress Verbose output for Chocolatey registration (log this action)
     Write-Host "[INFO] Suppressing Verbose output for Chocolatey registration..." -ForegroundColor Yellow
     $oldVerbose = $VerbosePreference

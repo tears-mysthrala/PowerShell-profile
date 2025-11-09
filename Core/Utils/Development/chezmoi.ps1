@@ -1,4 +1,4 @@
-﻿Set-Alias -Name cm -Value chezmoi -Option AllScope
+Set-Alias -Name cm -Value chezmoi -Option AllScope
 
 if (Get-Command "chezmoi" -ErrorAction SilentlyContinue)
 {
@@ -13,7 +13,7 @@ function cmc
   if ($msg)
   {
     chezmoi git commit -m "$msg"
-  } else 
+  } else
   {
     chezmoi git commit
   }

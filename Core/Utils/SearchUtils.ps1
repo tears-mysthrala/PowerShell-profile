@@ -1,4 +1,4 @@
-﻿# Search utilities for PowerShell profile
+# Search utilities for PowerShell profile
 
 function Find-Files {
     param(
@@ -7,9 +7,9 @@ function Find-Files {
         [string]$path = ".",
         [switch]$recurse
     )
-    
-    Get-ChildItem -Path $path -Filter $pattern -Recurse:$recurse | 
-        Select-Object FullName, LastWriteTime, Length | 
+
+    Get-ChildItem -Path $path -Filter $pattern -Recurse:$recurse |
+        Select-Object FullName, LastWriteTime, Length |
         Sort-Object LastWriteTime -Descending
 }
 
@@ -21,22 +21,22 @@ function Search-FileContent {
         [string]$filter = "*.*",
         [switch]$caseSensitive
     )
-    
+
     $params = @{
         Path = $path
         Filter = $filter
         Recurse = $true
         ErrorAction = "SilentlyContinue"
     }
-    
-    Get-ChildItem @params | 
+
+    Get-ChildItem @params |
         Select-String -Pattern $pattern -CaseSensitive:$caseSensitive |
         Select-Object Path, Line, LineNumber
 }
 
 function Find-Command {
     param([string]$name)
-    Get-Command -Name "*$name*" | 
+    Get-Command -Name "*$name*" |
         Select-Object Name, CommandType, Version, Source |
         Format-Table -AutoSize
 }

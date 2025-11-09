@@ -1,4 +1,4 @@
-﻿# Common utility functions used across the PowerShell profile
+# Common utility functions used across the PowerShell profile
 
 # Create module scope
 $script:moduleRoot = Split-Path -Parent $PSCommandPath
@@ -6,7 +6,7 @@ $script:moduleRoot = Split-Path -Parent $PSCommandPath
 function Test-CommandExists {
     [CmdletBinding()]
     param([string]$command)
-    
+
     $oldPreference = $ErrorActionPreference
     $ErrorActionPreference = 'SilentlyContinue'
     try {

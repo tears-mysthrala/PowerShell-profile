@@ -1,4 +1,4 @@
-﻿@{
+@{
     # PSScriptAnalyzer settings for PowerShell Profile repository
     # Based on PowerShell Best Practices and community standards
 

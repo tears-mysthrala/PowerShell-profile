@@ -2,7 +2,7 @@
 function Initialize-Editor {
     if ($script:EditorInitialized) { return }
     $script:EditorInitialized = $true
-    
+
     $editors = @('nvim', 'code', 'notepad', 'pvim', 'vim', 'vi', 'notepad++', 'sublime_text')
     foreach ($editor in $editors) {
         if (Test-CommandExists $editor) {

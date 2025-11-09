@@ -1,4 +1,4 @@
-﻿# Module Registry Configuration
+# Module Registry Configuration
 $script:moduleAliases = @{
     'AppsManage' = @{ Description = 'Application management'; Category = 'Apps' }
     'LinuxLike' = @{ Description = 'Shell utilities'; Category = 'Shell' }
@@ -7,8 +7,8 @@ $script:moduleAliases = @{
 
 # Register utility modules (lazy-loaded)
 $moduleConfigs = @{
-    'SystemUpdater' = @{ 
-        Block = { 
+    'SystemUpdater' = @{
+        Block = {
             . "$ProfileDir\Core\Apps\Updates\SystemUpdater.ps1"
         }
         Category = 'System'

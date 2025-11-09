@@ -1,10 +1,10 @@
-﻿New-Module -Name AppsManage -ScriptBlock {
+New-Module -Name AppsManage -ScriptBlock {
 $CHOCO_APPS_TO_UPGRADE = @(
 )
 
 function Update-AllApps {
     Write-Host "Starting system-wide update..." -ForegroundColor Cyan
-    
+
     # Execute the update script
     try {
         . "$ProfileDir\Scripts\powershell-config\UpdateApps.ps1"
@@ -155,7 +155,7 @@ function Uninstall-ChocoApps {
   $apps = Select-Apps $(Get-ChocoApps)
   if ($apps.Length -eq 0) {
     Write-Host "No app was selected"!
-    return 
+    return
   }
   if (Check-IsAdmin) {
     choco uninstall $apps -y
@@ -169,7 +169,7 @@ function Uninstall-ScoopApps {
   $apps = Select-Apps $(List-ScoopApps)
   if ($apps.Length -eq 0) {
     Write-Host "No app was selected"!
-    return 
+    return
   }
   scoop uninstall $apps
 }

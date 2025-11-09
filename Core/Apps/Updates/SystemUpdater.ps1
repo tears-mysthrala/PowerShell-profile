@@ -1,4 +1,4 @@
-﻿using namespace System.Threading
+using namespace System.Threading
 using namespace System.Collections.Concurrent
 
 # Unified system update module
@@ -86,7 +86,7 @@ function Update-System {
 function Update-PowerShellModules {
     $modulesToRetry = @()
     $modulesToUpdate = @{}
-    
+
     Get-Module -ListAvailable | ForEach-Object {
         $currentModule = $_
         try {
@@ -103,7 +103,7 @@ function Update-PowerShellModules {
             Write-Warning "Could not check online version for module '$($currentModule.Name)': $($_.Exception.Message)"
         }
     }
-    
+
     foreach ($moduleName in $modulesToUpdate.Keys) {
         $moduleInfo = $modulesToUpdate[$moduleName]
         try {
@@ -112,9 +112,9 @@ function Update-PowerShellModules {
             if ($loadedModule) {
                 Remove-Module -Name $moduleName -Force -ErrorAction Stop
             }
-            
+
             Update-Module -Name $moduleName -Force -ErrorAction Stop
-            
+
             if ($loadedModule) {
                 Import-Module -Name $moduleName -Force -ErrorAction Stop
             }
@@ -126,7 +126,7 @@ function Update-PowerShellModules {
             }
         }
     }
-    
+
     if ($modulesToRetry.Count -gt 0) {
         Write-Warning "\nThe following modules require a PowerShell restart to update:"
         $modulesToRetry | ForEach-Object {
