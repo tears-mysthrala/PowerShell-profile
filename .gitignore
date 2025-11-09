@@ -92,3 +92,6 @@ Icon?
 .github/workflows/*.sarif
 results.sarif
 devskim-results.sarif
+
+# .NET tool cache (local installations)
+tools/.store/
