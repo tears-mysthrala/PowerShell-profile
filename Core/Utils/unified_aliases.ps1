@@ -126,140 +126,6 @@ function uptime {
   }
 }
 
-# Search and find utilities
-function find-file($name) {
-  Get-ChildItem -recurse -filter "*${name}*" -ErrorAction SilentlyContinue | ForEach-Object {
-    $place_path = $_.directory
-    Write-Output "${place_path}\${_}"
-  }
-}
-
-function Find-String($regex, $dir) {
-  if ($dir) {
-    Get-ChildItem $dir | Select-String $regex
-    return
-  }
-  $input | Select-String $regex
-}
-Set-Alias -Name grep -Value Find-String
-
-# System utilities
-function df { get-volume }
-function which($name) { Get-Command $name | Select-Object -ExpandProperty Definition }
-function Set-EnvironmentVariable($name, $value) { set-item -force -path "env:$name" -value $value }
-Set-Alias -Name export -Value Set-EnvironmentVariable
-
-function Stop-ProcessByName($name) { Get-Process $name -ErrorAction SilentlyContinue | Stop-Process }
-Set-Alias -Name pkill -Value Stop-ProcessByName
-
-function Get-ProcessByName($name) { Get-Process $name }
-Set-Alias -Name pgrep -Value Get-ProcessByName
-
-# Profile management
-# This is now handled by the ProfileManagement module
-
-# Export all aliases and functions
-# Export-ModuleMember -Function * -Alias * -Variable EDITOR
-
-# Create module manifest if it doesn't exist
-$manifestPath = Join-Path $PSScriptRoot 'unified_aliases.psd1'
-if (-not (Test-Path $manifestPath)) {
-  New-ModuleManifest -Path $manifestPath `
-    -RootModule 'unified_aliases.ps1' `
-    -ModuleVersion '1.0.0' `
-    -Author 'PowerShell User' `
-    -Description 'Unified PowerShell Aliases' `
-    -PowerShellVersion '5.1' `
-    -FunctionsToExport '*' `
-    -AliasesToExport '*' `
-    -VariablesToExport 'EDITOR'
-}
-
-# ref: https://github.com/ChrisTitusTech/powershell-profile/blob/main/Microsoft.PowerShell_profile.ps1
-
-function Get-AvailableModules {
-  Get-Module -ListAvailable
-}
-
-function Update-PowerShell {
-  if (-not $global:canConnectToGitHub) {
-    Write-Host "Skipping PowerShell update check due to GitHub.com not responding within 1 second." -ForegroundColor Yellow
-    return
-  }
-
-  try {
-    Write-Host "Checking for PowerShell updates..." -ForegroundColor Cyan
-    $updateNeeded = $false
-    $currentVersion = $PSVersionTable.PSVersion.ToString()
-    $gitHubApiUrl = "https://api.github.com/repos/PowerShell/PowerShell/releases/latest"
-    $latestReleaseInfo = Invoke-RestMethod -Uri $gitHubApiUrl
-    $latestVersion = $latestReleaseInfo.tag_name.Trim('v')
-    if ($currentVersion -lt $latestVersion) {
-      $updateNeeded = $true
-    }
-
-    if ($updateNeeded) {
-      Write-Host "Updating PowerShell..." -ForegroundColor Yellow
-      winget upgrade "Microsoft.PowerShell" --accept-source-agreements --accept-package-agreements
-      Write-Host "PowerShell has been updated. Please restart your shell to reflect changes" -ForegroundColor Magenta
-    }
-    else {
-      Write-Host "Your PowerShell is up to date." -ForegroundColor Green
-    }
-  }
-  catch {
-    Write-Error "Failed to update PowerShell. Error: $_"
-  }
-}
-
-function Test-IsAdmin {
-  return ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
-}
-
-function Restart-BIOS {
-  if (Test-IsAdmin) {
-    shutdown /r /fw /f /t 0
-  }
-  else {
-    if (Test-CommandExists sudo) {
-      sudo shutdown /r /fw /f /t 0
-    }
-    else {
-      Write-Host "Please run with administrator privilege"
-    }
-  }
-}
-
-function Get-PubIP {
-  (Invoke-WebRequest http://ifconfig.me/ip ).Content
-}
-
-function Get-FormatedUptime {
-  $bootuptime = (Get-CimInstance -ClassName Win32_OperatingSystem).LastBootUpTime
-  $CurrentDate = Get-Date
-  $uptime = $CurrentDate - $bootuptime
-  Write-Output "Uptime: $($uptime.Days) Days, $($uptime.Hours) Hours, $($uptime.Minutes) Minutes"
-}
-
-function uptime {
-  #Windows Powershell only
-  If ($PSVersionTable.PSVersion.Major -eq 5 ) {
-    Get-WmiObject win32_operatingsystem |
-    Select-Object @{EXPRESSION = { $_.ConverttoDateTime($_.lastbootuptime) } } | Format-Table -HideTableHeaders
-  }
-  Else {
-    Get-FormatedUptime
-    net statistics workstation | Select-String "since" | foreach-object { $_.ToString().Replace('Statistics since ', 'Since: ') }
-  }
-}
-
-function find-file($name) {
-  Get-ChildItem -recurse -filter "*${name}*" -ErrorAction SilentlyContinue | ForEach-Object {
-    $place_path = $_.directory
-    Write-Output "${place_path}\${_}"
-  }
-}
-
 function Expand-ZipFile($file) {
   Write-Output("Extracting", $file, "to", $pwd)
   $fullFile = Get-ChildItem -Path $pwd -Filter .\cove.zip | ForEach-Object { $_.FullName }
@@ -305,78 +171,9 @@ function tail {
   Get-Content $Path -Tail $n
 }
 
-function mkcd {
-  param($dir) mkdir $dir -Force; Set-Location $dir 
-}
-
-# Quick Access to System Information
-function sysinfo {
-  Get-ComputerInfo 
-}
-
-# Networking Utilities
-function Clear-DnsCache {
-  Clear-DnsClientCache 
-}
-Set-Alias -Name flushdns -Value Clear-DnsCache
-
-# Clipboard Utilities
-function Set-ClipboardContent {
-  Set-Clipboard $args[0] 
-}
-Set-Alias -Name cpy -Value Set-ClipboardContent
-
-function Get-ClipboardContent {
-  Get-Clipboard 
-}
-Set-Alias -Name pst -Value Get-ClipboardContent
-
 function ix ($file) {
   curl.exe -F "f:1=@$file" ix.io
 }
-
-function grep($regex, $dir) {
-  if ( $dir ) {
-    Get-ChildItem $dir | select-string $regex
-    return
-  }
-  $input | select-string $regex
-}
-
-function touch($file) {
-  "" | Out-File $file -Encoding ASCII
-}
-
-function df {
-  get-volume
-}
-
-function Edit-FileContent($file, $find, $replace) {
-  (Get-Content $file).replace("$find", $replace) | Set-Content $file
-}
-Set-Alias -Name sed -Value Edit-FileContent
-
-function Get-CommandPath($command) {
-  Get-Command -Name $command -ErrorAction SilentlyContinue |
-  Select-Object -ExpandProperty Path -ErrorAction SilentlyContinue
-}
-Set-Alias -Name which -Value Get-CommandPath
-
-function export($name, $value) {
-  set-item -force -path "env:$name" -value $value;
-}
-
-function pkill($name) {
-  Get-Process $name -ErrorAction SilentlyContinue | Stop-Process
-}
-
-function pgrep($name) {
-  Get-Process $name
-}
-
-# Powershell profile from https://github.com/craftzdog/dotfiles-public/blob/master/.config/powershell/user_profile.ps1
-
-[console]::InputEncoding = [console]::OutputEncoding = New-Object System.Text.UTF8Encoding
 
 function Test-IsAdmin {
   return ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
@@ -395,6 +192,10 @@ function Restart-BIOS {
     }
   }
 }
+
+# Powershell profile from https://github.com/craftzdog/dotfiles-public/blob/master/.config/powershell/user_profile.ps1
+
+[console]::InputEncoding = [console]::OutputEncoding = New-Object System.Text.UTF8Encoding
 
 # Ref: https://gist.github.com/mikepruett3/7ca6518051383ee14f9cf8ae63ba18a7
 function Expand-CustomArchive {
