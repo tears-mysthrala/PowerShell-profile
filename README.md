@@ -39,13 +39,14 @@ git clone https://github.com/tears-mysthrala/PowerShell-profile.git $HOME\Docume
 
 ## Contributing
 
-This project uses automated documentation generation. When adding new functions:
+This project uses local documentation generation. When adding new functions:
 
 1. Place them in appropriate files under `Core/Utils/`
 2. Add descriptive comments above function definitions
-3. Run the docs generator: `.\tools\generate_function_docs.ps1`
+3. Run the docs generator locally: `.\tools\generate_function_docs.ps1`
+4. Or use the prepare script: `.\tools\prepare-commit.bat`
 
-The documentation will be automatically updated and committed via GitHub Actions.
+The documentation will be updated locally before you commit and push changes.
 
 ### Adding New Dependencies
 
