@@ -49,13 +49,46 @@ function Update-System {
     try {
         # Windows Update
         Write-Progress @progressParams -Status 'Checking Windows updates'
-        #Write-Host "[INFO] Checking for Get-WindowsUpdate with ErrorAction SilentlyContinue (errors will be suppressed)" -ForegroundColor Yellow
-        if (Get-Command Get-WindowsUpdate -ErrorAction SilentlyContinue) {
-            if (!(Get-Module -ListAvailable -Name PSWindowsUpdate)) {
-                Install-Module PSWindowsUpdate -Force -AllowClobber
+        try {
+            # Use native Windows Update API via COM objects
+            $UpdateSession = New-Object -ComObject Microsoft.Update.Session
+            $UpdateSearcher = $UpdateSession.CreateUpdateSearcher()
+            $SearchResult = $UpdateSearcher.Search("IsInstalled=0 and Type='Software'")
+            $Updates = $SearchResult.Updates | Where-Object { !$_.IsHidden }
+            
+            if ($Updates.Count -gt 0) {
+                Write-Host "Found $($Updates.Count) Windows updates to install." -ForegroundColor Yellow
+                $UpdatesToDownload = New-Object -ComObject Microsoft.Update.UpdateColl
+                $UpdatesToInstall = New-Object -ComObject Microsoft.Update.UpdateColl
+                
+                foreach ($Update in $Updates) {
+                    $UpdatesToDownload.Add($Update) | Out-Null
+                    $UpdatesToInstall.Add($Update) | Out-Null
+                }
+                
+                # Download updates
+                $Downloader = $UpdateSession.CreateUpdateDownloader()
+                $Downloader.Updates = $UpdatesToDownload
+                Write-Host "Downloading updates..." -ForegroundColor Cyan
+                $DownloadResult = $Downloader.Download()
+                
+                # Install updates
+                $Installer = $UpdateSession.CreateUpdateInstaller()
+                $Installer.Updates = $UpdatesToInstall
+                Write-Host "Installing updates..." -ForegroundColor Cyan
+                $InstallationResult = $Installer.Install()
+                
+                if ($InstallationResult.ResultCode -eq 2) {
+                    Write-Host "Windows updates installed successfully. Reboot may be required." -ForegroundColor Green
+                } else {
+                    Write-Host "Some updates failed to install." -ForegroundColor Red
+                }
+            } else {
+                Write-Host "No Windows updates available." -ForegroundColor Green
             }
-            Import-Module PSWindowsUpdate
-            Get-WindowsUpdate -AcceptAll -Install -AutoReboot:$false
+        }
+        catch {
+            Write-Host "Failed to check/install Windows updates: $_" -ForegroundColor Red
         }
 
         # Winget updates

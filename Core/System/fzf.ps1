@@ -1,8 +1,14 @@
-﻿Import-Module Catppuccin
+﻿# Define Catppuccin Mocha colors locally (no dependency on Catppuccin module)
+$Flavor = @{
+    Red       = '#f38ba8'
+    Text      = '#cdd6f4'
+    Mauve     = '#cba6f7'
+    Rosewater = '#f5e0dc'
+    Surface2  = '#585b70'
+}
 
 # Ref: https://github.com/catppuccin/powershell#profile-usage 
 # https://github.com/catppuccin/fzf - not use background for transparent
-$Flavor = $Catppuccin['Mocha']
 $env:FZF_DEFAULT_OPTS=@"
 --color=hl:$($Flavor.Red),fg:$($Flavor.Text),header:$($Flavor.Red)
 --color=info:$($Flavor.Mauve),pointer:$($Flavor.Rosewater),marker:$($Flavor.Rosewater)

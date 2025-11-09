@@ -25,20 +25,48 @@ function Test-CommandExists {
     $null -ne (Get-Command -Name $Command -ErrorAction SilentlyContinue)
 }
 
-# Update Windows using PowerShell module
+# Update Windows using native API
 Write-Log "Starting Windows Update..."
 try {
-    if (!(Get-Module -ListAvailable -Name PSWindowsUpdate)) {
-        Write-Log "Installing PSWindowsUpdate module..."
-        Install-Module PSWindowsUpdate -Force -AllowClobber
-    }
-    Import-Module PSWindowsUpdate
-    Get-WindowsUpdate -AcceptAll -Install -AutoReboot:$false | ForEach-Object {
-        Write-Log "Installing Windows Update: $($_.Title)"
+    # Use native Windows Update API via COM objects
+    $UpdateSession = New-Object -ComObject Microsoft.Update.Session
+    $UpdateSearcher = $UpdateSession.CreateUpdateSearcher()
+    $SearchResult = $UpdateSearcher.Search("IsInstalled=0 and Type='Software'")
+    $Updates = $SearchResult.Updates | Where-Object { !$_.IsHidden }
+    
+    if ($Updates.Count -gt 0) {
+        Write-Log "Found $($Updates.Count) Windows updates to install."
+        $UpdatesToDownload = New-Object -ComObject Microsoft.Update.UpdateColl
+        $UpdatesToInstall = New-Object -ComObject Microsoft.Update.UpdateColl
+        
+        foreach ($Update in $Updates) {
+            $UpdatesToDownload.Add($Update) | Out-Null
+            $UpdatesToInstall.Add($Update) | Out-Null
+        }
+        
+        # Download updates
+        $Downloader = $UpdateSession.CreateUpdateDownloader()
+        $Downloader.Updates = $UpdatesToDownload
+        Write-Log "Downloading Windows updates..."
+        $DownloadResult = $Downloader.Download()
+        
+        # Install updates
+        $Installer = $UpdateSession.CreateUpdateInstaller()
+        $Installer.Updates = $UpdatesToInstall
+        Write-Log "Installing Windows updates..."
+        $InstallationResult = $Installer.Install()
+        
+        if ($InstallationResult.ResultCode -eq 2) {
+            Write-Log "Windows updates installed successfully. Reboot may be required."
+        } else {
+            Write-Log "Some Windows updates failed to install."
+        }
+    } else {
+        Write-Log "No Windows updates available."
     }
 }
 catch {
-    Handle-Error "Failed to process Windows updates"
+    Handle-Error "Failed to process Windows updates: $_"
 }
 
 # Update package managers in parallel
