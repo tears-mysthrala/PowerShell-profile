@@ -49,7 +49,7 @@ function Start-BackgroundJob {
 }
 
 # Set essential environment variables
-$ProfileDir = Split-Path -Parent $PROFILE
+$ProfileDir = $PSScriptRoot
 Measure-Block 'Environment Setup' {
     # Use cached environment settings if available
     $envCachePath = "$ProfileDir\Config\env-cache.clixml"

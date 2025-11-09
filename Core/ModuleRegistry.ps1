@@ -9,14 +9,13 @@ $script:moduleAliases = @{
 $moduleConfigs = @{
     'SystemUpdater' = @{ 
         Block = { 
-            Import-Module "$ProfileDir\Scripts\powershell-config\Apps\Updates\SystemUpdater.psd1" -Force
-            . "$ProfileDir\Scripts\powershell-config\setAlias.ps1"
+            . "$ProfileDir\Core\Apps\Updates\SystemUpdater.ps1"
         }
         Category = 'System'
     }
-    'AppsManage' = @{ Block = { . "$ProfileDir\Scripts\powershell-config\appsManage.ps1" }; Category = 'Apps' }
-    'LinuxLike' = @{ Block = { . "$ProfileDir\Scripts\powershell-config\Helpers\linuxLike.ps1" }; Category = 'Shell' }
-    'Clean' = @{ Block = { . "$ProfileDir\Scripts\powershell-config\Helpers\clean.ps1" }; Category = 'System' }
+    'AppsManage' = @{ Block = { . "$ProfileDir\Core\Apps\appsManage.ps1" }; Category = 'Apps' }
+    'LinuxLike' = @{ Block = { . "$ProfileDir\Core\System\linuxLike.ps1" }; Category = 'Shell' }
+    'Clean' = @{ Block = { . "$ProfileDir\Core\System\clean.ps1" }; Category = 'System' }
 }
 
 $moduleConfigs.GetEnumerator() | ForEach-Object {
