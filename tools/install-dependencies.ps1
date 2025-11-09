@@ -29,16 +29,6 @@ function Write-ColorOutput {
     Write-Host $Message -ForegroundColor $Color
 }
 
-function Test-CommandExists {
-    param([string]$Command)
-    try {
-        $null = Get-Command $Command -ErrorAction Stop
-        return $true
-    } catch {
-        return $false
-    }
-}
-
 function Install-Chocolatey {
     Write-ColorOutput "Installing Chocolatey..." $Cyan
     if ($WhatIf) {

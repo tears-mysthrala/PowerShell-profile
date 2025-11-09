@@ -1,25 +1,5 @@
 ﻿# PowerShell Unified Alias Configuration
 
-# Ensure Test-CommandExists is available
-function Test-CommandExists {
-  param($command)
-  $oldPreference = $ErrorActionPreference
-  # Suppress errors for command existence check (log this action)
-  $ErrorActionPreference = 'SilentlyContinue'
-  try {
-    if (Get-Command $command) {
-      return $true
-    }
-  }
-  catch {
-    Write-Host "$command does not exist"
-    return $false
-  }
-  finally {
-    $ErrorActionPreference = $oldPreference
-  }
-}
-
 # Navigation aliases and utilities
 function .. { Set-Location .\.. }
 function ... { Set-Location .\..\..\ }

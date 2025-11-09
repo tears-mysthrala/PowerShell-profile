@@ -26,13 +26,6 @@ function Handle-UpdateError {
     Write-UpdateLog "Details: $($Error[0].Exception.Message)" $LogFile
 }
 
-# Command existence check
-function Test-CommandExists {
-    param($Command)
-    #Write-Host "[INFO] Checking for command '$Command' with ErrorAction SilentlyContinue (errors will be suppressed)" -ForegroundColor Yellow
-    $null -ne (Get-Command -Name $Command -ErrorAction SilentlyContinue)
-}
-
 # Main update function with progress display
 function Update-System {
     [CmdletBinding()]
@@ -49,80 +42,29 @@ function Update-System {
     try {
         # Windows Update
         Write-Progress @progressParams -Status 'Checking Windows updates'
-        try {
-            # Use native Windows Update API via COM objects
-            $UpdateSession = New-Object -ComObject Microsoft.Update.Session
-            $UpdateSearcher = $UpdateSession.CreateUpdateSearcher()
-            $SearchResult = $UpdateSearcher.Search("IsInstalled=0 and Type='Software'")
-            $Updates = $SearchResult.Updates | Where-Object { !$_.IsHidden }
-            
-            if ($Updates.Count -gt 0) {
-                Write-Host "Found $($Updates.Count) Windows updates to install." -ForegroundColor Yellow
-                $UpdatesToDownload = New-Object -ComObject Microsoft.Update.UpdateColl
-                $UpdatesToInstall = New-Object -ComObject Microsoft.Update.UpdateColl
-                
-                foreach ($Update in $Updates) {
-                    $UpdatesToDownload.Add($Update) | Out-Null
-                    $UpdatesToInstall.Add($Update) | Out-Null
-                }
-                
-                # Download updates
-                $Downloader = $UpdateSession.CreateUpdateDownloader()
-                $Downloader.Updates = $UpdatesToDownload
-                Write-Host "Downloading updates..." -ForegroundColor Cyan
-                $DownloadResult = $Downloader.Download()
-                
-                # Install updates
-                $Installer = $UpdateSession.CreateUpdateInstaller()
-                $Installer.Updates = $UpdatesToInstall
-                Write-Host "Installing updates..." -ForegroundColor Cyan
-                $InstallationResult = $Installer.Install()
-                
-                if ($InstallationResult.ResultCode -eq 2) {
-                    Write-Host "Windows updates installed successfully. Reboot may be required." -ForegroundColor Green
-                } else {
-                    Write-Host "Some updates failed to install." -ForegroundColor Red
-                }
-            } else {
-                Write-Host "No Windows updates available." -ForegroundColor Green
-            }
-        }
-        catch {
-            Write-Host "Failed to check/install Windows updates: $_" -ForegroundColor Red
-        }
+        . "$PSScriptRoot\WindowsUpdateHelper.ps1"
+        Update-WindowsUpdates
 
         # Winget updates
         Write-Progress @progressParams -Status 'Checking winget packages'
-        if (Test-CommandExists 'winget') {
-            winget upgrade -rhu --accept-source-agreements --accept-package-agreements
-        }
+        . "$PSScriptRoot\UpdateAppsHelper.ps1"
+        Update-Winget
 
         # Scoop updates
         Write-Progress @progressParams -Status 'Checking scoop apps'
-        if (Test-CommandExists 'scoop') {
-            scoop update
-            scoop update *
-        }
+        Update-Scoop
 
         # Chocolatey updates
         Write-Progress @progressParams -Status 'Checking choco packages'
-        if (Test-CommandExists 'choco') {
-            choco upgrade all -y
-        }
+        Update-Choco
 
         # NPM global updates
         Write-Progress @progressParams -Status 'Checking npm globals'
-        if (Test-CommandExists 'npm') {
-            npm update -g
-        }
+        Update-Npm
 
         # Microsoft Store updates
         Write-Progress @progressParams -Status 'Checking Store apps'
-        if (Get-Command Get-CimInstance -ErrorAction SilentlyContinue) {
-            Get-CimInstance -Namespace 'Root\cimv2' -ClassName 'Win32_AppxUpdateInfo' | 
-            Where-Object { $_.UpdateAvailable -eq $true } | 
-            ForEach-Object { Add-AppxPackage -Path $_.PackageLocation }
-        }
+        Update-StoreApps
 
         # PowerShell module updates
         Write-Progress @progressParams -Status 'Checking PowerShell modules'

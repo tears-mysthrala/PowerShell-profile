@@ -18,66 +18,27 @@ function Handle-Error {
     Write-Log "Details: $($Error[0].Exception.Message)"
 }
 
-# Function to check if a command exists
-function Test-CommandExists {
-    param($Command)
-    #Write-Host "[INFO] Checking for command '$Command' with ErrorAction SilentlyContinue (errors will be suppressed)" -ForegroundColor Yellow
-    $null -ne (Get-Command -Name $Command -ErrorAction SilentlyContinue)
-}
-
 # Update Windows using native API
 Write-Log "Starting Windows Update..."
 try {
-    # Use native Windows Update API via COM objects
-    $UpdateSession = New-Object -ComObject Microsoft.Update.Session
-    $UpdateSearcher = $UpdateSession.CreateUpdateSearcher()
-    $SearchResult = $UpdateSearcher.Search("IsInstalled=0 and Type='Software'")
-    $Updates = $SearchResult.Updates | Where-Object { !$_.IsHidden }
-    
-    if ($Updates.Count -gt 0) {
-        Write-Log "Found $($Updates.Count) Windows updates to install."
-        $UpdatesToDownload = New-Object -ComObject Microsoft.Update.UpdateColl
-        $UpdatesToInstall = New-Object -ComObject Microsoft.Update.UpdateColl
-        
-        foreach ($Update in $Updates) {
-            $UpdatesToDownload.Add($Update) | Out-Null
-            $UpdatesToInstall.Add($Update) | Out-Null
-        }
-        
-        # Download updates
-        $Downloader = $UpdateSession.CreateUpdateDownloader()
-        $Downloader.Updates = $UpdatesToDownload
-        Write-Log "Downloading Windows updates..."
-        $DownloadResult = $Downloader.Download()
-        
-        # Install updates
-        $Installer = $UpdateSession.CreateUpdateInstaller()
-        $Installer.Updates = $UpdatesToInstall
-        Write-Log "Installing Windows updates..."
-        $InstallationResult = $Installer.Install()
-        
-        if ($InstallationResult.ResultCode -eq 2) {
-            Write-Log "Windows updates installed successfully. Reboot may be required."
-        } else {
-            Write-Log "Some Windows updates failed to install."
-        }
-    } else {
-        Write-Log "No Windows updates available."
-    }
+    . "$PSScriptRoot\WindowsUpdateHelper.ps1"
+    Update-WindowsUpdates -UseLog
 }
 catch {
-    Handle-Error "Failed to process Windows updates: $_"
+    Handle-Error "Failed to process Windows updates"
 }
 
 # Update package managers in parallel
 $jobs = @()
+
+. "$PSScriptRoot\UpdateAppsHelper.ps1"
 
 # Winget updates
 if (Test-CommandExists 'winget') {
     if (Get-Command -Name Start-ThreadJob -ErrorAction SilentlyContinue) {
         $jobs += Start-ThreadJob -ScriptBlock {
             try {
-                winget upgrade -rhu --accept-source-agreements --accept-package-agreements --disable-interactivity
+                Update-Winget -Silent
             }
             catch {
                 Write-Output "ERROR: Winget update failed - $($_.Exception.Message)"
@@ -92,7 +53,7 @@ if (Test-CommandExists 'scoop') {
     if (Get-Command -Name Start-ThreadJob -ErrorAction SilentlyContinue) {
         $jobs += Start-ThreadJob -ScriptBlock {
             try {
-                scoop update *
+                Update-Scoop -Silent
             }
             catch {
                 Write-Output "ERROR: Scoop update failed - $($_.Exception.Message)"
@@ -107,7 +68,7 @@ if (Test-CommandExists 'choco') {
     if (Get-Command -Name Start-ThreadJob -ErrorAction SilentlyContinue) {
         $jobs += Start-ThreadJob -ScriptBlock {
             try {
-                choco upgrade all -y --no-progress
+                Update-Choco -Silent
             }
             catch {
                 Write-Output "ERROR: Chocolatey update failed - $($_.Exception.Message)"
@@ -122,7 +83,7 @@ if (Test-CommandExists 'npm') {
     if (Get-Command -Name Start-ThreadJob -ErrorAction SilentlyContinue) {
         $jobs += Start-ThreadJob -ScriptBlock {
             try {
-                npm update -g --silent
+                Update-Npm -Silent
             }
             catch {
                 Write-Output "ERROR: NPM update failed - $($_.Exception.Message)"
