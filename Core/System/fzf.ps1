@@ -29,7 +29,7 @@ $env:FZF_DEFAULT_OPTS=@"
 --bind ctrl-e:toggle-preview
 "@
 
-$commandOverride = [ScriptBlock]{ param($Location) Write-Host $Location }
+$commandOverride = [ScriptBlock]{ param($Location) Write-Output $Location }
 
 Set-PsFzfOption -AltCCommand $commandOverride
 

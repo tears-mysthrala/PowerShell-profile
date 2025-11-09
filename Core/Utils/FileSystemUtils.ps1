@@ -35,7 +35,7 @@ function Expand-CustomArchive {
                 return
             }
         }
-        Write-Host "Expanded '$File' to '$Folder'"
+        Write-Verbose "Expanded '$File' to '$Folder'"
     } else {
         Write-Error "File not found: $File"
     }

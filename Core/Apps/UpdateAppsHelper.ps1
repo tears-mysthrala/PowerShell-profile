@@ -10,7 +10,6 @@ function Update-Winget {
 }
 
 function Update-Scoop {
-    param([switch]$Silent)
     if (Test-CommandExists 'scoop') {
         scoop update
         scoop update *

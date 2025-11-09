@@ -25,15 +25,8 @@ function Register-UnifiedModule {
         [string]$ModulePath
     )
 
-    $originalPreferences = @{
-        Verbose = $VerbosePreference
-        Debug = $DebugPreference
-        Warning = $WarningPreference
-        Information = $InformationPreference
-    }
-
     # Suppress all non-critical messages (log this action)
-    Write-Host "[INFO] Suppressing Verbose, Debug, Warning, and Information output temporarily..." -ForegroundColor Yellow
+    Write-Verbose "[INFO] Suppressing Verbose, Debug, Warning, and Information output temporarily..."
     $oldVerbose = $VerbosePreference
     $oldDebug = $DebugPreference
     $oldWarning = $WarningPreference
@@ -85,7 +78,7 @@ function Register-UnifiedModule {
 
     if (-not $moduleExists) {
         # Suppress errors when checking for module (log this action)
-        Write-Host "[INFO] Checking for module $Name with ErrorAction SilentlyContinue (errors will be suppressed)" -ForegroundColor Yellow
+        Write-Verbose "[INFO] Checking for module $Name with ErrorAction SilentlyContinue (errors will be suppressed)"
         $moduleInfo = Get-Module -ListAvailable $Name -ErrorAction SilentlyContinue |
                      Sort-Object Version -Descending |
                      Select-Object -First 1
@@ -203,7 +196,7 @@ function Test-UnifiedModuleRequirements {
         try {
             $module = Test-ModuleManifest -Path $moduleInfo.ModulePath -ErrorAction Stop
         } catch {
-            # Silently continue on manifest validation failure
+            Write-Verbose "Module manifest validation failed for $($moduleInfo.ModulePath): $_"
         }
     }
 
@@ -244,8 +237,7 @@ function Import-UnifiedModule {
     [CmdletBinding(SupportsShouldProcess)]
     param(
         [string]$Name,
-        [switch]$Force,
-        [switch]$Silent
+        [switch]$Force
     )
 
     if ($script:loadedModules[$Name] -and -not $Force) { return $null }
@@ -282,7 +274,7 @@ function Import-UnifiedModule {
         }
 
         # Suppress all non-critical messages (log this action)
-        Write-Host "[INFO] Suppressing Verbose, Debug, Warning, and Information output temporarily..." -ForegroundColor Yellow
+        Write-Verbose "[INFO] Suppressing Verbose, Debug, Warning, and Information output temporarily..."
         $oldVerbose = $VerbosePreference
         $oldDebug = $DebugPreference
         $oldWarning = $WarningPreference
@@ -336,7 +328,7 @@ function Initialize-StartupModules {
     $jobs = @()
 
     # Suppress all non-critical messages (log this action)
-    Write-Host "[INFO] Suppressing Verbose, Debug, Warning, and Information output temporarily..." -ForegroundColor Yellow
+    Write-Verbose "[INFO] Suppressing Verbose, Debug, Warning, and Information output temporarily..."
     $oldVerbose = $VerbosePreference
     $oldDebug = $DebugPreference
     $oldWarning = $WarningPreference
@@ -353,7 +345,6 @@ function Initialize-StartupModules {
         $WarningPreference = $oldWarning
         $InformationPreference = $oldInformation
         # Create a hashtable to store module initialization scriptblocks
-        $moduleJobs = @{}
 
         foreach ($moduleName in $startupModules) {
             $moduleInfo = $script:moduleRegistry[$moduleName]
@@ -443,7 +434,7 @@ function Register-ChocolateyProfile {
     }
 
     # Suppress Verbose output for Chocolatey registration (log this action)
-    Write-Host "[INFO] Suppressing Verbose output for Chocolatey registration..." -ForegroundColor Yellow
+    Write-Verbose "[INFO] Suppressing Verbose output for Chocolatey registration..."
     $oldVerbose = $VerbosePreference
     $VerbosePreference = 'SilentlyContinue'
     try {

@@ -11,7 +11,7 @@ Param(
     [string]$OutFile = "$PSScriptRoot\..\docs\FunctionReference.md"
 )
 
-Write-Host "Scanning repository: $RepoRoot"
+Write-Verbose "Scanning repository: $RepoRoot"
 
 function Get-PrecedingCommentBlock($text, $startIndex) {
     # Return nearest contiguous comment block (<# ... #> or lines starting with #) immediately above the function
@@ -179,9 +179,9 @@ foreach ($name in ($byName.Keys | Sort-Object)) {
     $out += ''
 }
 
-Write-Host "Writing output to $OutFile"
+Write-Verbose "Writing output to $OutFile"
 Set-Content -LiteralPath $OutFile -Value ($out -join "`n") -Encoding UTF8
-Write-Host "Done. Found $($byName.Count) unique functions."
+Write-Verbose "Done. Found $($byName.Count) unique functions."
 
 # Update FUNCTIONS.md with current scan date
 $functionsFile = "$RepoRoot\docs\FUNCTIONS.md"
@@ -190,5 +190,5 @@ if (Test-Path $functionsFile) {
     $functionsContent = Get-Content -Raw -LiteralPath $functionsFile
     $updatedContent = $functionsContent -replace '<!-- AUTOGEN_SCAN_DATE -->', $currentDate
     Set-Content -LiteralPath $functionsFile -Value $updatedContent -Encoding UTF8
-    Write-Host "Updated scan date in FUNCTIONS.md to $currentDate"
+    Write-Verbose "Updated scan date in FUNCTIONS.md to $currentDate"
 }

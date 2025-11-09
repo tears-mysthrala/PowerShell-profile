@@ -71,7 +71,7 @@ function Test-ModuleInstalled {
             return [version]$cachedModule.Version -ge [version]$MinVersion
         }
         catch {
-            # Fall through to probing
+            Write-Verbose "Version comparison failed for cached module $ModuleName, falling back to probing: $_"
         }
     }
 
@@ -93,7 +93,7 @@ function Test-ModuleInstalled {
             $script:PSModuleCache | ConvertTo-Json -Depth 4 | Set-Content $cacheFile -Force
         }
         catch {
-            # ignore write errors on cache
+            Write-Verbose "Failed to write module cache: $_"
         }
 
         if ($MinVersion -and ($module.Version -lt [version]$MinVersion)) {
@@ -123,7 +123,7 @@ function Install-RequiredModules {
         return
     }
 
-    Write-Host "[INFO] Missing modules detected: $($missing.Name -join ', '). Installing in background job 'BackgroundModuleInstaller'." -ForegroundColor Yellow
+    Write-Verbose "[INFO] Missing modules detected: $($missing.Name -join ', '). Installing in background job 'BackgroundModuleInstaller'." -ForegroundColor Yellow
 
     # Run installation in a background job to avoid blocking the profile
     $missingList = $missing | ForEach-Object { $_.Name }

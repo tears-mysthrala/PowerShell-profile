@@ -3,12 +3,12 @@ $CHOCO_APPS_TO_UPGRADE = @(
 )
 
 function Update-AllApps {
-    Write-Host "Starting system-wide update..." -ForegroundColor Cyan
+    Write-Verbose "Starting system-wide update..." -ForegroundColor Cyan
 
     # Execute the update script
     try {
         . "$ProfileDir\Scripts\powershell-config\UpdateApps.ps1"
-        Write-Host "Update completed successfully." -ForegroundColor Green
+        Write-Verbose "Update completed successfully." -ForegroundColor Green
     }
     catch {
         Write-Error "Failed to update: $_"
@@ -132,7 +132,7 @@ function Update-ScoopApps {
     scoop update $apps_string
   }
   else {
-    Write-Host "No app was selected to update"
+    Write-Verbose "No app was selected to update"
   }
 }
 function Update-NpmApps {
@@ -154,7 +154,7 @@ function Update-PowershellModules {
 function Uninstall-ChocoApps {
   $apps = Select-Apps $(Get-ChocoApps)
   if ($apps.Length -eq 0) {
-    Write-Host "No app was selected"!
+    Write-Verbose "No app was selected"!
     return
   }
   if (Check-IsAdmin) {
@@ -168,7 +168,7 @@ function Uninstall-ChocoApps {
 function Uninstall-ScoopApps {
   $apps = Select-Apps $(List-ScoopApps)
   if ($apps.Length -eq 0) {
-    Write-Host "No app was selected"!
+    Write-Verbose "No app was selected"!
     return
   }
   scoop uninstall $apps

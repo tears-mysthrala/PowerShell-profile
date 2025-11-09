@@ -15,7 +15,7 @@ function Initialize-UpdateLog {
 function Write-UpdateLog {
     param($Message, $LogFile)
     $logMessage = "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss'): $Message"
-    Write-Host $logMessage
+    Write-Verbose $logMessage
     Add-Content -Path $LogFile -Value $logMessage
 }
 
@@ -90,7 +90,7 @@ function Update-PowerShellModules {
     Get-Module -ListAvailable | ForEach-Object {
         $currentModule = $_
         try {
-            #Write-Host "[INFO] Checking online version for module '$($currentModule.Name)' with ErrorAction SilentlyContinue (errors will be suppressed)" -ForegroundColor Yellow
+            #Write-Verbose "[INFO] Checking online version for module '$($currentModule.Name)' with ErrorAction SilentlyContinue (errors will be suppressed)" -ForegroundColor Yellow
             $online = Find-Module -Name $currentModule.Name -ErrorAction SilentlyContinue
             if ($online -and ($online.Version -gt $currentModule.Version)) {
                 $modulesToUpdate[$currentModule.Name] = @{
@@ -105,9 +105,8 @@ function Update-PowerShellModules {
     }
 
     foreach ($moduleName in $modulesToUpdate.Keys) {
-        $moduleInfo = $modulesToUpdate[$moduleName]
         try {
-            #Write-Host "[INFO] Checking if module '$moduleName' is loaded with ErrorAction SilentlyContinue (errors will be suppressed)" -ForegroundColor Yellow
+            #Write-Verbose "[INFO] Checking if module '$moduleName' is loaded with ErrorAction SilentlyContinue (errors will be suppressed)" -ForegroundColor Yellow
             $loadedModule = Get-Module -Name $moduleName -ErrorAction SilentlyContinue
             if ($loadedModule) {
                 Remove-Module -Name $moduleName -Force -ErrorAction Stop

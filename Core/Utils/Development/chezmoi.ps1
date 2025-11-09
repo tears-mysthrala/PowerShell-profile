@@ -2,7 +2,8 @@ Set-Alias -Name cm -Value chezmoi -Option AllScope
 
 if (Get-Command "chezmoi" -ErrorAction SilentlyContinue)
 {
-  Invoke-Expression (& { (chezmoi completion powershell | Out-String) })
+  $completionScript = chezmoi completion powershell | Out-String
+  . ([scriptblock]::Create($completionScript))
 }
 
 function cmc

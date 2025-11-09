@@ -27,7 +27,7 @@ function Initialize-Editor {
 # Lazy editor alias that initializes on first use
 function v {
     if (-not $script:EditorInitialized) { Initialize-Editor }
-    if ($script:EDITOR) { & $script:EDITOR @args } else { Write-Host "No editor found" }
+    if ($script:EDITOR) { & $script:EDITOR @args } else { Write-Verbose "No editor found" }
 }
 
 # System aliases
@@ -188,7 +188,7 @@ function Restart-BIOS {
       sudo shutdown /r /fw /f /t 0
     }
     else {
-      Write-Host "Please run with administrator privilege"
+      Write-Verbose "Please run with administrator privilege"
     }
   }
 }
@@ -231,7 +231,7 @@ function Expand-CustomArchive {
         Write-Error "No way to Extract $File !!!"; return;
       }
     }
-    Write-Host "Extracted "$FILE" to "$($Folder)""
+    Write-Verbose "Extracted "$FILE" to "$($Folder)""
   }
 }
 Set-Alias -Name extract -Value Expand-CustomArchive
@@ -266,7 +266,7 @@ function Upgrade {
 
   # Function to install PowerShell 7 using winget
   function Install-Pwsh {
-    Write-Host "Installing PowerShell 7..."
+    Write-Verbose "Installing PowerShell 7..."
     winget install --id Microsoft.Powershell --source winget -y
   }
 
@@ -274,7 +274,7 @@ function Upgrade {
   if (-not (Get-PwshInstalled)) {
     Install-Pwsh
     # Optionally, you can exit the function or script here
-    Write-Host "Please restart your shell to use PowerShell 7."
+    Write-Verbose "Please restart your shell to use PowerShell 7."
     return
   }
 
@@ -284,12 +284,12 @@ function Upgrade {
   if (-not $isAdmin) {
     # If not running as admin, try to run with sudo (if available)
     if (Get-Command sudo -ErrorAction SilentlyContinue) {
-      Write-Host "Running with sudo..."
+      Write-Verbose "Running with sudo..."
       sudo pwsh -ExecutionPolicy Bypass -File "$PSScriptRoot\..\Core\Apps\UpdateApps.ps1"
     }
     else {
       # If sudo is not available, use runas
-      Write-Host "Running with runas..."
+      Write-Verbose "Running with runas..."
       Start-Process pwsh -ArgumentList "-ExecutionPolicy Bypass -File `"$PSScriptRoot\..\Core\Apps\UpdateApps.ps1`"" -Verb RunAs
     }
   }

@@ -26,7 +26,7 @@ function Update-WindowsUpdates {
             $Downloader = $UpdateSession.CreateUpdateDownloader()
             $Downloader.Updates = $UpdatesToDownload
             & $logFunction "Downloading Windows updates..."
-            $DownloadResult = $Downloader.Download()
+            $Downloader.Download()
 
             # Install updates
             $Installer = $UpdateSession.CreateUpdateInstaller()
@@ -47,7 +47,7 @@ function Update-WindowsUpdates {
         if ($UseLog) {
             Handle-Error "Failed to process Windows updates: $_"
         } else {
-            Write-Host "Failed to check/install Windows updates: $_" -ForegroundColor Red
+            Write-Verbose "Failed to check/install Windows updates: $_" -ForegroundColor Red
         }
     }
 }

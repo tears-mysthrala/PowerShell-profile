@@ -7,7 +7,7 @@ $logFile = Join-Path $env:TEMP "UpdateApps_$(Get-Date -Format 'yyyyMMdd_HHmmss')
 function Write-Log {
     param($Message)
     $logMessage = "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss'): $Message"
-    Write-Host $logMessage
+    Write-Verbose $logMessage
     Add-Content -Path $logFile -Value $logMessage
 }
 
@@ -103,7 +103,7 @@ try {
     Get-Module -ListAvailable | ForEach-Object {
         $currentModule = $_
         try {
-            #Write-Host "[INFO] Checking online version for module '$($currentModule.Name)' with ErrorAction SilentlyContinue (errors will be suppressed)" -ForegroundColor Yellow
+            #Write-Verbose "[INFO] Checking online version for module '$($currentModule.Name)' with ErrorAction SilentlyContinue (errors will be suppressed)" -ForegroundColor Yellow
             $online = Find-Module -Name $currentModule.Name -ErrorAction SilentlyContinue
             if ($online -and ($online.Version -gt $currentModule.Version)) {
                 $modulesToUpdate[$currentModule.Name] = @{
@@ -122,7 +122,7 @@ try {
         $moduleInfo = $modulesToUpdate[$moduleName]
         try {
             # Check if module is currently loaded
-            #Write-Host "[INFO] Checking if module '$moduleName' is loaded with ErrorAction SilentlyContinue (errors will be suppressed)" -ForegroundColor Yellow
+            #Write-Verbose "[INFO] Checking if module '$moduleName' is loaded with ErrorAction SilentlyContinue (errors will be suppressed)" -ForegroundColor Yellow
             $loadedModule = Get-Module -Name $moduleName -ErrorAction SilentlyContinue
             if ($loadedModule) {
                 Write-Log "INFO: Unloading module '$moduleName' for update..."
@@ -196,12 +196,12 @@ foreach ($job in $jobs) {
     $result = Receive-Job -Job $job
     $color = $jobColors[$job.Name]
     if (-not $color) { $color = 'White' }
-    Write-Host ("Results from $($job.Name):") -ForegroundColor $color
+    Write-Information ("Results from $($job.Name):")
     if ($result) {
-        $result | ForEach-Object { Write-Host $_ -ForegroundColor $color }
+        $result | ForEach-Object { Write-Information $_ }
     }
     else {
-        Write-Host "(No output)" -ForegroundColor $color
+        Write-Verbose "(No output)"
     }
     Remove-Job -Job $job
 }

@@ -12,7 +12,6 @@ param(
     [switch]$Zoxide,
     [switch]$Ripgrep,
     [switch]$Fd,
-    [switch]$Force,
     [switch]$WhatIf
 )
 
@@ -25,8 +24,8 @@ $Red = [ConsoleColor]::Red
 $Cyan = [ConsoleColor]::Cyan
 
 function Write-ColorOutput {
-    param([string]$Message, [ConsoleColor]$Color = [ConsoleColor]::White)
-    Write-Host $Message -ForegroundColor $Color
+    param([string]$Message)
+    Write-Verbose $Message
 }
 
 function Install-Chocolatey {
@@ -39,7 +38,8 @@ function Install-Chocolatey {
     try {
         Set-ExecutionPolicy Bypass -Scope Process -Force
         [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072
-        Invoke-Expression ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
+        $installScript = (New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1')
+        & ([scriptblock]::Create($installScript))
         Write-ColorOutput "  ✓ Chocolatey installed successfully" $Green
     } catch {
         Write-ColorOutput "  ✗ Failed to install Chocolatey: $($_.Exception.Message)" $Red
@@ -55,7 +55,8 @@ function Install-Scoop {
 
     try {
         if (!(Test-CommandExists 'scoop')) {
-            Invoke-RestMethod -Uri 'https://get.scoop.sh' | Invoke-Expression
+            $installScript = Invoke-RestMethod -Uri 'https://get.scoop.sh'
+            & ([scriptblock]::Create($installScript))
             Write-ColorOutput "  ✓ Scoop installed successfully" $Green
         } else {
             Write-ColorOutput "  ✓ Scoop already installed" $Green

@@ -28,9 +28,9 @@ foreach ($module in $script:moduleAliases.Keys) {
     Set-Item -Path "Function:$functionName" -Value {
         try {
             Import-UnifiedModule $module
-            Write-Host "Loaded $($script:moduleAliases[$module].Description) successfully" -ForegroundColor Green
+            Write-Verbose "Loaded $($script:moduleAliases[$module].Description) successfully" -ForegroundColor Green
         } catch {
-            Write-Host "Failed to load $($script:moduleAliases[$module].Description): $_" -ForegroundColor Red
+            Write-Verbose "Failed to load $($script:moduleAliases[$module].Description): $_" -ForegroundColor Red
         }
     }.GetNewClosure()
 }

@@ -43,6 +43,7 @@ function Start-BackgroundJob {
         }
     }
     catch {
+        Write-Verbose "Start-ThreadJob failed, falling back to Start-Job: $_"
         # fall back
     }
     return Start-Job -ScriptBlock $ScriptBlock -ArgumentList $ArgumentList
@@ -241,7 +242,7 @@ Measure-Block 'Core Setup' {
         $WarningPreference = $originalPreferences.Warning
         $VerbosePreference = $originalPreferences.Verbose
         $InformationPreference = $originalPreferences.Information
-        # Write-Host "Core module loaded successfully" -ForegroundColor Green
+        # Write-Verbose "Core module loaded successfully" -ForegroundColor Green
         # Load common utilities with optimized caching (measured in sub-steps)
         $utilsPath = "$ProfileDir\Core\Utils"
         $utilsCachePath = "$ProfileDir\Config\utils-cache.clixml"
@@ -323,7 +324,7 @@ Measure-Block 'Core Setup' {
                     $utilsCache | Export-Clixml -Path $utilsCachePath
                 }
                 catch {
-                    # ignore cache write errors
+                    Write-Verbose "Failed to save utils cache: $_"
                 }
             }
         }
@@ -354,7 +355,7 @@ Start-Job -ScriptBlock {
         }
     }
     catch {
-        # non-fatal
+        Write-Verbose "Failed to create lazy Use-* functions: $_"
     }
 } | Out-Null
 
@@ -367,7 +368,7 @@ Measure-Block 'Shell Setup' {
             try {
                 # Temporarily suppress warnings (log this action)
                 if (-not $global:ProfileSuppressInfoLogs) {
-                    Write-Host "[INFO] Suppressing warnings and verbose output for alias loading..." -ForegroundColor Yellow
+                    Write-Verbose "[INFO] Suppressing warnings and verbose output for alias loading..." -ForegroundColor Yellow
                 }
                 $WarningPreference = 'SilentlyContinue'
                 $VerbosePreference = 'SilentlyContinue'

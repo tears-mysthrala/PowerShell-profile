@@ -18,5 +18,5 @@ function Initialize-Editor {
 # Lazy editor alias that initializes on first use
 function v {
     if (-not $script:EditorInitialized) { Initialize-Editor }
-    if ($script:EDITOR) { & $script:EDITOR @args } else { Write-Host "No editor found" }
+    if ($script:EDITOR) { & $script:EDITOR @args } else { Write-Verbose "No editor found" }
 }
