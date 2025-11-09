@@ -109,17 +109,15 @@ if (!([Environment]::UserInteractive -and -not $([Environment]::GetCommandLineAr
 }
 
 # Initialize background jobs array
-$global:backgroundJobs = @()
 $script:backgroundJobs = @()
-$global:profileTiming = @{}
 $script:profileTiming = @{}
 
 # By default, show info logs unless suppressed explicitly
-$global:ProfileSuppressInfoLogs = $false
+$script:ProfileSuppressInfoLogs = $false
 
 # Suppress info logs if not loaded with --no-supress
 if ($MyInvocation.Line -notmatch '--no-supress') {
-    $global:ProfileSuppressInfoLogs = $true
+    $script:ProfileSuppressInfoLogs = $true
 }
 
 # Load core configuration
@@ -137,9 +135,9 @@ Measure-Block 'Core Setup' {
 
         Measure-Block 'LazyLoadSetup' {
             # Import ModuleInstaller only when needed
-            $global:LazyLoadModules = {
+            $script:LazyLoadModules = {
                 Import-Module "$ProfileDir\Core\ModuleInstaller.ps1" -Force -ErrorAction Stop
-                Install-RequiredModules
+                Install-RequiredModule
             }
         }
 
@@ -286,7 +284,6 @@ Measure-Block 'Core Setup' {
                         try {
                             # Start background job to create and import the module (non-blocking)
                             $job = Start-Job -ScriptBlock {
-                                param($Path, $Name)
                                 Set-StrictMode -Version Latest
                                 $ErrorActionPreference = 'Stop'
                                 try {
@@ -294,13 +291,13 @@ Measure-Block 'Core Setup' {
                                         param($ScriptPath)
                                         . $ScriptPath
                                     }
-                                    New-Module -Name $Name -ScriptBlock $scriptBlock -ArgumentList $Path |
+                                    New-Module -Name $using:moduleName -ScriptBlock $scriptBlock -ArgumentList $using:filePath |
                                     Import-Module -Global -WarningAction SilentlyContinue
                                 }
                                 catch {
-                                    Write-Error ("Utility module import failed for {0}: {1}" -f $Name, $_)
+                                    Write-Error ("Utility module import failed for {0}: {1}" -f $using:moduleName, $_)
                                 }
-                            } -ArgumentList $filePath, $moduleName
+                            }
 
                             # Track background job so we can inspect later if needed
                             $script:backgroundJobs += @{ Name = $moduleName; Job = $job }
@@ -339,16 +336,16 @@ Measure-Block 'Core Setup' {
 Start-Job -ScriptBlock {
     Start-Sleep -Milliseconds 200
     try {
-        if ($using:script:moduleAliases) {
-            foreach ($name in $using:script:moduleAliases.Keys) {
+        if ($using:moduleAliases) {
+            foreach ($name in $using:moduleAliases.Keys) {
                 $functionName = "Use-$name"
                 if (-not (Get-Command -Name $functionName -ErrorAction SilentlyContinue)) {
                     Set-Item -Path "Function:$functionName" -Value {
                         param($arguments)
                         # Replace this proxy with a real loader and invoke it
-                        Remove-Item "Function:$functionName" -ErrorAction SilentlyContinue
-                        Import-PSModule $name
-                        & (Get-Command -Name $functionName -ErrorAction SilentlyContinue) @arguments
+                        Remove-Item "Function:$using:name" -ErrorAction SilentlyContinue
+                        Import-PSModule $using:name
+                        & (Get-Command -Name $using:functionName -ErrorAction SilentlyContinue) @arguments
                     }.GetNewClosure()
                 }
             }
@@ -367,7 +364,7 @@ Measure-Block 'Shell Setup' {
         if (Test-Path $aliasPath) {
             try {
                 # Temporarily suppress warnings (log this action)
-                if (-not $global:ProfileSuppressInfoLogs) {
+                if (-not $script:ProfileSuppressInfoLogs) {
                     Write-Verbose "[INFO] Suppressing warnings and verbose output for alias loading..." -ForegroundColor Yellow
                 }
                 $WarningPreference = 'SilentlyContinue'
@@ -484,7 +481,7 @@ Start-Job -ScriptBlock {
 } | Out-Null
 
 # Dependency installer functions
-function Install-Dependencies {
+function Install-Dependency {
     <#
     .SYNOPSIS
         Install PowerShell profile dependencies
@@ -499,11 +496,11 @@ function Install-Dependencies {
     .PARAMETER Tool
         Install a specific tool by name
     .EXAMPLE
-        Install-Dependencies -All
+        Install-Dependency -All
     .EXAMPLE
-        Install-Dependencies -PackageManagers
+        Install-Dependency -PackageManagers
     .EXAMPLE
-        Install-Dependencies -Tool git
+        Install-Dependency -Tool git
     #>
     param(
         [switch]$All,
@@ -530,15 +527,15 @@ function Install-Dependencies {
         Write-Verbose "====================================="
         Write-Verbose ""
         Write-Verbose "USAGE:"
-        Write-Verbose "    Install-Dependencies [-All|-PackageManagers|-CliTools|-Tool <name>]"
+        Write-Verbose "    Install-Dependency [-All|-PackageManagers|-CliTools|-Tool <name>]"
         Write-Verbose ""
         Write-Verbose "EXAMPLES:"
-        Write-Verbose "    Install-Dependencies -All"
-        Write-Verbose "    Install-Dependencies -PackageManagers"
-        Write-Verbose "    Install-Dependencies -CliTools"
-        Write-Verbose "    Install-Dependencies -Tool git"
+        Write-Verbose "    Install-Dependency -All"
+        Write-Verbose "    Install-Dependency -PackageManagers"
+        Write-Verbose "    Install-Dependency -CliTools"
+        Write-Verbose "    Install-Dependency -Tool git"
         Write-Verbose ""
-        Write-Verbose "Run 'Install-Dependencies -List' to see available tools."
+        Write-Verbose "Run 'Install-Dependency -List' to see available tools."
         return
     }
 

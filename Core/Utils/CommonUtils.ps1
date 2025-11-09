@@ -3,7 +3,7 @@
 # Create module scope
 $script:moduleRoot = Split-Path -Parent $PSCommandPath
 
-function Test-CommandExists {
+function Test-CommandExist {
     [CmdletBinding()]
     param([string]$command)
 
@@ -47,8 +47,8 @@ if (-not (Test-Path "$moduleRoot\CommonUtils.psd1")) {
         -ModuleVersion '1.0.0' `
         -Author 'unaiu' `
         -Description 'Common utility functions for PowerShell profile' `
-        -FunctionsToExport @('Test-CommandExists', 'Test-IsAdmin', 'Get-FormatedUptime', 'Get-PubIP', 'Initialize-EncodingConfig')
+        -FunctionsToExport @('Test-CommandExist', 'Test-IsAdmin', 'Get-FormatedUptime', 'Get-PubIP', 'Initialize-EncodingConfig')
 }
 
 # Export module members
-Export-ModuleMember -Function Test-CommandExists, Test-IsAdmin, Get-FormatedUptime, Get-PubIP, Initialize-EncodingConfig
+Export-ModuleMember -Function Test-CommandExist, Test-IsAdmin, Get-FormatedUptime, Get-PubIP, Initialize-EncodingConfig

@@ -14,7 +14,7 @@ function Initialize-Editor {
 
     $editors = @('nvim', 'code', 'notepad', 'pvim', 'vim', 'vi', 'notepad++', 'sublime_text')
     foreach ($editor in $editors) {
-        if (Test-CommandExists $editor) {
+        if (Test-CommandExist $editor) {
             $script:EDITOR = $editor
             if ($editor -eq 'nvim' -and (Test-Path "$env:LOCALAPPDATA/$env:DEFAULT_NVIM_CONFIG" -PathType Container)) {
                 $env:NVIM_APPNAME = $env:DEFAULT_NVIM_CONFIG
@@ -103,7 +103,13 @@ else {
 
 # File and directory management
 function mkcd { param($dir) mkdir $dir -Force; Set-Location $dir }
-function New-File($file) { "" | Out-File $file -Encoding ASCII }
+function New-File($file) { 
+    [CmdletBinding(SupportsShouldProcess)]
+    param($file)
+    if ($PSCmdlet.ShouldProcess($file, "Create file")) {
+        "" | Out-File $file -Encoding ASCII 
+    }
+}
 Set-Alias -Name touch -Value New-File
 
 # System information and utilities
@@ -117,7 +123,7 @@ function Get-FormatedUptime {
 
 function uptime {
   If ($PSVersionTable.PSVersion.Major -eq 5) {
-    Get-WmiObject win32_operatingsystem |
+    Get-CimInstance -ClassName Win32_OperatingSystem |
     Select-Object @{EXPRESSION = { $_.ConverttoDateTime($_.lastbootuptime) } } | Format-Table -HideTableHeaders
   }
   Else {
@@ -180,17 +186,20 @@ function Test-IsAdmin {
 }
 
 function Restart-BIOS {
-  if (Test-IsAdmin) {
-    shutdown /r /fw /f /t 0
-  }
-  else {
-    if (Test-CommandExists sudo) {
-      sudo shutdown /r /fw /f /t 0
+    [CmdletBinding(SupportsShouldProcess)]
+    if ($PSCmdlet.ShouldProcess("System", "Restart to BIOS")) {
+        if (Test-IsAdmin) {
+            shutdown /r /fw /f /t 0
+        }
+        else {
+            if (Test-CommandExist sudo) {
+                sudo shutdown /r /fw /f /t 0
+            }
+            else {
+                Write-Verbose "Please run with administrator privilege"
+            }
+        }
     }
-    else {
-      Write-Verbose "Please run with administrator privilege"
-    }
-  }
 }
 
 # Powershell profile from https://github.com/craftzdog/dotfiles-public/blob/master/.config/powershell/user_profile.ps1
@@ -236,7 +245,7 @@ function Expand-CustomArchive {
 }
 Set-Alias -Name extract -Value Expand-CustomArchive
 
-function Expand-MultipleArchives {
+function Expand-MultipleArchive {
   $CurrentDate = (Get-Date).ToString("yyyy-MM-dd_HH-mm-ss")
   $Folder = "extracted_$($CurrentDate)"
   New-Item -Path $Folder -ItemType Directory | Out-Null
@@ -244,9 +253,9 @@ function Expand-MultipleArchives {
     Expand-CustomArchive -File $File -Folder "$($Folder)\$([System.IO.Path]::GetFileNameWithoutExtension($File))"
   }
 }
-Set-Alias -Name extract_multi -Value Expand-MultipleArchives
+Set-Alias -Name extract_multi -Value Expand-MultipleArchive
 
-function Get-Fonts {
+function Get-Font {
   param (
     $regex
   )

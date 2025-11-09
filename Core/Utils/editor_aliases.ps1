@@ -5,7 +5,7 @@ function Initialize-Editor {
 
     $editors = @('nvim', 'code', 'notepad', 'pvim', 'vim', 'vi', 'notepad++', 'sublime_text')
     foreach ($editor in $editors) {
-        if (Test-CommandExists $editor) {
+        if (Test-CommandExist $editor) {
             $script:EDITOR = $editor
             if ($editor -eq 'nvim' -and (Test-Path "$env:LOCALAPPDATA/$env:DEFAULT_NVIM_CONFIG" -PathType Container)) {
                 $env:NVIM_APPNAME = $env:DEFAULT_NVIM_CONFIG

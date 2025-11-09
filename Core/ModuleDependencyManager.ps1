@@ -17,7 +17,7 @@ function Register-ModuleDependency {
     }
 }
 
-function Test-ModuleRequirements {
+function Test-ModuleRequirement {
     param([string]$ModuleName)
 
     if (-not $script:moduleDependencies.ContainsKey($ModuleName)) { return $true }
@@ -38,7 +38,7 @@ function Test-ModuleRequirements {
 
     # Check dependencies
     foreach ($dep in $dependency.Dependencies) {
-        if (-not (Test-ModuleRequirements $dep)) {
+        if (-not (Test-ModuleRequirement $dep)) {
             Write-Warning "Dependency $dep for module $ModuleName not satisfied"
             return $false
         }
@@ -47,13 +47,13 @@ function Test-ModuleRequirements {
     return $true
 }
 
-function Import-ModuleWithDependencies {
+function Import-ModuleWithDependency {
     param(
         [string]$ModuleName,
         [switch]$Force
     )
 
-    if (-not (Test-ModuleRequirements $ModuleName)) {
+    if (-not (Test-ModuleRequirement $ModuleName)) {
         if ($script:moduleDependencies[$ModuleName].OnFailure) {
             & $script:moduleDependencies[$ModuleName].OnFailure
         }

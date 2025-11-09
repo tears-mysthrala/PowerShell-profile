@@ -125,8 +125,8 @@ foreach ($f in $files) {
     if (-not $text) { continue }
 
     $pattern = '(?m)^[ \t]*function[ \t]+([A-Za-z0-9_\-]+)\b.*'
-    $matches = [regex]::Matches($text, $pattern)
-    foreach ($m in $matches) {
+    $functionMatches = [regex]::Matches($text, $pattern)
+    foreach ($m in $functionMatches) {
         $name = $m.Groups[1].Value
         $sig = Get-FunctionSignature $text $m.Index
         $desc = Get-PrecedingCommentBlock $text $m.Index

@@ -1,4 +1,4 @@
-function Update-WindowsUpdates {
+function Update-WindowsUpdate {
     param(
         [switch]$UseLog
     )

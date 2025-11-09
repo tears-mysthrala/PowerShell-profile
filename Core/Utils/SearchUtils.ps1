@@ -1,6 +1,6 @@
 # Search utilities for PowerShell profile
 
-function Find-Files {
+function Find-File {
     param(
         [Parameter(Position=0)]
         [string]$pattern = "*",
@@ -34,7 +34,7 @@ function Search-FileContent {
         Select-Object Path, Line, LineNumber
 }
 
-function Find-Command {
+function Find-PowerShellCommand {
     param([string]$name)
     Get-Command -Name "*$name*" |
         Select-Object Name, CommandType, Version, Source |
@@ -42,8 +42,8 @@ function Find-Command {
 }
 
 # Set aliases
-Set-Alias -Name ff -Value Find-Files
+Set-Alias -Name ff -Value Find-File
 Set-Alias -Name search -Value Search-FileContent
-Set-Alias -Name which -Value Find-Command
+Set-Alias -Name which -Value Find-PowerShellCommand
 
 

@@ -1,9 +1,12 @@
 # File system utilities for PowerShell profile
 
 function New-DirectoryAndEnter {
+    [CmdletBinding(SupportsShouldProcess)]
     param([string]$dir)
-    New-Item -Path $dir -ItemType Directory -Force | Out-Null
-    Set-Location $dir
+    if ($PSCmdlet.ShouldProcess($dir, "Create directory and enter")) {
+        New-Item -Path $dir -ItemType Directory -Force | Out-Null
+        Set-Location $dir
+    }
 }
 
 function Expand-CustomArchive {
@@ -41,7 +44,7 @@ function Expand-CustomArchive {
     }
 }
 
-function Expand-CustomArchives {
+function Expand-CustomArchive {
     param([string[]]$Files)
 
     $CurrentDate = (Get-Date).ToString("yyyy-MM-dd_HH-mm-ss")
@@ -55,6 +58,6 @@ function Expand-CustomArchives {
 
 Set-Alias -Name mkcd -Value New-DirectoryAndEnter
 Set-Alias -Name extract -Value Expand-CustomArchive
-Set-Alias -Name extract-multi -Value Expand-CustomArchives
+Set-Alias -Name extract-multi -Value Expand-CustomArchive
 
 # Export-ModuleMember -Function * -Alias *

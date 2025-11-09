@@ -25,13 +25,6 @@ function Register-UnifiedModule {
         [string]$ModulePath
     )
 
-    $originalPreferences = @{
-        Verbose = $VerbosePreference
-        Debug = $DebugPreference
-        Warning = $WarningPreference
-        Information = $InformationPreference
-    }
-
     # Suppress all non-critical messages (log this action)
     Write-Verbose "[INFO] Suppressing Verbose, Debug, Warning, and Information output temporarily..." -ForegroundColor Yellow
     $oldVerbose = $VerbosePreference
@@ -190,7 +183,7 @@ function Get-UnifiedToolStatus {
     }
 }
 
-function Test-UnifiedModuleRequirements {
+function Test-UnifiedModuleRequirement {
     [CmdletBinding(SupportsShouldProcess)]
     param([string]$Name)
 
@@ -203,7 +196,7 @@ function Test-UnifiedModuleRequirements {
         try {
             $module = Test-ModuleManifest -Path $moduleInfo.ModulePath -ErrorAction Stop
         } catch {
-            # Silently continue on manifest validation failure
+            Write-Verbose "Module manifest validation failed for $($moduleInfo.ModulePath): $_"
         }
     }
 
@@ -232,7 +225,7 @@ function Test-UnifiedModuleRequirements {
 
     # Dependency checks
     foreach ($dep in $moduleInfo.Dependencies) {
-        if (-not (Test-UnifiedModuleRequirements $dep)) {
+        if (-not (Test-UnifiedModuleRequirement $dep)) {
             return $null
         }
     }
@@ -260,7 +253,7 @@ function Import-UnifiedModule {
 
     $moduleInfo.LoadAttempts++
 
-    if (-not (Test-UnifiedModuleRequirements $Name)) {
+    if (-not (Test-UnifiedModuleRequirement $Name)) {
         if ($moduleInfo.OnFailure) {
             & $moduleInfo.OnFailure
             return $null
@@ -352,7 +345,6 @@ function Initialize-StartupModule {
         $WarningPreference = $oldWarning
         $InformationPreference = $oldInformation
         # Create a hashtable to store module initialization scriptblocks
-        $moduleJobs = @{}
 
         foreach ($moduleName in $startupModules) {
             $moduleInfo = $script:moduleRegistry[$moduleName]

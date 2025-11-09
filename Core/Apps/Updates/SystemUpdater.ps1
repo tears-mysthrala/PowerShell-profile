@@ -1,4 +1,4 @@
-using namespace System.Threading
+﻿using namespace System.Threading
 using namespace System.Collections.Concurrent
 
 # Unified system update module
@@ -43,7 +43,7 @@ function Update-System {
         # Windows Update
         Write-Progress @progressParams -Status 'Checking Windows updates'
         . "$PSScriptRoot\WindowsUpdateHelper.ps1"
-        Update-WindowsUpdates
+        Update-WindowsUpdate
 
         # Winget updates
         Write-Progress @progressParams -Status 'Checking winget packages'
@@ -64,7 +64,7 @@ function Update-System {
 
         # Microsoft Store updates
         Write-Progress @progressParams -Status 'Checking Store apps'
-        Update-StoreApps
+        Update-StoreApp
 
         # PowerShell module updates
         Write-Progress @progressParams -Status 'Checking PowerShell modules'
@@ -83,7 +83,7 @@ function Update-System {
 }
 
 # PowerShell module update function
-function Update-PowerShellModules {
+function Update-PowerShellModule {
     $modulesToRetry = @()
     $modulesToUpdate = @{}
 

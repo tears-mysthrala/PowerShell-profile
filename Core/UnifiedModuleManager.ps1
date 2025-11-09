@@ -10,7 +10,7 @@ $script:toolRegistry = @{}
 $script:loadedTools = @{}
 
 function Register-UnifiedModule {
-    [CmdletBinding(SupportsShouldProcess)]
+    [CmdletBinding()]
     param(
         [string]$Name,
         [string]$MinVersion,
@@ -183,8 +183,8 @@ function Get-UnifiedToolStatus {
     }
 }
 
-function Test-UnifiedModuleRequirements {
-    [CmdletBinding(SupportsShouldProcess)]
+function Test-UnifiedModuleRequirement {
+    [CmdletBinding()]
     param([string]$Name)
 
     if (-not $script:moduleRegistry.ContainsKey($Name)) { return $true }
@@ -225,7 +225,7 @@ function Test-UnifiedModuleRequirements {
 
     # Dependency checks
     foreach ($dep in $moduleInfo.Dependencies) {
-        if (-not (Test-UnifiedModuleRequirements $dep)) {
+        if (-not (Test-UnifiedModuleRequirement $dep)) {
             return $null
         }
     }
@@ -253,7 +253,7 @@ function Import-UnifiedModule {
 
     $moduleInfo.LoadAttempts++
 
-    if (-not (Test-UnifiedModuleRequirements $Name)) {
+    if (-not (Test-UnifiedModuleRequirement $Name)) {
         if ($moduleInfo.OnFailure) {
             & $moduleInfo.OnFailure
             return $null
@@ -291,11 +291,17 @@ function Import-UnifiedModule {
             $WarningPreference = $oldWarning
             $InformationPreference = $oldInformation
             if ($moduleInfo.InitializerBlock) {
-                & $moduleInfo.InitializerBlock
+                if ($PSCmdlet.ShouldProcess($Name, "Execute initializer block")) {
+                    & $moduleInfo.InitializerBlock
+                }
             } elseif ($moduleInfo.ModulePath -and (Test-Path $moduleInfo.ModulePath)) {
-                Import-Module $moduleInfo.ModulePath -Force:$Force -ErrorAction Stop
+                if ($PSCmdlet.ShouldProcess($moduleInfo.ModulePath, "Import module")) {
+                    Import-Module $moduleInfo.ModulePath -Force:$Force -ErrorAction Stop
+                }
             } else {
-                Import-Module $Name -Force:$Force -ErrorAction Stop
+                if ($PSCmdlet.ShouldProcess($Name, "Import module")) {
+                    Import-Module $Name -Force:$Force -ErrorAction Stop
+                }
             }
         } finally {
             $VerbosePreference = $originalPreferences.Verbose
@@ -351,40 +357,38 @@ function Initialize-StartupModule {
 
             # Create a job for each module (prefer Start-ThreadJob when available)
             $jobScript = {
-                param($moduleName, $moduleInfo)
-
                 $sw = [System.Diagnostics.Stopwatch]::StartNew()
 
                 try {
-                    if ($moduleInfo.InitializerBlock) {
-                        & $moduleInfo.InitializerBlock
-                    } elseif ($moduleInfo.ModulePath -and (Test-Path $moduleInfo.ModulePath)) {
-                        Import-Module $moduleInfo.ModulePath -Force
+                    if ($using:moduleInfo.InitializerBlock) {
+                        & $using:moduleInfo.InitializerBlock
+                    } elseif ($using:moduleInfo.ModulePath -and (Test-Path $using:moduleInfo.ModulePath)) {
+                        Import-Module $using:moduleInfo.ModulePath -Force
                     } else {
-                        Import-Module $moduleName -Force
+                        Import-Module $using:moduleName -Force
                     }
 
                     $sw.Stop()
                     return @{
-                        Name = $moduleName
+                        Name = $using:moduleName
                         Success = $true
                         Time = $sw.ElapsedMilliseconds
                     }
                 } catch {
-                    if ($moduleInfo.OnFailure) {
-                        & $moduleInfo.OnFailure
+                    if ($using:moduleInfo.OnFailure) {
+                        & $using:moduleInfo.OnFailure
                     }
                     return @{
-                        Name = $moduleName
+                        Name = $using:moduleName
                         Success = $false
                         Error = $_.Exception.Message
                     }
                 }
             }
             if (Get-Command -Name Start-ThreadJob -ErrorAction SilentlyContinue) {
-                $job = Start-ThreadJob -ScriptBlock $jobScript -ArgumentList $moduleName, $moduleInfo
+                $job = Start-ThreadJob -ScriptBlock $jobScript
             } else {
-                $job = Start-Job -ScriptBlock $jobScript -ArgumentList $moduleName, $moduleInfo
+                $job = Start-Job -ScriptBlock $jobScript
             }
             $jobs += $job
         }

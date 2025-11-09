@@ -105,7 +105,7 @@ function Test-ModuleInstalled {
     return $false
 }
 
-function Install-RequiredModules {
+function Install-RequiredModule {
     [CmdletBinding()]
     param()
 

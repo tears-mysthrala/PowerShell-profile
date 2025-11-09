@@ -7,7 +7,13 @@ function .5 { Set-Location .\..\..\..\..\..\.. }
 
 # File and directory management
 function mkcd { param($dir) mkdir $dir -Force; Set-Location $dir }
-function New-File($file) { "" | Out-File $file -Encoding ASCII }
+function New-File($file) { 
+    [CmdletBinding(SupportsShouldProcess)]
+    param($file)
+    if ($PSCmdlet.ShouldProcess($file, "Create file")) {
+        "" | Out-File $file -Encoding ASCII 
+    }
+}
 Set-Alias -Name touch -Value New-File
 
 # System aliases

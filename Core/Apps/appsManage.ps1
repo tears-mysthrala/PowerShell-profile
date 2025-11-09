@@ -1,4 +1,4 @@
-New-Module -Name AppsManage -ScriptBlock {
+﻿New-Module -Name AppsManage -ScriptBlock {
 $CHOCO_APPS_TO_UPGRADE = @(
 )
 
@@ -135,23 +135,23 @@ function Update-ScoopApp {
     Write-Verbose "No app was selected to update"
   }
 }
-function Update-NpmApps {
+function Update-NpmApp {
   $apps_string = $NPM_APPS_TO_UPGRADE -join " "
   npm upgrade $apps_string
 }
 
-function Update-PipApps {
+function Update-PipApp {
   $apps_string = $PIP_APPS_TO_UPGRADE -join " "
   pip install --upgrade $apps_string
 }
 
-function Update-PowershellModules {
+function Update-PowershellModule {
   # Use the variable in the command
   Update-Module -Name $POWERSHELL_MODULES_TO_UPDATE -AcceptLicense -Force
 }
 
 
-function Uninstall-ChocoApps {
+function Uninstall-ChocoApp {
   $apps = Select-App $(Get-ChocoApp)
   if ($apps.Length -eq 0) {
     Write-Verbose "No app was selected"!
@@ -165,7 +165,7 @@ function Uninstall-ChocoApps {
   }
 }
 
-function Uninstall-ScoopApps {
+function Uninstall-ScoopApp {
   $apps = Select-Apps $(List-ScoopApps)
   if ($apps.Length -eq 0) {
     Write-Verbose "No app was selected"!

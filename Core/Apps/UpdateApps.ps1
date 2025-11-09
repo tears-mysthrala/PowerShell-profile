@@ -1,10 +1,10 @@
-# Script to update all installed applications
+﻿# Script to update all installed applications
 $ErrorActionPreference = 'Continue'
 $ProgressPreference = 'Continue'
 
 # Initialize logging
 $logFile = Join-Path $env:TEMP "UpdateApps_$(Get-Date -Format 'yyyyMMdd_HHmmss').log"
-function Write-Log {
+function Write-AppLog {
     param($Message)
     $logMessage = "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss'): $Message"
     Write-Verbose $logMessage
@@ -14,15 +14,15 @@ function Write-Log {
 # Function to handle errors
 function Write-ErrorLog {
     param($ErrorMessage)
-    Write-Log "ERROR: $ErrorMessage"
-    Write-Log "Details: $($Error[0].Exception.Message)"
+    Write-AppLog "ERROR: $ErrorMessage"
+    Write-AppLog "Details: $($Error[0].Exception.Message)"
 }
 
 # Update Windows using native API
-Write-Log "Starting Windows Update..."
+Write-AppLog "Starting Windows Update..."
 try {
     . "$PSScriptRoot\WindowsUpdateHelper.ps1"
-    Update-WindowsUpdates -UseLog
+    Update-WindowsUpdate -UseLog
 }
 catch {
     Write-ErrorLog "Failed to process Windows updates"
@@ -34,7 +34,7 @@ $jobs = @()
 . "$PSScriptRoot\UpdateAppsHelper.ps1"
 
 # Winget updates
-if (Test-CommandExists 'winget') {
+if (Test-CommandExist 'winget') {
     if (Get-Command -Name Start-ThreadJob -ErrorAction SilentlyContinue) {
         $jobs += Start-ThreadJob -ScriptBlock {
             try {
@@ -44,12 +44,12 @@ if (Test-CommandExists 'winget') {
                 Write-Output "ERROR: Winget update failed - $($_.Exception.Message)"
             }
         } -Name 'WingetUpdate'
-        Write-Log "Started Winget update job"
+        Write-AppLog "Started Winget update job"
     }
 }
 
 # Scoop updates
-if (Test-CommandExists 'scoop') {
+if (Test-CommandExist 'scoop') {
     if (Get-Command -Name Start-ThreadJob -ErrorAction SilentlyContinue) {
         $jobs += Start-ThreadJob -ScriptBlock {
             try {
@@ -59,12 +59,12 @@ if (Test-CommandExists 'scoop') {
                 Write-Output "ERROR: Scoop update failed - $($_.Exception.Message)"
             }
         } -Name 'ScoopUpdate'
-        Write-Log "Started Scoop update job"
+        Write-AppLog "Started Scoop update job"
     }
 }
 
 # Chocolatey updates
-if (Test-CommandExists 'choco') {
+if (Test-CommandExist 'choco') {
     if (Get-Command -Name Start-ThreadJob -ErrorAction SilentlyContinue) {
         $jobs += Start-ThreadJob -ScriptBlock {
             try {
@@ -74,12 +74,12 @@ if (Test-CommandExists 'choco') {
                 Write-Output "ERROR: Chocolatey update failed - $($_.Exception.Message)"
             }
         } -Name 'ChocolateyUpdate'
-        Write-Log "Started Chocolatey update job"
+        Write-AppLog "Started Chocolatey update job"
     }
 }
 
 # NPM global updates
-if (Test-CommandExists 'npm') {
+if (Test-CommandExist 'npm') {
     if (Get-Command -Name Start-ThreadJob -ErrorAction SilentlyContinue) {
         $jobs += Start-ThreadJob -ScriptBlock {
             try {
@@ -89,13 +89,13 @@ if (Test-CommandExists 'npm') {
                 Write-Output "ERROR: NPM update failed - $($_.Exception.Message)"
             }
         } -Name 'NpmUpdate'
-        Write-Log "Started NPM update job"
+        Write-AppLog "Started NPM update job"
     }
 }
 
 # PowerShell module updates
 try {
-    Write-Log "Updating PowerShell modules..."
+    Write-AppLog "Updating PowerShell modules..."
     $modulesToRetry = @()
     $modulesToUpdate = @{}
 
@@ -113,7 +113,7 @@ try {
             }
         }
         catch {
-            Write-Log "WARNING: Could not check online version for module '$($currentModule.Name)': $($_.Exception.Message)"
+            Write-AppLog "WARNING: Could not check online version for module '$($currentModule.Name)': $($_.Exception.Message)"
         }
     }
 
@@ -125,36 +125,36 @@ try {
             #Write-Verbose "[INFO] Checking if module '$moduleName' is loaded with ErrorAction SilentlyContinue (errors will be suppressed)" -ForegroundColor Yellow
             $loadedModule = Get-Module -Name $moduleName -ErrorAction SilentlyContinue
             if ($loadedModule) {
-                Write-Log "INFO: Unloading module '$moduleName' for update..."
+                Write-AppLog "INFO: Unloading module '$moduleName' for update..."
                 try {
                     Remove-Module -Name $moduleName -Force -ErrorAction Stop
-                    Write-Log "INFO: Successfully unloaded module '$moduleName'"
+                    Write-AppLog "INFO: Successfully unloaded module '$moduleName'"
                 }
                 catch {
                     $modulesToRetry += $moduleName
-                    Write-Log "WARNING: Could not unload module '$moduleName'. Will update after restart: $($_.Exception.Message)"
+                    Write-AppLog "WARNING: Could not unload module '$moduleName'. Will update after restart: $($_.Exception.Message)"
                     continue
                 }
             }
 
             Update-Module -Name $moduleName -AcceptLicense -Force -ErrorAction Stop
-            Write-Log "SUCCESS: Updated module '$moduleName' from version $($moduleInfo.CurrentVersion) to $($moduleInfo.NewVersion)"
+            Write-AppLog "SUCCESS: Updated module '$moduleName' from version $($moduleInfo.CurrentVersion) to $($moduleInfo.NewVersion)"
 
             # Attempt to reload the module if it was previously loaded
             if ($loadedModule) {
                 try {
                     Import-Module -Name $moduleName -Force -ErrorAction Stop
-                    Write-Log "INFO: Successfully reloaded module '$moduleName' with new version"
+                    Write-AppLog "INFO: Successfully reloaded module '$moduleName' with new version"
                 }
                 catch {
-                    Write-Log "WARNING: Could not reload module '$moduleName': $($_.Exception.Message)"
+                    Write-AppLog "WARNING: Could not reload module '$moduleName': $($_.Exception.Message)"
                 }
             }
         }
         catch {
             if ($_.Exception.Message -match 'is currently in use') {
                 $modulesToRetry += $moduleName
-                Write-Log "WARNING: Module '$moduleName' is in use. Will update from $($moduleInfo.CurrentVersion) to $($moduleInfo.NewVersion) after restart."
+                Write-AppLog "WARNING: Module '$moduleName' is in use. Will update from $($moduleInfo.CurrentVersion) to $($moduleInfo.NewVersion) after restart."
             }
             else {
                 Write-ErrorLog "Failed to update module '$moduleName': $($_.Exception.Message)"
@@ -163,15 +163,15 @@ try {
     }
 
     if ($modulesToRetry.Count -gt 0) {
-        Write-Log "\nModules requiring restart to update:"
+        Write-AppLog "\nModules requiring restart to update:"
         $modulesToRetry | ForEach-Object {
             $info = $modulesToUpdate[$_]
-            Write-Log "  - $_ (Current: $($info.CurrentVersion) → New: $($info.NewVersion))"
+            Write-AppLog "  - $_ (Current: $($info.CurrentVersion) → New: $($info.NewVersion))"
         }
-        Write-Log "\nPlease restart PowerShell to complete these updates."
+        Write-AppLog "\nPlease restart PowerShell to complete these updates."
     }
     elseif ($modulesToUpdate.Count -eq 0) {
-        Write-Log "All PowerShell modules are up to date."
+        Write-AppLog "All PowerShell modules are up to date."
     }
 }
 catch {
@@ -179,7 +179,7 @@ catch {
 }
 
 # Wait for all package manager jobs to complete
-Write-Log "Waiting for package manager updates to complete..."
+Write-AppLog "Waiting for package manager updates to complete..."
 Wait-Job -Job $jobs | Out-Null
 
 
@@ -206,4 +206,4 @@ foreach ($job in $jobs) {
     Remove-Job -Job $job
 }
 
-Write-Log "All updates completed. Log file: $logFile"
+Write-AppLog "All updates completed. Log file: $logFile"

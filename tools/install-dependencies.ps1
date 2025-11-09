@@ -1,4 +1,4 @@
-# Dependency Installer for PowerShell Profile
+﻿# Dependency Installer for PowerShell Profile
 # This script installs external tools and package managers required by the PowerShell profile
 
 [CmdletBinding(SupportsShouldProcess)]
@@ -54,7 +54,7 @@ function Install-Scoop {
     }
 
     try {
-        if (!(Test-CommandExists 'scoop')) {
+        if (!(Test-CommandExist 'scoop')) {
             $installScript = Invoke-RestMethod -Uri 'https://get.scoop.sh'
             & ([scriptblock]::Create($installScript))
             Write-ColorOutput "  ✓ Scoop installed successfully" $Green
@@ -68,7 +68,7 @@ function Install-Scoop {
 
 function Install-Winget {
     Write-ColorOutput "Checking Winget..." $Cyan
-    if (Test-CommandExists 'winget') {
+    if (Test-CommandExist 'winget') {
         Write-ColorOutput "  ✓ Winget already installed" $Green
         return
     }
@@ -84,24 +84,24 @@ function Install-Git {
         return
     }
 
-    if (Test-CommandExists 'git') {
+    if (Test-CommandExist 'git') {
         Write-ColorOutput "  ✓ Git already installed" $Green
         return
     }
 
     try {
         # Try Chocolatey first
-        if (Test-CommandExists 'choco') {
+        if (Test-CommandExist 'choco') {
             Write-ColorOutput "  Installing via Chocolatey..." $Yellow
             choco install git -y
         }
         # Try Scoop
-        elseif (Test-CommandExists 'scoop') {
+        elseif (Test-CommandExist 'scoop') {
             Write-ColorOutput "  Installing via Scoop..." $Yellow
             scoop install git
         }
         # Try Winget
-        elseif (Test-CommandExists 'winget') {
+        elseif (Test-CommandExist 'winget') {
             Write-ColorOutput "  Installing via Winget..." $Yellow
             winget install --id Git.Git -e --source winget
         }
@@ -111,7 +111,7 @@ function Install-Git {
             return
         }
 
-        if (Test-CommandExists 'git') {
+        if (Test-CommandExist 'git') {
             Write-ColorOutput "  ✓ Git installed successfully" $Green
         } else {
             Write-ColorOutput "  ✗ Git installation failed" $Red
@@ -128,24 +128,24 @@ function Install-Fzf {
         return
     }
 
-    if (Test-CommandExists 'fzf') {
+    if (Test-CommandExist 'fzf') {
         Write-ColorOutput "  ✓ fzf already installed" $Green
         return
     }
 
     try {
         # Try Chocolatey first
-        if (Test-CommandExists 'choco') {
+        if (Test-CommandExist 'choco') {
             Write-ColorOutput "  Installing via Chocolatey..." $Yellow
             choco install fzf -y
         }
         # Try Scoop
-        elseif (Test-CommandExists 'scoop') {
+        elseif (Test-CommandExist 'scoop') {
             Write-ColorOutput "  Installing via Scoop..." $Yellow
             scoop install fzf
         }
         # Try Winget
-        elseif (Test-CommandExists 'winget') {
+        elseif (Test-CommandExist 'winget') {
             Write-ColorOutput "  Installing via Winget..." $Yellow
             winget install --id junegunn.fzf -e --source winget
         }
@@ -155,7 +155,7 @@ function Install-Fzf {
             return
         }
 
-        if (Test-CommandExists 'fzf') {
+        if (Test-CommandExist 'fzf') {
             Write-ColorOutput "  ✓ fzf installed successfully" $Green
         } else {
             Write-ColorOutput "  ✗ fzf installation failed" $Red
@@ -172,24 +172,24 @@ function Install-Bat {
         return
     }
 
-    if (Test-CommandExists 'bat') {
+    if (Test-CommandExist 'bat') {
         Write-ColorOutput "  ✓ bat already installed" $Green
         return
     }
 
     try {
         # Try Chocolatey first
-        if (Test-CommandExists 'choco') {
+        if (Test-CommandExist 'choco') {
             Write-ColorOutput "  Installing via Chocolatey..." $Yellow
             choco install bat -y
         }
         # Try Scoop
-        elseif (Test-CommandExists 'scoop') {
+        elseif (Test-CommandExist 'scoop') {
             Write-ColorOutput "  Installing via Scoop..." $Yellow
             scoop install bat
         }
         # Try Winget
-        elseif (Test-CommandExists 'winget') {
+        elseif (Test-CommandExist 'winget') {
             Write-ColorOutput "  Installing via Winget..." $Yellow
             winget install --id sharkdp.bat -e --source winget
         }
@@ -199,7 +199,7 @@ function Install-Bat {
             return
         }
 
-        if (Test-CommandExists 'bat') {
+        if (Test-CommandExist 'bat') {
             Write-ColorOutput "  ✓ bat installed successfully" $Green
         } else {
             Write-ColorOutput "  ✗ bat installation failed" $Red
@@ -216,24 +216,24 @@ function Install-Eza {
         return
     }
 
-    if (Test-CommandExists 'eza') {
+    if (Test-CommandExist 'eza') {
         Write-ColorOutput "  ✓ eza already installed" $Green
         return
     }
 
     try {
         # Try Scoop first (has eza)
-        if (Test-CommandExists 'scoop') {
+        if (Test-CommandExist 'scoop') {
             Write-ColorOutput "  Installing via Scoop..." $Yellow
             scoop install eza
         }
         # Try Chocolatey
-        elseif (Test-CommandExists 'choco') {
+        elseif (Test-CommandExist 'choco') {
             Write-ColorOutput "  Installing via Chocolatey..." $Yellow
             choco install eza -y
         }
         # Try Winget
-        elseif (Test-CommandExists 'winget') {
+        elseif (Test-CommandExist 'winget') {
             Write-ColorOutput "  Installing via Winget..." $Yellow
             winget install --id eza-community.eza -e --source winget
         }
@@ -243,7 +243,7 @@ function Install-Eza {
             return
         }
 
-        if (Test-CommandExists 'eza') {
+        if (Test-CommandExist 'eza') {
             Write-ColorOutput "  ✓ eza installed successfully" $Green
         } else {
             Write-ColorOutput "  ✗ eza installation failed" $Red
@@ -260,24 +260,24 @@ function Install-Lazygit {
         return
     }
 
-    if (Test-CommandExists 'lazygit') {
+    if (Test-CommandExist 'lazygit') {
         Write-ColorOutput "  ✓ lazygit already installed" $Green
         return
     }
 
     try {
         # Try Chocolatey first
-        if (Test-CommandExists 'choco') {
+        if (Test-CommandExist 'choco') {
             Write-ColorOutput "  Installing via Chocolatey..." $Yellow
             choco install lazygit -y
         }
         # Try Scoop
-        elseif (Test-CommandExists 'scoop') {
+        elseif (Test-CommandExist 'scoop') {
             Write-ColorOutput "  Installing via Scoop..." $Yellow
             scoop install lazygit
         }
         # Try Winget
-        elseif (Test-CommandExists 'winget') {
+        elseif (Test-CommandExist 'winget') {
             Write-ColorOutput "  Installing via Winget..." $Yellow
             winget install --id JesseDuffield.lazygit -e --source winget
         }
@@ -287,7 +287,7 @@ function Install-Lazygit {
             return
         }
 
-        if (Test-CommandExists 'lazygit') {
+        if (Test-CommandExist 'lazygit') {
             Write-ColorOutput "  ✓ lazygit installed successfully" $Green
         } else {
             Write-ColorOutput "  ✗ lazygit installation failed" $Red
@@ -304,24 +304,24 @@ function Install-Zoxide {
         return
     }
 
-    if (Test-CommandExists 'zoxide') {
+    if (Test-CommandExist 'zoxide') {
         Write-ColorOutput "  ✓ zoxide already installed" $Green
         return
     }
 
     try {
         # Try Scoop first
-        if (Test-CommandExists 'scoop') {
+        if (Test-CommandExist 'scoop') {
             Write-ColorOutput "  Installing via Scoop..." $Yellow
             scoop install zoxide
         }
         # Try Chocolatey
-        elseif (Test-CommandExists 'choco') {
+        elseif (Test-CommandExist 'choco') {
             Write-ColorOutput "  Installing via Chocolatey..." $Yellow
             choco install zoxide -y
         }
         # Try Winget
-        elseif (Test-CommandExists 'winget') {
+        elseif (Test-CommandExist 'winget') {
             Write-ColorOutput "  Installing via Winget..." $Yellow
             winget install --id ajeetdsouza.zoxide -e --source winget
         }
@@ -331,7 +331,7 @@ function Install-Zoxide {
             return
         }
 
-        if (Test-CommandExists 'zoxide') {
+        if (Test-CommandExist 'zoxide') {
             Write-ColorOutput "  ✓ zoxide installed successfully" $Green
         } else {
             Write-ColorOutput "  ✗ zoxide installation failed" $Red
@@ -348,24 +348,24 @@ function Install-Ripgrep {
         return
     }
 
-    if (Test-CommandExists 'rg') {
+    if (Test-CommandExist 'rg') {
         Write-ColorOutput "  ✓ ripgrep already installed" $Green
         return
     }
 
     try {
         # Try Scoop first
-        if (Test-CommandExists 'scoop') {
+        if (Test-CommandExist 'scoop') {
             Write-ColorOutput "  Installing via Scoop..." $Yellow
             scoop install ripgrep
         }
         # Try Chocolatey
-        elseif (Test-CommandExists 'choco') {
+        elseif (Test-CommandExist 'choco') {
             Write-ColorOutput "  Installing via Chocolatey..." $Yellow
             choco install ripgrep -y
         }
         # Try Winget
-        elseif (Test-CommandExists 'winget') {
+        elseif (Test-CommandExist 'winget') {
             Write-ColorOutput "  Installing via Winget..." $Yellow
             winget install --id BurntSushi.ripgrep.MSVC -e --source winget
         }
@@ -375,7 +375,7 @@ function Install-Ripgrep {
             return
         }
 
-        if (Test-CommandExists 'rg') {
+        if (Test-CommandExist 'rg') {
             Write-ColorOutput "  ✓ ripgrep installed successfully" $Green
         } else {
             Write-ColorOutput "  ✗ ripgrep installation failed" $Red
@@ -392,24 +392,24 @@ function Install-Fd {
         return
     }
 
-    if (Test-CommandExists 'fd') {
+    if (Test-CommandExist 'fd') {
         Write-ColorOutput "  ✓ fd already installed" $Green
         return
     }
 
     try {
         # Try Scoop first
-        if (Test-CommandExists 'scoop') {
+        if (Test-CommandExist 'scoop') {
             Write-ColorOutput "  Installing via Scoop..." $Yellow
             scoop install fd
         }
         # Try Chocolatey
-        elseif (Test-CommandExists 'choco') {
+        elseif (Test-CommandExist 'choco') {
             Write-ColorOutput "  Installing via Chocolatey..." $Yellow
             choco install fd -y
         }
         # Try Winget
-        elseif (Test-CommandExists 'winget') {
+        elseif (Test-CommandExist 'winget') {
             Write-ColorOutput "  Installing via Winget..." $Yellow
             winget install --id sharkdp.fd -e --source winget
         }
@@ -419,7 +419,7 @@ function Install-Fd {
             return
         }
 
-        if (Test-CommandExists 'fd') {
+        if (Test-CommandExist 'fd') {
             Write-ColorOutput "  ✓ fd installed successfully" $Green
         } else {
             Write-ColorOutput "  ✗ fd installation failed" $Red

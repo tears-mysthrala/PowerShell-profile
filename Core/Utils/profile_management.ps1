@@ -1,11 +1,11 @@
 function Reset-ProfileState {
-    [CmdletBinding()]
+    [CmdletBinding(SupportsShouldProcess)]
     param(
         [switch]$Quiet
     )
 
+    if ($PSCmdlet.ShouldProcess("Profile state", "Reset")) {
     try {
-        # Clear any existing background jobs
         $script:backgroundJobs = @()
 
         # Clear profile timing information
@@ -26,6 +26,7 @@ function Reset-ProfileState {
     } catch {
         Write-Error "Failed to reset profile state: $_"
         throw
+    }
     }
 }
 
