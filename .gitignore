@@ -24,7 +24,6 @@ docs/
 
 # Third-party modules (exclude all except explicitly maintained ones)
 Modules/*
-!Modules/Catppuccin/
 
 # Development and testing artifacts
 test-results/
