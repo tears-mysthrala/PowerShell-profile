@@ -175,7 +175,7 @@ function Import-UnifiedTool {
     return $false
 }
 
-function Initialize-StartupTools {
+function Initialize-StartupTool {
     $script:toolRegistry.GetEnumerator() | Where-Object { $_.Value.LoadOnStartup } | ForEach-Object {
         Import-UnifiedTool $_.Key
     }
@@ -322,7 +322,7 @@ function Import-UnifiedModule {
     }
 }
 
-function Initialize-StartupModules {
+function Initialize-StartupModule {
     [CmdletBinding(SupportsShouldProcess)]
     $startupModules = $script:moduleRegistry.GetEnumerator() |
         Where-Object { $_.Value.LoadOnStartup } |

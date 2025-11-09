@@ -2,7 +2,7 @@ New-Module -Name AppsManage -ScriptBlock {
 $CHOCO_APPS_TO_UPGRADE = @(
 )
 
-function Update-AllApps {
+function Update-AllApp {
     Write-Verbose "Starting system-wide update..." -ForegroundColor Cyan
 
     # Execute the update script
@@ -16,7 +16,7 @@ function Update-AllApps {
 }
 
 # Export the function
-# Export-ModuleMember -Function Update-AllApps
+# Export-ModuleMember -Function Update-AllApp
 
 $SCOOP_APPS_TO_UPGRADE = @(
   "extras/autohotkey",
@@ -68,19 +68,19 @@ $POWERSHELL_MODULES_TO_UPDATE = @(
   "posh-wakatime"
 )
 
-function Get-ChocoApps {
+function Get-ChocoApp {
   $apps = $(choco list --id-only --no-color).Split("\n")
   $apps = $apps[1..($apps.Length - 2)]
   return $apps
 }
 
-function Get-ScoopApps {
+function Get-ScoopApp {
   $apps = $(scoop list | Select-Object -ExpandProperty "Name").Split("\n")
   $apps = $apps[1..($apps.Length - 1)]
   return $apps
 }
 
-function Select-Apps {
+function Select-App {
   param (
     [string[]] $apps
   )
@@ -88,10 +88,10 @@ function Select-Apps {
   return $apps
 }
 
-function Update-ChocoApps {
+function Update-ChocoApp {
   $apps_set = New-Object System.Collections.Generic.HashSet[[String]]
-  $installed_apps = Get-ChocoApps
-  foreach ($app in Select-Apps $installed_apps) {
+  $installed_apps = Get-ChocoApp
+  foreach ($app in Select-App $installed_apps) {
     $apps_set.Add($app) >$null
   }
   $include = $(Read-Host "Include predefine apps to update [Y/n]").ToUpper()
@@ -113,10 +113,10 @@ function Update-ChocoApps {
   }
 }
 
-function Update-ScoopApps {
+function Update-ScoopApp {
   $apps_set = New-Object System.Collections.Generic.HashSet[[String]]
   $installed_apps = List-ScoopApps
-  foreach ($app in Select-Apps $installed_apps) {
+  foreach ($app in Select-App $installed_apps) {
     $apps_set.Add($app) >$null
   }
   $include = $(Read-Host "Include predefine apps to update [Y/n]").ToUpper()
@@ -152,7 +152,7 @@ function Update-PowershellModules {
 
 
 function Uninstall-ChocoApps {
-  $apps = Select-Apps $(Get-ChocoApps)
+  $apps = Select-App $(Get-ChocoApp)
   if ($apps.Length -eq 0) {
     Write-Verbose "No app was selected"!
     return

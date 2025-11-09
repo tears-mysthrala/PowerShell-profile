@@ -165,7 +165,7 @@ Measure-Block 'Core Setup' {
         }
 
         # Provide an explicit enable function for Terminal-Icons so nothing related to it is created at startup
-        function Enable-TerminalIcons {
+        function Enable-TerminalIcon {
             param(
                 [switch]$Async
             )
@@ -212,10 +212,10 @@ Measure-Block 'Core Setup' {
             }
 
             # Lightweight proxies that import the module on first use and then invoke the real function
-            function Initialize-PSModules {
+            function Initialize-PSModule {
                 Ensure-ProfileCore
-                $cmd = Get-Command -Module ProfileCore -Name Initialize-PSModules -ErrorAction SilentlyContinue
-                if ($cmd) { & $cmd @args } else { Write-Warning 'Initialize-PSModules not available' }
+                $cmd = Get-Command -Module ProfileCore -Name Initialize-PSModule -ErrorAction SilentlyContinue
+                if ($cmd) { & $cmd @args } else { Write-Warning 'Initialize-PSModule not available' }
             }
 
             function Import-PSModule {
@@ -339,8 +339,8 @@ Measure-Block 'Core Setup' {
 Start-Job -ScriptBlock {
     Start-Sleep -Milliseconds 200
     try {
-        if ($script:moduleAliases) {
-            foreach ($name in $script:moduleAliases.Keys) {
+        if ($using:script:moduleAliases) {
+            foreach ($name in $using:script:moduleAliases.Keys) {
                 $functionName = "Use-$name"
                 if (-not (Get-Command -Name $functionName -ErrorAction SilentlyContinue)) {
                     Set-Item -Path "Function:$functionName" -Value {
@@ -477,7 +477,7 @@ Measure-Block 'ShellToolsInit' {
 # Initialize startup modules asynchronously
 Start-Job -ScriptBlock {
     try {
-        Initialize-PSModules
+        Initialize-PSModule
     } catch {
         Write-Verbose "Module initialization failed: $_"
     }
