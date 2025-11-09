@@ -65,40 +65,56 @@ if (Get-Command bat -ErrorAction SilentlyContinue) {
   Set-Alias -Name cat -Value bat -Force -Option AllScope -Scope Global
 }
 
-# Configure exa if available
-if (Get-Command exa -ErrorAction SilentlyContinue) {
-  function ls_with_exa {
+# Configure eza if available
+if (Get-Command eza -ErrorAction SilentlyContinue) {
+  function ls_with_eza {
     param([Parameter(ValueFromRemainingArguments = $true)]$params)
-    $exaOutput = $(if ($params) {
-        exa --icons --git --color=always --group-directories-first $params
+    $ezaOutput = $(if ($params) {
+        eza --icons --git --color=always --group-directories-first $params
       }
       else {
-        exa --icons --git --color=always --group-directories-first
+        eza --icons --git --color=always --group-directories-first
       })
     if (Get-Command bat -ErrorAction SilentlyContinue) {
-      $exaOutput | Out-String | bat --plain --paging=never
+      $ezaOutput | Out-String | bat --plain --paging=never
     }
     else {
-      $exaOutput
+      $ezaOutput
     }
   }
-  function ll_with_exa {
-    $exaOutput = exa --icons --git --color=always --group-directories-first --long --header
+  function ll_with_eza {
+    $ezaOutput = eza --icons --git --color=always --group-directories-first --long --header
     if (Get-Command bat -ErrorAction SilentlyContinue) {
-      $exaOutput | Out-String | bat --plain --paging=never
+      $ezaOutput | Out-String | bat --plain --paging=never
     }
     else {
-      $exaOutput
+      $ezaOutput
     }
   }
-  Set-Alias -Name ls -Value ls_with_exa -Force -Option AllScope -Scope Global
-  Set-Alias -Name ll -Value ll_with_exa -Force -Option AllScope -Scope Global
+# this should be the same as ls -al no tree
+  function la_with_eza{
+    $ezaOutput = eza --icons --git --color=always --group-directories-first --all
+    if (Get-Command bat -ErrorAction SilentlyContinue) {
+      $ezaOutput | Out-String | bat --plain --paging=never
+    }
+    else {
+      $ezaOutput
+    }
+  }
+  function lt_with_eza {
+    eza --icons --git --color=always --group-directories-first --long --header --tree --sort=name
+  }
+  Set-Alias -Name ls -Value ls_with_eza -Force -Option AllScope -Scope Global
+  Set-Alias -Name ll -Value ll_with_eza -Force -Option AllScope -Scope Global
+  Set-Alias -Name la -Value la_with_eza -Force -Option AllScope -Scope Global
+  Set-Alias -Name lt -Value lt_with_eza -Force -Option AllScope -Scope Global
 }
 else {
   function ll {
     Get-ChildItem | Format-Table -AutoSize -Property Mode, LastWriteTime, Length, Name
   }
-  Set-Alias -Name ll -Value ll -Force -Option AllScope -Scope Global
+  # Remove the alias if it exists to avoid circular reference
+  Remove-Alias -Name ll -ErrorAction SilentlyContinue
 }
 
 # File and directory management
