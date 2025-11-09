@@ -1,13 +1,8 @@
 ﻿# Module Registry Configuration
 $script:moduleAliases = @{
-    'CheckWifiPassword' = @{ Description = 'Network tools'; Category = 'Network' }
-    'Chtsh' = @{ Description = 'Developer tools'; Category = 'Dev' }
     'AppsManage' = @{ Description = 'Application management'; Category = 'Apps' }
     'LinuxLike' = @{ Description = 'Shell utilities'; Category = 'Shell' }
-    'Gpg' = @{ Description = 'Security tools'; Category = 'Security' }
-    'CloudflareWARP' = @{ Description = 'Network tools'; Category = 'Network' }
     'Clean' = @{ Description = 'System maintenance'; Category = 'System' }
-    'Stylus' = @{ Description = 'Development tools'; Category = 'Dev' }
 }
 
 # Register utility modules (lazy-loaded)
@@ -19,14 +14,9 @@ $moduleConfigs = @{
         }
         Category = 'System'
     }
-    'CheckWifiPassword' = @{ Block = { . "$ProfileDir\Scripts\powershell-config\Helpers\checkWifiPassword.ps1" }; Category = 'Network' }
-    'CloudflareWARP' = @{ Block = { . "$ProfileDir\Scripts\powershell-config\Helpers\cloudflareWARP.ps1" }; Category = 'Network' }
-    'Gpg' = @{ Block = { . "$ProfileDir\Scripts\powershell-config\Helpers\gpg.ps1" }; Category = 'Security' }
-    'Chtsh' = @{ Block = { . "$ProfileDir\Scripts\powershell-config\chtsh.ps1" }; Category = 'Dev' }
-    'LinuxLike' = @{ Block = { . "$ProfileDir\Scripts\powershell-config\Helpers\linuxLike.ps1" }; Category = 'Shell' }
     'AppsManage' = @{ Block = { . "$ProfileDir\Scripts\powershell-config\appsManage.ps1" }; Category = 'Apps' }
+    'LinuxLike' = @{ Block = { . "$ProfileDir\Scripts\powershell-config\Helpers\linuxLike.ps1" }; Category = 'Shell' }
     'Clean' = @{ Block = { . "$ProfileDir\Scripts\powershell-config\Helpers\clean.ps1" }; Category = 'System' }
-    'Stylus' = @{ Block = { . "$ProfileDir\Scripts\powershell-config\Helpers\stylus.ps1" }; Category = 'Dev' }
 }
 
 $moduleConfigs.GetEnumerator() | ForEach-Object {
