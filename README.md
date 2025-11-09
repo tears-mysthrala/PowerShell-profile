@@ -39,14 +39,20 @@ git clone https://github.com/tears-mysthrala/PowerShell-profile.git $HOME\Docume
 
 ## Contributing
 
-This project uses local documentation generation. When adding new functions:
+This project uses local validation and documentation generation. Before committing:
 
-1. Place them in appropriate files under `Core/Utils/`
-2. Add descriptive comments above function definitions
-3. Run the docs generator locally: `.\tools\generate_function_docs.ps1`
-4. Or use the prepare script: `.\tools\prepare-commit.bat`
+1. **Run local checks**:
+   - Syntax validation: `pwsh -Command "Get-ChildItem -Recurse *.ps1,*.psm1 | ForEach-Object { try { $null = [scriptblock]::Create((Get-Content $_.FullName -Raw)) } catch { Write-Error \"Syntax error in $($_.Name): $_\" } }"`
+   - PSScriptAnalyzer: `Install-Module PSScriptAnalyzer; Invoke-ScriptAnalyzer -Path . -Recurse`
+   - Performance test: Load time check manually
 
-The documentation will be updated locally before you commit and push changes.
+2. **Update documentation**:
+   - Run the docs generator locally: `.\tools\generate_function_docs.ps1`
+   - Or use the prepare script: `.\tools\prepare-commit.bat`
+
+3. **When adding new functions**:
+   - Place them in appropriate files under `Core/Utils/`
+   - Add descriptive comments above function definitions
 
 ### Adding New Dependencies
 
