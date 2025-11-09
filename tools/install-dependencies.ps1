@@ -1,6 +1,7 @@
 # Dependency Installer for PowerShell Profile
 # This script installs external tools and package managers required by the PowerShell profile
 
+[CmdletBinding(SupportsShouldProcess)]
 param(
     [switch]$All,
     [switch]$PackageManagers,
@@ -11,8 +12,7 @@ param(
     [switch]$Lazygit,
     [switch]$Zoxide,
     [switch]$Ripgrep,
-    [switch]$Fd,
-    [switch]$WhatIf
+    [switch]$Fd
 )
 
 $ErrorActionPreference = 'Stop'

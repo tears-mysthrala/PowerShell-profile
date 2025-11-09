@@ -12,7 +12,7 @@ function Write-Log {
 }
 
 # Function to handle errors
-function Handle-Error {
+function Write-ErrorLog {
     param($ErrorMessage)
     Write-Log "ERROR: $ErrorMessage"
     Write-Log "Details: $($Error[0].Exception.Message)"
@@ -25,7 +25,7 @@ try {
     Update-WindowsUpdates -UseLog
 }
 catch {
-    Handle-Error "Failed to process Windows updates"
+    Write-ErrorLog "Failed to process Windows updates"
 }
 
 # Update package managers in parallel
@@ -157,7 +157,7 @@ try {
                 Write-Log "WARNING: Module '$moduleName' is in use. Will update from $($moduleInfo.CurrentVersion) to $($moduleInfo.NewVersion) after restart."
             }
             else {
-                Handle-Error "Failed to update module '$moduleName': $($_.Exception.Message)"
+                Write-ErrorLog "Failed to update module '$moduleName': $($_.Exception.Message)"
             }
         }
     }
@@ -175,7 +175,7 @@ try {
     }
 }
 catch {
-    Handle-Error "Failed to process PowerShell module updates: $($_.Exception.Message)"
+    Write-ErrorLog "Failed to process PowerShell module updates: $($_.Exception.Message)"
 }
 
 # Wait for all package manager jobs to complete

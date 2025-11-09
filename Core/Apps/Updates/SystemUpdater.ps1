@@ -20,7 +20,7 @@ function Write-UpdateLog {
 }
 
 # Error handling function
-function Handle-UpdateError {
+function Write-UpdateErrorLog {
     param($ErrorMessage, $Source, $LogFile)
     Write-UpdateLog "ERROR [$Source]: $ErrorMessage" $LogFile
     Write-UpdateLog "Details: $($Error[0].Exception.Message)" $LogFile
@@ -71,7 +71,7 @@ function Update-System {
         Update-PowerShellModules
     }
     catch {
-        Handle-UpdateError $_.Exception.Message "System Update" $logFile
+        Write-UpdateErrorLog $_.Exception.Message "System Update" $logFile
         Write-Warning "Update failed: $_"
         $PSCmdlet.ThrowTerminatingError($_)
     }

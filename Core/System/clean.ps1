@@ -1,6 +1,6 @@
 # Source: https://www.geeksforgeeks.org/disk-cleanup-using-powershell-scripts/
 
-function Clean-RecycleBin {
+function Clear-RecycleBin {
   #1# Removing recycle bin files
   # Set the path to the recycle bin on the C drive
   $Path = 'C' + ':\$Recycle.Bin'
@@ -13,7 +13,7 @@ function Clean-RecycleBin {
   Write-Verbose "All the necessary data removed from recycle bin successfully" -ForegroundColor Green
 }
 
-function Clean-TempData {
+function Clear-TempData {
   #2# Remove Temp files from various locations
   Write-Verbose "Erasing temporary files from various locations" -ForegroundColor Yellow
   # Specify the path where temporary files are stored in the Windows Temp folder
@@ -35,7 +35,7 @@ function Clean-TempData {
   Write-Verbose "removed all the temp files successfully" -ForegroundColor Green
 }
 
-function Clean-Disk {
+function Clear-Disk {
   #3# Using Disk cleanup Tool
   # Display a message indicating the usage of the Disk Cleanup tool
   Write-Verbose "Using Disk cleanup Tool" -ForegroundColor Yellow
@@ -47,8 +47,8 @@ function Clean-Disk {
   Write-Verbose "Disk Cleanup Successfully done" -ForegroundColor Green
 }
 
-function Clean-All {
-  Clean-RecycleBin
+function Clear-All {
+  Clear-RecycleBin
   Delete-TempData
   Run-DiskCleanUp
 }

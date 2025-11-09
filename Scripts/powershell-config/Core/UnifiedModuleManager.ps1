@@ -244,8 +244,7 @@ function Import-UnifiedModule {
     [CmdletBinding(SupportsShouldProcess)]
     param(
         [string]$Name,
-        [switch]$Force,
-        [switch]$Silent
+        [switch]$Force
     )
 
     if ($script:loadedModules[$Name] -and -not $Force) { return $null }

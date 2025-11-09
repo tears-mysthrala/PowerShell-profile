@@ -45,7 +45,7 @@ function Update-WindowsUpdates {
     }
     catch {
         if ($UseLog) {
-            Handle-Error "Failed to process Windows updates: $_"
+            Write-ErrorLog "Failed to process Windows updates: $_"
         } else {
             Write-Verbose "Failed to check/install Windows updates: $_" -ForegroundColor Red
         }

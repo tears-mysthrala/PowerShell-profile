@@ -42,12 +42,12 @@ Set-Alias -Name rebootnow -Value Restart-Computer
 
 # Git aliases
 Set-Alias -Name g -Value git
-function git-status { git status }
-function git-pull { git pull }
-function git-push { git push }
-Set-Alias -Name gst -Value git-status
-Set-Alias -Name pull -Value git-pull
-Set-Alias -Name push -Value git-push
+function Get-GitStatus { git status }
+function Invoke-GitPull { git pull }
+function Invoke-GitPush { git push }
+Set-Alias -Name gst -Value Get-GitStatus
+Set-Alias -Name pull -Value Invoke-GitPull
+Set-Alias -Name push -Value Invoke-GitPush
 
 # Docker aliases
 Set-Alias -Name d -Value docker
