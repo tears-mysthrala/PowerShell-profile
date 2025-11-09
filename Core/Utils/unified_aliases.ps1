@@ -324,3 +324,76 @@ function Upgrade {
     . "$PSScriptRoot\..\Apps\UpdateApps.ps1"
   }
 }
+
+# Quick Access to System Information
+function sysinfo { Get-ComputerInfo }
+
+# Networking Utilities
+function Clear-DnsCache { Clear-DnsClientCache }
+Set-Alias -Name flushdns -Value Clear-DnsCache
+
+# Clipboard Utilities
+function Set-ClipboardContent { 
+    [CmdletBinding(SupportsShouldProcess)]
+    param($content)
+    if ($PSCmdlet.ShouldProcess("Clipboard", "Set content")) {
+        Set-Clipboard $content 
+    }
+}
+Set-Alias -Name cpy -Value Set-ClipboardContent
+
+function Get-ClipboardContent { Get-Clipboard }
+Set-Alias -Name pst -Value Get-ClipboardContent
+
+# System utilities
+function df { get-volume }
+function which($name) { Get-Command $name | Select-Object -ExpandProperty Definition }
+
+function Set-EnvironmentVariable { 
+    [CmdletBinding(SupportsShouldProcess)]
+    param($name, $value)
+    if ($PSCmdlet.ShouldProcess("Environment variable $name", "Set value")) {
+        set-item -force -path "env:$name" -value $value 
+    }
+}
+Set-Alias -Name export -Value Set-EnvironmentVariable
+
+function Stop-ProcessByName { 
+    [CmdletBinding(SupportsShouldProcess)]
+    param($name)
+    if ($PSCmdlet.ShouldProcess("Process $name", "Stop")) {
+        Get-Process $name -ErrorAction SilentlyContinue | Stop-Process 
+    }
+}
+Set-Alias -Name pkill -Value Stop-ProcessByName
+
+function Get-ProcessByName($name) { Get-Process $name }
+Set-Alias -Name pgrep -Value Get-ProcessByName
+
+# Search and find utilities
+function find-file($name) {
+  Get-ChildItem -recurse -filter "*${name}*" -ErrorAction SilentlyContinue | ForEach-Object {
+    $place_path = $_.directory
+    Write-Output "${place_path}\${_}"
+  }
+}
+
+function Find-String($regex, $dir) {
+  if ($dir) {
+    Get-ChildItem $dir | Select-String $regex
+    return
+  }
+  $input | Select-String $regex
+}
+Set-Alias -Name grep -Value Find-String
+
+function Edit-FileContent($file, $find, $replace) {
+  (Get-Content $file).replace("$find", $replace) | Set-Content $file
+}
+Set-Alias -Name sed -Value Edit-FileContent
+
+function Get-CommandPath($command) {
+  Get-Command -Name $command -ErrorAction SilentlyContinue |
+  Select-Object -ExpandProperty Path -ErrorAction SilentlyContinue
+}
+Set-Alias -Name which -Value Get-CommandPath
