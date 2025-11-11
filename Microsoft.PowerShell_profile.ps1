@@ -569,33 +569,71 @@ if (-not $script:ProfileSuppressInfoLogs -and $script:profileTiming) {
     }
 }
 
-# Initialize Starship asynchronously after profile load
-if (Get-Command starship -ErrorAction SilentlyContinue) {
-    $starshipConfigPath = Join-Path $PSScriptRoot 'Config\starship.toml'
-    $ENV:STARSHIP_CONFIG = $starshipConfigPath
+# Initialize Starship with a proper full-init cache (no process spawn on each load)
+Measure-Block 'Starship Init' {
+    if (Get-Command starship -ErrorAction SilentlyContinue) {
+        $starshipConfigPath = Join-Path $PSScriptRoot 'Config\starship.toml'
+        $ENV:STARSHIP_CONFIG = $starshipConfigPath
 
-    # Cache starship init script
-    $starshipCachePath = "$PSScriptRoot\Config\starship-init-cache.ps1"
-    $starshipInit = $null
+        $starshipCachePath = "$PSScriptRoot\Config\starship-init-cache.ps1"
+        $starshipMetaPath = "$PSScriptRoot\Config\starship-init-cache.meta.clixml"
 
-    if (Test-Path $starshipCachePath) {
-        try {
-            $starshipInit = Get-Content $starshipCachePath -Raw
+        # Build current fingerprints without invoking starship.exe (fast path)
+        $starshipCmd = Get-Command starship -ErrorAction SilentlyContinue
+        $starshipExe = $null
+        $starshipExeMTime = $null
+        if ($starshipCmd -and $starshipCmd.Source) {
+            $starshipExe = $starshipCmd.Source
+            try { $starshipExeMTime = (Get-Item $starshipExe).LastWriteTime } catch { $starshipExeMTime = $null }
         }
-        catch {
-            # Cache corrupted, regenerate
+        $configMTime = $null
+        if (Test-Path $starshipConfigPath) {
+            try { $configMTime = (Get-Item $starshipConfigPath).LastWriteTime } catch { $configMTime = $null }
+        }
+
+        $needRegen = $true
+        if ((Test-Path $starshipCachePath) -and (Test-Path $starshipMetaPath)) {
+            try {
+                $meta = Import-Clixml -Path $starshipMetaPath
+                if ($meta -and $meta.CacheFormatVersion -ge 1) {
+                    $needRegen = -not (
+                        ($meta.StarshipExe -eq $starshipExe) -and
+                        ($meta.StarshipExeMTime -eq $starshipExeMTime) -and
+                        ($meta.ConfigPath -eq $starshipConfigPath) -and
+                        ($meta.ConfigMTime -eq $configMTime)
+                    )
+                }
+            }
+            catch {
+                $needRegen = $true
+            }
+        }
+
+        if ($needRegen) {
+            # Generate the full init once and cache it as plain PowerShell script
+            try {
+                $fullInit = (& starship init powershell --print-full-init | Out-String)
+                # Ensure UTF8 without BOM for speed
+                $fullInit | Set-Content -Path $starshipCachePath -Encoding UTF8 -Force
+                @{
+                    CacheFormatVersion = 1
+                    StarshipExe        = $starshipExe
+                    StarshipExeMTime   = $starshipExeMTime
+                    ConfigPath         = $starshipConfigPath
+                    ConfigMTime        = $configMTime
+                } | Export-Clixml -Path $starshipMetaPath -Force
+            }
+            catch {
+                # Fallback: if generation fails, attempt direct init (may be slower)
+                try { Invoke-Expression (& starship init powershell --print-full-init | Out-String) } catch {}
+                return
+            }
+        }
+
+        # Dot-source the cached init script (no starship.exe spawn during startup)
+        try { . $starshipCachePath } catch {
+            # As last resort, try direct init
+            try { Invoke-Expression (& starship init powershell --print-full-init | Out-String) } catch {}
         }
     }
-
-    if (-not $starshipInit) {
-        $starshipInit = &starship init powershell
-        try {
-            $starshipInit | Set-Content $starshipCachePath -Force
-        }
-        catch {
-            # Ignore cache write failures
-        }
-    }
-
-    . ([scriptblock]::Create($starshipInit))
 }

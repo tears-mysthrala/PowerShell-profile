@@ -32,6 +32,10 @@ git clone https://github.com/tears-mysthrala/PowerShell-profile.git $HOME\Docume
 - **Development Tools**: Integration with `bat`, `fzf`, `eza`, and other modern CLI tools
 - **Performance Monitoring**: Built-in timing and optimization features
 
+## Performance
+
+- Starship prompt initialization is cached: the profile generates the full PowerShell init script once and reuses it on subsequent starts, avoiding a process spawn on each shell load. The cache is automatically invalidated when either the Starship binary or `Config/starship.toml` changes. You can force regeneration by deleting `Config/starship-init-cache.ps1` and `Config/starship-init-cache.meta.clixml`.
+
 ## Requirements
 
 - PowerShell 7+
