@@ -41,7 +41,9 @@ if (Test-CommandExist 'winget') {
     if (Get-Command -Name Start-ThreadJob -ErrorAction SilentlyContinue) {
         $jobs += Start-ThreadJob -ScriptBlock {
             try {
+                Write-AppLog "Starting Winget update..."
                 Update-Winget -Silent
+                Write-AppLog "Winget update completed successfully"
             }
             catch {
                 Write-Output "ERROR: Winget update failed - $($_.Exception.Message)"
@@ -56,7 +58,9 @@ if (Test-CommandExist 'scoop') {
     if (Get-Command -Name Start-ThreadJob -ErrorAction SilentlyContinue) {
         $jobs += Start-ThreadJob -ScriptBlock {
             try {
+                Write-AppLog "Starting Scoop update..."
                 Update-Scoop -Silent
+                Write-AppLog "Scoop update completed successfully"
             }
             catch {
                 Write-Output "ERROR: Scoop update failed - $($_.Exception.Message)"
@@ -71,7 +75,9 @@ if (Test-CommandExist 'choco') {
     if (Get-Command -Name Start-ThreadJob -ErrorAction SilentlyContinue) {
         $jobs += Start-ThreadJob -ScriptBlock {
             try {
+                Write-AppLog "Starting Chocolatey update..."
                 Update-Choco -Silent
+                Write-AppLog "Chocolatey update completed successfully"
             }
             catch {
                 Write-Output "ERROR: Chocolatey update failed - $($_.Exception.Message)"
@@ -86,7 +92,9 @@ if (Test-CommandExist 'npm') {
     if (Get-Command -Name Start-ThreadJob -ErrorAction SilentlyContinue) {
         $jobs += Start-ThreadJob -ScriptBlock {
             try {
+                Write-AppLog "Starting NPM global packages update..."
                 Update-Npm -Silent
+                Write-AppLog "NPM global packages update completed successfully"
             }
             catch {
                 Write-Output "ERROR: NPM update failed - $($_.Exception.Message)"

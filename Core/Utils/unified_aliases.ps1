@@ -311,12 +311,12 @@ function Upgrade {
     # If not running as admin, try to run with sudo (if available)
     if (Get-Command sudo -ErrorAction SilentlyContinue) {
       Write-Verbose "Running with sudo..."
-      sudo pwsh -ExecutionPolicy Bypass -File "$PSScriptRoot\..\Core\Apps\UpdateApps.ps1"
+      sudo pwsh -ExecutionPolicy Bypass -File "$PSScriptRoot\..\Apps\UpdateApps.ps1"
     }
     else {
       # If sudo is not available, use runas
       Write-Verbose "Running with runas..."
-      Start-Process pwsh -ArgumentList "-ExecutionPolicy Bypass -File `"$PSScriptRoot\..\Core\Apps\UpdateApps.ps1`"" -Verb RunAs
+      Start-Process pwsh -ArgumentList "-ExecutionPolicy Bypass -File `"$PSScriptRoot\..\Apps\UpdateApps.ps1`"" -Verb RunAs
     }
   }
   else {

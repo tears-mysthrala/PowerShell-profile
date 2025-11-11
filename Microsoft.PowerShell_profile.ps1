@@ -140,9 +140,11 @@ Measure-Block 'Core Setup' {
         }
 
         Measure-Block 'LazyLoadSetup' {
-            # Import ModuleInstaller only when needed
+            # Import ModuleInstaller and install required modules only when needed
             $script:LazyLoadModules = {
-                Import-Module "$ProfileDir\Core\ModuleInstaller.ps1" -Force -ErrorAction Stop
+                if (-not (Get-Module -Name ModuleInstaller -ErrorAction SilentlyContinue)) {
+                    Import-Module "$ProfileDir\Core\ModuleInstaller.ps1" -Force -ErrorAction Stop
+                }
                 Install-RequiredModule
             }
         }
@@ -160,6 +162,10 @@ Measure-Block 'Core Setup' {
                     Remove-Item "Function:\$command"
                     # Load the actual module
                     Import-Module $moduleName -ErrorAction Stop
+                    # For PSFzf, also initialize fzf configuration
+                    if ($moduleName -eq 'PSFzf' -and $script:InitializeFzf) {
+                        & $script:InitializeFzf
+                    }
                     # Call the original command with the same arguments
                     $commandInfo = Get-Command $command
                     & $commandInfo @args
@@ -263,6 +269,7 @@ Measure-Block 'Core Setup' {
 
             # Enqueue background jobs for utils that need loading (measured)
             Measure-Block 'Utils:EnqueueJobs' {
+                $utilsToLoad = @()
                 foreach ($file in $utilsFiles) {
                     $moduleName = [System.IO.Path]::GetFileNameWithoutExtension($file.Name)
                     $filePath = $file.FullName
@@ -287,35 +294,62 @@ Measure-Block 'Core Setup' {
                     }
 
                     if ($needsLoading) {
-                        try {
-                            # Start background job to create and import the module (non-blocking)
-                            $job = Start-Job -ScriptBlock {
-                                Set-StrictMode -Version Latest
-                                $ErrorActionPreference = 'Stop'
+                        $utilsToLoad += @{ Name = $moduleName; Path = $filePath; LastWriteTime = (Get-Item $filePath).LastWriteTime }
+                    }
+                }
+
+                # Load all utilities in a background job to reduce job creation overhead
+                if ($utilsToLoad.Count -gt 0) {
+                    # Use ThreadJob if available for better performance
+                    if (Get-Command -Name Start-ThreadJob -ErrorAction SilentlyContinue) {
+                        $job = Start-ThreadJob -ScriptBlock {
+                            param($utils)
+                            Set-StrictMode -Version Latest
+                            $ErrorActionPreference = 'Stop'
+                            foreach ($util in $utils) {
                                 try {
                                     $scriptBlock = {
                                         param($ScriptPath)
                                         . $ScriptPath
                                     }
-                                    New-Module -Name $using:moduleName -ScriptBlock $scriptBlock -ArgumentList $using:filePath |
+                                    New-Module -Name $util.Name -ScriptBlock $scriptBlock -ArgumentList $util.Path |
                                     Import-Module -Global -WarningAction SilentlyContinue
                                 }
                                 catch {
-                                    Write-Error ("Utility module import failed for {0}: {1}" -f $using:moduleName, $_)
+                                    Write-Error ("Utility module import failed for {0}: {1}" -f $util.Name, $_)
                                 }
                             }
-
-                            # Track background job so we can inspect later if needed
-                            $script:backgroundJobs += @{ Name = $moduleName; Job = $job }
-
-                            # Update cache in main session
-                            $utilsCache[$moduleName] = @{
-                                LastWriteTime = (Get-Item $filePath).LastWriteTime
-                                Path          = $filePath
+                        } -ArgumentList (, $utilsToLoad)
+                    }
+                    else {
+                        $job = Start-Job -ScriptBlock {
+                            param($utils)
+                            Set-StrictMode -Version Latest
+                            $ErrorActionPreference = 'Stop'
+                            foreach ($util in $utils) {
+                                try {
+                                    $scriptBlock = {
+                                        param($ScriptPath)
+                                        . $ScriptPath
+                                    }
+                                    New-Module -Name $util.Name -ScriptBlock $scriptBlock -ArgumentList $util.Path |
+                                    Import-Module -Global -WarningAction SilentlyContinue
+                                }
+                                catch {
+                                    Write-Error ("Utility module import failed for {0}: {1}" -f $util.Name, $_)
+                                }
                             }
-                        }
-                        catch {
-                            Write-Warning "Failed to enqueue utility module $moduleName`: $_"
+                        } -ArgumentList (, $utilsToLoad)
+                    }
+
+                    # Track background job
+                    $script:backgroundJobs += @{ Name = 'UtilsBatch'; Job = $job }
+
+                    # Update cache in main session
+                    foreach ($util in $utilsToLoad) {
+                        $utilsCache[$util.Name] = @{
+                            LastWriteTime = $util.LastWriteTime
+                            Path          = $util.Path
                         }
                     }
                 }
@@ -368,17 +402,6 @@ Measure-Block 'Shell Setup' {
 
     # Initialize shell enhancements
 
-    # Simple Starship prompt initialization with config file
-    $starshipConfigPath = Join-Path $ProfileDir 'Config\starship.toml'
-    if (Get-Command starship -ErrorAction SilentlyContinue) {
-        $ENV:STARSHIP_CONFIG = $starshipConfigPath
-        $starshipInit = &starship init powershell
-        . ([scriptblock]::Create($starshipInit))
-    }
-    else {
-        Write-Verbose "[INFO] Starship not found, skipping prompt initialization."
-    }
-
     Measure-Block 'PSReadLine' {
         # Configure PSReadLine with full features enabled
         $PSReadLineOptions = @{
@@ -396,17 +419,22 @@ Measure-Block 'Shell Setup' {
             Write-Warning "PSReadLine configuration failed: $_"
         }
 
-        # Import PSFzf for enhanced history search with fzf
+        # Import PSFzf for enhanced history search with fzf (lazy-loaded)
         try {
-            Import-Module PSFzf -ErrorAction SilentlyContinue
-            # Load fzf configurations
-            $fzfPath = "$ProfileDir\Core\System\fzf.ps1"
-            if (Test-Path $fzfPath) {
-                . $fzfPath
+            # Remove synchronous import - PSFzf will be loaded on first use via proxy function
+            # Load fzf configurations only after PSFzf is available
+            $script:InitializeFzf = {
+                if (-not (Get-Module PSFzf -ErrorAction SilentlyContinue)) {
+                    Import-Module PSFzf -ErrorAction Stop
+                }
+                $fzfPath = "$ProfileDir\Core\System\fzf.ps1"
+                if (Test-Path $fzfPath) {
+                    . $fzfPath
+                }
             }
         }
         catch {
-            Write-Warning "PSFzf could not be loaded: $_"
+            Write-Warning "PSFzf lazy loading setup failed: $_"
         }
 
         # Provide a function to disable PSReadLine features if needed
@@ -429,14 +457,18 @@ Measure-Block 'Shell Setup' {
 
 # Initialize shell tools (asynchronous to avoid blocking startup)
 Measure-Block 'ShellToolsInit' {
-    Start-Job -ScriptBlock {
+    # Use ThreadJob if available for better performance
+    $jobCmd = if (Get-Command -Name Start-ThreadJob -ErrorAction SilentlyContinue) { 'Start-ThreadJob' } else { 'Start-Job' }
+    
+    & $jobCmd -ScriptBlock {
         # Initialize Zoxide asynchronously
         if (Get-Command zoxide -ErrorAction SilentlyContinue) {
             try {
                 $env:_ZO_DATA_DIR = "$using:ProfileDir\.zo"
                 $zoxideInit = & { (zoxide init powershell --cmd cd | Out-String) }
                 . ([scriptblock]::Create($zoxideInit))
-            } catch {
+            }
+            catch {
                 Write-Verbose "Zoxide initialization failed: $_"
             }
         }
@@ -446,7 +478,8 @@ Measure-Block 'ShellToolsInit' {
             try {
                 $ghCompletion = & { (gh completion -s powershell | Out-String) }
                 . ([scriptblock]::Create($ghCompletion))
-            } catch {
+            }
+            catch {
                 Write-Verbose "GitHub CLI completion initialization failed: $_"
             }
         }
@@ -454,15 +487,16 @@ Measure-Block 'ShellToolsInit' {
 }
 
 # Initialize startup modules asynchronously
-Start-Job -ScriptBlock {
+$jobCmd = if (Get-Command -Name Start-ThreadJob -ErrorAction SilentlyContinue) { 'Start-ThreadJob' } else { 'Start-Job' }
+& $jobCmd -ScriptBlock {
     try {
         Initialize-PSModule
-    } catch {
+    }
+    catch {
         Write-Verbose "Module initialization failed: $_"
     }
 } | Out-Null
 
-# Dependency installer functions
 function Install-Dependency {
     <#
     .SYNOPSIS
@@ -523,4 +557,45 @@ function Install-Dependency {
 
     # Execute the installer
     & $installerPath @installerArgs
+}
+
+# Display profile loading timing if not suppressed
+if (-not $script:ProfileSuppressInfoLogs -and $script:profileTiming) {
+    $totalTime = ($script:profileTiming.GetEnumerator() | Measure-Object -Property Value -Sum).Sum
+    Write-Host "Profile loaded in ${totalTime}ms" -ForegroundColor Green
+    Write-Host "Timing breakdown:" -ForegroundColor Yellow
+    $script:profileTiming.GetEnumerator() | Sort-Object -Property Value -Descending | ForEach-Object {
+        Write-Host ("  {0}: {1}ms" -f $_.Key, $_.Value) -ForegroundColor Gray
+    }
+}
+
+# Initialize Starship asynchronously after profile load
+if (Get-Command starship -ErrorAction SilentlyContinue) {
+    $starshipConfigPath = Join-Path $PSScriptRoot 'Config\starship.toml'
+    $ENV:STARSHIP_CONFIG = $starshipConfigPath
+
+    # Cache starship init script
+    $starshipCachePath = "$PSScriptRoot\Config\starship-init-cache.ps1"
+    $starshipInit = $null
+
+    if (Test-Path $starshipCachePath) {
+        try {
+            $starshipInit = Get-Content $starshipCachePath -Raw
+        }
+        catch {
+            # Cache corrupted, regenerate
+        }
+    }
+
+    if (-not $starshipInit) {
+        $starshipInit = &starship init powershell
+        try {
+            $starshipInit | Set-Content $starshipCachePath -Force
+        }
+        catch {
+            # Ignore cache write failures
+        }
+    }
+
+    . ([scriptblock]::Create($starshipInit))
 }
