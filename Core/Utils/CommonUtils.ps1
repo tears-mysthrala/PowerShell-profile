@@ -51,4 +51,8 @@ if (-not (Test-Path "$moduleRoot\CommonUtils.psd1")) {
 }
 
 # Export module members
-Export-ModuleMember -Function Test-CommandExist, Test-IsAdmin, Get-FormatedUptime, Get-PubIP, Initialize-EncodingConfig
+try {
+    Export-ModuleMember -Function Test-CommandExist, Test-IsAdmin, Get-FormatedUptime, Get-PubIP, Initialize-EncodingConfig
+} catch {
+    # Ignore if not in module context
+}

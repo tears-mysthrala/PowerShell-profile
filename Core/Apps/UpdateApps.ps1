@@ -18,6 +18,9 @@ function Write-ErrorLog {
     Write-AppLog "Details: $($Error[0].Exception.Message)"
 }
 
+# Load common utilities
+. "$PSScriptRoot\..\Utils\CommonUtils.ps1"
+
 # Update Windows using native API
 Write-AppLog "Starting Windows Update..."
 try {
