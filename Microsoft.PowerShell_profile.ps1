@@ -94,6 +94,7 @@ Measure-Block 'Environment Setup' {
         # Performance optimizations
         $env:POWERSHELL_TELEMETRY_OPTOUT = 1
         $env:POWERSHELL_UPDATECHECK = 'Off'
+        $env:GIT_IPVERSION = '4'
 
         # Cache the environment settings
         $envToCache = @{
@@ -102,6 +103,7 @@ Measure-Block 'Environment Setup' {
             VISUAL                      = $env:VISUAL
             POWERSHELL_TELEMETRY_OPTOUT = $env:POWERSHELL_TELEMETRY_OPTOUT
             POWERSHELL_UPDATECHECK      = $env:POWERSHELL_UPDATECHECK
+            GIT_IPVERSION               = $env:GIT_IPVERSION
         }
         $envToCache | Export-Clixml -Path $envCachePath
     }
