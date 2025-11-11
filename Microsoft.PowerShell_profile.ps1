@@ -3,7 +3,10 @@
 
 # Initialize profiling
 $script:profileTiming = @{}
-$script:backgroundJobs = @()
+$script:backgroundJobs = @{}
+
+# Cache Start-ThreadJob availability once at startup for better performance
+$script:hasThreadJob = $null -ne (Get-Command -Name Start-ThreadJob -ErrorAction SilentlyContinue)
 
 function Start-BackgroundJob {
     [CmdletBinding(SupportsShouldProcess)]
@@ -13,7 +16,7 @@ function Start-BackgroundJob {
     )
     if ($PSCmdlet.ShouldProcess("Background job", "Start")) {
         try {
-            if (Get-Command -Name Start-ThreadJob -ErrorAction SilentlyContinue) {
+            if ($script:hasThreadJob) {
                 return Start-ThreadJob -ScriptBlock $ScriptBlock -ArgumentList $ArgumentList
             }
             else {
@@ -39,7 +42,7 @@ function Measure-Block {
         if ($Async) {
             # Use faster thread jobs when available
             $job = Start-BackgroundJob -ScriptBlock $Block
-            $script:backgroundJobs += @{ Name = $Name; Job = $job }
+            $script:backgroundJobs[$Name] = $job
         }
         else {
             & $Block
@@ -193,7 +196,7 @@ Measure-Block 'Core Setup' {
                 }
             }
             if ($Async) {
-                if (Get-Command -Name Start-ThreadJob -ErrorAction SilentlyContinue) {
+                if ($script:hasThreadJob) {
                     Start-ThreadJob -ScriptBlock $sb | Out-Null
                 }
                 else {
@@ -203,9 +206,7 @@ Measure-Block 'Core Setup' {
             else {
                 & $sb
             }
-        }
-
-        Measure-Block 'ImportProfileModules' {
+        }        Measure-Block 'ImportProfileModules' {
             # Defer importing heavy profile modules until first use
             function Initialize-ProfileManagement {
                 if (-not (Get-Module -Name ProfileManagement -ListAvailable)) {
@@ -270,6 +271,17 @@ Measure-Block 'Core Setup' {
             # Enqueue background jobs for utils that need loading (measured)
             Measure-Block 'Utils:EnqueueJobs' {
                 $utilsToLoad = @()
+                # Batch Get-Item calls for better performance
+                $fileMetadata = @{}
+                foreach ($file in $utilsFiles) {
+                    try {
+                        $fileMetadata[$file.FullName] = $file.LastWriteTime
+                    }
+                    catch {
+                        # If LastWriteTime fails, file will be reloaded
+                    }
+                }
+
                 foreach ($file in $utilsFiles) {
                     $moduleName = [System.IO.Path]::GetFileNameWithoutExtension($file.Name)
                     $filePath = $file.FullName
@@ -282,7 +294,7 @@ Measure-Block 'Core Setup' {
                     if ($utilsCache.ContainsKey($moduleName)) {
                         $cached = $utilsCache[$moduleName]
                         try {
-                            if ((Get-Item $filePath).LastWriteTime -eq $cached.LastWriteTime) {
+                            if ($fileMetadata.ContainsKey($filePath) -and $fileMetadata[$filePath] -eq $cached.LastWriteTime) {
                                 # If module is already imported in this session, skip
                                 $cachedModule = Get-Module -Name $moduleName -ErrorAction SilentlyContinue
                                 if ($cachedModule) { $needsLoading = $false }
@@ -293,15 +305,15 @@ Measure-Block 'Core Setup' {
                         }
                     }
 
-                    if ($needsLoading) {
-                        $utilsToLoad += @{ Name = $moduleName; Path = $filePath; LastWriteTime = (Get-Item $filePath).LastWriteTime }
+                    if ($needsLoading -and $fileMetadata.ContainsKey($filePath)) {
+                        $utilsToLoad += @{ Name = $moduleName; Path = $filePath; LastWriteTime = $fileMetadata[$filePath] }
                     }
                 }
 
                 # Load all utilities in a background job to reduce job creation overhead
                 if ($utilsToLoad.Count -gt 0) {
                     # Use ThreadJob if available for better performance
-                    if (Get-Command -Name Start-ThreadJob -ErrorAction SilentlyContinue) {
+                    if ($script:hasThreadJob) {
                         $job = Start-ThreadJob -ScriptBlock {
                             param($utils)
                             Set-StrictMode -Version Latest
@@ -457,8 +469,8 @@ Measure-Block 'Shell Setup' {
 
 # Initialize shell tools (asynchronous to avoid blocking startup)
 Measure-Block 'ShellToolsInit' {
-    # Use ThreadJob if available for better performance
-    $jobCmd = if (Get-Command -Name Start-ThreadJob -ErrorAction SilentlyContinue) { 'Start-ThreadJob' } else { 'Start-Job' }
+    # Use cached ThreadJob availability
+    $jobCmd = if ($script:hasThreadJob) { 'Start-ThreadJob' } else { 'Start-Job' }
     
     & $jobCmd -ScriptBlock {
         # Initialize Zoxide asynchronously
@@ -487,7 +499,7 @@ Measure-Block 'ShellToolsInit' {
 }
 
 # Initialize startup modules asynchronously
-$jobCmd = if (Get-Command -Name Start-ThreadJob -ErrorAction SilentlyContinue) { 'Start-ThreadJob' } else { 'Start-Job' }
+$jobCmd = if ($script:hasThreadJob) { 'Start-ThreadJob' } else { 'Start-Job' }
 & $jobCmd -ScriptBlock {
     try {
         Initialize-PSModule
@@ -610,24 +622,65 @@ Measure-Block 'Starship Init' {
         }
 
         if ($needRegen) {
-            # Generate the full init once and cache it as plain PowerShell script
+            # Fast path: do a quick direct init for the current session so the prompt appears
+            # promptly, then regenerate and persist the full cached init asynchronously
+            $didDirectInit = $false
             try {
-                $fullInit = (& starship init powershell --print-full-init | Out-String)
-                # Ensure UTF8 without BOM for speed
-                $fullInit | Set-Content -Path $starshipCachePath -Encoding UTF8 -Force
-                @{
-                    CacheFormatVersion = 1
-                    StarshipExe        = $starshipExe
-                    StarshipExeMTime   = $starshipExeMTime
-                    ConfigPath         = $starshipConfigPath
-                    ConfigMTime        = $configMTime
-                } | Export-Clixml -Path $starshipMetaPath -Force
+                # Direct init (may spawn starship) but returns quickly for current session
+                Invoke-Expression (& starship init powershell --print-full-init | Out-String)
+                $didDirectInit = $true
             }
             catch {
-                # Fallback: if generation fails, attempt direct init (may be slower)
-                try { Invoke-Expression (& starship init powershell --print-full-init | Out-String) } catch {}
-                return
+                Write-Verbose "Starship direct init failed: $_"
             }
+
+            # Asynchronously regenerate and write the persistent cache for future sessions
+            try {
+                $bgScript = {
+                    param($cachePath, $metaPath, $configPath, $starshipExe, $starshipExeMTime, $configMTime)
+                    try {
+                        $fullInit = (& starship init powershell --print-full-init | Out-String)
+                        $fullInit | Set-Content -Path $cachePath -Encoding UTF8 -Force
+                        @{
+                            CacheFormatVersion = 1
+                            StarshipExe        = $starshipExe
+                            StarshipExeMTime   = $starshipExeMTime
+                            ConfigPath         = $configPath
+                            ConfigMTime        = $configMTime
+                        } | Export-Clixml -Path $metaPath -Force
+                    }
+                    catch {
+                        # Ignore background failures; they don't block startup
+                    }
+                }
+
+                if ($script:hasThreadJob) {
+                    Start-ThreadJob -ScriptBlock $bgScript -ArgumentList $starshipCachePath, $starshipMetaPath, $starshipConfigPath, $starshipExe, $starshipExeMTime, $configMTime | Out-Null
+                }
+                else {
+                    Start-Job -ScriptBlock $bgScript -ArgumentList $starshipCachePath, $starshipMetaPath, $starshipConfigPath, $starshipExe, $starshipExeMTime, $configMTime | Out-Null
+                }
+            }
+            catch {
+                # If background job creation fails, fall back to synchronous generation
+                try {
+                    $fullInit = (& starship init powershell --print-full-init | Out-String)
+                    $fullInit | Set-Content -Path $starshipCachePath -Encoding UTF8 -Force
+                    @{
+                        CacheFormatVersion = 1
+                        StarshipExe        = $starshipExe
+                        StarshipExeMTime   = $starshipExeMTime
+                        ConfigPath         = $starshipConfigPath
+                        ConfigMTime        = $configMTime
+                    } | Export-Clixml -Path $starshipMetaPath -Force
+                }
+                catch {
+                    # Last-resort: try direct init so user still gets a prompt
+                    try { Invoke-Expression (& starship init powershell --print-full-init | Out-String) } catch {}
+                }
+            }
+
+            if ($didDirectInit) { return }
         }
 
         # Dot-source the cached init script (no starship.exe spawn during startup)
