@@ -254,126 +254,42 @@ Measure-Block 'Core Setup' {
         $VerbosePreference = $originalPreferences.Verbose
         $InformationPreference = $originalPreferences.Information
         # Write-Verbose "Core module loaded successfully" -ForegroundColor Green
-        # Load common utilities with optimized caching (measured in sub-steps)
+        # Register lazy-loading wrappers for utility modules instead of importing all on startup
         $utilsPath = "$ProfileDir\Core\Utils"
-        $utilsCachePath = "$ProfileDir\Config\utils-cache.clixml"
-
         if (Test-Path $utilsPath) {
-            # Initialize cache
-            $utilsCache = @{}
-            if (Test-Path $utilsCachePath) {
-                $utilsCache = Import-Clixml -Path $utilsCachePath
-            }
-
-            # Enumerate utility files
             $utilsFiles = Get-ChildItem -Path $utilsPath -Filter "*.ps1"
 
-            # Enqueue background jobs for utils that need loading (measured)
-            Measure-Block 'Utils:EnqueueJobs' {
-                $utilsToLoad = @()
-                # Batch Get-Item calls for better performance
-                $fileMetadata = @{}
-                foreach ($file in $utilsFiles) {
-                    try {
-                        $fileMetadata[$file.FullName] = $file.LastWriteTime
-                    }
-                    catch {
-                        # If LastWriteTime fails, file will be reloaded
-                    }
-                }
+            foreach ($file in $utilsFiles) {
+                $moduleName = [System.IO.Path]::GetFileNameWithoutExtension($file.Name)
 
-                foreach ($file in $utilsFiles) {
-                    $moduleName = [System.IO.Path]::GetFileNameWithoutExtension($file.Name)
-                    $filePath = $file.FullName
+                # unified_aliases ya está cargado explícitamente al inicio
+                if ($moduleName -eq 'unified_aliases') { continue }
 
-                    # Skip unified_aliases.ps1 as it's already loaded synchronously at startup
-                    if ($moduleName -eq 'unified_aliases') { continue }
+                $script:utilityModules ??= @{}
+                $script:utilityModules[$moduleName] = $file.FullName
 
-                    # Check if module needs loading based on cache
-                    $needsLoading = $true
-                    if ($utilsCache.ContainsKey($moduleName)) {
-                        $cached = $utilsCache[$moduleName]
-                        try {
-                            if ($fileMetadata.ContainsKey($filePath) -and $fileMetadata[$filePath] -eq $cached.LastWriteTime) {
-                                # If module is already imported in this session, skip
-                                $cachedModule = Get-Module -Name $moduleName -ErrorAction SilentlyContinue
-                                if ($cachedModule) { $needsLoading = $false }
+                # Solo crear wrapper si no existe ya una función/comando con ese nombre
+                if (-not (Get-Command -Name $moduleName -ErrorAction SilentlyContinue)) {
+                    $sb = {
+                        param()
+                        $name = $MyInvocation.MyCommand.Name
+                        $path = $script:utilityModules[$name]
+                        if ($path -and (Test-Path $path)) {
+                            try {
+                                . $path
+                            }
+                            catch {
+                                Write-Warning "Failed to load utility module ${name}: $_"
                             }
                         }
-                        catch {
-                            $needsLoading = $true
+                        # Reinvoca el comando original con los mismos argumentos tras la carga
+                        $cmd = Get-Command -Name $name -ErrorAction SilentlyContinue
+                        if ($cmd -and $cmd -ne $MyInvocation.MyCommand) {
+                            & $cmd @args
                         }
-                    }
+                    }.GetNewClosure()
 
-                    if ($needsLoading -and $fileMetadata.ContainsKey($filePath)) {
-                        $utilsToLoad += @{ Name = $moduleName; Path = $filePath; LastWriteTime = $fileMetadata[$filePath] }
-                    }
-                }
-
-                # Load all utilities in a background job to reduce job creation overhead
-                if ($utilsToLoad.Count -gt 0) {
-                    # Use ThreadJob if available for better performance
-                    if ($script:hasThreadJob) {
-                        $job = Start-ThreadJob -ScriptBlock {
-                            param($utils)
-                            Set-StrictMode -Version Latest
-                            $ErrorActionPreference = 'Stop'
-                            foreach ($util in $utils) {
-                                try {
-                                    $scriptBlock = {
-                                        param($ScriptPath)
-                                        . $ScriptPath
-                                    }
-                                    New-Module -Name $util.Name -ScriptBlock $scriptBlock -ArgumentList $util.Path |
-                                    Import-Module -Global -WarningAction SilentlyContinue
-                                }
-                                catch {
-                                    Write-Error ("Utility module import failed for {0}: {1}" -f $util.Name, $_)
-                                }
-                            }
-                        } -ArgumentList (, $utilsToLoad)
-                    }
-                    else {
-                        $job = Start-Job -ScriptBlock {
-                            param($utils)
-                            Set-StrictMode -Version Latest
-                            $ErrorActionPreference = 'Stop'
-                            foreach ($util in $utils) {
-                                try {
-                                    $scriptBlock = {
-                                        param($ScriptPath)
-                                        . $ScriptPath
-                                    }
-                                    New-Module -Name $util.Name -ScriptBlock $scriptBlock -ArgumentList $util.Path |
-                                    Import-Module -Global -WarningAction SilentlyContinue
-                                }
-                                catch {
-                                    Write-Error ("Utility module import failed for {0}: {1}" -f $util.Name, $_)
-                                }
-                            }
-                        } -ArgumentList (, $utilsToLoad)
-                    }
-
-                    # Track background job
-                    $script:backgroundJobs += @{ Name = 'UtilsBatch'; Job = $job }
-
-                    # Update cache in main session
-                    foreach ($util in $utilsToLoad) {
-                        $utilsCache[$util.Name] = @{
-                            LastWriteTime = $util.LastWriteTime
-                            Path          = $util.Path
-                        }
-                    }
-                }
-            }
-
-            # Save updated cache (measured)
-            Measure-Block 'Utils:SaveCache' {
-                try {
-                    $utilsCache | Export-Clixml -Path $utilsCachePath
-                }
-                catch {
-                    Write-Verbose "Failed to save utils cache: $_"
+                    Set-Item -Path "Function:$moduleName" -Value $sb -Force
                 }
             }
         }
@@ -471,25 +387,141 @@ Measure-Block 'Shell Setup' {
 Measure-Block 'ShellToolsInit' {
     # Use cached ThreadJob availability
     $jobCmd = if ($script:hasThreadJob) { 'Start-ThreadJob' } else { 'Start-Job' }
-    
+
     & $jobCmd -ScriptBlock {
-        # Initialize Zoxide asynchronously
+        $profileDir = $using:ProfileDir
+
+        # Initialize Zoxide asynchronously with cached init script
         if (Get-Command zoxide -ErrorAction SilentlyContinue) {
             try {
-                $env:_ZO_DATA_DIR = "$using:ProfileDir\.zo"
-                $zoxideInit = & { (zoxide init powershell --cmd cd | Out-String) }
-                . ([scriptblock]::Create($zoxideInit))
+                $env:_ZO_DATA_DIR = "$profileDir\.zo"
+
+                $zoxideCachePath = Join-Path $profileDir 'Config\zoxide-init-cache.ps1'
+                $zoxideMetaPath = Join-Path $profileDir 'Config\zoxide-init-cache.meta.clixml'
+
+                $zoxideCmd = Get-Command zoxide -ErrorAction SilentlyContinue
+                $zoxideExe = $null
+                $zoxideExeMTime = $null
+                if ($zoxideCmd -and $zoxideCmd.Source) {
+                    $zoxideExe = $zoxideCmd.Source
+                    try { $zoxideExeMTime = (Get-Item $zoxideExe).LastWriteTime } catch { $zoxideExeMTime = $null }
+                }
+
+                $needRegen = $true
+                if ((Test-Path $zoxideCachePath) -and (Test-Path $zoxideMetaPath)) {
+                    try {
+                        $meta = Import-Clixml -Path $zoxideMetaPath
+                        if ($meta -and $meta.CacheFormatVersion -ge 1) {
+                            $needRegen = -not (
+                                ($meta.ZoxideExe -eq $zoxideExe) -and
+                                ($meta.ZoxideExeMTime -eq $zoxideExeMTime)
+                            )
+                        }
+                    }
+                    catch {
+                        $needRegen = $true
+                    }
+                }
+
+                if ($needRegen) {
+                    # Direct init for current session
+                    $zoxideInit = (zoxide init powershell --cmd cd | Out-String)
+                    . ([scriptblock]::Create($zoxideInit))
+
+                    # Persist cache for future sessions
+                    try {
+                        $zoxideInit | Set-Content -Path $zoxideCachePath -Encoding UTF8 -Force
+                        @{
+                            CacheFormatVersion = 1
+                            ZoxideExe          = $zoxideExe
+                            ZoxideExeMTime     = $zoxideExeMTime
+                        } | Export-Clixml -Path $zoxideMetaPath -Force
+                    }
+                    catch {
+                        # Ignore cache write failures; current session is already initialized
+                    }
+                }
+                else {
+                    try {
+                        . $zoxideCachePath
+                    }
+                    catch {
+                        # Fallback: regenerate on failure
+                        try {
+                            $zoxideInit = (zoxide init powershell --cmd cd | Out-String)
+                            . ([scriptblock]::Create($zoxideInit))
+                        }
+                        catch {
+                            Write-Verbose "Zoxide initialization failed: $_"
+                        }
+                    }
+                }
             }
             catch {
                 Write-Verbose "Zoxide initialization failed: $_"
             }
         }
 
-        # Initialize GitHub CLI completion asynchronously
+        # Initialize GitHub CLI completion asynchronously with cached script
         if (Get-Command gh -ErrorAction SilentlyContinue) {
             try {
-                $ghCompletion = & { (gh completion -s powershell | Out-String) }
-                . ([scriptblock]::Create($ghCompletion))
+                $ghCachePath = Join-Path $profileDir 'Config\gh-completion-cache.ps1'
+                $ghMetaPath = Join-Path $profileDir 'Config\gh-completion-cache.meta.clixml'
+
+                $ghCmd = Get-Command gh -ErrorAction SilentlyContinue
+                $ghExe = $null
+                $ghExeMTime = $null
+                if ($ghCmd -and $ghCmd.Source) {
+                    $ghExe = $ghCmd.Source
+                    try { $ghExeMTime = (Get-Item $ghExe).LastWriteTime } catch { $ghExeMTime = $null }
+                }
+
+                $needRegenGh = $true
+                if ((Test-Path $ghCachePath) -and (Test-Path $ghMetaPath)) {
+                    try {
+                        $metaGh = Import-Clixml -Path $ghMetaPath
+                        if ($metaGh -and $metaGh.CacheFormatVersion -ge 1) {
+                            $needRegenGh = -not (
+                                ($metaGh.GhExe -eq $ghExe) -and
+                                ($metaGh.GhExeMTime -eq $ghExeMTime)
+                            )
+                        }
+                    }
+                    catch {
+                        $needRegenGh = $true
+                    }
+                }
+
+                if ($needRegenGh) {
+                    $ghCompletion = (gh completion -s powershell | Out-String)
+                    . ([scriptblock]::Create($ghCompletion))
+
+                    try {
+                        $ghCompletion | Set-Content -Path $ghCachePath -Encoding UTF8 -Force
+                        @{
+                            CacheFormatVersion = 1
+                            GhExe              = $ghExe
+                            GhExeMTime         = $ghExeMTime
+                        } | Export-Clixml -Path $ghMetaPath -Force
+                    }
+                    catch {
+                        # Ignore cache write failures
+                    }
+                }
+                else {
+                    try {
+                        . $ghCachePath
+                    }
+                    catch {
+                        try {
+                            $ghCompletion = (gh completion -s powershell | Out-String)
+                            . ([scriptblock]::Create($ghCompletion))
+                        }
+                        catch {
+                            Write-Verbose "GitHub CLI completion initialization failed: $_"
+                        }
+                    }
+                }
             }
             catch {
                 Write-Verbose "GitHub CLI completion initialization failed: $_"

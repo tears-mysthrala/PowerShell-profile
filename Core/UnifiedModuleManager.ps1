@@ -169,9 +169,11 @@ function Import-UnifiedTool {
 }
 
 function Initialize-StartupTool {
-    $script:toolRegistry.GetEnumerator() | Where-Object { $_.Value.LoadOnStartup } | ForEach-Object {
-        Import-UnifiedTool $_.Key
-    }
+    # Mantener compatibilidad pero evitar trabajo innecesario: solo
+    # se inicializarán herramientas marcadas explícitamente como LoadOnStartup.
+    $script:toolRegistry.GetEnumerator() |
+        Where-Object { $_.Value.LoadOnStartup } |
+        ForEach-Object { Import-UnifiedTool $_.Key }
 }
 
 function Get-UnifiedToolStatus {
