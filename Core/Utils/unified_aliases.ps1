@@ -397,3 +397,6 @@ function Get-CommandPath($command) {
   Select-Object -ExpandProperty Path -ErrorAction SilentlyContinue
 }
 Set-Alias -Name which -Value Get-CommandPath
+
+# SSH Aliases
+function akkorokamui { ssh -p 54226 tears@192.168.1.100 }
