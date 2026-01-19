@@ -66,3 +66,12 @@ When adding new tools or dependencies:
 2. Add installation methods for supported package managers (winget, choco, scoop)
 3. Update the documentation in `docs/INSTALLATION.md`
 4. Test the installation: `Install-Dependencies -Tool <toolname>`
+
+
+## 📊 Statistics
+
+- **Functions:** 628
+- **Aliases:** 40
+- **Categories:** 6
+- **Last Updated:** 2026-01-19 20:16:14
+

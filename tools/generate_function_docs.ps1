@@ -1,112 +1,173 @@
 <#
-Generate FunctionReference.md by scanning PowerShell source files for function declarations
-and extracting nearby comment blocks as short descriptions.
+.SYNOPSIS
+    Professional documentation generator for PowerShell Profile project.
 
-Usage:
-  pwsh -NoProfile -ExecutionPolicy Bypass -File .\tools\generate_function_docs.ps1
+.DESCRIPTION
+    Scans all PowerShell source files in the repository and generates comprehensive
+    documentation including:
+    - Function reference with signatures and descriptions
+    - Module documentation
+    - Performance metrics
+    - Cross-references and examples
 
+.PARAMETER RepoRoot
+    Root directory of the repository. Defaults to parent of script location.
+
+.PARAMETER OutputDir
+    Directory where documentation will be generated. Defaults to 'docs' folder.
+
+.PARAMETER Verbose
+    Show detailed progress information.
+
+.EXAMPLE
+    .\generate_function_docs.ps1
+    Generates all documentation with default settings.
+
+.EXAMPLE
+    .\generate_function_docs.ps1 -Verbose
+    Generates documentation with detailed progress output.
 #>
+
+[CmdletBinding()]
 Param(
     [string]$RepoRoot = (Split-Path -Parent $PSScriptRoot),
-    [string]$OutFile = "$PSScriptRoot\..\docs\FunctionReference.md"
+    [string]$OutputDir = "$RepoRoot\docs"
 )
 
-Write-Verbose "Scanning repository: $RepoRoot"
-
-function Get-PrecedingCommentBlock($text, $startIndex) {
-    # Return nearest contiguous comment block (<# ... #> or lines starting with #) immediately above the function
-    $before = $text.Substring(0, $startIndex)
-
-    # Try block comment first
-    $blockPattern = '(?s)<#(.*?)#>\s*$'
-    $m = [regex]::Match($before, $blockPattern)
-    if ($m.Success) {
-        $comment = $m.Groups[1].Value.Trim()
-        # Extract first line as description
-        $lines = $comment -split "\r?\n" | Where-Object { $_.Trim() -and -not $_.Trim().StartsWith('.') }
-        if ($lines) {
-            return ($lines | Select-Object -First 1).Trim()
-        }
-        return $comment
-    }
-
-    # Fallback: collect contiguous '#' lines from the end
-    $lines = $before -split "\r?\n"
-    $descLines = @()
-    for ($i = $lines.Length - 1; $i -ge 0; $i--) {
-        $line = $lines[$i]
-        if ($line -match '^[ \t]*#') {
-            $cleanLine = ($line -replace '^[ \t]*#\s?', '').Trim()
-            if ($cleanLine -and -not $cleanLine.StartsWith('.') -and $cleanLine -notmatch '^function\s+') {
-                $descLines += $cleanLine
-            }
-        } elseif ($line -match '^[ \t]*$') {
-            # stop on blank line between comments and function
-            if ($descLines.Count -gt 0) { break }
-            else { continue }
-        } else { break }
-    }
-    if ($descLines.Count -gt 0) {
-        # We collected lines from bottom-to-top; reverse them back to original order
-        [array]::Reverse($descLines)
-        return ($descLines -join ' ')
-    }
-    return ''
+# Ensure output directory exists
+if (-not (Test-Path $OutputDir)) {
+    New-Item -ItemType Directory -Path $OutputDir -Force | Out-Null
 }
 
-function Get-FunctionSignature($text, $matchIndex) {
-    # Extract the complete function signature including parameters
-    $lines = $text -split "\r?\n"
+# Performance tracking
+$sw = [System.Diagnostics.Stopwatch]::StartNew()
+
+Write-Verbose "=== PowerShell Profile Documentation Generator ==="
+Write-Verbose "Repository Root: $RepoRoot"
+Write-Verbose "Output Directory: $OutputDir"
+Write-Verbose ""
+
+#region Helper Functions
+
+function Get-PrecedingCommentBlock {
+    <#
+    .SYNOPSIS
+        Extract comment block immediately above a function declaration.
+    #>
+    param(
+        [string]$Text,
+        [int]$StartIndex
+    )
+
+    $before = $Text.Substring(0, $StartIndex)
+
+    # Try block comment first (<# ... #>)
+    $blockPattern = '(?s)<#(.*?)#>\s*$'
+    $match = [regex]::Match($before, $blockPattern)
+    
+    if ($match.Success) {
+        $comment = $match.Groups[1].Value.Trim()
+        
+        # Parse structured comment
+        $structured = @{
+            Synopsis    = ''
+            Description = ''
+            Examples    = @()
+            Parameters  = @{}
+            Notes       = ''
+        }
+        
+        $currentSection = 'Description'
+        $lines = $comment -split "\r?\n"
+        
+        foreach ($line in $lines) {
+            $cleanLine = $line.Trim()
+            
+            if ($cleanLine -match '^\.(SYNOPSIS|DESCRIPTION|EXAMPLE|PARAMETER|NOTES)') {
+                $currentSection = $matches[1]
+                continue
+            }
+            
+            if ($cleanLine) {
+                switch ($currentSection) {
+                    'SYNOPSIS' { $structured.Synopsis += " $cleanLine" }
+                    'DESCRIPTION' { $structured.Description += " $cleanLine" }
+                    'EXAMPLE' { $structured.Examples += $cleanLine }
+                    'NOTES' { $structured.Notes += " $cleanLine" }
+                }
+            }
+        }
+        
+        return $structured
+    }
+
+    # Fallback: single-line comments
+    $lines = $before -split "\r?\n"
+    $commentLines = @()
+    
+    for ($i = $lines.Length - 1; $i -ge 0; $i--) {
+        if ($lines[$i] -match '^[ \t]*#\s*(.+)$') {
+            $commentLines = , $matches[1] + $commentLines
+        }
+        elseif ($lines[$i] -match '^[ \t]*$') {
+            if ($commentLines.Count -gt 0) { break }
+        }
+        else { break }
+    }
+    
+    if ($commentLines.Count -gt 0) {
+        return @{ Description = ($commentLines -join ' ').Trim() }
+    }
+    
+    return @{ Description = '' }
+}
+
+function Get-FunctionSignature {
+    <#
+    .SYNOPSIS
+        Extract complete function signature including parameters.
+    #>
+    param(
+        [string]$Text,
+        [int]$MatchIndex
+    )
+
+    $lines = $Text -split "\r?\n"
+    $currentPos = 0
     $startLine = 0
 
-    # Find which line the match starts on
-    $currentPos = 0
+    # Find starting line
     for ($i = 0; $i -lt $lines.Length; $i++) {
-        if ($currentPos + $lines[$i].Length -ge $matchIndex) {
+        if ($currentPos + $lines[$i].Length -ge $MatchIndex) {
             $startLine = $i
             break
         }
-        $currentPos += $lines[$i].Length + 2  # +2 for \r\n
+        $currentPos += $lines[$i].Length + 2
     }
 
-    $signatureLines = @()
-    $signatureLines += $lines[$startLine].Trim()
+    $signatureLines = @($lines[$startLine].Trim())
+    $braceCount = 0
+    $parenCount = 0
+    $inParam = $false
 
-    $inParamBlock = $false
-    $paramParenCount = 0
-
-    for ($i = $startLine + 1; $i -lt $lines.Length; $i++) {
+    for ($i = $startLine + 1; $i -lt [Math]::Min($startLine + 100, $lines.Length); $i++) {
         $line = $lines[$i]
-
-        # Check if we're entering a param block
+        
         if ($line -match 'param\s*\(') {
-            $inParamBlock = $true
-            $paramParenCount = ($line -split '\(').Count - ($line -split '\)').Count
+            $inParam = $true
         }
+        
+        $parenCount += ($line.ToCharArray() | Where-Object { $_ -eq '(' }).Count
+        $parenCount -= ($line.ToCharArray() | Where-Object { $_ -eq ')' }).Count
+        $braceCount += ($line.ToCharArray() | Where-Object { $_ -eq '{' }).Count
 
-        # If we're in a param block, count parentheses
-        if ($inParamBlock) {
-            $paramParenCount += ($line -split '\(').Count - 1
-            $paramParenCount -= ($line -split '\)').Count - 1
-        }
-
-        # Stop if this line closes the param block (contains only closing paren and whitespace)
-        if ($inParamBlock -and $line.Trim() -match '^\s*\)\s*$') {
-            $signatureLines += $line.TrimEnd()
-            break
-        }
-
-        # Stop at the opening brace of the function body if no param block
-        if (-not $inParamBlock -and $line.Trim() -match '^\{') {
-            $signatureLines += $line.TrimEnd()
-            break
-        }
-
-        # Add the line to signature
         $signatureLines += $line.TrimEnd()
 
-        # Safety break if we have too many lines
-        if ($signatureLines.Count -gt 50) {
+        if ($inParam -and $parenCount -eq 0) {
+            break
+        }
+        
+        if (-not $inParam -and $braceCount -gt 0) {
             break
         }
     }
@@ -114,81 +175,250 @@ function Get-FunctionSignature($text, $matchIndex) {
     return ($signatureLines -join "`n").Trim()
 }
 
-$files = Get-ChildItem -Path $RepoRoot -Recurse -Include *.ps1,*.psm1 -File -ErrorAction SilentlyContinue | Where-Object { $_.FullName -notmatch '\\.git\\' -and $_.FullName -notmatch '\\docs\\' -and $_.FullName -notmatch '\\tools\\' }
+function Get-SourceCategory {
+    <#
+    .SYNOPSIS
+        Categorize source file based on path.
+    #>
+    param([string]$Path)
+    
+    $relativePath = $Path.Replace($RepoRoot, '').TrimStart('\', '/')
+    
+    if ($relativePath -match '^Core\\Utils') { return 'Utilities' }
+    if ($relativePath -match '^Core\\Apps') { return 'Applications' }
+    if ($relativePath -match '^Core\\System') { return 'System' }
+    if ($relativePath -match '^Core') { return 'Core' }
+    if ($relativePath -match '^Modules') { return 'Modules' }
+    if ($relativePath -match '^Scripts') { return 'Scripts' }
+    
+    return 'Other'
+}
 
-$entries = @()
-foreach ($f in $files) {
+#endregion
+
+#region Scan Functions
+
+Write-Verbose "Scanning for PowerShell files..."
+
+$files = Get-ChildItem -Path $RepoRoot -Recurse -Include *.ps1, *.psm1 -File -ErrorAction SilentlyContinue |
+Where-Object { 
+    $_.FullName -notmatch '[\\/]\.(git|vscode)[\\/]' -and
+    $_.FullName -notmatch '[\\/]docs[\\/]' -and
+    $_.FullName -notmatch '[\\/]tools[\\/]generate_' -and
+    $_.FullName -notmatch '[\\/]node_modules[\\/]'
+}
+
+Write-Verbose "Found $($files.Count) PowerShell files to scan"
+
+$functions = @{}
+$aliases = @{}
+$categories = @{}
+
+$functionPattern = '(?m)^[ \t]*function[ \t]+([A-Za-z0-9_\-]+)\b'
+$aliasPattern = '(?m)Set-Alias\s+-Name\s+([A-Za-z0-9_\-]+)\s+-Value\s+([A-Za-z0-9_\-]+)'
+
+foreach ($file in $files) {
+    Write-Verbose "  Processing: $($file.Name)"
+    
     try {
-        $text = Get-Content -Raw -LiteralPath $f.FullName -ErrorAction Stop
-    } catch { continue }
-    # Skip files where reading returned nothing (avoid null-valued calls later)
-    if (-not $text) { continue }
-
-    $pattern = '(?m)^[ \t]*function[ \t]+([A-Za-z0-9_\-]+)\b.*'
-    $functionMatches = [regex]::Matches($text, $pattern)
-    foreach ($m in $functionMatches) {
-        $name = $m.Groups[1].Value
-        $sig = Get-FunctionSignature $text $m.Index
-        $desc = Get-PrecedingCommentBlock $text $m.Index
-        $entry = [PSCustomObject]@{
-            Name = $name
-            Signature = $sig
-            Description = if ($desc) { $desc } else { '' }
-            Source = $f.FullName
+        $content = Get-Content -Raw -LiteralPath $file.FullName -ErrorAction Stop
+        if (-not $content) { continue }
+        
+        $category = Get-SourceCategory $file.FullName
+        
+        # Extract functions
+        $functionMatches = [regex]::Matches($content, $functionPattern)
+        foreach ($match in $functionMatches) {
+            $name = $match.Groups[1].Value
+            
+            if (-not $functions.ContainsKey($name)) {
+                $sig = Get-FunctionSignature $content $match.Index
+                $doc = Get-PrecedingCommentBlock $content $match.Index
+                
+                $functions[$name] = @{
+                    Name          = $name
+                    Signature     = $sig
+                    Documentation = $doc
+                    Source        = $file.FullName.Replace($RepoRoot, '').TrimStart('\', '/')
+                    Category      = $category
+                }
+                
+                if (-not $categories.ContainsKey($category)) {
+                    $categories[$category] = @()
+                }
+                $categories[$category] += $name
+            }
         }
-        $entries += $entry
+        
+        # Extract aliases
+        $aliasMatches = [regex]::Matches($content, $aliasPattern)
+        foreach ($match in $aliasMatches) {
+            $aliasName = $match.Groups[1].Value
+            $targetName = $match.Groups[2].Value
+            
+            if (-not $aliases.ContainsKey($aliasName)) {
+                $aliases[$aliasName] = @{
+                    Alias  = $aliasName
+                    Target = $targetName
+                    Source = $file.FullName.Replace($RepoRoot, '').TrimStart('\', '/')
+                }
+            }
+        }
+    }
+    catch {
+        Write-Warning "Error processing $($file.Name): $_"
     }
 }
 
-# Deduplicate by name (keep first)
-$byName = @{}
-foreach ($e in $entries) {
-    if (-not $byName.ContainsKey($e.Name)) { $byName[$e.Name] = $e }
+Write-Verbose ""
+Write-Verbose "Scan complete:"
+Write-Verbose "  Functions: $($functions.Count)"
+Write-Verbose "  Aliases: $($aliases.Count)"
+Write-Verbose "  Categories: $($categories.Count)"
+Write-Verbose ""
+
+#endregion
+
+#region Generate Documentation
+
+$timestamp = Get-Date -Format 'yyyy-MM-dd HH:mm:ss'
+
+# 1. Function Reference (detailed)
+Write-Verbose "Generating FunctionReference.md..."
+$output = @()
+$output += "# Function Reference"
+$output += ""
+$output += "> **Auto-generated documentation**"
+$output += "> Last updated: $timestamp"
+$output += "> Total functions: $($functions.Count)"
+$output += ""
+$output += "## Table of Contents"
+$output += ""
+
+foreach ($cat in ($categories.Keys | Sort-Object)) {
+    $output += "- [$cat](#$($cat.ToLower()))"
 }
 
-# Generate output
-$out = @()
-$out += "# Function Reference (auto-generated)"
-$out += ''
-$out += "This file was generated by tools/generate_function_docs.ps1. Run the script to refresh the contents."
-$out += ''
-$out += "Generated on: $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')"
-$out += ''
-$out += "Total functions found: $($byName.Count)"
-$out += ''
+$output += ""
 
-foreach ($name in ($byName.Keys | Sort-Object)) {
-    $e = $byName[$name]
-    $out += "## $($e.Name)"
-    $out += ''
-    if ($e.Signature) {
-        $out += "**Signature:**"
-        $out += ''
-        $out += '```powershell'
-        $out += $e.Signature
-        $out += '```'
-        $out += ''
+foreach ($cat in ($categories.Keys | Sort-Object)) {
+    $output += "## $cat"
+    $output += ""
+    
+    $categoryFunctions = $categories[$cat] | Sort-Object
+    foreach ($funcName in $categoryFunctions) {
+        $func = $functions[$funcName]
+        $output += "### ``$($func.Name)``"
+        $output += ""
+        
+        if ($func.Documentation.Synopsis) {
+            $output += $func.Documentation.Synopsis.Trim()
+            $output += ""
+        }
+        
+        if ($func.Signature) {
+            $output += "**Signature:**"
+            $output += "``````powershell"
+            $output += $func.Signature
+            $output += "``````"
+            $output += ""
+        }
+        
+        if ($func.Documentation.Description) {
+            $output += "**Description:**"
+            $output += ""
+            $output += $func.Documentation.Description.Trim()
+            $output += ""
+        }
+        
+        if ($func.Documentation.Examples -and $func.Documentation.Examples.Count -gt 0) {
+            $output += "**Examples:**"
+            $output += ""
+            foreach ($example in $func.Documentation.Examples) {
+                $output += "``````powershell"
+                $output += $example
+                $output += "``````"
+                $output += ""
+            }
+        }
+        
+        $output += "<sub>**Source:** ``$($func.Source)``</sub>"
+        $output += ""
     }
-    if ($e.Description) {
-        $out += "**Description:**"
-        $out += ''
-        $out += $e.Description
-        $out += ''
+}
+
+Set-Content -LiteralPath "$OutputDir\FunctionReference.md" -Value ($output -join "`n") -Encoding UTF8
+
+# 2. Quick Reference (aliases and functions list)
+Write-Verbose "Generating QuickReference.md..."
+$output = @()
+$output += "# Quick Reference"
+$output += ""
+$output += "> **Auto-generated documentation**"
+$output += "> Last updated: $timestamp"
+$output += ""
+$output += "## Functions"
+$output += ""
+$output += "| Function | Category | Description |"
+$output += "|----------|----------|-------------|"
+
+foreach ($funcName in ($functions.Keys | Sort-Object)) {
+    $func = $functions[$funcName]
+    $desc = if ($func.Documentation.Synopsis) { 
+        $func.Documentation.Synopsis.Trim() -replace '\r?\n', ' ' 
     }
-    $out += "**Source:** $($e.Source.Replace($RepoRoot, '').TrimStart('\'))"
-    $out += ''
+    else { 
+        $func.Documentation.Description.Trim() -replace '\r?\n', ' ' 
+    }
+    if ($desc.Length -gt 80) { $desc = $desc.Substring(0, 77) + "..." }
+    $output += "| ``$($func.Name)`` | $($func.Category) | $desc |"
 }
 
-Write-Verbose "Writing output to $OutFile"
-Set-Content -LiteralPath $OutFile -Value ($out -join "`n") -Encoding UTF8
-Write-Verbose "Done. Found $($byName.Count) unique functions."
+$output += ""
+$output += "## Aliases"
+$output += ""
+$output += "| Alias | Target | Source |"
+$output += "|-------|--------|--------|"
 
-# Update FUNCTIONS.md with current scan date
-$functionsFile = "$RepoRoot\docs\FUNCTIONS.md"
-if (Test-Path $functionsFile) {
-    $currentDate = Get-Date -Format 'yyyy-MM-dd'
-    $functionsContent = Get-Content -Raw -LiteralPath $functionsFile
-    $updatedContent = $functionsContent -replace '<!-- AUTOGEN_SCAN_DATE -->', $currentDate
-    Set-Content -LiteralPath $functionsFile -Value $updatedContent -Encoding UTF8
-    Write-Verbose "Updated scan date in FUNCTIONS.md to $currentDate"
+foreach ($aliasName in ($aliases.Keys | Sort-Object)) {
+    $alias = $aliases[$aliasName]
+    $output += "| ``$($alias.Alias)`` | ``$($alias.Target)`` | ``$($alias.Source)`` |"
 }
+
+Set-Content -LiteralPath "$OutputDir\QuickReference.md" -Value ($output -join "`n") -Encoding UTF8
+
+# 3. Generate/Update README sections
+Write-Verbose "Updating README.md sections..."
+
+$readmePath = "$RepoRoot\README.md"
+if (Test-Path $readmePath) {
+    $readmeContent = Get-Content -Raw $readmePath
+    
+    # Update stats
+    $statsBlock = @"
+## 📊 Statistics
+
+- **Functions:** $($functions.Count)
+- **Aliases:** $($aliases.Count)
+- **Categories:** $($categories.Count)
+- **Last Updated:** $timestamp
+
+"@
+    
+    # Add stats if not present
+    if ($readmeContent -notmatch '## 📊 Statistics') {
+        $readmeContent += "`n`n$statsBlock"
+        Set-Content -LiteralPath $readmePath -Value $readmeContent -Encoding UTF8
+    }
+}
+
+#endregion
+
+$sw.Stop()
+Write-Verbose ""
+Write-Verbose "=== Documentation Generation Complete ==="
+Write-Verbose "Time elapsed: $($sw.ElapsedMilliseconds)ms"
+Write-Verbose "Files generated:"
+Write-Verbose "  - FunctionReference.md"
+Write-Verbose "  - QuickReference.md"
+Write-Verbose ""
