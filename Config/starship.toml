@@ -12,6 +12,7 @@ format = """
 [📅 $time ](bg:#1d2230 fg:#5BCEFA)\
 $git_branch\
 $git_status\
+$git_state\
 $docker_context\
 $conda\
 $nodejs\
@@ -87,6 +88,10 @@ renamed = "»${count} "
 modified = "!${count} "
 staged = "+${count} "
 untracked = "?${count} "
+
+[git_state]
+style = "bg:#394260 fg:#F5A9B8"
+format = '\([$state( $progress_current/$progress_total)]($style)\) '
 
 [docker_context]
 style = "bg:#212736 fg:#F5A9B8"
