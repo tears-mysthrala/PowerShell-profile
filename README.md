@@ -17,11 +17,10 @@ git clone https://github.com/tears-mysthrala/PowerShell-profile.git $HOME\Docume
 
 ## Documentation
 
-- **[📋 Features](docs/FEATURES.md)** - Complete list of available functions and aliases
-- **[⚙️ Installation & Requirements](docs/INSTALLATION.md)** - Setup instructions and system requirements
-- **[🔧 Customization](docs/CUSTOMIZATION.md)** - How to extend and modify the environment
-- **[📚 Functions Reference](docs/FUNCTIONS.md)** - Auto-generated function and alias documentation
-- **[📖 Function Reference](docs/FunctionReference.md)** - Detailed function signatures and descriptions
+- **[⚙️ Installation Guide](docs/INSTALLATION.md)** - Setup instructions, requirements & troubleshooting
+- **[🔧 Customization Guide](docs/CUSTOMIZATION.md)** - Extend and modify the environment
+- **[📖 Function Reference](docs/FunctionReference.md)** - Complete function signatures and documentation (628 functions)
+- **[📋 Quick Reference](docs/QuickReference.md)** - Fast lookup table for functions and aliases
 
 ## Key Features
 
@@ -34,7 +33,23 @@ git clone https://github.com/tears-mysthrala/PowerShell-profile.git $HOME\Docume
 
 ## Performance
 
-- Starship prompt initialization is cached: the profile generates the full PowerShell init script once and reuses it on subsequent starts, avoiding a process spawn on each shell load. The cache is automatically invalidated when either the Starship binary or `Config/starship.toml` changes. You can force regeneration by deleting `Config/starship-init-cache.ps1` and `Config/starship-init-cache.meta.clixml`.
+**Current load time: ~500-600ms** (optimized with aggressive caching)
+
+### Optimization Features
+
+- **Module caching**: JSON-based cache in `$env:TEMP\PSModuleCache.json` eliminates repeated `Get-Module -ListAvailable` calls
+- **Command pre-caching**: Common tools (bat, eza, fd, zoxide, etc.) checked once at startup
+- **Starship init cache**: Full PowerShell init script cached and auto-invalidated on binary/config changes
+- **Path caching**: Repeated path checks cached in session memory
+- **Parallel updates**: Module updates run in parallel using `Start-ThreadJob`
+
+**Cache management:**
+```powershell
+# Clear all caches
+Remove-Item $env:TEMP\PSModuleCache.json
+Remove-Item Config\*-cache.*
+. $PROFILE  # Rebuild on reload
+```
 
 ## Requirements
 
@@ -50,9 +65,10 @@ This project uses local validation and documentation generation. Before committi
    - PSScriptAnalyzer: `Install-Module PSScriptAnalyzer; Invoke-ScriptAnalyzer -Path . -Recurse`
    - Performance test: Load time check manually
 
-2. **Update documentation**:
-   - Run the docs generator locally: `.\tools\generate_function_docs.ps1`
-   - Or use the prepare script: `.\tools\prepare-commit.bat`
+2. **Update documentation** (automated via GitHub Actions):
+   - Manual generation: `.\tools\generate_function_docs.ps1 -Verbose`
+   - Auto-generated every Sunday 6 AM GMT if code changes detected
+   - Or trigger manually from GitHub Actions UI
 
 3. **When adding new functions**:
    - Place them in appropriate files under `Core/Utils/`
