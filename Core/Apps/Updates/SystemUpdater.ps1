@@ -81,58 +81,109 @@ function Update-System {
     Write-UpdateLog "System update completed" $logFile
 }
 
-# PowerShell module update function
+# PowerShell module update function with parallel checking
 function Update-PowerShellModule {
     [CmdletBinding(SupportsShouldProcess)]
     param()
     if ($PSCmdlet.ShouldProcess("PowerShell modules", "Update")) {
-    $modulesToRetry = @()
-    $modulesToUpdate = @{}
+        $modulesToRetry = @()
+        $modulesToUpdate = @{}
+        $hasThreadJob = $null -ne (Get-Command Start-ThreadJob -ErrorAction SilentlyContinue)
 
-    Get-Module -ListAvailable | ForEach-Object {
-        $currentModule = $_
-        try {
-            #Write-Verbose "[INFO] Checking online version for module '$($currentModule.Name)' with ErrorAction SilentlyContinue (errors will be suppressed)" -ForegroundColor Yellow
-            $online = Find-Module -Name $currentModule.Name -ErrorAction SilentlyContinue
-            if ($online -and ($online.Version -gt $currentModule.Version)) {
-                $modulesToUpdate[$currentModule.Name] = @{
-                    'CurrentVersion' = $currentModule.Version
-                    'NewVersion'     = $online.Version
+        # Get all installed modules
+        $allModules = Get-Module -ListAvailable | 
+        Group-Object Name | 
+        ForEach-Object { $_.Group | Sort-Object Version -Descending | Select-Object -First 1 }
+
+        if ($hasThreadJob) {
+            # Parallel version using ThreadJobs
+            Write-Verbose "Checking module updates in parallel using ThreadJobs..."
+            $jobs = @()
+            
+            foreach ($currentModule in $allModules) {
+                $job = Start-ThreadJob -ScriptBlock {
+                    param($moduleName, $currentVersion)
+                    try {
+                        $online = Find-Module -Name $moduleName -ErrorAction SilentlyContinue
+                        if ($online -and ($online.Version -gt $currentVersion)) {
+                            return @{
+                                Name           = $moduleName
+                                CurrentVersion = $currentVersion
+                                NewVersion     = $online.Version
+                            }
+                        }
+                    }
+                    catch {
+                        # Silently ignore errors
+                    }
+                    return $null
+                } -ArgumentList $currentModule.Name, $currentModule.Version
+                
+                $jobs += $job
+            }
+
+            # Wait for all jobs and collect results
+            $results = $jobs | Wait-Job | Receive-Job
+            $jobs | Remove-Job -Force
+
+            foreach ($result in $results) {
+                if ($result) {
+                    $modulesToUpdate[$result.Name] = @{
+                        'CurrentVersion' = $result.CurrentVersion
+                        'NewVersion'     = $result.NewVersion
+                    }
                 }
             }
         }
-        catch {
-            Write-Warning "Could not check online version for module '$($currentModule.Name)': $($_.Exception.Message)"
-        }
-    }
-
-    foreach ($moduleName in $modulesToUpdate.Keys) {
-        try {
-            #Write-Verbose "[INFO] Checking if module '$moduleName' is loaded with ErrorAction SilentlyContinue (errors will be suppressed)" -ForegroundColor Yellow
-            $loadedModule = Get-Module -Name $moduleName -ErrorAction SilentlyContinue
-            if ($loadedModule) {
-                Remove-Module -Name $moduleName -Force -ErrorAction Stop
-            }
-
-            Update-Module -Name $moduleName -Force -ErrorAction Stop
-
-            if ($loadedModule) {
-                Import-Module -Name $moduleName -Force -ErrorAction Stop
-            }
-        } catch {
-            if ($_.Exception.Message -match 'is currently in use') {
-                $modulesToRetry += $moduleName
-            } else {
-                Write-Warning "Failed to update module '$moduleName': $($_.Exception.Message)"
+        else {
+            # Sequential version (fallback)
+            Write-Verbose "Checking module updates sequentially..."
+            foreach ($currentModule in $allModules) {
+                try {
+                    $online = Find-Module -Name $currentModule.Name -ErrorAction SilentlyContinue
+                    if ($online -and ($online.Version -gt $currentModule.Version)) {
+                        $modulesToUpdate[$currentModule.Name] = @{
+                            'CurrentVersion' = $currentModule.Version
+                            'NewVersion'     = $online.Version
+                        }
+                    }
+                }
+                catch {
+                    Write-Warning "Could not check online version for module '$($currentModule.Name)': $($_.Exception.Message)"
+                }
             }
         }
-    }
 
-    if ($modulesToRetry.Count -gt 0) {
-        Write-Warning "\nThe following modules require a PowerShell restart to update:"
-        $modulesToRetry | ForEach-Object {
-            $info = $modulesToUpdate[$_]
-            Write-Warning "  - $_ (Current: $($info.CurrentVersion) → New: $($info.NewVersion))"
+        # Update modules
+        foreach ($moduleName in $modulesToUpdate.Keys) {
+            try {
+                $loadedModule = Get-Module -Name $moduleName -ErrorAction SilentlyContinue
+                if ($loadedModule) {
+                    Remove-Module -Name $moduleName -Force -ErrorAction Stop
+                }
+
+                Update-Module -Name $moduleName -Force -ErrorAction Stop
+
+                if ($loadedModule) {
+                    Import-Module -Name $moduleName -Force -ErrorAction Stop
+                }
+            }
+            catch {
+                if ($_.Exception.Message -match 'is currently in use') {
+                    $modulesToRetry += $moduleName
+                }
+                else {
+                    Write-Warning "Failed to update module '$moduleName': $($_.Exception.Message)"
+                }
+            }
+        }
+
+        if ($modulesToRetry.Count -gt 0) {
+            Write-Warning "\nThe following modules require a PowerShell restart to update:"
+            $modulesToRetry | ForEach-Object {
+                $info = $modulesToUpdate[$_]
+                Write-Warning "  - $_ (Current: $($info.CurrentVersion) → New: $($info.NewVersion))"
+            }
         }
     }
 }

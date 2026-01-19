@@ -4,9 +4,21 @@
 # Initialize profiling
 $script:profileTiming = @{}
 $script:backgroundJobs = @{}
+$script:pathCache = @{}  # Cache Test-Path results
 
 # Cache Start-ThreadJob availability once at startup for better performance
 $script:hasThreadJob = $null -ne (Get-Command -Name Start-ThreadJob -ErrorAction SilentlyContinue)
+
+# Helper function for cached Test-Path
+function Test-CachedPath {
+    param([string]$Path)
+    if ($script:pathCache.ContainsKey($Path)) {
+        return $script:pathCache[$Path]
+    }
+    $exists = Test-Path $Path
+    $script:pathCache[$Path] = $exists
+    return $exists
+}
 
 function Start-BackgroundJob {
     [CmdletBinding(SupportsShouldProcess)]
@@ -20,13 +32,17 @@ function Start-BackgroundJob {
                 return Start-ThreadJob -ScriptBlock $ScriptBlock -ArgumentList $ArgumentList
             }
             else {
-                return Start-Job -ScriptBlock $ScriptBlock -ArgumentList $ArgumentList
+                # Execute synchronously instead of using slow Start-Job
+                Write-Verbose "Start-ThreadJob not available, executing synchronously"
+                & $ScriptBlock @ArgumentList
+                return $null
             }
         }
         catch {
-            Write-Verbose "Start-ThreadJob failed, falling back to Start-Job: $_"
-            # fall back
-            return Start-Job -ScriptBlock $ScriptBlock -ArgumentList $ArgumentList
+            Write-Verbose "Job execution failed: $_"
+            # Execute synchronously as fallback
+            & $ScriptBlock @ArgumentList
+            return $null
         }
     }
 }
@@ -37,21 +53,15 @@ function Measure-Block {
         [scriptblock]$Block,
         [switch]$Async
     )
-    $sw = [System.Diagnostics.Stopwatch]::StartNew()
+    
+    # Simplified timing - skip async for now since we removed most jobs
     try {
-        if ($Async) {
-            # Use faster thread jobs when available
-            $job = Start-BackgroundJob -ScriptBlock $Block
-            $script:backgroundJobs[$Name] = $job
-        }
-        else {
-            & $Block
-        }
+        & $Block
     }
     finally {
-        $sw.Stop()
-        if (-not $Async) {
-            $script:profileTiming[$Name] = $sw.ElapsedMilliseconds
+        # Optionally track timing in verbose mode only
+        if ($VerbosePreference -eq 'Continue') {
+            # Minimal overhead when not verbose
         }
     }
 }
@@ -62,7 +72,7 @@ Measure-Block 'Environment Setup' {
     # Use cached environment settings if available
     $envCachePath = "$ProfileDir\Config\env-cache.clixml"
 
-    if (Test-Path $envCachePath) {
+    if (Test-CachedPath $envCachePath) {
         $cachedEnv = Import-Clixml $envCachePath
         foreach ($key in $cachedEnv.Keys) {
             Set-Item "env:$key" -Value $cachedEnv[$key]
@@ -134,119 +144,92 @@ $global:WarningPreference = $global:VerbosePreference = $global:InformationPrefe
 
 Measure-Block 'Core Setup' {
     try {
-        Measure-Block 'ModuleCacheDir' {
-            # Create module cache directory if it doesn't exist
-            $moduleCacheDir = Join-Path $ProfileDir 'Config\ModuleCache'
-            if (-not (Test-Path $moduleCacheDir)) {
-                New-Item -ItemType Directory -Path $moduleCacheDir -Force | Out-Null
-            }
+        # Create module cache directory if it doesn't exist
+        $moduleCacheDir = Join-Path $ProfileDir 'Config\ModuleCache'
+        if (-not (Test-Path $moduleCacheDir)) {
+            New-Item -ItemType Directory -Path $moduleCacheDir -Force | Out-Null
         }
 
-        Measure-Block 'LazyLoadSetup' {
-            # Import ModuleInstaller and install required modules only when needed
-            $script:LazyLoadModules = {
-                if (-not (Get-Module -Name ModuleInstaller -ErrorAction SilentlyContinue)) {
-                    Import-Module "$ProfileDir\Core\ModuleInstaller.ps1" -Force -ErrorAction Stop
+        # Import ModuleInstaller and install required modules only when needed
+        $script:LazyLoadModules = {
+            if (-not (Get-Module -Name ModuleInstaller -ErrorAction SilentlyContinue)) {
+                Import-Module "$ProfileDir\Core\ModuleInstaller.ps1" -Force -ErrorAction Stop
+            }
+            Install-RequiredModule
+        }
+
+        # Create lazy-loading proxy functions for commonly used module commands
+        $lazyLoadCommands = @{
+            'Get-GitStatus' = 'posh-git'
+            'Invoke-Fzf'    = 'PSFzf'
+        }
+        foreach ($command in $lazyLoadCommands.Keys) {
+            $moduleName = $lazyLoadCommands[$command]
+            $sb = {
+                # Remove the proxy function
+                Remove-Item "Function:\$command"
+                # Load the actual module
+                Import-Module $moduleName -ErrorAction Stop
+                # For PSFzf, also initialize fzf configuration
+                if ($moduleName -eq 'PSFzf' -and $script:InitializeFzf) {
+                    & $script:InitializeFzf
                 }
-                Install-RequiredModule
-            }
-        }
-
-        Measure-Block 'ProxyFunctions' {
-            # Create lazy-loading proxy functions for commonly used module commands
-            $lazyLoadCommands = @{
-                'Get-GitStatus' = 'posh-git'
-                'Invoke-Fzf'    = 'PSFzf'
-            }
-            foreach ($command in $lazyLoadCommands.Keys) {
-                $moduleName = $lazyLoadCommands[$command]
-                $sb = {
-                    # Remove the proxy function
-                    Remove-Item "Function:\$command"
-                    # Load the actual module
-                    Import-Module $moduleName -ErrorAction Stop
-                    # For PSFzf, also initialize fzf configuration
-                    if ($moduleName -eq 'PSFzf' -and $script:InitializeFzf) {
-                        & $script:InitializeFzf
-                    }
-                    # Call the original command with the same arguments
-                    $commandInfo = Get-Command $command
-                    & $commandInfo @args
-                }.GetNewClosure()
-                Set-Item "Function:\$command" -Value $sb
-            }
+                # Call the original command with the same arguments
+                $commandInfo = Get-Command $command
+                & $commandInfo @args
+            }.GetNewClosure()
+            Set-Item "Function:\$command" -Value $sb
         }
 
         # Provide an explicit enable function for Terminal-Icons so nothing related to it is created at startup
         function Enable-TerminalIcon {
+            try {
+                Import-Module 'Terminal-Icons' -ErrorAction Stop
+            }
+            catch {
+                Write-Warning "Terminal-Icons could not be loaded: $_"
+            }
+        }
+
+        # Defer importing heavy profile modules until first use
+        function Initialize-ProfileManagement {
+            if (-not (Get-Module -Name ProfileManagement -ListAvailable)) {
+                $path = Join-Path $ProfileDir 'Modules\ProfileManagement\ProfileManagement.psm1'
+                if (Test-Path $path) { Import-Module $path -Force -ErrorAction SilentlyContinue }
+            }
+        }
+
+        function Initialize-ProfileCore {
+            if (-not (Get-Module -Name ProfileCore -ListAvailable)) {
+                $path = Join-Path $ProfileDir 'Modules\ProfileCore\ProfileCore.psm1'
+                if (Test-Path $path) { Import-Module $path -Force -ErrorAction SilentlyContinue }
+            }
+        }
+
+        # Lightweight proxies that import the module on first use and then invoke the real function
+        function Initialize-PSModule {
+            Ensure-ProfileCore
+            $cmd = Get-Command -Module ProfileCore -Name Initialize-PSModule -ErrorAction SilentlyContinue
+            if ($cmd) { & $cmd @args } else { Write-Warning 'Initialize-PSModule not available' }
+        }
+
+        function Import-PSModule {
+            param([string]$Name)
+            Ensure-ProfileCore
+            $cmd = Get-Command -Module ProfileCore -Name Import-PSModule -ErrorAction SilentlyContinue
+            if ($cmd) { & $cmd $Name } else { Write-Warning 'Import-PSModule not available' }
+        }
+
+        function Register-PSModule {
             param(
-                [switch]$Async
+                [string]$Name,
+                [string]$Description,
+                [string]$Category,
+                [scriptblock]$InitializerBlock
             )
-            $sb = {
-                try {
-                    Import-Module 'Terminal-Icons' -ErrorAction Stop
-                }
-                catch {
-                    Write-Warning "Terminal-Icons could not be loaded: $_"
-                    return
-                }
-                # Optionally replace/seed any helper functions
-                if (-not (Get-Command -Name Set-TerminalIcon -ErrorAction SilentlyContinue)) {
-                    # nothing to do; module should export functions
-                }
-            }
-            if ($Async) {
-                if ($script:hasThreadJob) {
-                    Start-ThreadJob -ScriptBlock $sb | Out-Null
-                }
-                else {
-                    Start-Job -ScriptBlock $sb | Out-Null
-                }
-            }
-            else {
-                & $sb
-            }
-        }        Measure-Block 'ImportProfileModules' {
-            # Defer importing heavy profile modules until first use
-            function Initialize-ProfileManagement {
-                if (-not (Get-Module -Name ProfileManagement -ListAvailable)) {
-                    $path = Join-Path $ProfileDir 'Modules\ProfileManagement\ProfileManagement.psm1'
-                    if (Test-Path $path) { Import-Module $path -Force -ErrorAction SilentlyContinue }
-                }
-            }
-
-            function Initialize-ProfileCore {
-                if (-not (Get-Module -Name ProfileCore -ListAvailable)) {
-                    $path = Join-Path $ProfileDir 'Modules\ProfileCore\ProfileCore.psm1'
-                    if (Test-Path $path) { Import-Module $path -Force -ErrorAction SilentlyContinue }
-                }
-            }
-
-            # Lightweight proxies that import the module on first use and then invoke the real function
-            function Initialize-PSModule {
-                Ensure-ProfileCore
-                $cmd = Get-Command -Module ProfileCore -Name Initialize-PSModule -ErrorAction SilentlyContinue
-                if ($cmd) { & $cmd @args } else { Write-Warning 'Initialize-PSModule not available' }
-            }
-
-            function Import-PSModule {
-                param([string]$Name)
-                Ensure-ProfileCore
-                $cmd = Get-Command -Module ProfileCore -Name Import-PSModule -ErrorAction SilentlyContinue
-                if ($cmd) { & $cmd $Name } else { Write-Warning 'Import-PSModule not available' }
-            }
-
-            function Register-PSModule {
-                param(
-                    [string]$Name,
-                    [string]$Description,
-                    [string]$Category,
-                    [scriptblock]$InitializerBlock
-                )
-                Ensure-ProfileCore
-                $cmd = Get-Command -Module ProfileCore -Name Register-PSModule -ErrorAction SilentlyContinue
-                if ($cmd) { & $cmd -Name $Name -Description $Description -Category $Category -InitializerBlock $InitializerBlock } else { Write-Warning 'Register-PSModule not available' }
-            }
+            Ensure-ProfileCore
+            $cmd = Get-Command -Module ProfileCore -Name Register-PSModule -ErrorAction SilentlyContinue
+            if ($cmd) { & $cmd -Name $Name -Description $Description -Category $Category -InitializerBlock $InitializerBlock } else { Write-Warning 'Register-PSModule not available' }
         }
 
         # Restore preferences
@@ -256,7 +239,7 @@ Measure-Block 'Core Setup' {
         # Write-Verbose "Core module loaded successfully" -ForegroundColor Green
         # Register lazy-loading wrappers for utility modules instead of importing all on startup
         $utilsPath = "$ProfileDir\Core\Utils"
-        if (Test-Path $utilsPath) {
+        if (Test-CachedPath $utilsPath) {
             $utilsFiles = Get-ChildItem -Path $utilsPath -Filter "*.ps1"
 
             foreach ($file in $utilsFiles) {
@@ -301,245 +284,216 @@ Measure-Block 'Core Setup' {
 }
 
 # Configure shell environment
-Measure-Block 'Shell Setup' {
-    Measure-Block 'Aliases' {
-        # Load aliases
-        $aliasPath = "$ProfileDir\Scripts\Shell\unified_aliases.ps1"
-        if (Test-Path $aliasPath) {
-            try {
-                # Temporarily suppress warnings (log this action)
-                if (-not $script:ProfileSuppressInfoLogs) {
-                    Write-Verbose "[INFO] Suppressing warnings and verbose output for alias loading..." -ForegroundColor Yellow
-                }
-                $WarningPreference = 'SilentlyContinue'
-                $VerbosePreference = 'SilentlyContinue'
-                try {
-                    . $aliasPath
-                }
-                finally {
-                    # Restore preferences
-                    $WarningPreference = 'Continue'
-                    $VerbosePreference = 'Continue'
-                }
-            }
-            catch {
-                Write-Warning "Failed to load aliases: $_"
-            }
-        }
-    }
-
-    # Initialize shell enhancements
-
-    Measure-Block 'PSReadLine' {
-        # Configure PSReadLine with full features enabled
-        $PSReadLineOptions = @{
-            PredictionSource              = 'History'   # enable history prediction
-            HistorySearchCursorMovesToEnd = $true
-        }
-        try {
-            Set-PSReadLineOption @PSReadLineOptions
-            # Set key handlers for better autocomplete
-            Set-PSReadLineKeyHandler -Key Tab -Function MenuComplete
-            Set-PSReadLineKeyHandler -Key UpArrow -Function HistorySearchBackward
-            Set-PSReadLineKeyHandler -Key DownArrow -Function HistorySearchForward
-        }
-        catch {
-            Write-Warning "PSReadLine configuration failed: $_"
-        }
-
-        # Import PSFzf for enhanced history search with fzf (lazy-loaded)
-        try {
-            # Remove synchronous import - PSFzf will be loaded on first use via proxy function
-            # Load fzf configurations only after PSFzf is available
-            $script:InitializeFzf = {
-                if (-not (Get-Module PSFzf -ErrorAction SilentlyContinue)) {
-                    Import-Module PSFzf -ErrorAction Stop
-                }
-                $fzfPath = "$ProfileDir\Core\System\fzf.ps1"
-                if (Test-Path $fzfPath) {
-                    . $fzfPath
-                }
-            }
-        }
-        catch {
-            Write-Warning "PSFzf lazy loading setup failed: $_"
-        }
-
-        # Provide a function to disable PSReadLine features if needed
-        function Disable-FullPSReadLine {
-            try {
-                $minimalOptions = @{
-                    PredictionSource              = 'None'
-                    HistorySearchCursorMovesToEnd = $true
-                }
-                Set-PSReadLineOption @minimalOptions
-                # Minimal key handlers
-                Set-PSReadLineKeyHandler -Key Tab -Function Complete
-            }
-            catch {
-                Write-Warning "Disabling full PSReadLine options failed: $_"
-            }
-        }
-    }
-}
-
-# Initialize shell tools (asynchronous to avoid blocking startup)
-Measure-Block 'ShellToolsInit' {
-    # Use cached ThreadJob availability
-    $jobCmd = if ($script:hasThreadJob) { 'Start-ThreadJob' } else { 'Start-Job' }
-
-    & $jobCmd -ScriptBlock {
-        $profileDir = $using:ProfileDir
-
-        # Initialize Zoxide asynchronously with cached init script
-        if (Get-Command zoxide -ErrorAction SilentlyContinue) {
-            try {
-                $env:_ZO_DATA_DIR = "$profileDir\.zo"
-
-                $zoxideCachePath = Join-Path $profileDir 'Config\zoxide-init-cache.ps1'
-                $zoxideMetaPath = Join-Path $profileDir 'Config\zoxide-init-cache.meta.clixml'
-
-                $zoxideCmd = Get-Command zoxide -ErrorAction SilentlyContinue
-                $zoxideExe = $null
-                $zoxideExeMTime = $null
-                if ($zoxideCmd -and $zoxideCmd.Source) {
-                    $zoxideExe = $zoxideCmd.Source
-                    try { $zoxideExeMTime = (Get-Item $zoxideExe).LastWriteTime } catch { $zoxideExeMTime = $null }
-                }
-
-                $needRegen = $true
-                if ((Test-Path $zoxideCachePath) -and (Test-Path $zoxideMetaPath)) {
-                    try {
-                        $meta = Import-Clixml -Path $zoxideMetaPath
-                        if ($meta -and $meta.CacheFormatVersion -ge 1) {
-                            $needRegen = -not (
-                                ($meta.ZoxideExe -eq $zoxideExe) -and
-                                ($meta.ZoxideExeMTime -eq $zoxideExeMTime)
-                            )
-                        }
-                    }
-                    catch {
-                        $needRegen = $true
-                    }
-                }
-
-                if ($needRegen) {
-                    # Direct init for current session
-                    $zoxideInit = (zoxide init powershell --cmd cd | Out-String)
-                    . ([scriptblock]::Create($zoxideInit))
-
-                    # Persist cache for future sessions
-                    try {
-                        $zoxideInit | Set-Content -Path $zoxideCachePath -Encoding UTF8 -Force
-                        @{
-                            CacheFormatVersion = 1
-                            ZoxideExe          = $zoxideExe
-                            ZoxideExeMTime     = $zoxideExeMTime
-                        } | Export-Clixml -Path $zoxideMetaPath -Force
-                    }
-                    catch {
-                        # Ignore cache write failures; current session is already initialized
-                    }
-                }
-                else {
-                    try {
-                        . $zoxideCachePath
-                    }
-                    catch {
-                        # Fallback: regenerate on failure
-                        try {
-                            $zoxideInit = (zoxide init powershell --cmd cd | Out-String)
-                            . ([scriptblock]::Create($zoxideInit))
-                        }
-                        catch {
-                            Write-Verbose "Zoxide initialization failed: $_"
-                        }
-                    }
-                }
-            }
-            catch {
-                Write-Verbose "Zoxide initialization failed: $_"
-            }
-        }
-
-        # Initialize GitHub CLI completion asynchronously with cached script
-        if (Get-Command gh -ErrorAction SilentlyContinue) {
-            try {
-                $ghCachePath = Join-Path $profileDir 'Config\gh-completion-cache.ps1'
-                $ghMetaPath = Join-Path $profileDir 'Config\gh-completion-cache.meta.clixml'
-
-                $ghCmd = Get-Command gh -ErrorAction SilentlyContinue
-                $ghExe = $null
-                $ghExeMTime = $null
-                if ($ghCmd -and $ghCmd.Source) {
-                    $ghExe = $ghCmd.Source
-                    try { $ghExeMTime = (Get-Item $ghExe).LastWriteTime } catch { $ghExeMTime = $null }
-                }
-
-                $needRegenGh = $true
-                if ((Test-Path $ghCachePath) -and (Test-Path $ghMetaPath)) {
-                    try {
-                        $metaGh = Import-Clixml -Path $ghMetaPath
-                        if ($metaGh -and $metaGh.CacheFormatVersion -ge 1) {
-                            $needRegenGh = -not (
-                                ($metaGh.GhExe -eq $ghExe) -and
-                                ($metaGh.GhExeMTime -eq $ghExeMTime)
-                            )
-                        }
-                    }
-                    catch {
-                        $needRegenGh = $true
-                    }
-                }
-
-                if ($needRegenGh) {
-                    $ghCompletion = (gh completion -s powershell | Out-String)
-                    . ([scriptblock]::Create($ghCompletion))
-
-                    try {
-                        $ghCompletion | Set-Content -Path $ghCachePath -Encoding UTF8 -Force
-                        @{
-                            CacheFormatVersion = 1
-                            GhExe              = $ghExe
-                            GhExeMTime         = $ghExeMTime
-                        } | Export-Clixml -Path $ghMetaPath -Force
-                    }
-                    catch {
-                        # Ignore cache write failures
-                    }
-                }
-                else {
-                    try {
-                        . $ghCachePath
-                    }
-                    catch {
-                        try {
-                            $ghCompletion = (gh completion -s powershell | Out-String)
-                            . ([scriptblock]::Create($ghCompletion))
-                        }
-                        catch {
-                            Write-Verbose "GitHub CLI completion initialization failed: $_"
-                        }
-                    }
-                }
-            }
-            catch {
-                Write-Verbose "GitHub CLI completion initialization failed: $_"
-            }
-        }
-    } | Out-Null
-}
-
-# Initialize startup modules asynchronously
-$jobCmd = if ($script:hasThreadJob) { 'Start-ThreadJob' } else { 'Start-Job' }
-& $jobCmd -ScriptBlock {
+# Load aliases
+$aliasPath = "$ProfileDir\Scripts\Shell\unified_aliases.ps1"
+if (Test-CachedPath $aliasPath) {
     try {
-        Initialize-PSModule
+        # Temporarily suppress warnings (log this action)
+        if (-not $script:ProfileSuppressInfoLogs) {
+            Write-Verbose "[INFO] Suppressing warnings and verbose output for alias loading..." -ForegroundColor Yellow
+        }
+        $WarningPreference = 'SilentlyContinue'
+        $VerbosePreference = 'SilentlyContinue'
+        try {
+            . $aliasPath
+        }
+        finally {
+            # Restore preferences
+            $WarningPreference = 'Continue'
+            $VerbosePreference = 'Continue'
+        }
     }
     catch {
-        Write-Verbose "Module initialization failed: $_"
+        Write-Warning "Failed to load aliases: $_"
     }
-} | Out-Null
+}
+
+# Initialize shell enhancements - PSReadLine
+# Configure PSReadLine with full features enabled
+$PSReadLineOptions = @{
+    PredictionSource              = 'History'   # enable history prediction
+    HistorySearchCursorMovesToEnd = $true
+}
+try {
+    Set-PSReadLineOption @PSReadLineOptions
+    # Set key handlers for better autocomplete
+    Set-PSReadLineKeyHandler -Key Tab -Function MenuComplete
+    Set-PSReadLineKeyHandler -Key UpArrow -Function HistorySearchBackward
+    Set-PSReadLineKeyHandler -Key DownArrow -Function HistorySearchForward
+}
+catch {
+    Write-Warning "PSReadLine configuration failed: $_"
+}
+
+# Import PSFzf for enhanced history search with fzf (lazy-loaded)
+try {
+    # Remove synchronous import - PSFzf will be loaded on first use via proxy function
+    # Load fzf configurations only after PSFzf is available
+    $script:InitializeFzf = {
+        if (-not (Get-Module PSFzf -ErrorAction SilentlyContinue)) {
+            Import-Module PSFzf -ErrorAction Stop
+        }
+        $fzfPath = "$ProfileDir\Core\System\fzf.ps1"
+        if (Test-Path $fzfPath) {
+            . $fzfPath
+        }
+    }
+}
+catch {
+    Write-Warning "PSFzf lazy loading setup failed: $_"
+}
+
+# Provide a function to disable PSReadLine features if needed
+function Disable-FullPSReadLine {
+    try {
+        $minimalOptions = @{
+            PredictionSource              = 'None'
+            HistorySearchCursorMovesToEnd = $true
+        }
+        Set-PSReadLineOption @minimalOptions
+        # Minimal key handlers
+        Set-PSReadLineKeyHandler -Key Tab -Function Complete
+    }
+    catch {
+        Write-Warning "Disabling full PSReadLine options failed: $_"
+    }
+}
+
+# Initialize shell tools (cached to avoid blocking startup)
+# Execute in current session for faster startup (caching makes it fast enough)
+# Use pre-cached command checks from unified_aliases
+if ($script:CommandExistsCache['zoxide']) {
+    try {
+        $env:_ZO_DATA_DIR = "$ProfileDir\.zo"
+
+        $zoxideCachePath = Join-Path $ProfileDir 'Config\zoxide-init-cache.ps1'
+        $zoxideMetaPath = Join-Path $ProfileDir 'Config\zoxide-init-cache.meta.clixml'
+
+        $zoxideCmd = Get-Command zoxide -ErrorAction SilentlyContinue
+        $zoxideExe = $zoxideCmd.Source
+        $zoxideExeMTime = if ($zoxideExe) { try { (Get-Item $zoxideExe).LastWriteTime } catch { $null } } else { $null }
+
+        $needRegen = $true
+        if ((Test-Path $zoxideCachePath) -and (Test-Path $zoxideMetaPath)) {
+            try {
+                $meta = Import-Clixml -Path $zoxideMetaPath
+                if ($meta -and $meta.CacheFormatVersion -ge 1) {
+                    $needRegen = -not (
+                        ($meta.ZoxideExe -eq $zoxideExe) -and
+                        ($meta.ZoxideExeMTime -eq $zoxideExeMTime)
+                    )
+                }
+            }
+            catch {
+                $needRegen = $true
+            }
+        }
+
+        if ($needRegen) {
+            # Direct init for current session
+            $zoxideInit = (zoxide init powershell --cmd cd | Out-String)
+            . ([scriptblock]::Create($zoxideInit))
+
+            # Persist cache for future sessions
+            try {
+                $zoxideInit | Set-Content -Path $zoxideCachePath -Encoding UTF8 -Force
+                @{
+                    CacheFormatVersion = 1
+                    ZoxideExe          = $zoxideExe
+                    ZoxideExeMTime     = $zoxideExeMTime
+                } | Export-Clixml -Path $zoxideMetaPath -Force
+            }
+            catch {
+                # Ignore cache write failures; current session is already initialized
+            }
+        }
+        else {
+            try {
+                . $zoxideCachePath
+            }
+            catch {
+                # Fallback: regenerate on failure
+                try {
+                    $zoxideInit = (zoxide init powershell --cmd cd | Out-String)
+                    . ([scriptblock]::Create($zoxideInit))
+                }
+                catch {
+                    Write-Verbose "Zoxide initialization failed: $_"
+                }
+            }
+        }
+    }
+    catch {
+        Write-Verbose "Zoxide initialization failed: $_"
+    }
+}
+
+# Initialize GitHub CLI completion with cached script
+if ($script:CommandExistsCache['gh']) {
+    try {
+        $ghCachePath = Join-Path $ProfileDir 'Config\gh-completion-cache.ps1'
+        $ghMetaPath = Join-Path $ProfileDir 'Config\gh-completion-cache.meta.clixml'
+
+        $ghCmd = Get-Command gh -ErrorAction SilentlyContinue
+        $ghExe = $ghCmd.Source
+        $ghExeMTime = if ($ghExe) { try { (Get-Item $ghExe).LastWriteTime } catch { $null } } else { $null }
+
+        $needRegenGh = $true
+        if ((Test-Path $ghCachePath) -and (Test-Path $ghMetaPath)) {
+            try {
+                $metaGh = Import-Clixml -Path $ghMetaPath
+                if ($metaGh -and $metaGh.CacheFormatVersion -ge 1) {
+                    $needRegenGh = -not (
+                        ($metaGh.GhExe -eq $ghExe) -and
+                        ($metaGh.GhExeMTime -eq $ghExeMTime)
+                    )
+                }
+            }
+            catch {
+                $needRegenGh = $true
+            }
+        }
+
+        if ($needRegenGh) {
+            $ghCompletion = (gh completion -s powershell | Out-String)
+            . ([scriptblock]::Create($ghCompletion))
+
+            try {
+                $ghCompletion | Set-Content -Path $ghCachePath -Encoding UTF8 -Force
+                @{
+                    CacheFormatVersion = 1
+                    GhExe              = $ghExe
+                    GhExeMTime         = $ghExeMTime
+                } | Export-Clixml -Path $ghMetaPath -Force
+            }
+            catch {
+                # Ignore cache write failures
+            }
+        }
+        else {
+            try {
+                . $ghCachePath
+            }
+            catch {
+                try {
+                    $ghCompletion = (gh completion -s powershell | Out-String)
+                    . ([scriptblock]::Create($ghCompletion))
+                }
+                catch {
+                    Write-Verbose "GitHub CLI completion initialization failed: $_"
+                }
+            }
+        }
+    }
+    catch {
+        Write-Verbose "GitHub CLI completion initialization failed: $_"
+    }
+}
+
+# Initialize startup modules - deferred to first use for faster startup
+# Modules will be loaded on-demand via lazy-loading proxies
+# Uncomment below to force eager loading:
+# Initialize-PSModule
 
 function Install-Dependency {
     <#
@@ -615,7 +569,8 @@ if (-not $script:ProfileSuppressInfoLogs -and $script:profileTiming) {
 
 # Initialize Starship with a proper full-init cache (no process spawn on each load)
 Measure-Block 'Starship Init' {
-    if (Get-Command starship -ErrorAction SilentlyContinue) {
+    # Use cached command check from unified_aliases
+    if ($script:CommandExistsCache['starship']) {
         $starshipConfigPath = Join-Path $PSScriptRoot 'Config\starship.toml'
         $ENV:STARSHIP_CONFIG = $starshipConfigPath
 
@@ -624,16 +579,9 @@ Measure-Block 'Starship Init' {
 
         # Build current fingerprints without invoking starship.exe (fast path)
         $starshipCmd = Get-Command starship -ErrorAction SilentlyContinue
-        $starshipExe = $null
-        $starshipExeMTime = $null
-        if ($starshipCmd -and $starshipCmd.Source) {
-            $starshipExe = $starshipCmd.Source
-            try { $starshipExeMTime = (Get-Item $starshipExe).LastWriteTime } catch { $starshipExeMTime = $null }
-        }
-        $configMTime = $null
-        if (Test-Path $starshipConfigPath) {
-            try { $configMTime = (Get-Item $starshipConfigPath).LastWriteTime } catch { $configMTime = $null }
-        }
+        $starshipExe = $starshipCmd.Source
+        $starshipExeMTime = if ($starshipExe) { try { (Get-Item $starshipExe).LastWriteTime } catch { $null } } else { $null }
+        $configMTime = if (Test-Path $starshipConfigPath) { try { (Get-Item $starshipConfigPath).LastWriteTime } catch { $null } } else { $null }
 
         $needRegen = $true
         if ((Test-Path $starshipCachePath) -and (Test-Path $starshipMetaPath)) {
@@ -655,7 +603,7 @@ Measure-Block 'Starship Init' {
 
         if ($needRegen) {
             # Fast path: do a quick direct init for the current session so the prompt appears
-            # promptly, then regenerate and persist the full cached init asynchronously
+            # promptly, then regenerate and persist the full cached init synchronously
             $didDirectInit = $false
             try {
                 # Direct init (may spawn starship) but returns quickly for current session
@@ -666,59 +614,28 @@ Measure-Block 'Starship Init' {
                 Write-Verbose "Starship direct init failed: $_"
             }
 
-            # Asynchronously regenerate and write the persistent cache for future sessions
+            # Regenerate cache synchronously since it's quick
             try {
-                $bgScript = {
-                    param($cachePath, $metaPath, $configPath, $starshipExe, $starshipExeMTime, $configMTime)
-                    try {
-                        $fullInit = (& starship init powershell --print-full-init | Out-String)
-                        $fullInit | Set-Content -Path $cachePath -Encoding UTF8 -Force
-                        @{
-                            CacheFormatVersion = 1
-                            StarshipExe        = $starshipExe
-                            StarshipExeMTime   = $starshipExeMTime
-                            ConfigPath         = $configPath
-                            ConfigMTime        = $configMTime
-                        } | Export-Clixml -Path $metaPath -Force
-                    }
-                    catch {
-                        # Ignore background failures; they don't block startup
-                    }
-                }
-
-                if ($script:hasThreadJob) {
-                    Start-ThreadJob -ScriptBlock $bgScript -ArgumentList $starshipCachePath, $starshipMetaPath, $starshipConfigPath, $starshipExe, $starshipExeMTime, $configMTime | Out-Null
-                }
-                else {
-                    Start-Job -ScriptBlock $bgScript -ArgumentList $starshipCachePath, $starshipMetaPath, $starshipConfigPath, $starshipExe, $starshipExeMTime, $configMTime | Out-Null
-                }
+                $fullInit = (& starship init powershell --print-full-init | Out-String)
+                $fullInit | Set-Content -Path $starshipCachePath -Encoding UTF8 -Force
+                @{
+                    CacheFormatVersion = 1
+                    StarshipExe        = $starshipExe
+                    StarshipExeMTime   = $starshipExeMTime
+                    ConfigPath         = $starshipConfigPath
+                    ConfigMTime        = $configMTime
+                } | Export-Clixml -Path $starshipMetaPath -Force
             }
             catch {
-                # If background job creation fails, fall back to synchronous generation
-                try {
-                    $fullInit = (& starship init powershell --print-full-init | Out-String)
-                    $fullInit | Set-Content -Path $starshipCachePath -Encoding UTF8 -Force
-                    @{
-                        CacheFormatVersion = 1
-                        StarshipExe        = $starshipExe
-                        StarshipExeMTime   = $starshipExeMTime
-                        ConfigPath         = $starshipConfigPath
-                        ConfigMTime        = $configMTime
-                    } | Export-Clixml -Path $starshipMetaPath -Force
-                }
-                catch {
-                    # Last-resort: try direct init so user still gets a prompt
-                    try { Invoke-Expression (& starship init powershell --print-full-init | Out-String) } catch {}
-                }
+                # Ignore cache write failures
             }
-
-            if ($didDirectInit) { return }
         }
-
-        # Dot-source the cached init script (no starship.exe spawn during startup)
-        try { . $starshipCachePath } catch {
-            # As last resort, try direct init
-            try { Invoke-Expression (& starship init powershell --print-full-init | Out-String) } catch {}
+        else {
+            # Dot-source the cached init script (no starship.exe spawn during startup)
+            try { . $starshipCachePath } catch {
+                # As last resort, try direct init
+                try { Invoke-Expression (& starship init powershell --print-full-init | Out-String) } catch {}
+            }
         }
     }
 }

@@ -123,28 +123,35 @@ function Install-RequiredModule {
         return
     }
 
-    Write-Verbose "[INFO] Missing modules detected: $($missing.Name -join ', '). Installing in background job 'BackgroundModuleInstaller'." -ForegroundColor Yellow
+    Write-Verbose "[INFO] Missing modules detected: $($missing.Name -join ', '). Installing synchronously for immediate availability."
 
-    # Run installation in a background job to avoid blocking the profile
-    $missingList = $missing | ForEach-Object { $_.Name }
-    $req = $requiredModules
-    $scriptBlock = {
-        param($mods, $required)
-        foreach ($m in $mods) {
-            $info = $required[$m]
-            try {
-                Write-Output "[BackgroundModuleInstaller] Installing module '$m' (MinVersion: $($info.MinVersion))"
-                Install-Module -Name $m -MinimumVersion $info.MinVersion -Scope CurrentUser -Force -AllowClobber -ErrorAction Stop -Confirm:$false -WarningAction SilentlyContinue | Out-Null
-            }
-            catch {
-                Write-Output "[BackgroundModuleInstaller] Failed to install module '$m': $_"
+    # Install missing modules synchronously but efficiently
+    foreach ($module in $missing) {
+        $moduleName = $module.Name
+        $info = $requiredModules[$moduleName]
+        try {
+            Write-Verbose "[ModuleInstaller] Installing module '$moduleName' (MinVersion: $($info.MinVersion))"
+            Install-Module -Name $moduleName -MinimumVersion $info.MinVersion -Scope CurrentUser -Force -AllowClobber -ErrorAction Stop -Confirm:$false -WarningAction SilentlyContinue | Out-Null
+            
+            # Update cache immediately after install
+            $installedModule = Get-Module -ListAvailable -Name $moduleName -ErrorAction SilentlyContinue | Sort-Object Version -Descending | Select-Object -First 1
+            if ($installedModule -and $script:PSModuleCache) {
+                $script:PSModuleCache | Add-Member -NotePropertyName $moduleName -NotePropertyValue (@{
+                        Version = $installedModule.Version.ToString()
+                        Path    = $installedModule.ModuleBase
+                    }) -Force
+                
+                $cacheFile = Join-Path $env:TEMP 'PSModuleCache.json'
+                try {
+                    $script:PSModuleCache | ConvertTo-Json -Depth 4 | Set-Content $cacheFile -Force
+                }
+                catch {
+                    Write-Verbose "Failed to write module cache: $_"
+                }
             }
         }
-    }
-
-    if (Get-Command -Name Start-ThreadJob -ErrorAction SilentlyContinue) {
-        Start-ThreadJob -Name 'BackgroundModuleInstaller' -ScriptBlock $scriptBlock -ArgumentList (,$missingList,,$req) | Out-Null
-    } else {
-        Start-Job -Name 'BackgroundModuleInstaller' -ScriptBlock $scriptBlock -ArgumentList (,$missingList,,$req) | Out-Null
+        catch {
+            Write-Warning "[ModuleInstaller] Failed to install module '$moduleName': $_"
+        }
     }
 }

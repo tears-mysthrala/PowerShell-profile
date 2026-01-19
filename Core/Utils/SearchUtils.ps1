@@ -5,12 +5,36 @@ function Find-File {
         [Parameter(Position=0)]
         [string]$pattern = "*",
         [string]$path = ".",
-        [switch]$recurse
+        [switch]$recurse,
+        [int]$depth = 3
     )
 
-    Get-ChildItem -Path $path -Filter $pattern -Recurse:$recurse |
-        Select-Object FullName, LastWriteTime, Length |
-        Sort-Object LastWriteTime -Descending
+    # Use fd if available (much faster)
+    if (Get-Command fd -ErrorAction SilentlyContinue) {
+        if ($recurse) {
+            fd --type f $pattern $path
+        } else {
+            fd --type f --max-depth $depth $pattern $path
+        }
+    }
+    else {
+        # Use PowerShell native with depth limit to prevent hanging
+        $params = @{
+            Path = $path
+            Filter = $pattern
+            ErrorAction = 'SilentlyContinue'
+        }
+        
+        if ($recurse) {
+            $params.Recurse = $true
+        } else {
+            $params.Depth = $depth
+        }
+        
+        Get-ChildItem @params |
+            Select-Object FullName, LastWriteTime, Length |
+            Sort-Object LastWriteTime -Descending
+    }
 }
 
 function Search-FileContent {

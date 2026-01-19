@@ -8,6 +8,69 @@ $script:moduleVersions = @{}
 $script:moduleInitializers = @{}
 $script:toolRegistry = @{}
 $script:loadedTools = @{}
+$script:moduleCachePath = "$env:TEMP\PSModuleCache.json"
+$script:moduleCache = @{}
+
+# Initialize module cache from disk
+function Initialize-ModuleCache {
+    if (Test-Path $script:moduleCachePath) {
+        try {
+            $cacheData = Get-Content $script:moduleCachePath -Raw | ConvertFrom-Json
+            $script:moduleCache = @{}
+            $cacheData.PSObject.Properties | ForEach-Object {
+                $script:moduleCache[$_.Name] = $_.Value
+            }
+        }
+        catch {
+            Write-Verbose "Failed to load module cache: $_"
+            $script:moduleCache = @{}
+        }
+    }
+}
+
+# Save module cache to disk
+function Save-ModuleCache {
+    try {
+        $script:moduleCache | ConvertTo-Json | Set-Content $script:moduleCachePath -Force
+    }
+    catch {
+        Write-Verbose "Failed to save module cache: $_"
+    }
+}
+
+# Get module info from cache or scan
+function Get-CachedModuleInfo {
+    param([string]$Name)
+    
+    # Check in-memory cache first
+    if ($script:moduleCache.ContainsKey($Name)) {
+        $cached = $script:moduleCache[$Name]
+        if ($cached -and $cached.Path -and (Test-Path $cached.Path)) {
+            return $cached
+        }
+    }
+    
+    # Not in cache, scan and cache it
+    $module = Get-Module -ListAvailable $Name -ErrorAction SilentlyContinue |
+    Sort-Object Version -Descending |
+    Select-Object -First 1
+    
+    if ($module) {
+        $moduleInfo = @{
+            Name    = $module.Name
+            Version = $module.Version.ToString()
+            Path    = $module.Path
+        }
+        $script:moduleCache[$Name] = $moduleInfo
+        Save-ModuleCache
+        return $moduleInfo
+    }
+    
+    return $null
+}
+
+# Initialize cache on module load
+Initialize-ModuleCache
 
 function Register-UnifiedModule {
     [CmdletBinding()]
@@ -69,7 +132,8 @@ function Register-UnifiedModule {
                     $moduleExists = $true
                     break
                 }
-            } catch {
+            }
+            catch {
                 Write-Verbose ("Failed to validate module manifest at {0}: {1}" -f $potentialPath, $_.Exception.Message)
                 continue
             }
@@ -77,47 +141,55 @@ function Register-UnifiedModule {
     }
 
     if (-not $moduleExists) {
-        # Suppress errors when checking for module (log this action)
-        Write-Verbose "[INFO] Checking for module $Name with ErrorAction SilentlyContinue (errors will be suppressed)"
-        $moduleInfo = Get-Module -ListAvailable $Name -ErrorAction SilentlyContinue |
-                     Sort-Object Version -Descending |
-                     Select-Object -First 1
-        $moduleExists = $null -ne $moduleInfo
+        # Use cached module check instead of slow Get-Module scan
+        $cachedInfo = Get-CachedModuleInfo -Name $Name
+        if ($cachedInfo) {
+            try {
+                $moduleInfo = Test-ModuleManifest -Path $cachedInfo.Path -ErrorAction Stop
+                $moduleExists = $true
+            }
+            catch {
+                # Cache is stale
+                $script:moduleCache.Remove($Name)
+                Save-ModuleCache
+            }
+        }
     }
 
     if (-not $moduleExists) {
         if ($IgnoreIfMissing) {
             # Silently register optional modules for lazy loading
             $script:moduleRegistry[$Name] = @{
-                MinVersion = $MinVersion
-                RequiredVersion = $RequiredVersion
-                Dependencies = $Dependencies
-                InitializerBlock = $InitializerBlock
-                OnFailure = $OnFailure
+                MinVersion        = $MinVersion
+                RequiredVersion   = $RequiredVersion
+                Dependencies      = $Dependencies
+                InitializerBlock  = $InitializerBlock
+                OnFailure         = $OnFailure
                 OnVersionMismatch = $OnVersionMismatch
-                LoadOnStartup = $LoadOnStartup
-                MaxAttempts = $MaxAttempts
-                LoadAttempts = 0
-                ModulePath = $ModulePath
-                IgnoreIfMissing = $IgnoreIfMissing
+                LoadOnStartup     = $LoadOnStartup
+                MaxAttempts       = $MaxAttempts
+                LoadAttempts      = 0
+                ModulePath        = $ModulePath
+                IgnoreIfMissing   = $IgnoreIfMissing
             }
             return $null
-        } else {
+        }
+        else {
             return $null
         }
     }
     $script:moduleRegistry[$Name] = @{
-        MinVersion = $MinVersion
-        RequiredVersion = $RequiredVersion
-        Dependencies = $Dependencies
-        InitializerBlock = $InitializerBlock
-        OnFailure = $OnFailure
+        MinVersion        = $MinVersion
+        RequiredVersion   = $RequiredVersion
+        Dependencies      = $Dependencies
+        InitializerBlock  = $InitializerBlock
+        OnFailure         = $OnFailure
         OnVersionMismatch = $OnVersionMismatch
-        LoadOnStartup = $LoadOnStartup
-        MaxAttempts = $MaxAttempts
-        LoadAttempts = 0
-        ModulePath = $ModulePath
-        IgnoreIfMissing = $IgnoreIfMissing
+        LoadOnStartup     = $LoadOnStartup
+        MaxAttempts       = $MaxAttempts
+        LoadAttempts      = 0
+        ModulePath        = $ModulePath
+        IgnoreIfMissing   = $IgnoreIfMissing
     }
 }
 
@@ -130,7 +202,8 @@ function Import-LazyModule {
         try {
             Import-UnifiedModule $Name
             return $true
-        } catch {
+        }
+        catch {
             Write-Warning ("Failed to load module '{0}': {1}" -f $Name, $_.Exception.Message)
             return $false
         }
@@ -146,7 +219,7 @@ function Register-UnifiedTool {
         [bool]$LoadOnStartup = $false
     )
     $script:toolRegistry[$Name] = @{
-        Block = $InitializerBlock
+        Block         = $InitializerBlock
         LoadOnStartup = $LoadOnStartup
     }
 }
@@ -160,7 +233,8 @@ function Import-UnifiedTool {
             & $script:toolRegistry[$Name].Block
             $script:loadedTools[$Name] = $true
             return $true
-        } catch {
+        }
+        catch {
             Write-Warning ("Failed to load tool '{0}': {1}" -f $Name, $_.Exception.Message)
             return $false
         }
@@ -172,14 +246,14 @@ function Initialize-StartupTool {
     # Mantener compatibilidad pero evitar trabajo innecesario: solo
     # se inicializarán herramientas marcadas explícitamente como LoadOnStartup.
     $script:toolRegistry.GetEnumerator() |
-        Where-Object { $_.Value.LoadOnStartup } |
-        ForEach-Object { Import-UnifiedTool $_.Key }
+    Where-Object { $_.Value.LoadOnStartup } |
+    ForEach-Object { Import-UnifiedTool $_.Key }
 }
 
 function Get-UnifiedToolStatus {
     $script:loadedTools.GetEnumerator() | ForEach-Object {
         [PSCustomObject]@{
-            Name = $_.Key
+            Name   = $_.Key
             Loaded = $_.Value
         }
     }
@@ -197,13 +271,25 @@ function Test-UnifiedModuleRequirement {
     if ($moduleInfo.ModulePath -and (Test-Path $moduleInfo.ModulePath)) {
         try {
             $module = Test-ModuleManifest -Path $moduleInfo.ModulePath -ErrorAction Stop
-        } catch {
+        }
+        catch {
             Write-Verbose "Module manifest validation failed for $($moduleInfo.ModulePath): $_"
         }
     }
 
     if (-not $module) {
-        $module = Get-Module -ListAvailable $Name | Sort-Object Version -Descending | Select-Object -First 1
+        # Use cached module info instead of slow Get-Module scan
+        $cachedInfo = Get-CachedModuleInfo -Name $Name
+        if ($cachedInfo) {
+            try {
+                $module = Test-ModuleManifest -Path $cachedInfo.Path -ErrorAction Stop
+            }
+            catch {
+                # Cache is stale, remove it
+                $script:moduleCache.Remove($Name)
+                Save-ModuleCache
+            }
+        }
     }
 
     if (-not $module) {
@@ -269,9 +355,9 @@ function Import-UnifiedModule {
     try {
         $sw = [System.Diagnostics.Stopwatch]::StartNew()
         $originalPreferences = @{
-            Verbose = $VerbosePreference
-            Debug = $DebugPreference
-            Warning = $WarningPreference
+            Verbose     = $VerbosePreference
+            Debug       = $DebugPreference
+            Warning     = $WarningPreference
             Information = $InformationPreference
         }
 
@@ -296,16 +382,19 @@ function Import-UnifiedModule {
                 if ($PSCmdlet.ShouldProcess($Name, "Execute initializer block")) {
                     & $moduleInfo.InitializerBlock
                 }
-            } elseif ($moduleInfo.ModulePath -and (Test-Path $moduleInfo.ModulePath)) {
+            }
+            elseif ($moduleInfo.ModulePath -and (Test-Path $moduleInfo.ModulePath)) {
                 if ($PSCmdlet.ShouldProcess($moduleInfo.ModulePath, "Import module")) {
                     Import-Module $moduleInfo.ModulePath -Force:$Force -ErrorAction Stop
                 }
-            } else {
+            }
+            else {
                 if ($PSCmdlet.ShouldProcess($Name, "Import module")) {
                     Import-Module $Name -Force:$Force -ErrorAction Stop
                 }
             }
-        } finally {
+        }
+        finally {
             $VerbosePreference = $originalPreferences.Verbose
             $DebugPreference = $originalPreferences.Debug
             $WarningPreference = $originalPreferences.Warning
@@ -315,7 +404,8 @@ function Import-UnifiedModule {
         $sw.Stop()
         $script:loadedModules[$Name] = $true
         return $null
-    } catch {
+    }
+    catch {
         if ($moduleInfo.OnFailure) {
             & $moduleInfo.OnFailure
         }
@@ -326,8 +416,8 @@ function Import-UnifiedModule {
 function Initialize-StartupModule {
     [CmdletBinding(SupportsShouldProcess)]
     $startupModules = $script:moduleRegistry.GetEnumerator() |
-        Where-Object { $_.Value.LoadOnStartup } |
-        ForEach-Object { $_.Key }
+    Where-Object { $_.Value.LoadOnStartup } |
+    ForEach-Object { $_.Key }
 
     if ($startupModules.Count -eq 0) { return @{} }
 
@@ -364,52 +454,76 @@ function Initialize-StartupModule {
                 try {
                     if ($using:moduleInfo.InitializerBlock) {
                         & $using:moduleInfo.InitializerBlock
-                    } elseif ($using:moduleInfo.ModulePath -and (Test-Path $using:moduleInfo.ModulePath)) {
+                    }
+                    elseif ($using:moduleInfo.ModulePath -and (Test-Path $using:moduleInfo.ModulePath)) {
                         Import-Module $using:moduleInfo.ModulePath -Force
-                    } else {
+                    }
+                    else {
                         Import-Module $using:moduleName -Force
                     }
 
                     $sw.Stop()
                     return @{
-                        Name = $using:moduleName
+                        Name    = $using:moduleName
                         Success = $true
-                        Time = $sw.ElapsedMilliseconds
+                        Time    = $sw.ElapsedMilliseconds
                     }
-                } catch {
+                }
+                catch {
                     if ($using:moduleInfo.OnFailure) {
                         & $using:moduleInfo.OnFailure
                     }
                     return @{
-                        Name = $using:moduleName
+                        Name    = $using:moduleName
                         Success = $false
-                        Error = $_.Exception.Message
+                        Error   = $_.Exception.Message
                     }
                 }
             }
             if (Get-Command -Name Start-ThreadJob -ErrorAction SilentlyContinue) {
                 $job = Start-ThreadJob -ScriptBlock $jobScript
-            } else {
-                $job = Start-Job -ScriptBlock $jobScript
+                $jobs += $job
             }
-            $jobs += $job
+            else {
+                # Execute synchronously if ThreadJob not available (faster than Start-Job)
+                try {
+                    if ($moduleInfo.InitializerBlock) {
+                        & $moduleInfo.InitializerBlock
+                    }
+                    elseif ($moduleInfo.ModulePath -and (Test-Path $moduleInfo.ModulePath)) {
+                        Import-Module $moduleInfo.ModulePath -Force
+                    }
+                    else {
+                        Import-Module $moduleName -Force
+                    }
+                    $script:loadedModules[$moduleName] = $true
+                }
+                catch {
+                    if ($moduleInfo.OnFailure) {
+                        & $moduleInfo.OnFailure
+                    }
+                }
+            }
         }
 
-        # Wait for all jobs to complete
-        $results = $jobs | Wait-Job | Receive-Job
+        # Wait for all jobs to complete (only if we used ThreadJobs)
+        if ($jobs.Count -gt 0) {
+            $results = $jobs | Wait-Job | Receive-Job
 
-        # Process results
-        foreach ($result in $results) {
-            if ($result.Success) {
-                $script:loadedModules[$result.Name] = $true
-                $loadTimes[$result.Name] = $result.Time
+            # Process results
+            foreach ($result in $results) {
+                if ($result.Success) {
+                    $script:loadedModules[$result.Name] = $true
+                    $loadTimes[$result.Name] = $result.Time
+                }
             }
+            
+            # Cleanup jobs
+            $jobs | Remove-Job -Force
         }
     } finally {
         $totalTimer.Stop()
         $loadTimes['Module load time'] = $totalTimer.ElapsedMilliseconds
-        # Cleanup jobs
-        $jobs | Remove-Job -Force
     }
 
     #return $loadTimes

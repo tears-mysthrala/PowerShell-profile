@@ -1,5 +1,24 @@
 # PowerShell Unified Alias Configuration
 
+# Command existence cache for performance
+$script:CommandExistsCache = @{}
+
+function Test-CommandExist {
+  param([string]$Command)
+    
+  if ($script:CommandExistsCache.ContainsKey($Command)) {
+    return $script:CommandExistsCache[$Command]
+  }
+    
+  $exists = $null -ne (Get-Command $Command -ErrorAction SilentlyContinue)
+  $script:CommandExistsCache[$Command] = $exists
+  return $exists
+}
+# Pre-cache common commands to avoid repeated lookups
+$commonCommands = @('bat', 'eza', 'lazygit', 'fd', 'nvim', 'code', 'zoxide', 'gh', 'starship')
+foreach ($cmd in $commonCommands) {
+    Test-CommandExist $cmd | Out-Null
+}
 # Navigation aliases and utilities
 function .. { Set-Location .\.. }
 function ... { Set-Location .\..\..\ }
@@ -9,25 +28,25 @@ function .5 { Set-Location .\..\..\..\..\..\.. }
 
 # Editor detection and configuration - lazy loaded
 function Initialize-Editor {
-    if ($script:EditorInitialized) { return }
-    $script:EditorInitialized = $true
+  if ($script:EditorInitialized) { return }
+  $script:EditorInitialized = $true
 
-    $editors = @('nvim', 'code', 'notepad', 'pvim', 'vim', 'vi', 'notepad++', 'sublime_text')
-    foreach ($editor in $editors) {
-        if (Test-CommandExist $editor) {
-            $script:EDITOR = $editor
-            if ($editor -eq 'nvim' -and (Test-Path "$env:LOCALAPPDATA/$env:DEFAULT_NVIM_CONFIG" -PathType Container)) {
-                $env:NVIM_APPNAME = $env:DEFAULT_NVIM_CONFIG
-            }
-            break
-        }
+  $editors = @('nvim', 'code', 'notepad', 'pvim', 'vim', 'vi', 'notepad++', 'sublime_text')
+  foreach ($editor in $editors) {
+    if (Test-CommandExist $editor) {
+      $script:EDITOR = $editor
+      if ($editor -eq 'nvim' -and (Test-Path "$env:LOCALAPPDATA/$env:DEFAULT_NVIM_CONFIG" -PathType Container)) {
+        $env:NVIM_APPNAME = $env:DEFAULT_NVIM_CONFIG
+      }
+      break
     }
+  }
 }
 
 # Lazy editor alias that initializes on first use
 function v {
-    if (-not $script:EditorInitialized) { Initialize-Editor }
-    if ($script:EDITOR) { & $script:EDITOR @args } else { Write-Verbose "No editor found" }
+  if (-not $script:EditorInitialized) { Initialize-Editor }
+  if ($script:EDITOR) { & $script:EDITOR @args } else { Write-Verbose "No editor found" }
 }
 
 # System aliases
@@ -36,7 +55,6 @@ Set-Alias -Name e -Value explorer.exe
 Set-Alias -Name c -Value cls
 Set-Alias -Name csl -Value cls
 Set-Alias -Name ss -Value Select-String
-Set-Alias -Name grep -Value Select-String
 Set-Alias -Name shutdownnow -Value Stop-Computer
 Set-Alias -Name rebootnow -Value Restart-Computer
 
@@ -54,19 +72,23 @@ Set-Alias -Name d -Value docker
 Set-Alias -Name dc -Value docker-compose
 
 # Conditional aliases
-if (Get-Command lazygit -ErrorAction SilentlyContinue) {
+$script:hasLazygit = Test-CommandExist 'lazygit'
+if ($script:hasLazygit) {
   Set-Alias -Name lg -Value lazygit
 }
 
 # Configure bat if available
-if (Get-Command bat -ErrorAction SilentlyContinue) {
+$script:hasBat = Test-CommandExist 'bat'
+if ($script:hasBat) {
   $env:BAT_THEME = 'Nord'
   Remove-Item Alias:cat -Force -ErrorAction SilentlyContinue
   Set-Alias -Name cat -Value bat -Force -Option AllScope -Scope Global
 }
 
 # Configure eza if available
-if (Get-Command eza -ErrorAction SilentlyContinue) {
+$script:hasEza = Test-CommandExist 'eza'
+if ($script:hasEza) {
+  Remove-Item Alias:ls -Force -ErrorAction SilentlyContinue
   function ls_with_eza {
     param([Parameter(ValueFromRemainingArguments = $true)]$params)
     $ezaOutput = $(if ($params) {
@@ -75,7 +97,7 @@ if (Get-Command eza -ErrorAction SilentlyContinue) {
       else {
         eza --icons --git --color=always --group-directories-first
       })
-    if (Get-Command bat -ErrorAction SilentlyContinue) {
+    if ($script:hasBat) {
       $ezaOutput | Out-String | bat --plain --paging=never
     }
     else {
@@ -84,7 +106,7 @@ if (Get-Command eza -ErrorAction SilentlyContinue) {
   }
   function ll_with_eza {
     $ezaOutput = eza --icons --git --color=always --group-directories-first --long --header
-    if (Get-Command bat -ErrorAction SilentlyContinue) {
+    if ($script:hasBat) {
       $ezaOutput | Out-String | bat --plain --paging=never
     }
     else {
@@ -94,7 +116,7 @@ if (Get-Command eza -ErrorAction SilentlyContinue) {
 # this should be the same as ls -al no tree
   function la_with_eza{
     $ezaOutput = eza --icons --git --color=always --group-directories-first --all
-    if (Get-Command bat -ErrorAction SilentlyContinue) {
+    if ($script:hasBat) {
       $ezaOutput | Out-String | bat --plain --paging=never
     }
     else {
