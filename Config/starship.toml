@@ -30,7 +30,6 @@ $line_break\
 [$directory](fg:#5BCEFA)\
 $character"""
 
-
 [username]
 style_user = "bg:#5BCEFA fg:#090c0c"
 style_root = "bg:#5BCEFA fg:#FFFFFF"
@@ -71,7 +70,6 @@ error_symbol = "[❯](#F5A9B8)"
 
 [line_break]
 disabled = false
-
 
 [git_branch]
 style = "bg:#394260 fg:#F5A9B8"
@@ -178,7 +176,6 @@ symbol = "💠 "
 detect_files = ["*.tf", "*.tfvars"]
 detect_folders = [".terraform"]
 disabled = true
-
 
 [azure]
 style = "bg:#212736 fg:#F5A9B8"
