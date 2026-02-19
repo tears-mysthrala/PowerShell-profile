@@ -1,6 +1,9 @@
 # Load aliases
 . "$PSScriptRoot/Core/Utils/unified_aliases.ps1"
 
+# Load system updater
+. "$PSScriptRoot/Core/Apps/Updates/SystemUpdater.ps1"
+
 # Initialize profiling
 $script:profileTiming = @{}
 $script:backgroundJobs = @{}

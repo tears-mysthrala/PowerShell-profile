@@ -19,6 +19,10 @@ $commonCommands = @('bat', 'eza', 'lazygit', 'fd', 'nvim', 'code', 'zoxide', 'gh
 foreach ($cmd in $commonCommands) {
     Test-CommandExist $cmd | Out-Null
 }
+# SSH alias for Proxmox
+function akkorokamui { ssh -p 54226 tears@192.168.1.100 }
+Set-Alias -Name proxmox -Value akkorokamui
+
 # Navigation aliases and utilities
 function .. { Set-Location .\.. }
 function ... { Set-Location .\..\..\ }
