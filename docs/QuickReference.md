@@ -1,7 +1,7 @@
 # Quick Reference
 
 > **Auto-generated documentation**
-> Last updated: 2026-01-19 19:29:33
+> Last updated: 2026-02-22 06:23:55
 
 ## Functions
 
@@ -11,7 +11,7 @@
 | `_fzf_get_path_using_fd` | System |  |
 | `_fzf_get_path_using_rg` | System |  |
 | `_fzf_open_path` | System |  |
-| `akkorokamui` | Utilities | SSH Aliases |
+| `akkorokamui` | Utilities | SSH alias for Proxmox |
 | `Clear-All` | System |  |
 | `Clear-Disk` | System |  |
 | `Clear-DnsCache` | Utilities | Networking Utilities |
@@ -131,16 +131,20 @@
 | `Test-UnifiedModuleRequirement` | Core |  |
 | `Uninstall-ChocoApp` | Applications |  |
 | `Update-AllApp` | Applications |  |
+| `Update-Cargo` | Applications |  |
 | `Update-Choco` | Applications |  |
 | `Update-ChocoApp` | Applications |  |
 | `Update-Npm` | Applications |  |
 | `Update-NpmApp` | Applications |  |
 | `Update-PipApp` | Applications |  |
-| `Update-PowerShellModule` | Applications | PowerShell module update function with parallel checking |
+| `Update-Pipx` | Applications |  |
+| `Update-PowershellModule` | Applications |  |
 | `Update-Scoop` | Applications |  |
 | `Update-ScoopApp` | Applications |  |
 | `Update-StoreApp` | Applications |  |
-| `Update-System` | Applications | Main update function with progress display |
+| `Update-System` | Applications | Main update function with visual progress |
+| `Update-Uv` | Applications |  |
+| `Update-WindowsSystem` | Applications |  |
 | `Update-WindowsUpdate` | Applications |  |
 | `Update-Winget` | Applications |  |
 | `Upgrade` | Utilities |  |
@@ -151,7 +155,9 @@
 | `Write-ColorOutput` | Other |  |
 | `Write-ErrorLog` | Applications | Function to handle errors |
 | `Write-UpdateErrorLog` | Applications | Error handling function |
+| `Write-UpdateHeader` | Applications | Helper function to write section headers |
 | `Write-UpdateLog` | Applications | Logging function |
+| `Write-UpdateStatus` | Applications | Helper function to write status messages |
 
 ## Aliases
 
@@ -184,6 +190,7 @@
 | `mkcd` | `New-DirectoryAndEnter` | `Core\Utils\FileSystemUtils.ps1` |
 | `pgrep` | `Get-ProcessByName` | `Core\Utils\unified_aliases.ps1` |
 | `pkill` | `Stop-ProcessByName` | `Core\Utils\unified_aliases.ps1` |
+| `proxmox` | `akkorokamui` | `Core\Utils\unified_aliases.ps1` |
 | `pst` | `Get-ClipboardContent` | `Core\Utils\unified_aliases.ps1` |
 | `pull` | `Invoke-GitPull` | `Core\Utils\unified_aliases.ps1` |
 | `push` | `Invoke-GitPush` | `Core\Utils\unified_aliases.ps1` |

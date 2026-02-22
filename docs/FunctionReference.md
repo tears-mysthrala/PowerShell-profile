@@ -1,8 +1,8 @@
 # Function Reference
 
 > **Auto-generated documentation**
-> Last updated: 2026-01-19 19:29:33
-> Total functions: 145
+> Last updated: 2026-02-22 06:23:55
+> Total functions: 151
 
 ## Table of Contents
 
@@ -97,13 +97,24 @@ function Update-AllApp {
 
 <sub>**Source:** `Core\Apps\appsManage.ps1`</sub>
 
+### `Update-Cargo`
+
+**Signature:**
+```powershell
+function Update-Cargo {
+    [CmdletBinding(SupportsShouldProcess)]
+    param()
+```
+
+<sub>**Source:** `Core\Apps\UpdateAppsHelper.ps1`</sub>
+
 ### `Update-Choco`
 
 **Signature:**
 ```powershell
 function Update-Choco {
     [CmdletBinding(SupportsShouldProcess)]
-    param([switch]$Silent)
+    param()
 ```
 
 <sub>**Source:** `Core\Apps\UpdateAppsHelper.ps1`</sub>
@@ -125,7 +136,7 @@ function Update-ChocoApp {
 ```powershell
 function Update-Npm {
     [CmdletBinding(SupportsShouldProcess)]
-    param([switch]$Silent)
+    param()
 ```
 
 <sub>**Source:** `Core\Apps\UpdateAppsHelper.ps1`</sub>
@@ -152,20 +163,27 @@ function Update-PipApp {
 
 <sub>**Source:** `Core\Apps\appsManage.ps1`</sub>
 
-### `Update-PowerShellModule`
+### `Update-Pipx`
 
 **Signature:**
 ```powershell
-function Update-PowerShellModule {
+function Update-Pipx {
     [CmdletBinding(SupportsShouldProcess)]
     param()
 ```
 
-**Description:**
+<sub>**Source:** `Core\Apps\UpdateAppsHelper.ps1`</sub>
 
-PowerShell module update function with parallel checking
+### `Update-PowershellModule`
 
-<sub>**Source:** `Core\Apps\Updates\SystemUpdater.ps1`</sub>
+**Signature:**
+```powershell
+function Update-PowershellModule {
+    [CmdletBinding(SupportsShouldProcess)]
+    param()
+```
+
+<sub>**Source:** `Core\Apps\appsManage.ps1`</sub>
 
 ### `Update-Scoop`
 
@@ -211,9 +229,31 @@ function Update-System {
 
 **Description:**
 
-Main update function with progress display
+Main update function with visual progress
 
 <sub>**Source:** `Core\Apps\Updates\SystemUpdater.ps1`</sub>
+
+### `Update-Uv`
+
+**Signature:**
+```powershell
+function Update-Uv {
+    [CmdletBinding(SupportsShouldProcess)]
+    param()
+```
+
+<sub>**Source:** `Core\Apps\UpdateAppsHelper.ps1`</sub>
+
+### `Update-WindowsSystem`
+
+**Signature:**
+```powershell
+function Update-WindowsSystem {
+    [CmdletBinding(SupportsShouldProcess)]
+    param()
+```
+
+<sub>**Source:** `Core\Apps\UpdateAppsHelper.ps1`</sub>
 
 ### `Update-WindowsUpdate`
 
@@ -234,7 +274,7 @@ function Update-WindowsUpdate {
 ```powershell
 function Update-Winget {
     [CmdletBinding(SupportsShouldProcess)]
-    param([switch]$Silent)
+    param()
 ```
 
 <sub>**Source:** `Core\Apps\UpdateAppsHelper.ps1`</sub>
@@ -277,6 +317,20 @@ Error handling function
 
 <sub>**Source:** `Core\Apps\Updates\SystemUpdater.ps1`</sub>
 
+### `Write-UpdateHeader`
+
+**Signature:**
+```powershell
+function Write-UpdateHeader {
+    param([string]$Title)
+```
+
+**Description:**
+
+Helper function to write section headers
+
+<sub>**Source:** `Core\Apps\Updates\SystemUpdater.ps1`</sub>
+
 ### `Write-UpdateLog`
 
 **Signature:**
@@ -288,6 +342,24 @@ function Write-UpdateLog {
 **Description:**
 
 Logging function
+
+<sub>**Source:** `Core\Apps\Updates\SystemUpdater.ps1`</sub>
+
+### `Write-UpdateStatus`
+
+**Signature:**
+```powershell
+function Write-UpdateStatus {
+    param(
+        [string]$Message,
+        [ValidateSet('Info', 'Success', 'Warning', 'Error')]
+        [string]$Status = 'Info'
+    )
+```
+
+**Description:**
+
+Helper function to write status messages
 
 <sub>**Source:** `Core\Apps\Updates\SystemUpdater.ps1`</sub>
 
@@ -1230,11 +1302,15 @@ FROM https://github.com/ChrisTitusTech/powershell-profile/ If so and the current
 **Signature:**
 ```powershell
 function akkorokamui { ssh -p 54226 tears@192.168.1.100 }
+Set-Alias -Name proxmox -Value akkorokamui
+
+# Navigation aliases and utilities
+function .. { Set-Location .\.. }
 ```
 
 **Description:**
 
-SSH Aliases
+SSH alias for Proxmox
 
 <sub>**Source:** `Core\Utils\unified_aliases.ps1`</sub>
 
