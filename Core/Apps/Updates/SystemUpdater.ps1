@@ -59,11 +59,9 @@ function Update-System {
     
     # Header
     Write-Host ""
-    Write-Host "╔══════════════════════════════════════════════════════════╗" -ForegroundColor Cyan
-    Write-Host "║                                                          ║" -ForegroundColor Cyan
-    Write-Host "║               🔄  STARTING SYSTEM UPGRADE                 ║" -ForegroundColor Cyan
-    Write-Host "║                                                          ║" -ForegroundColor Cyan
-    Write-Host "╚══════════════════════════════════════════════════════════╝" -ForegroundColor Cyan
+    Write-Host "============================================================" -ForegroundColor Cyan
+    Write-Host "               STARTING SYSTEM UPGRADE                       " -ForegroundColor Cyan
+    Write-Host "============================================================" -ForegroundColor Cyan
     Write-Host ""
     Write-UpdateStatus "Log file: $logFile" -Status Info
     Write-UpdateStatus "Starting system update at $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')..." -Status Info
@@ -72,35 +70,50 @@ function Update-System {
     $startTime = Get-Date
 
     try {
-        # Windows Update (Layer 0)
+        # ============================================================
+        # LAYER 0: WINDOWS SYSTEM
+        # ============================================================
         Update-WindowsSystem
+        Update-WSL
 
-        # Winget updates (Layer 1)
+        # ============================================================
+        # LAYER 1: PACKAGE MANAGERS
+        # ============================================================
         Update-Winget
-
-        # Scoop updates (Layer 1)
         Update-Scoop
-
-        # Chocolatey updates (Layer 1)
         Update-Choco
+        Update-Homebrew
 
-        # NPM global updates (Layer 2)
+        # ============================================================
+        # LAYER 2: DEVELOPMENT TOOLS
+        # ============================================================
         Update-Npm
-
-        # Pipx updates (Layer 2)
         Update-Pipx
-
-        # Cargo updates (Layer 2)
         Update-Cargo
-
-        # Uv tool updates (Layer 2)
         Update-Uv
+        Update-Vcpkg
+        Update-Conda
+        Update-DotnetTool
+        Update-Gem
+        Update-GoTools
+        Update-Composer
 
-        # Microsoft Store updates (Layer 3)
+        # ============================================================
+        # LAYER 3: APP STORES & FRAMEWORKS
+        # ============================================================
         Update-StoreApp
-
-        # PowerShell module updates (Layer 3)
         Update-PowerShellModule
+        Update-PythonEnvironment
+        Update-NodeEnvironment
+
+        # ============================================================
+        # LAYER 4: DOTFILES & SHELL TOOLS
+        # ============================================================
+        Update-Chezmoi
+        Update-Starship
+        Update-Fzf
+        Update-VSCodeExtension
+        Update-GitSubmodule
     }
     catch {
         Write-UpdateErrorLog $_.Exception.Message "System Update" $logFile
@@ -113,11 +126,9 @@ function Update-System {
 
     # Footer
     Write-Host ""
-    Write-Host "╔══════════════════════════════════════════════════════════╗" -ForegroundColor Green
-    Write-Host "║                                                          ║" -ForegroundColor Green
-    Write-Host "║            ✅  SYSTEM UPGRADE COMPLETED                  ║" -ForegroundColor Green
-    Write-Host "║                                                          ║" -ForegroundColor Green
-    Write-Host "╚══════════════════════════════════════════════════════════╝" -ForegroundColor Green
+    Write-Host "============================================================" -ForegroundColor Green
+    Write-Host "            SYSTEM UPGRADE COMPLETED                        " -ForegroundColor Green
+    Write-Host "============================================================" -ForegroundColor Green
     Write-Host ""
     Write-UpdateStatus "Total duration: $($duration.ToString('hh\:mm\:ss'))" -Status Success
     Write-UpdateStatus "Log saved to: $logFile" -Status Info
