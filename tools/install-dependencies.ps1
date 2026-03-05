@@ -30,6 +30,23 @@ function Test-IsAdmin {
     return $principal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
 }
 
+function Test-SudoAvailable {
+    return (Test-CommandExist 'sudo')
+}
+
+function Invoke-Elevated {
+    param([string]$Command, [string[]]$Arguments)
+    if (Test-IsAdmin) {
+        & $Command @Arguments
+    } elseif (Test-SudoAvailable) {
+        sudo $Command @Arguments
+    } else {
+        Write-Status "Needs admin - enable sudo in Windows Settings > Developer or run as Administrator" -Type Error
+        return $false
+    }
+    return ($LASTEXITCODE -eq 0)
+}
+
 function Test-CommandExist {
     param([string]$Command)
     return [bool](Get-Command $Command -ErrorAction SilentlyContinue)
@@ -246,6 +263,7 @@ $AiCliTools = @(
         Command    = 'kimi'
         Method     = 'uv'
         PipPackage = 'kimi-cli'
+        UvPython   = '3.13'
     }
     @{
         Name       = 'Gemini CLI'
@@ -316,23 +334,29 @@ function Install-PackageManagers {
         Write-Status "Winget not found - install 'App Installer' from Microsoft Store" -Type Warning
     }
 
-    # Chocolatey (requires admin)
+    # Chocolatey (requires admin - uses sudo for elevation)
     Write-Status "Chocolatey" -Type Header
     if (Test-CommandExist 'choco') {
         Write-Status "Chocolatey already installed" -Type Success
     } elseif ($WhatIfPreference) {
         Write-Status "Would install Chocolatey" -Type Warning
-    } elseif (-not (Test-IsAdmin)) {
-        Write-Status "Chocolatey requires admin - run this script as Administrator to install it" -Type Warning
     } else {
         Write-Status "Installing Chocolatey..." -Type Info
         try {
-            Set-ExecutionPolicy Bypass -Scope Process -Force
-            [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072
-            $installScript = (New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1')
-            & ([scriptblock]::Create($installScript))
+            if (Test-IsAdmin) {
+                Set-ExecutionPolicy Bypass -Scope Process -Force
+                [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072
+                $installScript = (New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1')
+                & ([scriptblock]::Create($installScript))
+            } elseif (Test-SudoAvailable) {
+                sudo powershell -NoProfile -Command "Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))"
+            } else {
+                Write-Status "Chocolatey requires admin - enable sudo or run as Administrator" -Type Warning
+            }
             Update-SessionPath
-            Write-Status "Chocolatey installed" -Type Success
+            if (Test-CommandExist 'choco') {
+                Write-Status "Chocolatey installed" -Type Success
+            }
         } catch {
             Write-Status "Failed to install Chocolatey: $_" -Type Error
         }
@@ -559,21 +583,40 @@ function Install-DevRuntimes {
     Install-Tool -Name 'Ruby' -Command 'ruby' -ScoopPackage 'ruby' -WingetId 'RubyInstallerTeam.RubyWithDevKit.3.2' -ChocoPackage 'ruby'
     Update-SessionPath
 
-    # Conda/Mamba
-    if (-not (Test-CommandExist 'conda')) {
+    # Conda/Mamba - check PATH and common install locations
+    $condaFound = Test-CommandExist 'conda'
+    if (-not $condaFound) {
+        # Miniforge/Anaconda/Miniconda don't always add conda to PATH
+        $condaPaths = @(
+            "$env:USERPROFILE\miniforge3\condabin\conda.exe",
+            "$env:USERPROFILE\miniforge3\Scripts\conda.exe",
+            "$env:USERPROFILE\miniconda3\condabin\conda.exe",
+            "$env:USERPROFILE\anaconda3\condabin\conda.exe",
+            "$env:LOCALAPPDATA\miniforge3\condabin\conda.exe",
+            "$env:LOCALAPPDATA\Programs\miniforge3\condabin\conda.exe"
+        )
+        foreach ($p in $condaPaths) {
+            if (Test-Path $p) {
+                $condaFound = $true
+                break
+            }
+        }
+    }
+    if (-not $condaFound) {
         if ($WhatIfPreference) {
             Write-Status "Would install Miniforge3 (conda/mamba)" -Type Warning
         } else {
             Write-Status "Installing Miniforge3..." -Type Info
             $installed = Install-WithWinget -PackageId 'CondaForge.Miniforge3'
+            Update-SessionPath
             if ($installed) {
-                Write-Status "Miniforge3 installed (restart terminal to use conda)" -Type Success
+                Write-Status "Miniforge3 installed (run 'conda init powershell' then restart terminal)" -Type Success
             } else {
                 Write-Status "Failed to install Miniforge3" -Type Error
             }
         }
     } else {
-        Write-Status "conda already installed" -Type Success
+        Write-Status "conda/Miniforge already installed" -Type Success
     }
 
     # Chezmoi
@@ -657,7 +700,10 @@ function Install-AiTools {
             'uv' {
                 # uv tool install creates an isolated env and downloads Python if needed
                 if ($tool.PipPackage -and (Test-CommandExist 'uv')) {
-                    $uvOutput = uv tool install $tool.PipPackage 2>&1
+                    $uvArgs = @('tool', 'install')
+                    if ($tool.UvPython) { $uvArgs += @('--python', $tool.UvPython) }
+                    $uvArgs += $tool.PipPackage
+                    $uvOutput = & uv @uvArgs 2>&1
                     $uvExit = $LASTEXITCODE
                     if ($uvExit -eq 0) {
                         $installed = $true
