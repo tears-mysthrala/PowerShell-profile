@@ -526,6 +526,29 @@ function Install-DevRuntimes {
 function Install-AiTools {
     Write-Host "`n===== AI CLI Tools =====" -ForegroundColor Cyan
 
+    # Ensure prerequisites are available before installing AI tools
+    Update-SessionPath
+
+    # uv - needed for Kimi CLI; also bundles its own Python so it can work without system Python
+    if (-not (Test-CommandExist 'uv')) {
+        Write-Status "Installing uv (required for Python-based AI tools)..." -Type Info
+        $uvInstalled = Install-WithScoop -Package 'uv'
+        if (-not $uvInstalled) { $uvInstalled = Install-WithWinget -PackageId 'astral-sh.uv' }
+        if ($uvInstalled) {
+            Update-SessionPath
+            Write-Status "uv installed" -Type Success
+        } else {
+            Write-Status "Failed to install uv" -Type Warning
+        }
+    }
+
+    # npm - needed for Codex, Gemini CLI
+    if (-not (Test-CommandExist 'npm')) {
+        Write-Status "npm not found - installing Node.js..." -Type Info
+        Install-Tool -Name 'Node.js' -Command 'node' -ScoopPackage 'nodejs-lts' -WingetId 'OpenJS.NodeJS.LTS' -ChocoPackage 'nodejs-lts'
+        Update-SessionPath
+    }
+
     foreach ($tool in $AiCliTools) {
         $name = $tool.Name
         $command = $tool.Command
@@ -560,18 +583,20 @@ function Install-AiTools {
                 if (-not $installed -and $tool.WingetId) { $installed = Install-WithWinget -PackageId $tool.WingetId }
             }
             'uv' {
-                # Prefer uv tool install (isolated env, adds to PATH), fallback to pip
+                # uv tool install creates an isolated env and manages Python automatically
                 if ($tool.PipPackage -and (Test-CommandExist 'uv')) {
                     try {
-                        uv tool install --python 3.13 $tool.PipPackage 2>&1 | Out-Null
+                        uv tool install $tool.PipPackage 2>&1 | Out-Null
                         $installed = ($LASTEXITCODE -eq 0)
                     } catch {}
                 }
+                # Fallback to pip if uv failed or not available
                 if (-not $installed -and $tool.PipPackage -and (Test-CommandExist 'pip')) {
+                    Write-Status "uv failed, trying pip..." -Type Warning
                     try { pip install $tool.PipPackage 2>&1 | Out-Null; $installed = $true } catch {}
                 }
                 if (-not $installed) {
-                    Write-Status "$name requires uv or pip - install Python/uv first" -Type Warning
+                    Write-Status "$name failed - neither uv nor pip could install it" -Type Error
                     continue
                 }
             }
