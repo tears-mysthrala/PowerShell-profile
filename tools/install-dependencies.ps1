@@ -173,6 +173,7 @@ $ScoopMainTools = @(
     @{ Name = 'grep';       Command = 'grep';      ScoopPackage = 'grep';      WingetId = $null;                          ChocoPackage = $null }
     @{ Name = 'actionlint'; Command = 'actionlint';ScoopPackage = 'actionlint';WingetId = $null;                          ChocoPackage = $null }
     @{ Name = 'GitHub CLI'; Command = 'gh';        ScoopPackage = 'gh';        WingetId = 'GitHub.cli';                   ChocoPackage = 'gh' }
+    @{ Name = 'uv';         Command = 'uv';        ScoopPackage = 'uv';        WingetId = 'astral-sh.uv';                 ChocoPackage = $null }
 )
 
 $ScoopExtrasTools = @(
@@ -231,7 +232,7 @@ $AiCliTools = @(
     @{
         Name       = 'Kimi CLI'
         Command    = 'kimi'
-        Method     = 'pip'
+        Method     = 'uv'
         PipPackage = 'kimi-cli'
     }
     @{
@@ -557,6 +558,22 @@ function Install-AiTools {
                     continue
                 }
                 if (-not $installed -and $tool.WingetId) { $installed = Install-WithWinget -PackageId $tool.WingetId }
+            }
+            'uv' {
+                # Prefer uv tool install (isolated env, adds to PATH), fallback to pip
+                if ($tool.PipPackage -and (Test-CommandExist 'uv')) {
+                    try {
+                        uv tool install --python 3.13 $tool.PipPackage 2>&1 | Out-Null
+                        $installed = ($LASTEXITCODE -eq 0)
+                    } catch {}
+                }
+                if (-not $installed -and $tool.PipPackage -and (Test-CommandExist 'pip')) {
+                    try { pip install $tool.PipPackage 2>&1 | Out-Null; $installed = $true } catch {}
+                }
+                if (-not $installed) {
+                    Write-Status "$name requires uv or pip - install Python/uv first" -Type Warning
+                    continue
+                }
             }
             'pip' {
                 if ($tool.PipPackage -and (Test-CommandExist 'pip')) {
