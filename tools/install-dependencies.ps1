@@ -9,7 +9,8 @@ param(
     [switch]$Modules,
     [switch]$NpmPackages,
     [switch]$PipPackages,
-    [switch]$DevTools
+    [switch]$DevTools,
+    [switch]$AiTools
 )
 
 $ErrorActionPreference = 'Continue'
@@ -202,6 +203,51 @@ $NpmGlobalPackages = @('markdownlint-cli', 'eslint', 'prettier')
 
 # pip packages
 $PipGlobalPackages = @('thefuck', 'cpplint', 'ruff')
+
+# AI CLI tools
+$AiCliTools = @(
+    @{
+        Name       = 'Claude Code'
+        Command    = 'claude'
+        Method     = 'winget'
+        WingetId   = 'Anthropic.ClaudeCode'
+        NpmPackage = '@anthropic-ai/claude-code'
+    }
+    @{
+        Name       = 'Codex CLI'
+        Command    = 'codex'
+        Method     = 'npm'
+        WingetId   = 'OpenAI.Codex'
+        NpmPackage = '@openai/codex'
+    }
+    @{
+        Name         = 'OpenCode'
+        Command      = 'opencode'
+        Method       = 'scoop'
+        ScoopPackage = 'opencode'
+        NpmPackage   = 'opencode-ai'
+        ChocoPackage = 'opencode'
+    }
+    @{
+        Name       = 'Kimi CLI'
+        Command    = 'kimi'
+        Method     = 'pip'
+        PipPackage = 'kimi-cli'
+    }
+    @{
+        Name       = 'Gemini CLI'
+        Command    = 'gemini'
+        Method     = 'npm'
+        NpmPackage = '@google/gemini-cli'
+    }
+    @{
+        Name         = 'Ollama'
+        Command      = 'ollama'
+        Method       = 'scoop'
+        ScoopPackage = 'ollama'
+        WingetId     = 'Ollama.Ollama'
+    }
+)
 
 #endregion
 
@@ -476,6 +522,70 @@ function Install-DevRuntimes {
     Install-Tool -Name 'chezmoi' -Command 'chezmoi' -ScoopPackage 'chezmoi' -WingetId 'twpayne.chezmoi' -ChocoPackage $null
 }
 
+function Install-AiTools {
+    Write-Host "`n===== AI CLI Tools =====" -ForegroundColor Cyan
+
+    foreach ($tool in $AiCliTools) {
+        $name = $tool.Name
+        $command = $tool.Command
+
+        if (Test-CommandExist $command) {
+            Write-Status "$name already installed" -Type Success
+            continue
+        }
+
+        if ($WhatIfPreference) {
+            Write-Status "Would install $name" -Type Warning
+            continue
+        }
+
+        Write-Status "Installing $name..." -Type Info
+        $installed = $false
+
+        switch ($tool.Method) {
+            'winget' {
+                if ($tool.WingetId) { $installed = Install-WithWinget -PackageId $tool.WingetId }
+                if (-not $installed -and $tool.NpmPackage -and (Test-CommandExist 'npm')) {
+                    try { npm install -g $tool.NpmPackage 2>&1 | Out-Null; $installed = $true } catch {}
+                }
+            }
+            'npm' {
+                if ($tool.NpmPackage -and (Test-CommandExist 'npm')) {
+                    try { npm install -g $tool.NpmPackage 2>&1 | Out-Null; $installed = $true } catch {}
+                } elseif (-not (Test-CommandExist 'npm')) {
+                    Write-Status "$name requires npm - install Node.js first" -Type Warning
+                    continue
+                }
+                if (-not $installed -and $tool.WingetId) { $installed = Install-WithWinget -PackageId $tool.WingetId }
+            }
+            'pip' {
+                if ($tool.PipPackage -and (Test-CommandExist 'pip')) {
+                    try { pip install $tool.PipPackage 2>&1 | Out-Null; $installed = $true } catch {}
+                } elseif (-not (Test-CommandExist 'pip')) {
+                    Write-Status "$name requires pip - install Python first" -Type Warning
+                    continue
+                }
+            }
+            'scoop' {
+                if ($tool.ScoopPackage) { $installed = Install-WithScoop -Package $tool.ScoopPackage }
+                if (-not $installed -and $tool.WingetId) { $installed = Install-WithWinget -PackageId $tool.WingetId }
+                if (-not $installed -and $tool.ChocoPackage) { $installed = Install-WithChoco -Package $tool.ChocoPackage }
+                if (-not $installed -and $tool.NpmPackage -and (Test-CommandExist 'npm')) {
+                    try { npm install -g $tool.NpmPackage 2>&1 | Out-Null; $installed = $true } catch {}
+                }
+            }
+        }
+
+        Update-SessionPath
+
+        if ($installed -or (Test-CommandExist $command)) {
+            Write-Status "$name installed" -Type Success
+        } else {
+            Write-Status "Failed to install $name" -Type Error
+        }
+    }
+}
+
 #endregion
 
 #region Main
@@ -484,7 +594,7 @@ Write-Host ""
 Write-Host "  PowerShell Profile Dependency Installer" -ForegroundColor Cyan
 Write-Host "  ========================================" -ForegroundColor Cyan
 
-$noSwitch = -not ($All -or $PackageManagers -or $CliTools -or $Modules -or $NpmPackages -or $PipPackages -or $DevTools)
+$noSwitch = -not ($All -or $PackageManagers -or $CliTools -or $Modules -or $NpmPackages -or $PipPackages -or $DevTools -or $AiTools)
 
 if ($noSwitch) {
     Write-Host @"
@@ -499,6 +609,7 @@ if ($noSwitch) {
     -NpmPackages      Install global npm packages (eslint, prettier, etc.)
     -PipPackages      Install pip packages (thefuck, ruff, etc.)
     -DevTools         Install dev runtimes (Node, Python, Ruby, conda, chezmoi)
+    -AiTools          Install AI CLI tools (Claude, Codex, OpenCode, Kimi, Gemini, Ollama)
     -WhatIf           Show what would be installed without installing
 
   Examples:
@@ -514,6 +625,7 @@ if ($All -or $PackageManagers) { Install-PackageManagers }
 if ($All -or $CliTools)        { Install-CliTools }
 if ($All -or $Modules)         { Install-PowerShellModules }
 if ($All -or $DevTools)        { Install-DevRuntimes; Update-SessionPath }
+if ($All -or $AiTools)         { Install-AiTools }
 if ($All -or $NpmPackages)     { Install-NpmPackages }
 if ($All -or $PipPackages)     { Install-PipPackages }
 
