@@ -77,17 +77,26 @@ function Install-WithScoop {
     )
     if (-not (Test-CommandExist 'scoop')) { return $false }
     try {
-        scoop install "$Bucket/$Package" 2>&1 | Out-Null
-        return ($LASTEXITCODE -eq 0)
-    } catch { return $false }
+        $output = scoop install "$Bucket/$Package" 2>&1
+        $exitCode = $LASTEXITCODE
+        if ($exitCode -ne 0) {
+            Write-Status "scoop: $($output | Out-String)" -Type Warning
+        }
+        return ($exitCode -eq 0)
+    } catch {
+        Write-Status "scoop exception: $_" -Type Warning
+        return $false
+    }
 }
 
 function Install-WithWinget {
     param([string]$PackageId)
     if (-not (Test-CommandExist 'winget')) { return $false }
     try {
-        winget install --id $PackageId -e --source winget --silent --accept-source-agreements --accept-package-agreements 2>&1 | Out-Null
-        return ($LASTEXITCODE -eq 0)
+        $output = winget install --id $PackageId -e --source winget --silent --accept-source-agreements --accept-package-agreements 2>&1
+        $exitCode = $LASTEXITCODE
+        # winget returns 0 on success, -1978335189 (0x8A150019) if already installed
+        return ($exitCode -eq 0 -or $exitCode -eq -1978335189)
     } catch { return $false }
 }
 
@@ -95,8 +104,12 @@ function Install-WithChoco {
     param([string]$Package)
     if (-not (Test-CommandExist 'choco')) { return $false }
     try {
-        choco install $Package -y 2>&1 | Out-Null
-        return ($LASTEXITCODE -eq 0)
+        $output = choco install $Package -y 2>&1
+        $exitCode = $LASTEXITCODE
+        if ($exitCode -ne 0) {
+            Write-Status "choco: $($output | Out-String)" -Type Warning
+        }
+        return ($exitCode -eq 0)
     } catch { return $false }
 }
 
@@ -496,14 +509,50 @@ function Install-DevRuntimes {
     Install-Tool -Name 'Node.js' -Command 'node' -ScoopPackage 'nodejs-lts' -WingetId 'OpenJS.NodeJS.LTS' -ChocoPackage 'nodejs-lts'
     Update-SessionPath
 
-    # Python (scoop preferred - adds python + pip shims correctly)
-    Install-Tool -Name 'Python' -Command 'python' -ScoopPackage 'python' -WingetId 'Python.Python.3.12' -ChocoPackage 'python3'
+    # Python (scoop preferred - handles multiple versions, creates proper shims for python + pip)
+    if (-not (Test-CommandExist 'python')) {
+        if ($WhatIfPreference) {
+            Write-Status "Would install Python" -Type Warning
+        } else {
+            Write-Status "Installing Python..." -Type Info
+            $pyInstalled = $false
+
+            # Scoop is strongly preferred for Python - proper shims, multi-version support
+            if (Test-CommandExist 'scoop') {
+                $pyInstalled = Install-WithScoop -Package 'python'
+                if ($pyInstalled) {
+                    Update-SessionPath
+                    # Reset shims to ensure python/pip are correctly linked
+                    scoop reset python 2>&1 | Out-Null
+                    Update-SessionPath
+                }
+            }
+            if (-not $pyInstalled) { $pyInstalled = Install-WithWinget -PackageId 'Python.Python.3.12' }
+            if (-not $pyInstalled) { $pyInstalled = Install-WithChoco -Package 'python3' }
+
+            Update-SessionPath
+
+            if ($pyInstalled -or (Test-CommandExist 'python')) {
+                Write-Status "Python installed" -Type Success
+            } else {
+                Write-Status "Failed to install Python" -Type Error
+            }
+        }
+    } else {
+        Write-Status "Python already installed" -Type Success
+    }
+
+    # Ensure pip is available
     Update-SessionPath
-    # Ensure pip is available after Python install
     if ((Test-CommandExist 'python') -and -not (Test-CommandExist 'pip')) {
-        Write-Status "Ensuring pip is available..." -Type Info
-        try { python -m ensurepip --upgrade 2>&1 | Out-Null } catch {}
-        Update-SessionPath
+        Write-Status "pip not found, bootstrapping..." -Type Info
+        try {
+            python -m ensurepip --upgrade 2>&1 | Out-Null
+            Update-SessionPath
+        } catch {}
+        if (-not (Test-CommandExist 'pip')) {
+            Write-Status "pip still not found - try restarting terminal" -Type Warning
+        }
     }
 
     # Ruby
@@ -537,16 +586,31 @@ function Install-AiTools {
     # Ensure prerequisites are available before installing AI tools
     Update-SessionPath
 
-    # uv - needed for Kimi CLI; also bundles its own Python so it can work without system Python
+    # uv - needed for Kimi CLI; manages its own Python downloads
     if (-not (Test-CommandExist 'uv')) {
         Write-Status "Installing uv (required for Python-based AI tools)..." -Type Info
         $uvInstalled = Install-WithScoop -Package 'uv'
         if (-not $uvInstalled) { $uvInstalled = Install-WithWinget -PackageId 'astral-sh.uv' }
-        if ($uvInstalled) {
-            Update-SessionPath
+        Update-SessionPath
+        if (Test-CommandExist 'uv') {
             Write-Status "uv installed" -Type Success
         } else {
-            Write-Status "Failed to install uv" -Type Warning
+            Write-Status "Failed to install uv - Python-based AI tools may fail" -Type Warning
+        }
+    }
+
+    # Python - needed by uv for tool installs; scoop preferred for multi-version support
+    if ((Test-CommandExist 'uv') -and -not (Test-CommandExist 'python')) {
+        Write-Status "Installing Python via scoop (needed by uv)..." -Type Info
+        $pyInstalled = Install-WithScoop -Package 'python'
+        if ($pyInstalled) {
+            scoop reset python 2>&1 | Out-Null
+        }
+        Update-SessionPath
+        if (Test-CommandExist 'python') {
+            Write-Status "Python installed" -Type Success
+        } else {
+            Write-Status "Python not in PATH - uv will download its own Python" -Type Warning
         }
     }
 
@@ -591,20 +655,29 @@ function Install-AiTools {
                 if (-not $installed -and $tool.WingetId) { $installed = Install-WithWinget -PackageId $tool.WingetId }
             }
             'uv' {
-                # uv tool install creates an isolated env and manages Python automatically
+                # uv tool install creates an isolated env and downloads Python if needed
                 if ($tool.PipPackage -and (Test-CommandExist 'uv')) {
-                    try {
-                        uv tool install $tool.PipPackage 2>&1 | Out-Null
-                        $installed = ($LASTEXITCODE -eq 0)
-                    } catch {}
+                    $uvOutput = uv tool install $tool.PipPackage 2>&1
+                    $uvExit = $LASTEXITCODE
+                    if ($uvExit -eq 0) {
+                        $installed = $true
+                    } else {
+                        Write-Status "uv tool install failed: $($uvOutput | Out-String)" -Type Warning
+                    }
                 }
-                # Fallback to pip if uv failed or not available
+                # Fallback to pip
                 if (-not $installed -and $tool.PipPackage -and (Test-CommandExist 'pip')) {
-                    Write-Status "uv failed, trying pip..." -Type Warning
-                    try { pip install $tool.PipPackage 2>&1 | Out-Null; $installed = $true } catch {}
+                    Write-Status "Trying pip fallback..." -Type Info
+                    $pipOutput = pip install $tool.PipPackage 2>&1
+                    if ($LASTEXITCODE -eq 0) { $installed = $true }
+                    else { Write-Status "pip failed: $($pipOutput | Out-String)" -Type Warning }
+                }
+                if (-not $installed -and -not (Test-CommandExist 'uv') -and -not (Test-CommandExist 'pip')) {
+                    Write-Status "$name requires uv or pip - run with -CliTools -DevTools first" -Type Error
+                    continue
                 }
                 if (-not $installed) {
-                    Write-Status "$name failed - neither uv nor pip could install it" -Type Error
+                    Write-Status "$name failed to install" -Type Error
                     continue
                 }
             }
