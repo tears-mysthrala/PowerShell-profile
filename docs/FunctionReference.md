@@ -1,8 +1,8 @@
 # Function Reference
 
 > **Auto-generated documentation**
-> Last updated: 2026-02-22 06:23:55
-> Total functions: 151
+> Last updated: 2026-02-26 15:43:42
+> Total functions: 174
 
 ## Table of Contents
 
@@ -63,6 +63,77 @@ Initialize logging
 
 <sub>**Source:** `Core\Apps\Updates\SystemUpdater.ps1`</sub>
 
+### `Install-AllMissingTools`
+
+**Signature:**
+```powershell
+function Install-AllMissingTools {
+    [CmdletBinding(SupportsShouldProcess)]
+    param()
+```
+
+<sub>**Source:** `Core\Apps\InstallMissingTools.ps1`</sub>
+
+### `Install-Chezmoi`
+
+**Signature:**
+```powershell
+function Install-Chezmoi {
+    Write-InstallHeader "Installing Chezmoi (Dotfiles Manager)"
+
+    if (Test-CommandExist 'chezmoi') {
+```
+
+<sub>**Source:** `Core\Apps\InstallMissingTools.ps1`</sub>
+
+### `Install-Composer`
+
+**Signature:**
+```powershell
+function Install-Composer {
+    Write-InstallHeader "Installing PHP and Composer"
+
+    if (Test-CommandExist 'composer') {
+```
+
+<sub>**Source:** `Core\Apps\InstallMissingTools.ps1`</sub>
+
+### `Install-Conda`
+
+**Signature:**
+```powershell
+function Install-Conda {
+    Write-InstallHeader "Installing Conda (Miniforge/Mamba)"
+
+    if (Test-CommandExist 'conda') {
+```
+
+<sub>**Source:** `Core\Apps\InstallMissingTools.ps1`</sub>
+
+### `Install-Homebrew-WSL`
+
+**Signature:**
+```powershell
+function Install-Homebrew-WSL {
+    Write-InstallHeader "Installing Homebrew in WSL"
+
+    if (-not (Test-CommandExist 'wsl')) {
+```
+
+<sub>**Source:** `Core\Apps\InstallMissingTools.ps1`</sub>
+
+### `Install-Ruby`
+
+**Signature:**
+```powershell
+function Install-Ruby {
+    Write-InstallHeader "Installing Ruby with DevKit"
+
+    if (Test-CommandExist 'ruby') {
+```
+
+<sub>**Source:** `Core\Apps\InstallMissingTools.ps1`</sub>
+
 ### `Select-App`
 
 **Signature:**
@@ -74,6 +145,16 @@ function Select-App {
 ```
 
 <sub>**Source:** `Core\Apps\appsManage.ps1`</sub>
+
+### `Test-CommandExist`
+
+**Signature:**
+```powershell
+function Test-CommandExist {
+    param([string]$Command)
+```
+
+<sub>**Source:** `Core\Apps\InstallMissingTools.ps1`</sub>
 
 ### `Uninstall-ChocoApp`
 
@@ -108,6 +189,17 @@ function Update-Cargo {
 
 <sub>**Source:** `Core\Apps\UpdateAppsHelper.ps1`</sub>
 
+### `Update-Chezmoi`
+
+**Signature:**
+```powershell
+function Update-Chezmoi {
+    [CmdletBinding(SupportsShouldProcess)]
+    param()
+```
+
+<sub>**Source:** `Core\Apps\UpdateAppsHelper.ps1`</sub>
+
 ### `Update-Choco`
 
 **Signature:**
@@ -129,6 +221,114 @@ function Update-ChocoApp {
 ```
 
 <sub>**Source:** `Core\Apps\appsManage.ps1`</sub>
+
+### `Update-Composer`
+
+**Signature:**
+```powershell
+function Update-Composer {
+    [CmdletBinding(SupportsShouldProcess)]
+    param()
+```
+
+<sub>**Source:** `Core\Apps\UpdateAppsHelper.ps1`</sub>
+
+### `Update-Conda`
+
+**Signature:**
+```powershell
+function Update-Conda {
+    [CmdletBinding(SupportsShouldProcess)]
+    param()
+```
+
+**Description:**
+
+Additional Development Tools
+
+<sub>**Source:** `Core\Apps\UpdateAppsHelper.ps1`</sub>
+
+### `Update-DotnetTool`
+
+**Signature:**
+```powershell
+function Update-DotnetTool {
+    [CmdletBinding(SupportsShouldProcess)]
+    param()
+```
+
+<sub>**Source:** `Core\Apps\UpdateAppsHelper.ps1`</sub>
+
+### `Update-Fzf`
+
+**Signature:**
+```powershell
+function Update-Fzf {
+    [CmdletBinding(SupportsShouldProcess)]
+    param()
+```
+
+<sub>**Source:** `Core\Apps\UpdateAppsHelper.ps1`</sub>
+
+### `Update-Gem`
+
+**Signature:**
+```powershell
+function Update-Gem {
+    [CmdletBinding(SupportsShouldProcess)]
+    param()
+```
+
+<sub>**Source:** `Core\Apps\UpdateAppsHelper.ps1`</sub>
+
+### `Update-GitSubmodule`
+
+**Signature:**
+```powershell
+function Update-GitSubmodule {
+    [CmdletBinding(SupportsShouldProcess)]
+    param(
+        [string]$Path = $PWD
+    )
+```
+
+<sub>**Source:** `Core\Apps\UpdateAppsHelper.ps1`</sub>
+
+### `Update-GoTools`
+
+**Signature:**
+```powershell
+function Update-GoTools {
+    [CmdletBinding(SupportsShouldProcess)]
+    param()
+```
+
+<sub>**Source:** `Core\Apps\UpdateAppsHelper.ps1`</sub>
+
+### `Update-Homebrew`
+
+**Signature:**
+```powershell
+function Update-Homebrew {
+    [CmdletBinding(SupportsShouldProcess)]
+    param()
+```
+
+<sub>**Source:** `Core\Apps\UpdateAppsHelper.ps1`</sub>
+
+### `Update-NodeEnvironment`
+
+**Signature:**
+```powershell
+function Update-NodeEnvironment {
+    [CmdletBinding(SupportsShouldProcess)]
+    param(
+        [switch]$CleanCache,
+        [switch]$ForceReinstall
+    )
+```
+
+<sub>**Source:** `Core\Apps\UpdateAppsHelper.ps1`</sub>
 
 ### `Update-Npm`
 
@@ -185,6 +385,19 @@ function Update-PowershellModule {
 
 <sub>**Source:** `Core\Apps\appsManage.ps1`</sub>
 
+### `Update-PythonEnvironment`
+
+**Signature:**
+```powershell
+function Update-PythonEnvironment {
+    [CmdletBinding(SupportsShouldProcess)]
+    param(
+        [switch]$CleanCache
+    )
+```
+
+<sub>**Source:** `Core\Apps\UpdateAppsHelper.ps1`</sub>
+
 ### `Update-Scoop`
 
 **Signature:**
@@ -206,6 +419,17 @@ function Update-ScoopApp {
 ```
 
 <sub>**Source:** `Core\Apps\appsManage.ps1`</sub>
+
+### `Update-Starship`
+
+**Signature:**
+```powershell
+function Update-Starship {
+    [CmdletBinding(SupportsShouldProcess)]
+    param()
+```
+
+<sub>**Source:** `Core\Apps\UpdateAppsHelper.ps1`</sub>
 
 ### `Update-StoreApp`
 
@@ -238,6 +462,30 @@ Main update function with visual progress
 **Signature:**
 ```powershell
 function Update-Uv {
+    [CmdletBinding(SupportsShouldProcess)]
+    param()
+```
+
+<sub>**Source:** `Core\Apps\UpdateAppsHelper.ps1`</sub>
+
+### `Update-Vcpkg`
+
+**Signature:**
+```powershell
+function Update-Vcpkg {
+    [CmdletBinding(SupportsShouldProcess)]
+    param(
+        [string[]]$VcpkgRoots = @('C:\vcpkg', 'D:\opt\vcpkg', 'C:\tools\vcpkg')
+    )
+```
+
+<sub>**Source:** `Core\Apps\UpdateAppsHelper.ps1`</sub>
+
+### `Update-VSCodeExtension`
+
+**Signature:**
+```powershell
+function Update-VSCodeExtension {
     [CmdletBinding(SupportsShouldProcess)]
     param()
 ```
@@ -279,6 +527,17 @@ function Update-Winget {
 
 <sub>**Source:** `Core\Apps\UpdateAppsHelper.ps1`</sub>
 
+### `Update-WSL`
+
+**Signature:**
+```powershell
+function Update-WSL {
+    [CmdletBinding(SupportsShouldProcess)]
+    param()
+```
+
+<sub>**Source:** `Core\Apps\UpdateAppsHelper.ps1`</sub>
+
 ### `Write-AppLog`
 
 **Signature:**
@@ -302,6 +561,30 @@ function Write-ErrorLog {
 Function to handle errors
 
 <sub>**Source:** `Core\Apps\UpdateApps.ps1`</sub>
+
+### `Write-InstallHeader`
+
+**Signature:**
+```powershell
+function Write-InstallHeader {
+    param([string]$Title)
+```
+
+<sub>**Source:** `Core\Apps\InstallMissingTools.ps1`</sub>
+
+### `Write-InstallStatus`
+
+**Signature:**
+```powershell
+function Write-InstallStatus {
+    param(
+        [string]$Message,
+        [ValidateSet('Info', 'Success', 'Warning', 'Error')]
+        [string]$Status = 'Info'
+    )
+```
+
+<sub>**Source:** `Core\Apps\InstallMissingTools.ps1`</sub>
 
 ### `Write-UpdateErrorLog`
 
@@ -1922,17 +2205,6 @@ function tail {
 ```
 
 <sub>**Source:** `Core\Utils\unified_aliases.ps1`</sub>
-
-### `Test-CommandExist`
-
-**Signature:**
-```powershell
-function Test-CommandExist {
-    [CmdletBinding()]
-    param([string]$command)
-```
-
-<sub>**Source:** `Core\Utils\CommonUtils.ps1`</sub>
 
 ### `Test-IsAdmin`
 

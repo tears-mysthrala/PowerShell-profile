@@ -1,7 +1,7 @@
 # Quick Reference
 
 > **Auto-generated documentation**
-> Last updated: 2026-02-22 06:23:55
+> Last updated: 2026-02-26 15:43:42
 
 ## Functions
 
@@ -70,17 +70,23 @@
 | `Initialize-StartupModule` | Core |  |
 | `Initialize-StartupTool` | Core |  |
 | `Initialize-UpdateLog` | Applications | Initialize logging |
+| `Install-AllMissingTools` | Applications |  |
 | `Install-Bat` | Other |  |
+| `Install-Chezmoi` | Applications |  |
 | `Install-Chocolatey` | Other |  |
+| `Install-Composer` | Applications |  |
+| `Install-Conda` | Applications |  |
 | `Install-Dependency` | Other | Initialize startup modules - deferred to first use for faster startup Modules... |
 | `Install-Eza` | Other |  |
 | `Install-Fd` | Other |  |
 | `Install-Fzf` | Other |  |
 | `Install-Git` | Other |  |
+| `Install-Homebrew-WSL` | Applications |  |
 | `Install-Lazygit` | Other |  |
 | `Install-Pwsh` | Utilities | Function to install PowerShell 7 using winget |
 | `Install-RequiredModule` | Core |  |
 | `Install-Ripgrep` | Other |  |
+| `Install-Ruby` | Applications |  |
 | `Install-Scoop` | Other |  |
 | `Install-Winget` | Other |  |
 | `Install-Zoxide` | Other |  |
@@ -123,7 +129,7 @@
 | `sysinfo` | Utilities | Quick Access to System Information |
 | `tail` | Utilities |  |
 | `Test-CachedPath` | Other | Helper function for cached Test-Path |
-| `Test-CommandExist` | Utilities |  |
+| `Test-CommandExist` | Applications |  |
 | `Test-IsAdmin` | Utilities |  |
 | `Test-ModuleInstalled` | Core |  |
 | `Test-ModuleRequirement` | Core |  |
@@ -132,21 +138,36 @@
 | `Uninstall-ChocoApp` | Applications |  |
 | `Update-AllApp` | Applications |  |
 | `Update-Cargo` | Applications |  |
+| `Update-Chezmoi` | Applications |  |
 | `Update-Choco` | Applications |  |
 | `Update-ChocoApp` | Applications |  |
+| `Update-Composer` | Applications |  |
+| `Update-Conda` | Applications | Additional Development Tools |
+| `Update-DotnetTool` | Applications |  |
+| `Update-Fzf` | Applications |  |
+| `Update-Gem` | Applications |  |
+| `Update-GitSubmodule` | Applications |  |
+| `Update-GoTools` | Applications |  |
+| `Update-Homebrew` | Applications |  |
+| `Update-NodeEnvironment` | Applications |  |
 | `Update-Npm` | Applications |  |
 | `Update-NpmApp` | Applications |  |
 | `Update-PipApp` | Applications |  |
 | `Update-Pipx` | Applications |  |
 | `Update-PowershellModule` | Applications |  |
+| `Update-PythonEnvironment` | Applications |  |
 | `Update-Scoop` | Applications |  |
 | `Update-ScoopApp` | Applications |  |
+| `Update-Starship` | Applications |  |
 | `Update-StoreApp` | Applications |  |
 | `Update-System` | Applications | Main update function with visual progress |
 | `Update-Uv` | Applications |  |
+| `Update-Vcpkg` | Applications |  |
+| `Update-VSCodeExtension` | Applications |  |
 | `Update-WindowsSystem` | Applications |  |
 | `Update-WindowsUpdate` | Applications |  |
 | `Update-Winget` | Applications |  |
+| `Update-WSL` | Applications |  |
 | `Upgrade` | Utilities |  |
 | `uptime` | Utilities |  |
 | `v` | Utilities | Lazy editor alias that initializes on first use |
@@ -154,6 +175,8 @@
 | `Write-AppLog` | Applications |  |
 | `Write-ColorOutput` | Other |  |
 | `Write-ErrorLog` | Applications | Function to handle errors |
+| `Write-InstallHeader` | Applications |  |
+| `Write-InstallStatus` | Applications |  |
 | `Write-UpdateErrorLog` | Applications | Error handling function |
 | `Write-UpdateHeader` | Applications | Helper function to write section headers |
 | `Write-UpdateLog` | Applications | Logging function |
@@ -182,6 +205,7 @@
 | `g` | `git` | `Core\Utils\unified_aliases.ps1` |
 | `grep` | `Find-String` | `Core\Utils\unified_aliases.ps1` |
 | `gst` | `Get-GitStatus` | `Core\Utils\unified_aliases.ps1` |
+| `install-dev-tools` | `Install-AllMissingTools` | `Core\Apps\InstallMissingTools.ps1` |
 | `la` | `la_with_eza` | `Core\Utils\unified_aliases.ps1` |
 | `lg` | `lazygit` | `Core\Utils\unified_aliases.ps1` |
 | `ll` | `ll_with_eza` | `Core\Utils\unified_aliases.ps1` |
