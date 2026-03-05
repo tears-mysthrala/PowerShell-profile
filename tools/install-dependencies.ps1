@@ -619,6 +619,88 @@ function Install-DevRuntimes {
         Write-Status "conda/Miniforge already installed" -Type Success
     }
 
+    # Rust (rustup + cargo)
+    if (-not (Test-CommandExist 'cargo')) {
+        if ($WhatIfPreference) {
+            Write-Status "Would install Rust (rustup + cargo)" -Type Warning
+        } else {
+            Write-Status "Installing Rust (rustup + cargo)..." -Type Info
+            $rustInstalled = Install-WithScoop -Package 'rustup'
+            if (-not $rustInstalled) { $rustInstalled = Install-WithWinget -PackageId 'Rustlang.Rustup' }
+            Update-SessionPath
+            if (Test-CommandExist 'rustup') {
+                rustup default stable 2>&1 | Out-Null
+                Update-SessionPath
+                Write-Status "Rust installed" -Type Success
+            } else {
+                Write-Status "Failed to install Rust" -Type Error
+            }
+        }
+    } else {
+        Write-Status "Rust/cargo already installed" -Type Success
+    }
+
+    # Go
+    Install-Tool -Name 'Go' -Command 'go' -ScoopPackage 'go' -WingetId 'GoLang.Go' -ChocoPackage 'golang'
+    Update-SessionPath
+
+    # .NET SDK
+    Install-Tool -Name '.NET SDK' -Command 'dotnet' -ScoopPackage 'dotnet-sdk' -WingetId 'Microsoft.DotNet.SDK.8' -ChocoPackage 'dotnet-sdk'
+    Update-SessionPath
+
+    # pipx (isolated Python app runner, used by upgrade for global Python tools)
+    if (-not (Test-CommandExist 'pipx')) {
+        if ($WhatIfPreference) {
+            Write-Status "Would install pipx" -Type Warning
+        } else {
+            Write-Status "Installing pipx..." -Type Info
+            $pipxInstalled = $false
+            if (Test-CommandExist 'scoop') {
+                $pipxInstalled = Install-WithScoop -Package 'pipx'
+            }
+            if (-not $pipxInstalled -and (Test-CommandExist 'pip')) {
+                pip install --user pipx 2>&1 | Out-Null
+                $pipxInstalled = ($LASTEXITCODE -eq 0)
+            }
+            Update-SessionPath
+            if (Test-CommandExist 'pipx') {
+                pipx ensurepath 2>&1 | Out-Null
+                Update-SessionPath
+                Write-Status "pipx installed" -Type Success
+            } else {
+                Write-Status "Failed to install pipx" -Type Error
+            }
+        }
+    } else {
+        Write-Status "pipx already installed" -Type Success
+    }
+
+    # Composer (PHP package manager)
+    if ((Test-CommandExist 'php') -and -not (Test-CommandExist 'composer')) {
+        if ($WhatIfPreference) {
+            Write-Status "Would install Composer" -Type Warning
+        } else {
+            Write-Status "Installing Composer..." -Type Info
+            $composerInstalled = Install-WithScoop -Package 'composer'
+            if (-not $composerInstalled) {
+                if (Test-SudoAvailable) {
+                    sudo winget install Composer.Composer --silent --accept-source-agreements --accept-package-agreements 2>&1 | Out-Null
+                    $composerInstalled = ($LASTEXITCODE -eq 0)
+                } else {
+                    $composerInstalled = Install-WithWinget -PackageId 'Composer.Composer'
+                }
+            }
+            Update-SessionPath
+            if ($composerInstalled -or (Test-CommandExist 'composer')) {
+                Write-Status "Composer installed" -Type Success
+            } else {
+                Write-Status "Failed to install Composer" -Type Error
+            }
+        }
+    } elseif (Test-CommandExist 'composer') {
+        Write-Status "Composer already installed" -Type Success
+    }
+
     # Chezmoi
     Install-Tool -Name 'chezmoi' -Command 'chezmoi' -ScoopPackage 'chezmoi' -WingetId 'twpayne.chezmoi' -ChocoPackage $null
 }
