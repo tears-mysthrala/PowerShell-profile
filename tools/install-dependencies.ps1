@@ -192,7 +192,6 @@ $RequiredModules = @(
     @{ Name = 'posh-git';                      MinVersion = '1.1.0' }
     @{ Name = 'PSFzf';                         MinVersion = '2.5.0' }
     @{ Name = 'z';                             MinVersion = '1.1.0' }
-    @{ Name = 'Catppuccin';                    MinVersion = '0.2.0' }
     @{ Name = 'PSWindowsUpdate';               MinVersion = '2.2.0.3' }
     @{ Name = 'PowerShellGet';                 MinVersion = '2.2.5' }
     @{ Name = 'CompletionPredictor';           MinVersion = $null }
@@ -495,12 +494,21 @@ function Install-DevRuntimes {
 
     # Node.js
     Install-Tool -Name 'Node.js' -Command 'node' -ScoopPackage 'nodejs-lts' -WingetId 'OpenJS.NodeJS.LTS' -ChocoPackage 'nodejs-lts'
+    Update-SessionPath
 
-    # Python
+    # Python (scoop preferred - adds python + pip shims correctly)
     Install-Tool -Name 'Python' -Command 'python' -ScoopPackage 'python' -WingetId 'Python.Python.3.12' -ChocoPackage 'python3'
+    Update-SessionPath
+    # Ensure pip is available after Python install
+    if ((Test-CommandExist 'python') -and -not (Test-CommandExist 'pip')) {
+        Write-Status "Ensuring pip is available..." -Type Info
+        try { python -m ensurepip --upgrade 2>&1 | Out-Null } catch {}
+        Update-SessionPath
+    }
 
     # Ruby
     Install-Tool -Name 'Ruby' -Command 'ruby' -ScoopPackage 'ruby' -WingetId 'RubyInstallerTeam.RubyWithDevKit.3.2' -ChocoPackage 'ruby'
+    Update-SessionPath
 
     # Conda/Mamba
     if (-not (Test-CommandExist 'conda')) {

@@ -23,10 +23,6 @@ $requiredModules = @{
         MinVersion  = '1.1.0'
         Description = 'Directory jumping'
     }
-    'Catppuccin'                    = @{
-        MinVersion  = '0.2.0'
-        Description = 'Catppuccin theme for PowerShell'
-    }
     'PSWindowsUpdate'               = @{
         MinVersion  = '2.2.0.3'
         Description = 'Windows Update management'
