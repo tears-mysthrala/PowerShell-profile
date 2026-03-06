@@ -402,18 +402,27 @@ function Update-WindowsSystem {
     [CmdletBinding(SupportsShouldProcess)]
     param()
     Write-UpdateHeader "Layer 0: Windows System Updates"
-    
+
     if ($PSCmdlet.ShouldProcess("Windows System", "Update")) {
         # Check for PSWindowsUpdate module
         if (Get-Module -ListAvailable -Name PSWindowsUpdate) {
             Write-UpdateStatus "Checking for Windows updates via PSWindowsUpdate..." -Status Info
             try {
-                $updates = Get-WindowsUpdate -ErrorAction SilentlyContinue
-                if ($updates) {
-                    Write-Host "  Found $($updates.Count) update(s)" -ForegroundColor Gray
-                    Install-WindowsUpdate -AcceptAll -AutoReboot -IgnoreReboot
+                # PSWindowsUpdate requires elevation for both checking and installing
+                if (Get-Command 'sudo' -ErrorAction SilentlyContinue) {
+                    sudo pwsh -NoProfile -Command {
+                        Import-Module PSWindowsUpdate -ErrorAction Stop
+                        $updates = Get-WindowsUpdate -ErrorAction SilentlyContinue
+                        if ($updates) {
+                            Write-Host "  Found $($updates.Count) update(s)" -ForegroundColor Gray
+                            Install-WindowsUpdate -AcceptAll -IgnoreReboot -ErrorAction SilentlyContinue
+                        } else {
+                            Write-Host "  No Windows updates available" -ForegroundColor Green
+                        }
+                    }
                 } else {
-                    Write-UpdateStatus "No Windows updates available" -Status Success
+                    Write-UpdateStatus "sudo not available - Windows Update requires elevation" -Status Warning
+                    Write-UpdateStatus "Enable sudo in Windows Settings > Developer Settings" -Status Info
                 }
             } catch {
                 Write-UpdateStatus "Windows Update check failed: $_" -Status Error
@@ -422,8 +431,13 @@ function Update-WindowsSystem {
             Write-UpdateStatus "PSWindowsUpdate module not found, using Windows Update client..." -Status Info
             try {
                 Write-Host "  Starting Windows Update scan and install..." -ForegroundColor Gray
-                Start-Process -FilePath "usoclient" -ArgumentList "StartScan" -Wait -WindowStyle Hidden
-                Start-Process -FilePath "usoclient" -ArgumentList "StartInstall" -Wait -WindowStyle Hidden
+                if (Get-Command 'sudo' -ErrorAction SilentlyContinue) {
+                    sudo usoclient StartScan
+                    sudo usoclient StartInstall
+                } else {
+                    Start-Process -FilePath "usoclient" -ArgumentList "StartScan" -Wait -WindowStyle Hidden
+                    Start-Process -FilePath "usoclient" -ArgumentList "StartInstall" -Wait -WindowStyle Hidden
+                }
                 Write-UpdateStatus "Windows Update triggered successfully" -Status Success
             } catch {
                 Write-UpdateStatus "Windows Update via usoclient failed: $_" -Status Error
