@@ -161,43 +161,13 @@ Measure-Block 'Core Setup' {
             }
         }
 
-        # Register lazy-loading wrappers for utility modules instead of importing all on startup
+        # Load utility modules directly (small files, ~200 lines total, negligible startup cost)
         $utilsPath = "$ProfileDir\Core\Utils"
         if (Test-CachedPath $utilsPath) {
-            $utilsFiles = Get-ChildItem -Path $utilsPath -Filter "*.ps1"
-
-            foreach ($file in $utilsFiles) {
-                $moduleName = [System.IO.Path]::GetFileNameWithoutExtension($file.Name)
-
-                # unified_aliases is already loaded explicitly at startup
-                if ($moduleName -eq 'unified_aliases') { continue }
-
-                $script:utilityModules ??= @{}
-                $script:utilityModules[$moduleName] = $file.FullName
-
-                # Only create wrapper if no function/command with that name exists
-                if (-not (Get-Command -Name $moduleName -ErrorAction SilentlyContinue)) {
-                    $sb = {
-                        param()
-                        $name = $MyInvocation.MyCommand.Name
-                        $path = $script:utilityModules[$name]
-                        if ($path -and (Test-Path $path)) {
-                            try {
-                                . $path
-                            }
-                            catch {
-                                Write-Warning "Failed to load utility module ${name}: $_"
-                            }
-                        }
-                        # Re-invoke the original command with the same arguments after loading
-                        $cmd = Get-Command -Name $name -ErrorAction SilentlyContinue
-                        if ($cmd -and $cmd -ne $MyInvocation.MyCommand) {
-                            & $cmd @args
-                        }
-                    }.GetNewClosure()
-
-                    Set-Item -Path "Function:$moduleName" -Value $sb -Force
-                }
+            foreach ($file in (Get-ChildItem -Path $utilsPath -Filter "*.ps1")) {
+                # unified_aliases is already loaded at startup (line 2)
+                if ($file.Name -eq 'unified_aliases.ps1') { continue }
+                try { . $file.FullName } catch { Write-Warning "Failed to load $($file.Name): $_" }
             }
         }
     }

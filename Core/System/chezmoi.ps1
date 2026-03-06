@@ -44,6 +44,6 @@ function cms {
     }
     chezmoi re-add
     Set-Location $(chezmoi source-path)
-    git f
+    git fetch
     Set-Location $current_dir
 }

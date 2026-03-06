@@ -143,25 +143,17 @@ else {
   Remove-Alias -Name ll -ErrorAction SilentlyContinue
 }
 
-# File and directory management
-function mkcd { param($dir) mkdir $dir -Force; Set-Location $dir }
-function New-File { 
+# File and directory management (mkcd/New-DirectoryAndEnter defined in FileSystemUtils.ps1)
+function New-File {
     [CmdletBinding(SupportsShouldProcess)]
     param($file)
     if ($PSCmdlet.ShouldProcess($file, "Create file")) {
-        "" | Out-File $file -Encoding ASCII 
+        "" | Out-File $file -Encoding ASCII
     }
 }
 Set-Alias -Name touch -Value New-File
 
-# System information and utilities
-function Get-PubIP { (Invoke-WebRequest https://ifconfig.me/ip ).Content }
-function Get-FormattedUptime {
-  $bootuptime = (Get-CimInstance -ClassName Win32_OperatingSystem).LastBootUpTime
-  $CurrentDate = Get-Date
-  $uptime = $CurrentDate - $bootuptime
-  Write-Output "Uptime: $($uptime.Days) Days, $($uptime.Hours) Hours, $($uptime.Minutes) Minutes"
-}
+# System information and utilities (Get-PubIP, Get-FormattedUptime defined in CommonUtils.ps1)
 
 function uptime {
   If ($PSVersionTable.PSVersion.Major -eq 5) {
@@ -223,9 +215,7 @@ function ix ($file) {
   curl.exe -F "f:1=@$file" ix.io
 }
 
-function Test-IsAdmin {
-  return ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
-}
+# Test-IsAdmin defined in CommonUtils.ps1
 
 function Restart-BIOS {
     [CmdletBinding(SupportsShouldProcess)]

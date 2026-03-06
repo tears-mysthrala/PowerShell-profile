@@ -88,23 +88,7 @@ function Register-UnifiedModule {
         [string]$ModulePath
     )
 
-    # Suppress all non-critical messages (log this action)
-    Write-Verbose "[INFO] Suppressing Verbose, Debug, Warning, and Information output temporarily..."
-    $oldVerbose = $VerbosePreference
-    $oldDebug = $DebugPreference
-    $oldWarning = $WarningPreference
-    $oldInformation = $InformationPreference
-    $VerbosePreference = 'SilentlyContinue'
-    $DebugPreference = 'SilentlyContinue'
-    $WarningPreference = 'SilentlyContinue'
-    $InformationPreference = 'SilentlyContinue'
-
     # Check if module exists before registration
-    # Restore previous preferences after block
-    $VerbosePreference = $oldVerbose
-    $DebugPreference = $oldDebug
-    $WarningPreference = $oldWarning
-    $InformationPreference = $oldInformation
     $moduleExists = $false
     $moduleInfo = $null
     $moduleSearchPaths = @($env:PSModulePath -split ';')
@@ -361,23 +345,13 @@ function Import-UnifiedModule {
             Information = $InformationPreference
         }
 
-        # Suppress all non-critical messages (log this action)
-        Write-Verbose "[INFO] Suppressing Verbose, Debug, Warning, and Information output temporarily..."
-        $oldVerbose = $VerbosePreference
-        $oldDebug = $DebugPreference
-        $oldWarning = $WarningPreference
-        $oldInformation = $InformationPreference
+        # Suppress non-critical messages during module import
         $VerbosePreference = 'SilentlyContinue'
         $DebugPreference = 'SilentlyContinue'
         $WarningPreference = 'SilentlyContinue'
         $InformationPreference = 'SilentlyContinue'
 
         try {
-            # Restore previous preferences after block
-            $VerbosePreference = $oldVerbose
-            $DebugPreference = $oldDebug
-            $WarningPreference = $oldWarning
-            $InformationPreference = $oldInformation
             if ($moduleInfo.InitializerBlock) {
                 if ($PSCmdlet.ShouldProcess($Name, "Execute initializer block")) {
                     & $moduleInfo.InitializerBlock
@@ -425,24 +399,19 @@ function Initialize-StartupModule {
     $totalTimer = [System.Diagnostics.Stopwatch]::StartNew()
     $jobs = @()
 
-    # Suppress all non-critical messages (log this action)
-    Write-Verbose "[INFO] Suppressing Verbose, Debug, Warning, and Information output temporarily..."
-    $oldVerbose = $VerbosePreference
-    $oldDebug = $DebugPreference
-    $oldWarning = $WarningPreference
-    $oldInformation = $InformationPreference
+    # Suppress non-critical messages during module initialization
+    $originalPreferences = @{
+        Verbose     = $VerbosePreference
+        Debug       = $DebugPreference
+        Warning     = $WarningPreference
+        Information = $InformationPreference
+    }
     $VerbosePreference = 'SilentlyContinue'
     $DebugPreference = 'SilentlyContinue'
     $WarningPreference = 'SilentlyContinue'
     $InformationPreference = 'SilentlyContinue'
 
     try {
-        # Restore previous preferences after block
-        $VerbosePreference = $oldVerbose
-        $DebugPreference = $oldDebug
-        $WarningPreference = $oldWarning
-        $InformationPreference = $oldInformation
-        # Create a hashtable to store module initialization scriptblocks
 
         foreach ($moduleName in $startupModules) {
             $moduleInfo = $script:moduleRegistry[$moduleName]
@@ -522,6 +491,10 @@ function Initialize-StartupModule {
             $jobs | Remove-Job -Force
         }
     } finally {
+        $VerbosePreference = $originalPreferences.Verbose
+        $DebugPreference = $originalPreferences.Debug
+        $WarningPreference = $originalPreferences.Warning
+        $InformationPreference = $originalPreferences.Information
         $totalTimer.Stop()
         $loadTimes['Module load time'] = $totalTimer.ElapsedMilliseconds
     }
