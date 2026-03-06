@@ -1,4 +1,7 @@
-New-Module -Name AppsManage -ScriptBlock {
+New-Module -Name AppsManage -ArgumentList $PSScriptRoot -ScriptBlock {
+param($InitRoot)
+$script:ModuleRoot = $InitRoot
+
 $CHOCO_APPS_TO_UPGRADE = @(
 )
 
@@ -9,7 +12,7 @@ function Update-AllApp {
         Write-Host "Starting system-wide update..." -ForegroundColor Cyan
 
         try {
-            . "$ProfileDir\Core\Apps\UpdateApps.ps1"
+            . "$script:ModuleRoot\UpdateApps.ps1"
             Write-Host "Update completed successfully." -ForegroundColor Green
         }
         catch {

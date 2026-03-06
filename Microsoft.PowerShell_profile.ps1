@@ -307,6 +307,12 @@ Register-EngineEvent -SourceIdentifier PowerShell.OnIdle -MaxTriggerCount 1 -Act
     if ($wcnfMod) {
         Import-Module Microsoft.WinGet.CommandNotFound -ErrorAction SilentlyContinue
     }
+
+    # Package manager operations (Update-ChocoApp, Update-ScoopApp, etc.)
+    $appsManagePath = "$ProfileDir\Core\Apps\appsManage.ps1"
+    if (Test-Path $appsManagePath) {
+        . $appsManagePath
+    }
 } | Out-Null
 
 # Import PSFzf for enhanced history search with fzf (lazy-loaded)

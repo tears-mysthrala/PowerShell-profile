@@ -25,7 +25,7 @@ function Write-ErrorLog {
 Write-AppLog "Starting Windows Update..."
 try {
     . "$PSScriptRoot\WindowsUpdateHelper.ps1"
-    Update-WindowsUpdate -UseLog
+    Update-WindowsUpdate
 }
 catch {
     Write-ErrorLog "Failed to process Windows updates"

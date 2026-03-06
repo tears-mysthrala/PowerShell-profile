@@ -39,7 +39,7 @@ function Initialize-Editor {
   foreach ($editor in $editors) {
     if (Test-CommandExist $editor) {
       $script:EDITOR = $editor
-      if ($editor -eq 'nvim' -and (Test-Path "$env:LOCALAPPDATA/$env:DEFAULT_NVIM_CONFIG" -PathType Container)) {
+      if ($editor -eq 'nvim' -and $env:DEFAULT_NVIM_CONFIG -and (Test-Path "$env:LOCALAPPDATA/$env:DEFAULT_NVIM_CONFIG" -PathType Container)) {
         $env:NVIM_APPNAME = $env:DEFAULT_NVIM_CONFIG
       }
       break

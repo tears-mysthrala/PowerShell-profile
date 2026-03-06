@@ -1,19 +1,15 @@
 function Update-WindowsUpdate {
     [CmdletBinding(SupportsShouldProcess)]
-    param(
-        [switch]$UseLog
-    )
+    param()
     if ($PSCmdlet.ShouldProcess("Windows updates", "Install")) {
-        $logFunction = if ($UseLog) { ${function:Write-Log} } else { ${function:Write-Host} }
-
         # Windows Update COM API requires elevation
         if (-not (Get-Command 'sudo' -ErrorAction SilentlyContinue)) {
-            & $logFunction "sudo not available - Windows Update requires elevation. Enable sudo in Windows Settings > Developer Settings."
+            Write-Warning "sudo not available - Windows Update requires elevation. Enable sudo in Windows Settings > Developer Settings."
             return
         }
 
         try {
-            & $logFunction "Running Windows Update with elevation..."
+            Write-Host "Running Windows Update with elevation..." -ForegroundColor Cyan
             sudo pwsh -NoProfile -Command {
                 $UpdateSession = New-Object -ComObject Microsoft.Update.Session
                 $UpdateSearcher = $UpdateSession.CreateUpdateSearcher()
@@ -50,11 +46,7 @@ function Update-WindowsUpdate {
                 }
             }
         } catch {
-            if ($UseLog) {
-                Write-ErrorLog "Failed to process Windows updates: $_"
-            } else {
-                Write-Warning "Failed to check/install Windows updates: $_"
-            }
+            Write-Warning "Failed to check/install Windows updates: $_"
         }
     }
 }
