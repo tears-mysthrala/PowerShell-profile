@@ -201,11 +201,13 @@ function Get-SourceCategory {
 Write-Verbose "Scanning for PowerShell files..."
 
 $files = Get-ChildItem -Path $RepoRoot -Recurse -Include *.ps1, *.psm1 -File -ErrorAction SilentlyContinue |
-Where-Object { 
-    $_.FullName -notmatch '[\\/]\.(git|vscode)[\\/]' -and
+Where-Object {
+    $_.FullName -notmatch '[\\/]\.(git|vscode|claude)[\\/]' -and
     $_.FullName -notmatch '[\\/]docs[\\/]' -and
     $_.FullName -notmatch '[\\/]tools[\\/]generate_' -and
-    $_.FullName -notmatch '[\\/]node_modules[\\/]'
+    $_.FullName -notmatch '[\\/]node_modules[\\/]' -and
+    $_.FullName -notmatch '[\\/]Modules[\\/]' -and
+    $_.FullName -notmatch '[\\/]Config[\\/].*-cache'
 }
 
 Write-Verbose "Found $($files.Count) PowerShell files to scan"
@@ -405,11 +407,13 @@ if (Test-Path $readmePath) {
 
 "@
     
-    # Add stats if not present
-    if ($readmeContent -notmatch '## 📊 Statistics') {
+    # Update or add stats section
+    if ($readmeContent -match '(?s)## 📊 Statistics.*?(?=\n## |\z)') {
+        $readmeContent = $readmeContent -replace '(?s)## 📊 Statistics.*?(?=\n## |\z)', $statsBlock
+    } else {
         $readmeContent += "`n`n$statsBlock"
-        Set-Content -LiteralPath $readmePath -Value $readmeContent -Encoding UTF8
     }
+    Set-Content -LiteralPath $readmePath -Value $readmeContent -Encoding UTF8
 }
 
 #endregion

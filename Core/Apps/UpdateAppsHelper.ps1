@@ -1,7 +1,9 @@
-# Helper function to check if a command exists (defined here for self-containment)
-function Test-CommandExist {
-    param([string]$Command)
-    return [bool](Get-Command $Command -ErrorAction SilentlyContinue)
+# Helper function to check if a command exists (uses cached version from profile when available)
+if (-not (Get-Command Test-CommandExist -ErrorAction SilentlyContinue)) {
+    function Test-CommandExist {
+        param([string]$Command)
+        return [bool](Get-Command $Command -ErrorAction SilentlyContinue)
+    }
 }
 
 # Helper function to write section headers

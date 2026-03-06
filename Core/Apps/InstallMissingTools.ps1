@@ -22,9 +22,11 @@ function Write-InstallStatus {
     Write-Host "[$($prefixes[$Status])] $Message" -ForegroundColor $colors[$Status]
 }
 
-function Test-CommandExist {
-    param([string]$Command)
-    return [bool](Get-Command $Command -ErrorAction SilentlyContinue)
+if (-not (Get-Command Test-CommandExist -ErrorAction SilentlyContinue)) {
+    function Test-CommandExist {
+        param([string]$Command)
+        return [bool](Get-Command $Command -ErrorAction SilentlyContinue)
+    }
 }
 
 function Install-Conda {

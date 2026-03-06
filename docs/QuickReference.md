@@ -1,13 +1,12 @@
 # Quick Reference
 
 > **Auto-generated documentation**
-> Last updated: 2026-02-26 15:43:42
+> Last updated: 2026-03-07 00:02:46
 
 ## Functions
 
 | Function | Category | Description |
 |----------|----------|-------------|
-| `__gh_debug` | Other | powershell completion for gh                                   -*- shell-scri... |
 | `_fzf_get_path_using_fd` | System |  |
 | `_fzf_get_path_using_rg` | System |  |
 | `_fzf_open_path` | System |  |
@@ -15,22 +14,20 @@
 | `Clear-All` | System |  |
 | `Clear-Disk` | System |  |
 | `Clear-DnsCache` | Utilities | Networking Utilities |
-| `Clear-RecycleBin` | System | Source: https://www.geeksforgeeks.org/disk-cleanup-using-powershell-scripts/ |
+| `Clear-RecycleBin` | System | Disk cleanup utilities Source: https://www.geeksforgeeks.org/disk-cleanup-usi... |
 | `Clear-TempData` | System |  |
 | `cma` | System |  |
 | `cmc` | System |  |
 | `cmp` | System |  |
 | `cms` | System |  |
 | `df` | Utilities | System utilities |
-| `dirs` | System | Does the the rough equivalent of dir /s /b. For example, dirs *.png is dir /s... |
+| `dirs` | System | Recursive file listing (equivalent of dir /s /b) |
 | `Disable-FullPSReadLine` | Other | Provide a function to disable PSReadLine features if needed |
-| `Disable-TransientPrompt` | Other |  |
 | `Edit-FileContent` | Utilities |  |
 | `Enable-TerminalIcon` | Other | Provide an explicit enable function for Terminal-Icons so nothing related to ... |
-| `Enable-TransientPrompt` | Other |  |
 | `Env` | System |  |
 | `Expand-CustomArchive` | Utilities |  |
-| `Expand-MultipleArchive` | Utilities |  |
+| `Expand-MultipleArchives` | Utilities |  |
 | `Expand-ZipFile` | Utilities |  |
 | `fdg` | System |  |
 | `Find-File` | Utilities | Search utilities for PowerShell profile |
@@ -40,9 +37,8 @@
 | `Get-ChocoApp` | Applications |  |
 | `Get-ClipboardContent` | Utilities |  |
 | `Get-CommandPath` | Utilities |  |
-| `Get-Cwd` | Other |  |
 | `Get-Font` | Utilities |  |
-| `Get-FormatedUptime` | Utilities |  |
+| `Get-FormattedUptime` | Utilities |  |
 | `Get-GitStatus` | Utilities |  |
 | `Get-ProcessByName` | Utilities |  |
 | `Get-PubIP` | Utilities |  |
@@ -50,49 +46,44 @@
 | `Get-ScoopApp` | Applications |  |
 | `Get-UnifiedModuleStatus` | Core |  |
 | `Get-UnifiedToolStatus` | Core |  |
-| `global` | Other |  |
 | `hb` | Utilities |  |
 | `head` | Utilities |  |
 | `HKCU` | System |  |
 | `HKLM` | System | Drive shortcuts |
 | `Import-LazyModule` | Core | Lazy loading functionality from LazyModuleManager |
-| `Import-ModuleWithDependency` | Core |  |
-| `Import-ModuleWithVersion` | Core |  |
-| `Import-PSModule` | Other |  |
 | `Import-UnifiedModule` | Core |  |
 | `Import-UnifiedTool` | Core |  |
+| `Initialize-CachedToolInit` | Other | Reusable fingerprint-based cache for tool init scripts |
 | `Initialize-Editor` | Utilities | Editor detection and configuration - lazy loaded |
 | `Initialize-EncodingConfig` | Utilities |  |
 | `Initialize-ModuleCache` | Core | Initialize module cache from disk |
-| `Initialize-ProfileCore` | Other |  |
-| `Initialize-ProfileManagement` | Other | Defer importing heavy profile modules until first use |
-| `Initialize-PSModule` | Other | Lightweight proxies that import the module on first use and then invoke the r... |
+| `Initialize-NuGetProvider` | Other |  |
 | `Initialize-StartupModule` | Core |  |
 | `Initialize-StartupTool` | Core |  |
 | `Initialize-UpdateLog` | Applications | Initialize logging |
+| `Install-AiTools` | Other |  |
 | `Install-AllMissingTools` | Applications |  |
-| `Install-Bat` | Other |  |
 | `Install-Chezmoi` | Applications |  |
-| `Install-Chocolatey` | Other |  |
+| `Install-CliTools` | Other |  |
 | `Install-Composer` | Applications |  |
 | `Install-Conda` | Applications |  |
-| `Install-Dependency` | Other | Initialize startup modules - deferred to first use for faster startup Modules... |
-| `Install-Eza` | Other |  |
-| `Install-Fd` | Other |  |
-| `Install-Fzf` | Other |  |
-| `Install-Git` | Other |  |
+| `Install-Dependency` | Other |  |
+| `Install-DevRuntimes` | Other |  |
 | `Install-Homebrew-WSL` | Applications |  |
-| `Install-Lazygit` | Other |  |
+| `Install-NpmPackages` | Other |  |
+| `Install-PackageManagers` | Other | region Installation Functions |
+| `Install-PipPackages` | Other |  |
+| `Install-PowerShellModules` | Other |  |
 | `Install-Pwsh` | Utilities | Function to install PowerShell 7 using winget |
 | `Install-RequiredModule` | Core |  |
-| `Install-Ripgrep` | Other |  |
 | `Install-Ruby` | Applications |  |
-| `Install-Scoop` | Other |  |
-| `Install-Winget` | Other |  |
-| `Install-Zoxide` | Other |  |
+| `Install-Tool` | Other |  |
+| `Install-WithChoco` | Other |  |
+| `Install-WithScoop` | Other |  |
+| `Install-WithWinget` | Other |  |
+| `Invoke-Elevated` | Other |  |
 | `Invoke-GitPull` | Utilities |  |
 | `Invoke-GitPush` | Utilities |  |
-| `Invoke-Native` | Other |  |
 | `ix` | Utilities |  |
 | `la_with_eza` | Utilities | this should be the same as ls -al no tree |
 | `ll` | Utilities |  |
@@ -101,17 +92,10 @@
 | `lt_with_eza` | Utilities |  |
 | `Measure-Block` | Other |  |
 | `mkcd` | Utilities | File and directory management |
-| `n` | System | Quick shortcut to start notepad |
+| `n` | System |  |
 | `New-DirectoryAndEnter` | Utilities | File system utilities for PowerShell profile |
 | `New-File` | Utilities |  |
-| `pretty_git_branch` | Utilities |  |
-| `pretty_git_branch_sorted` | Utilities |  |
-| `pretty_git_format` | Utilities |  |
-| `pretty_git_log` | Utilities |  |
 | `Register-ChocolateyProfile` | Core |  |
-| `Register-ModuleDependency` | Core |  |
-| `Register-ModuleVersion` | Core |  |
-| `Register-PSModule` | Other |  |
 | `Register-UnifiedModule` | Core |  |
 | `Register-UnifiedTool` | Core | Tool management functionality from LazyToolManager |
 | `Reset-ProfileState` | Utilities |  |
@@ -122,9 +106,7 @@
 | `Select-App` | Applications |  |
 | `Set-ClipboardContent` | Utilities | Clipboard Utilities |
 | `Set-EnvironmentVariable` | Utilities |  |
-| `sha256` | System | FROM https://github.com/ChrisTitusTech/powershell-profile/ If so and the curr... |
-| `show_git_head` | Utilities |  |
-| `Start-BackgroundJob` | Other |  |
+| `sha256` | System | Linux-like utility functions for PowerShell |
 | `Stop-ProcessByName` | Utilities |  |
 | `sysinfo` | Utilities | Quick Access to System Information |
 | `tail` | Utilities |  |
@@ -132,10 +114,10 @@
 | `Test-CommandExist` | Applications |  |
 | `Test-IsAdmin` | Utilities |  |
 | `Test-ModuleInstalled` | Core |  |
-| `Test-ModuleRequirement` | Core |  |
-| `Test-ModuleVersion` | Core |  |
+| `Test-SudoAvailable` | Other |  |
 | `Test-UnifiedModuleRequirement` | Core |  |
 | `Uninstall-ChocoApp` | Applications |  |
+| `Uninstall-ScoopApp` | Applications |  |
 | `Update-AllApp` | Applications |  |
 | `Update-Cargo` | Applications |  |
 | `Update-Chezmoi` | Applications |  |
@@ -158,6 +140,7 @@
 | `Update-PythonEnvironment` | Applications |  |
 | `Update-Scoop` | Applications |  |
 | `Update-ScoopApp` | Applications |  |
+| `Update-SessionPath` | Other | region Helper Functions |
 | `Update-Starship` | Applications |  |
 | `Update-StoreApp` | Applications |  |
 | `Update-System` | Applications | Main update function with visual progress |
@@ -171,12 +154,11 @@
 | `Upgrade` | Utilities |  |
 | `uptime` | Utilities |  |
 | `v` | Utilities | Lazy editor alias that initializes on first use |
-| `which` | Utilities |  |
 | `Write-AppLog` | Applications |  |
-| `Write-ColorOutput` | Other |  |
 | `Write-ErrorLog` | Applications | Function to handle errors |
 | `Write-InstallHeader` | Applications |  |
 | `Write-InstallStatus` | Applications |  |
+| `Write-Status` | Other |  |
 | `Write-UpdateErrorLog` | Applications | Error handling function |
 | `Write-UpdateHeader` | Applications | Helper function to write section headers |
 | `Write-UpdateLog` | Applications | Logging function |
@@ -188,8 +170,6 @@
 |-------|--------|--------|
 | `c` | `cls` | `Core\Utils\unified_aliases.ps1` |
 | `cat` | `bat` | `Core\Utils\unified_aliases.ps1` |
-| `cd` | `__zoxide_z` | `Config\zoxide-init-cache.ps1` |
-| `cdi` | `__zoxide_zi` | `Config\zoxide-init-cache.ps1` |
 | `cm` | `chezmoi` | `Core\System\chezmoi.ps1` |
 | `cpy` | `Set-ClipboardContent` | `Core\Utils\unified_aliases.ps1` |
 | `csl` | `cls` | `Core\Utils\unified_aliases.ps1` |
@@ -198,9 +178,10 @@
 | `e` | `explorer` | `Core\Utils\unified_aliases.ps1` |
 | `export` | `Set-EnvironmentVariable` | `Core\Utils\unified_aliases.ps1` |
 | `extract` | `Expand-CustomArchive` | `Core\Utils\FileSystemUtils.ps1` |
-| `extract_multi` | `Expand-MultipleArchive` | `Core\Utils\unified_aliases.ps1` |
-| `extract-multi` | `Expand-CustomArchive` | `Core\Utils\FileSystemUtils.ps1` |
+| `extract_multi` | `Expand-MultipleArchives` | `Core\Utils\unified_aliases.ps1` |
+| `extract-multi` | `Expand-MultipleArchives` | `Core\Utils\FileSystemUtils.ps1` |
 | `ff` | `Find-File` | `Core\Utils\SearchUtils.ps1` |
+| `find-cmd` | `Find-PowerShellCommand` | `Core\Utils\SearchUtils.ps1` |
 | `flushdns` | `Clear-DnsCache` | `Core\Utils\unified_aliases.ps1` |
 | `g` | `git` | `Core\Utils\unified_aliases.ps1` |
 | `grep` | `Find-String` | `Core\Utils\unified_aliases.ps1` |
@@ -226,4 +207,4 @@
 | `touch` | `New-File` | `Core\Utils\unified_aliases.ps1` |
 | `unzip` | `Expand-ZipFile` | `Core\Utils\unified_aliases.ps1` |
 | `upgrade` | `Update-System` | `Core\Apps\Updates\SystemUpdater.ps1` |
-| `which` | `Find-PowerShellCommand` | `Core\Utils\SearchUtils.ps1` |
+| `which` | `Get-CommandPath` | `Core\Utils\unified_aliases.ps1` |

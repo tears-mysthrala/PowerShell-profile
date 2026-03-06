@@ -118,7 +118,7 @@ if ($script:hasEza) {
     }
   }
 # this should be the same as ls -al no tree
-  function la_with_eza{
+  function la_with_eza {
     $ezaOutput = eza --icons --git --color=always --group-directories-first --all
     if ($script:hasBat) {
       $ezaOutput | Out-String | bat --plain --paging=never
@@ -155,8 +155,8 @@ function New-File {
 Set-Alias -Name touch -Value New-File
 
 # System information and utilities
-function Get-PubIP { (Invoke-WebRequest http://ifconfig.me/ip ).Content }
-function Get-FormatedUptime {
+function Get-PubIP { (Invoke-WebRequest https://ifconfig.me/ip ).Content }
+function Get-FormattedUptime {
   $bootuptime = (Get-CimInstance -ClassName Win32_OperatingSystem).LastBootUpTime
   $CurrentDate = Get-Date
   $uptime = $CurrentDate - $bootuptime
@@ -169,14 +169,14 @@ function uptime {
     Select-Object @{EXPRESSION = { $_.ConverttoDateTime($_.lastbootuptime) } } | Format-Table -HideTableHeaders
   }
   Else {
-    Get-FormatedUptime
+    Get-FormattedUptime
     net statistics workstation | Select-String "since" | foreach-object { $_.ToString().Replace('Statistics since ', 'Since: ') }
   }
 }
 
 function Expand-ZipFile($file) {
   Write-Output("Extracting", $file, "to", $pwd)
-  $fullFile = Get-ChildItem -Path $pwd -Filter .\cove.zip | ForEach-Object { $_.FullName }
+  $fullFile = Get-ChildItem -Path $pwd -Filter $file | ForEach-Object { $_.FullName }
   Expand-Archive -Path $fullFile -DestinationPath $pwd
 }
 Set-Alias -Name unzip -Value Expand-ZipFile
@@ -197,11 +197,11 @@ function hb {
     return
   }
 
-  $uri = "http://bin.christitus.com/documents"
+  $uri = "https://bin.christitus.com/documents"
   try {
     $response = Invoke-RestMethod -Uri $uri -Method Post -Body $Content -ErrorAction Stop
     $hasteKey = $response.key
-    $url = "http://bin.christitus.com/$hasteKey"
+    $url = "https://bin.christitus.com/$hasteKey"
     Write-Output $url
   }
   catch {
@@ -249,54 +249,7 @@ function Restart-BIOS {
 
 [console]::InputEncoding = [console]::OutputEncoding = New-Object System.Text.UTF8Encoding
 
-# Ref: https://gist.github.com/mikepruett3/7ca6518051383ee14f9cf8ae63ba18a7
-function Expand-CustomArchive {
-  param (
-    [string]$File,
-    [string]$Folder
-  )
-
-  if (-not $Folder) {
-    $FileName = [System.IO.Path]::GetFileNameWithoutExtension($File)
-    $Folder = Join-Path -Path (Split-Path -Path $File -Parent) -ChildPath "$FileName"
-  }
-
-  if (-not (Test-Path -Path $Folder -PathType Container)) {
-    New-Item -Path $Folder -ItemType Directory | Out-Null
-  }
-
-  if (Test-Path -Path "$File" -PathType Leaf) {
-    switch ($File.Split(".") | Select-Object -Last 1) {
-      "rar" {
-        Start-Process -FilePath "UnRar.exe" -ArgumentList "x", "-op'$Folder'", "-y", "$File" -WorkingDirectory "$Env:ProgramFiles\WinRAR\" -Wait | Out-Null
-      }
-      "zip" {
-        7z x -o"$Folder" -y "$File" | Out-Null
-      }
-      "7z" {
-        7z x -o"$Folder" -y "$File" | Out-Null
-      }
-      "exe" {
-        7z x -o"$Folder" -y "$File" | Out-Null
-      }
-      Default {
-        Write-Error "No way to Extract $File !!!"; return;
-      }
-    }
-    Write-Verbose "Extracted "$FILE" to "$($Folder)""
-  }
-}
-Set-Alias -Name extract -Value Expand-CustomArchive
-
-function Expand-MultipleArchive {
-  $CurrentDate = (Get-Date).ToString("yyyy-MM-dd_HH-mm-ss")
-  $Folder = "extracted_$($CurrentDate)"
-  New-Item -Path $Folder -ItemType Directory | Out-Null
-  foreach ($File in $args) {
-    Expand-CustomArchive -File $File -Folder "$($Folder)\$([System.IO.Path]::GetFileNameWithoutExtension($File))"
-  }
-}
-Set-Alias -Name extract_multi -Value Expand-MultipleArchive
+Set-Alias -Name extract_multi -Value Expand-MultipleArchives
 
 function Get-Font {
   param (
@@ -373,7 +326,6 @@ Set-Alias -Name pst -Value Get-ClipboardContent
 
 # System utilities
 function df { get-volume }
-function which($name) { Get-Command $name | Select-Object -ExpandProperty Definition }
 
 function Set-EnvironmentVariable { 
     [CmdletBinding(SupportsShouldProcess)]
@@ -424,5 +376,3 @@ function Get-CommandPath($command) {
 }
 Set-Alias -Name which -Value Get-CommandPath
 
-# SSH Aliases
-function akkorokamui { ssh -p 54226 tears@192.168.1.100 }

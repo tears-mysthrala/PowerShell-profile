@@ -86,8 +86,8 @@ When adding new tools or dependencies:
 
 ## 📊 Statistics
 
-- **Functions:** 628
+- **Functions:** 156
 - **Aliases:** 40
-- **Categories:** 6
-- **Last Updated:** 2026-01-19 20:16:14
+- **Categories:** 5
+- **Last Updated:** 2026-03-07
 

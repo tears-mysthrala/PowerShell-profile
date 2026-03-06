@@ -6,11 +6,7 @@
 
 # Initialize profiling
 $script:profileTiming = @{}
-$script:backgroundJobs = @{}
 $script:pathCache = @{}  # Cache Test-Path results
-
-# Cache Start-ThreadJob availability once at startup for better performance
-$script:hasThreadJob = $null -ne (Get-Command -Name Start-ThreadJob -ErrorAction SilentlyContinue)
 
 # Helper function for cached Test-Path
 function Test-CachedPath {
@@ -23,49 +19,18 @@ function Test-CachedPath {
     return $exists
 }
 
-function Start-BackgroundJob {
-    [CmdletBinding(SupportsShouldProcess)]
-    param(
-        [scriptblock]$ScriptBlock,
-        [Parameter(ValueFromRemainingArguments = $true)] $ArgumentList
-    )
-    if ($PSCmdlet.ShouldProcess("Background job", "Start")) {
-        try {
-            if ($script:hasThreadJob) {
-                return Start-ThreadJob -ScriptBlock $ScriptBlock -ArgumentList $ArgumentList
-            }
-            else {
-                # Execute synchronously instead of using slow Start-Job
-                Write-Verbose "Start-ThreadJob not available, executing synchronously"
-                & $ScriptBlock @ArgumentList
-                return $null
-            }
-        }
-        catch {
-            Write-Verbose "Job execution failed: $_"
-            # Execute synchronously as fallback
-            & $ScriptBlock @ArgumentList
-            return $null
-        }
-    }
-}
-
 function Measure-Block {
     param(
         [string]$Name,
-        [scriptblock]$Block,
-        [switch]$Async
+        [scriptblock]$Block
     )
-    
-    # Simplified timing - skip async for now since we removed most jobs
+    $sw = [System.Diagnostics.Stopwatch]::StartNew()
     try {
         & $Block
     }
     finally {
-        # Optionally track timing in verbose mode only
-        if ($VerbosePreference -eq 'Continue') {
-            # Minimal overhead when not verbose
-        }
+        $sw.Stop()
+        $script:profileTiming[$Name] = $sw.ElapsedMilliseconds
     }
 }
 
@@ -91,6 +56,12 @@ Measure-Block 'Environment Setup' {
         $customModulePath = "$ProfileDir\Modules"
         if ($env:PSModulePath -notlike "*$customModulePath*") {
             $env:PSModulePath = "$customModulePath;" + $env:PSModulePath
+        }
+
+        # Scoop modules path (DockerCompletion, scoop-completion, etc.)
+        $scoopModulePath = "$env:USERPROFILE\scoop\modules"
+        if ((Test-Path $scoopModulePath) -and $env:PSModulePath -notlike "*$scoopModulePath*") {
+            $env:PSModulePath = "$scoopModulePath;" + $env:PSModulePath
         }
 
         # Editor preferences with fallbacks
@@ -130,15 +101,11 @@ if (!([Environment]::UserInteractive -and -not $([Environment]::GetCommandLineAr
     return
 }
 
-# Initialize background jobs array
-$script:backgroundJobs = @()
-$script:profileTiming = @{}
-
 # By default, show info logs unless suppressed explicitly
 $script:ProfileSuppressInfoLogs = $false
 
-# Suppress info logs if not loaded with --no-supress
-if ($MyInvocation.Line -notmatch '--no-supress') {
+# Suppress info logs if not loaded with --no-suppress
+if ($MyInvocation.Line -notmatch '--no-suppress') {
     $script:ProfileSuppressInfoLogs = $true
 }
 
@@ -194,52 +161,6 @@ Measure-Block 'Core Setup' {
             }
         }
 
-        # Defer importing heavy profile modules until first use
-        function Initialize-ProfileManagement {
-            if (-not (Get-Module -Name ProfileManagement -ListAvailable)) {
-                $path = Join-Path $ProfileDir 'Modules\ProfileManagement\ProfileManagement.psm1'
-                if (Test-Path $path) { Import-Module $path -Force -ErrorAction SilentlyContinue }
-            }
-        }
-
-        function Initialize-ProfileCore {
-            if (-not (Get-Module -Name ProfileCore -ListAvailable)) {
-                $path = Join-Path $ProfileDir 'Modules\ProfileCore\ProfileCore.psm1'
-                if (Test-Path $path) { Import-Module $path -Force -ErrorAction SilentlyContinue }
-            }
-        }
-
-        # Lightweight proxies that import the module on first use and then invoke the real function
-        function Initialize-PSModule {
-            Ensure-ProfileCore
-            $cmd = Get-Command -Module ProfileCore -Name Initialize-PSModule -ErrorAction SilentlyContinue
-            if ($cmd) { & $cmd @args } else { Write-Warning 'Initialize-PSModule not available' }
-        }
-
-        function Import-PSModule {
-            param([string]$Name)
-            Ensure-ProfileCore
-            $cmd = Get-Command -Module ProfileCore -Name Import-PSModule -ErrorAction SilentlyContinue
-            if ($cmd) { & $cmd $Name } else { Write-Warning 'Import-PSModule not available' }
-        }
-
-        function Register-PSModule {
-            param(
-                [string]$Name,
-                [string]$Description,
-                [string]$Category,
-                [scriptblock]$InitializerBlock
-            )
-            Ensure-ProfileCore
-            $cmd = Get-Command -Module ProfileCore -Name Register-PSModule -ErrorAction SilentlyContinue
-            if ($cmd) { & $cmd -Name $Name -Description $Description -Category $Category -InitializerBlock $InitializerBlock } else { Write-Warning 'Register-PSModule not available' }
-        }
-
-        # Restore preferences
-        $WarningPreference = $originalPreferences.Warning
-        $VerbosePreference = $originalPreferences.Verbose
-        $InformationPreference = $originalPreferences.Information
-        # Write-Verbose "Core module loaded successfully" -ForegroundColor Green
         # Register lazy-loading wrappers for utility modules instead of importing all on startup
         $utilsPath = "$ProfileDir\Core\Utils"
         if (Test-CachedPath $utilsPath) {
@@ -248,13 +169,13 @@ Measure-Block 'Core Setup' {
             foreach ($file in $utilsFiles) {
                 $moduleName = [System.IO.Path]::GetFileNameWithoutExtension($file.Name)
 
-                # unified_aliases ya está cargado explícitamente al inicio
+                # unified_aliases is already loaded explicitly at startup
                 if ($moduleName -eq 'unified_aliases') { continue }
 
                 $script:utilityModules ??= @{}
                 $script:utilityModules[$moduleName] = $file.FullName
 
-                # Solo crear wrapper si no existe ya una función/comando con ese nombre
+                # Only create wrapper if no function/command with that name exists
                 if (-not (Get-Command -Name $moduleName -ErrorAction SilentlyContinue)) {
                     $sb = {
                         param()
@@ -268,7 +189,7 @@ Measure-Block 'Core Setup' {
                                 Write-Warning "Failed to load utility module ${name}: $_"
                             }
                         }
-                        # Reinvoca el comando original con los mismos argumentos tras la carga
+                        # Re-invoke the original command with the same arguments after loading
                         $cmd = Get-Command -Name $name -ErrorAction SilentlyContinue
                         if ($cmd -and $cmd -ne $MyInvocation.MyCommand) {
                             & $cmd @args
@@ -288,12 +209,12 @@ Measure-Block 'Core Setup' {
 
 # Configure shell environment
 # Load aliases
-$aliasPath = "$ProfileDir\Scripts\Shell\unified_aliases.ps1"
+$aliasPath = "$ProfileDir\Core\Utils\unified_aliases.ps1"
 if (Test-CachedPath $aliasPath) {
     try {
         # Temporarily suppress warnings (log this action)
         if (-not $script:ProfileSuppressInfoLogs) {
-            Write-Verbose "[INFO] Suppressing warnings and verbose output for alias loading..." -ForegroundColor Yellow
+            Write-Host "[INFO] Suppressing warnings and verbose output for alias loading..." -ForegroundColor Yellow
         }
         $WarningPreference = 'SilentlyContinue'
         $VerbosePreference = 'SilentlyContinue'
@@ -301,9 +222,9 @@ if (Test-CachedPath $aliasPath) {
             . $aliasPath
         }
         finally {
-            # Restore preferences
-            $WarningPreference = 'Continue'
-            $VerbosePreference = 'Continue'
+            # Restore preferences (keep SilentlyContinue as set at profile top)
+            $WarningPreference = 'SilentlyContinue'
+            $VerbosePreference = 'SilentlyContinue'
         }
     }
     catch {
@@ -314,19 +235,79 @@ if (Test-CachedPath $aliasPath) {
 # Initialize shell enhancements - PSReadLine
 # Configure PSReadLine with full features enabled
 $PSReadLineOptions = @{
-    PredictionSource              = 'History'   # enable history prediction
+    PredictionSource              = 'History'
+    PredictionViewStyle           = 'ListView'
     HistorySearchCursorMovesToEnd = $true
+    HistoryNoDuplicates           = $true
+    MaximumHistoryCount           = 10000
+    AddToHistoryHandler           = {
+        param([string]$Line)
+        # Don't save commands containing secrets to history on disk
+        $Line -notmatch '(?i)(password|secret|token|apikey|api_key|api-key|credential|secure[-_]?string|convertto-securestring)'
+    }
 }
 try {
     Set-PSReadLineOption @PSReadLineOptions
-    # Set key handlers for better autocomplete
+    # Core navigation
     Set-PSReadLineKeyHandler -Key Tab -Function MenuComplete
     Set-PSReadLineKeyHandler -Key UpArrow -Function HistorySearchBackward
     Set-PSReadLineKeyHandler -Key DownArrow -Function HistorySearchForward
+    # Undo/redo
+    Set-PSReadLineKeyHandler -Key Ctrl+z -Function Undo
+    Set-PSReadLineKeyHandler -Key Ctrl+y -Function Redo
+    # Toggle between ListView and InlineView
+    Set-PSReadLineKeyHandler -Key F2 -Function SwitchPredictionView
+    # Force menu complete
+    Set-PSReadLineKeyHandler -Key Ctrl+Spacebar -Function MenuComplete
+    # Select all
+    Set-PSReadLineKeyHandler -Key Alt+a -Function SelectAll
+    # Smart RightArrow: accept next word from suggestion when at end of line, else move cursor
+    Set-PSReadLineKeyHandler -Key RightArrow -ScriptBlock {
+        param($key, $arg)
+        $line = $null; $cursor = $null
+        [Microsoft.PowerShell.PSConsoleReadLine]::GetBufferState([ref]$line, [ref]$cursor)
+        if ($cursor -lt $line.Length) {
+            [Microsoft.PowerShell.PSConsoleReadLine]::ForwardChar($key, $arg)
+        } else {
+            [Microsoft.PowerShell.PSConsoleReadLine]::ForwardWord($key, $arg)
+        }
+    }
 }
 catch {
     Write-Warning "PSReadLine configuration failed: $_"
 }
+
+# Deferred module loading - runs once after the first prompt renders (zero startup cost)
+Register-EngineEvent -SourceIdentifier PowerShell.OnIdle -MaxTriggerCount 1 -Action {
+    # Suppress verbose output from module imports (inherits 'Continue' from profile)
+    $VerbosePreference = 'SilentlyContinue'
+    $WarningPreference = 'SilentlyContinue'
+
+    # DockerCompletion - docker/docker-compose tab completion
+    if (Get-Command docker -ErrorAction SilentlyContinue) {
+        $dcMod = Get-Module -ListAvailable -Name DockerCompletion -ErrorAction SilentlyContinue
+        if ($dcMod) { Import-Module DockerCompletion -ErrorAction SilentlyContinue }
+    }
+
+    # scoop-completion - scoop tab completion
+    if (Get-Command scoop -ErrorAction SilentlyContinue) {
+        $scMod = Get-Module -ListAvailable -Name scoop-completion -ErrorAction SilentlyContinue
+        if ($scMod) { Import-Module scoop-completion -ErrorAction SilentlyContinue }
+    }
+
+    # CompletionPredictor - upgrades PredictionSource to HistoryAndPlugin
+    $cpMod = Get-Module -ListAvailable -Name CompletionPredictor -ErrorAction SilentlyContinue
+    if ($cpMod) {
+        Import-Module CompletionPredictor -ErrorAction SilentlyContinue
+        Set-PSReadLineOption -PredictionSource HistoryAndPlugin -ErrorAction SilentlyContinue
+    }
+
+    # Microsoft.WinGet.CommandNotFound - "did you mean?" + winget install suggestions
+    $wcnfMod = Get-Module -ListAvailable -Name Microsoft.WinGet.CommandNotFound -ErrorAction SilentlyContinue
+    if ($wcnfMod) {
+        Import-Module Microsoft.WinGet.CommandNotFound -ErrorAction SilentlyContinue
+    }
+} | Out-Null
 
 # Import PSFzf for enhanced history search with fzf (lazy-loaded)
 try {
@@ -362,160 +343,98 @@ function Disable-FullPSReadLine {
     }
 }
 
-# Initialize shell tools (cached to avoid blocking startup)
-# Execute in current session for faster startup (caching makes it fast enough)
-# Use pre-cached command checks from unified_aliases
-if ($script:CommandExistsCache['zoxide']) {
+# Reusable fingerprint-based cache for tool init scripts
+function Initialize-CachedToolInit {
+    param(
+        [string]$ToolName,
+        [scriptblock]$InitCommand,
+        [string]$CacheBaseName,
+        [string]$ConfigPath
+    )
     try {
-        $env:_ZO_DATA_DIR = "$ProfileDir\.zo"
+        $cachePath = Join-Path $ProfileDir "Config\$CacheBaseName.ps1"
+        $metaPath = Join-Path $ProfileDir "Config\$CacheBaseName.meta.clixml"
 
-        $zoxideCachePath = Join-Path $ProfileDir 'Config\zoxide-init-cache.ps1'
-        $zoxideMetaPath = Join-Path $ProfileDir 'Config\zoxide-init-cache.meta.clixml'
-
-        $zoxideCmd = Get-Command zoxide -ErrorAction SilentlyContinue
-        $zoxideExe = $zoxideCmd.Source
-        $zoxideExeMTime = if ($zoxideExe) { try { (Get-Item $zoxideExe).LastWriteTime } catch { $null } } else { $null }
+        $toolCmd = Get-Command $ToolName -ErrorAction SilentlyContinue
+        $toolExe = $toolCmd.Source
+        $toolExeMTime = if ($toolExe) { try { (Get-Item $toolExe).LastWriteTime } catch { $null } } else { $null }
+        $cfgMTime = if ($ConfigPath -and (Test-Path $ConfigPath)) { try { (Get-Item $ConfigPath).LastWriteTime } catch { $null } } else { $null }
 
         $needRegen = $true
-        if ((Test-Path $zoxideCachePath) -and (Test-Path $zoxideMetaPath)) {
+        if ((Test-Path $cachePath) -and (Test-Path $metaPath)) {
             try {
-                $meta = Import-Clixml -Path $zoxideMetaPath
+                $meta = Import-Clixml -Path $metaPath
                 if ($meta -and $meta.CacheFormatVersion -ge 1) {
                     $needRegen = -not (
-                        ($meta.ZoxideExe -eq $zoxideExe) -and
-                        ($meta.ZoxideExeMTime -eq $zoxideExeMTime)
+                        ($meta.ToolExe -eq $toolExe) -and
+                        ($meta.ToolExeMTime -eq $toolExeMTime) -and
+                        ($meta.ConfigPath -eq $ConfigPath) -and
+                        ($meta.ConfigMTime -eq $cfgMTime)
                     )
                 }
             }
-            catch {
-                $needRegen = $true
-            }
+            catch { $needRegen = $true }
         }
 
         if ($needRegen) {
-            # Direct init for current session
-            $zoxideInit = (zoxide init powershell --cmd cd | Out-String)
-            . ([scriptblock]::Create($zoxideInit))
-
-            # Persist cache for future sessions
+            $initOutput = (& $InitCommand | Out-String)
+            . ([scriptblock]::Create($initOutput))
             try {
-                $zoxideInit | Set-Content -Path $zoxideCachePath -Encoding UTF8 -Force
+                $initOutput | Set-Content -Path $cachePath -Encoding UTF8 -Force
                 @{
                     CacheFormatVersion = 1
-                    ZoxideExe          = $zoxideExe
-                    ZoxideExeMTime     = $zoxideExeMTime
-                } | Export-Clixml -Path $zoxideMetaPath -Force
+                    ToolExe            = $toolExe
+                    ToolExeMTime       = $toolExeMTime
+                    ConfigPath         = $ConfigPath
+                    ConfigMTime        = $cfgMTime
+                } | Export-Clixml -Path $metaPath -Force
             }
-            catch {
-                # Ignore cache write failures; current session is already initialized
-            }
+            catch { <# Ignore cache write failures; current session is already initialized #> }
         }
         else {
-            try {
-                . $zoxideCachePath
-            }
+            try { . $cachePath }
             catch {
-                # Fallback: regenerate on failure
                 try {
-                    $zoxideInit = (zoxide init powershell --cmd cd | Out-String)
-                    . ([scriptblock]::Create($zoxideInit))
+                    $initOutput = (& $InitCommand | Out-String)
+                    . ([scriptblock]::Create($initOutput))
                 }
-                catch {
-                    Write-Verbose "Zoxide initialization failed: $_"
-                }
+                catch { Write-Verbose "$ToolName initialization failed: $_" }
             }
         }
     }
-    catch {
-        Write-Verbose "Zoxide initialization failed: $_"
-    }
+    catch { Write-Verbose "$ToolName initialization failed: $_" }
 }
 
-# Initialize GitHub CLI completion with cached script
+# Initialize shell tools (cached to avoid blocking startup)
+if ($script:CommandExistsCache['zoxide']) {
+    $env:_ZO_DATA_DIR = "$ProfileDir\.zo"
+    Initialize-CachedToolInit -ToolName 'zoxide' -InitCommand { zoxide init powershell --cmd cd } -CacheBaseName 'zoxide-init-cache'
+}
+
 if ($script:CommandExistsCache['gh']) {
-    try {
-        $ghCachePath = Join-Path $ProfileDir 'Config\gh-completion-cache.ps1'
-        $ghMetaPath = Join-Path $ProfileDir 'Config\gh-completion-cache.meta.clixml'
-
-        $ghCmd = Get-Command gh -ErrorAction SilentlyContinue
-        $ghExe = $ghCmd.Source
-        $ghExeMTime = if ($ghExe) { try { (Get-Item $ghExe).LastWriteTime } catch { $null } } else { $null }
-
-        $needRegenGh = $true
-        if ((Test-Path $ghCachePath) -and (Test-Path $ghMetaPath)) {
-            try {
-                $metaGh = Import-Clixml -Path $ghMetaPath
-                if ($metaGh -and $metaGh.CacheFormatVersion -ge 1) {
-                    $needRegenGh = -not (
-                        ($metaGh.GhExe -eq $ghExe) -and
-                        ($metaGh.GhExeMTime -eq $ghExeMTime)
-                    )
-                }
-            }
-            catch {
-                $needRegenGh = $true
-            }
-        }
-
-        if ($needRegenGh) {
-            $ghCompletion = (gh completion -s powershell | Out-String)
-            . ([scriptblock]::Create($ghCompletion))
-
-            try {
-                $ghCompletion | Set-Content -Path $ghCachePath -Encoding UTF8 -Force
-                @{
-                    CacheFormatVersion = 1
-                    GhExe              = $ghExe
-                    GhExeMTime         = $ghExeMTime
-                } | Export-Clixml -Path $ghMetaPath -Force
-            }
-            catch {
-                # Ignore cache write failures
-            }
-        }
-        else {
-            try {
-                . $ghCachePath
-            }
-            catch {
-                try {
-                    $ghCompletion = (gh completion -s powershell | Out-String)
-                    . ([scriptblock]::Create($ghCompletion))
-                }
-                catch {
-                    Write-Verbose "GitHub CLI completion initialization failed: $_"
-                }
-            }
-        }
-    }
-    catch {
-        Write-Verbose "GitHub CLI completion initialization failed: $_"
-    }
+    Initialize-CachedToolInit -ToolName 'gh' -InitCommand { gh completion -s powershell } -CacheBaseName 'gh-completion-cache'
 }
-
-# Initialize startup modules - deferred to first use for faster startup
-# Modules will be loaded on-demand via lazy-loading proxies
-# Uncomment below to force eager loading:
-# Initialize-PSModule
 
 function Install-Dependency {
     <#
     .SYNOPSIS
         Install PowerShell profile dependencies
     .DESCRIPTION
-        Installs package managers and CLI tools required by the PowerShell profile
+        Installs package managers, CLI tools, and modules required by the PowerShell profile
     .PARAMETER All
-        Install all dependencies (package managers + CLI tools)
+        Install all dependencies
     .PARAMETER PackageManagers
         Install only package managers (Chocolatey, Scoop)
     .PARAMETER CliTools
         Install only CLI tools (git, fzf, bat, eza, etc.)
+    .PARAMETER Modules
+        Install only PowerShell modules
     .PARAMETER Tool
         Install a specific tool by name
     .EXAMPLE
         Install-Dependency -All
     .EXAMPLE
-        Install-Dependency -PackageManagers
+        Install-Dependency -Modules
     .EXAMPLE
         Install-Dependency -Tool git
     #>
@@ -523,10 +442,11 @@ function Install-Dependency {
         [switch]$All,
         [switch]$PackageManagers,
         [switch]$CliTools,
+        [switch]$Modules,
         [string]$Tool
     )
 
-    $installerPath = "$PSScriptRoot\tools\DependencyInstaller.ps1"
+    $installerPath = "$PSScriptRoot\tools\install-dependencies.ps1"
 
     if (-not (Test-Path $installerPath)) {
         Write-Error "Dependency installer not found at: $installerPath"
@@ -535,28 +455,22 @@ function Install-Dependency {
 
     $installerArgs = @()
 
-    if ($All) { $installerArgs += "-InstallAll" }
+    if ($All) { $installerArgs += "-All" }
     elseif ($PackageManagers) { $installerArgs += "-PackageManagers" }
     elseif ($CliTools) { $installerArgs += "-CliTools" }
+    elseif ($Modules) { $installerArgs += "-Modules" }
     elseif ($Tool) { $installerArgs += "-Tool", $Tool }
     else {
-        Write-Verbose "PowerShell Profile Dependency Installer"
-        Write-Verbose "====================================="
-        Write-Verbose ""
-        Write-Verbose "USAGE:"
-        Write-Verbose "    Install-Dependency [-All|-PackageManagers|-CliTools|-Tool <name>]"
-        Write-Verbose ""
-        Write-Verbose "EXAMPLES:"
-        Write-Verbose "    Install-Dependency -All"
-        Write-Verbose "    Install-Dependency -PackageManagers"
-        Write-Verbose "    Install-Dependency -CliTools"
-        Write-Verbose "    Install-Dependency -Tool git"
-        Write-Verbose ""
-        Write-Verbose "Run 'Install-Dependency -List' to see available tools."
+        Write-Host "Usage: Install-Dependency [-All|-PackageManagers|-CliTools|-Modules|-Tool <name>]"
+        Write-Host ""
+        Write-Host "Examples:"
+        Write-Host "  Install-Dependency -All            # Install everything"
+        Write-Host "  Install-Dependency -Modules        # Install PowerShell modules"
+        Write-Host "  Install-Dependency -CliTools       # Install CLI tools"
+        Write-Host "  Install-Dependency -Tool git       # Install specific tool"
         return
     }
 
-    # Execute the installer
     & $installerPath @installerArgs
 }
 
@@ -572,73 +486,9 @@ if (-not $script:ProfileSuppressInfoLogs -and $script:profileTiming) {
 
 # Initialize Starship with a proper full-init cache (no process spawn on each load)
 Measure-Block 'Starship Init' {
-    # Use cached command check from unified_aliases
     if ($script:CommandExistsCache['starship']) {
         $starshipConfigPath = Join-Path $PSScriptRoot 'Config\starship.toml'
         $ENV:STARSHIP_CONFIG = $starshipConfigPath
-
-        $starshipCachePath = "$PSScriptRoot\Config\starship-init-cache.ps1"
-        $starshipMetaPath = "$PSScriptRoot\Config\starship-init-cache.meta.clixml"
-
-        # Build current fingerprints without invoking starship.exe (fast path)
-        $starshipCmd = Get-Command starship -ErrorAction SilentlyContinue
-        $starshipExe = $starshipCmd.Source
-        $starshipExeMTime = if ($starshipExe) { try { (Get-Item $starshipExe).LastWriteTime } catch { $null } } else { $null }
-        $configMTime = if (Test-Path $starshipConfigPath) { try { (Get-Item $starshipConfigPath).LastWriteTime } catch { $null } } else { $null }
-
-        $needRegen = $true
-        if ((Test-Path $starshipCachePath) -and (Test-Path $starshipMetaPath)) {
-            try {
-                $meta = Import-Clixml -Path $starshipMetaPath
-                if ($meta -and $meta.CacheFormatVersion -ge 1) {
-                    $needRegen = -not (
-                        ($meta.StarshipExe -eq $starshipExe) -and
-                        ($meta.StarshipExeMTime -eq $starshipExeMTime) -and
-                        ($meta.ConfigPath -eq $starshipConfigPath) -and
-                        ($meta.ConfigMTime -eq $configMTime)
-                    )
-                }
-            }
-            catch {
-                $needRegen = $true
-            }
-        }
-
-        if ($needRegen) {
-            # Fast path: do a quick direct init for the current session so the prompt appears
-            # promptly, then regenerate and persist the full cached init synchronously
-            $didDirectInit = $false
-            try {
-                # Direct init (may spawn starship) but returns quickly for current session
-                Invoke-Expression (& starship init powershell --print-full-init | Out-String)
-                $didDirectInit = $true
-            }
-            catch {
-                Write-Verbose "Starship direct init failed: $_"
-            }
-
-            # Regenerate cache synchronously since it's quick
-            try {
-                $fullInit = (& starship init powershell --print-full-init | Out-String)
-                $fullInit | Set-Content -Path $starshipCachePath -Encoding UTF8 -Force
-                @{
-                    CacheFormatVersion = 1
-                    StarshipExe        = $starshipExe
-                    StarshipExeMTime   = $starshipExeMTime
-                    ConfigPath         = $starshipConfigPath
-                    ConfigMTime        = $configMTime
-                } | Export-Clixml -Path $starshipMetaPath -Force
-            }
-            catch {
-                # Ignore cache write failures
-            }
-        }
-        else {
-            # Dot-source the cached init script (no starship.exe spawn during startup)
-            try { . $starshipCachePath } catch {
-                # As last resort, try direct init
-                try { Invoke-Expression (& starship init powershell --print-full-init | Out-String) } catch {}
-            }
-        }
+        Initialize-CachedToolInit -ToolName 'starship' -InitCommand { starship init powershell --print-full-init } -CacheBaseName 'starship-init-cache' -ConfigPath $starshipConfigPath
     }
 }

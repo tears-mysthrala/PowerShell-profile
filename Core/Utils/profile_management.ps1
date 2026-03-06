@@ -21,7 +21,7 @@ function Reset-ProfileState {
         [System.GC]::Collect()
 
         if (-not $Quiet) {
-            Write-Verbose "Profile state reset successfully" -ForegroundColor Green
+            Write-Host "Profile state reset successfully" -ForegroundColor Green
         }
     } catch {
         Write-Error "Failed to reset profile state: $_"

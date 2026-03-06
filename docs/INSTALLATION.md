@@ -53,7 +53,8 @@ cd "$HOME\Documents\PowerShell"
 .\tools\install-dependencies.ps1 -All
 
 # Or install selectively
-.\tools\install-dependencies.ps1 -Tools bat,eza,fd,fzf
+.\tools\install-dependencies.ps1 -CliTools
+.\tools\install-dependencies.ps1 -Modules
 ```
 
 ### 3. Initialize Profile

@@ -68,6 +68,4 @@ function Find-PowerShellCommand {
 # Set aliases
 Set-Alias -Name ff -Value Find-File
 Set-Alias -Name search -Value Search-FileContent
-Set-Alias -Name which -Value Find-PowerShellCommand
-
-
+Set-Alias -Name find-cmd -Value Find-PowerShellCommand

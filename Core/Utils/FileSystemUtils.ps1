@@ -44,7 +44,7 @@ function Expand-CustomArchive {
     }
 }
 
-function Expand-CustomArchive {
+function Expand-MultipleArchives {
     param([string[]]$Files)
 
     $CurrentDate = (Get-Date).ToString("yyyy-MM-dd_HH-mm-ss")
@@ -58,6 +58,6 @@ function Expand-CustomArchive {
 
 Set-Alias -Name mkcd -Value New-DirectoryAndEnter
 Set-Alias -Name extract -Value Expand-CustomArchive
-Set-Alias -Name extract-multi -Value Expand-CustomArchive
+Set-Alias -Name extract-multi -Value Expand-MultipleArchives
 
 # Export-ModuleMember -Function * -Alias *

@@ -47,9 +47,11 @@ function Invoke-Elevated {
     return ($LASTEXITCODE -eq 0)
 }
 
-function Test-CommandExist {
-    param([string]$Command)
-    return [bool](Get-Command $Command -ErrorAction SilentlyContinue)
+if (-not (Get-Command Test-CommandExist -ErrorAction SilentlyContinue)) {
+    function Test-CommandExist {
+        param([string]$Command)
+        return [bool](Get-Command $Command -ErrorAction SilentlyContinue)
+    }
 }
 
 function Write-Status {
@@ -225,6 +227,7 @@ $RequiredModules = @(
     @{ Name = 'PSWindowsUpdate';               MinVersion = '2.2.0.3' }
     @{ Name = 'PowerShellGet';                 MinVersion = '2.2.5' }
     @{ Name = 'CompletionPredictor';           MinVersion = $null }
+    @{ Name = 'Microsoft.WinGet.CommandNotFound'; MinVersion = $null }
     @{ Name = 'posh-wakatime';                 MinVersion = $null }
 )
 

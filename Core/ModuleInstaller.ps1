@@ -35,6 +35,14 @@ $requiredModules = @{
         MinVersion  = '0.91.1.0'
         Description = 'PowerToys configuration'
     }
+    'CompletionPredictor'           = @{
+        MinVersion  = '0.1.0'
+        Description = 'Plugin-based command completion predictions'
+    }
+    'Microsoft.WinGet.CommandNotFound' = @{
+        MinVersion  = '1.0.0'
+        Description = 'Suggests winget packages for unrecognized commands'
+    }
 }
 
 function Test-ModuleInstalled {

@@ -6,14 +6,31 @@
 PowerShell-profile/
 ├── Microsoft.PowerShell_profile.ps1    # Main orchestrator
 ├── Core/
+│   ├── ModuleInstaller.ps1             # Module installation & caching
 │   ├── UnifiedModuleManager.ps1        # Module loading & caching
-│   ├── Utils/unified_aliases.ps1       # Centralized aliases
-│   ├── Apps/Updates/SystemUpdater.ps1  # Update management
-│   └── System/                         # System utilities
+│   ├── Utils/
+│   │   ├── unified_aliases.ps1         # Centralized aliases & command cache
+│   │   ├── CommonUtils.ps1             # Common utility functions
+│   │   ├── FileSystemUtils.ps1         # File/archive operations
+│   │   ├── SearchUtils.ps1             # Search utilities (ff, search)
+│   │   └── profile_management.ps1      # Profile state reset
+│   ├── Apps/
+│   │   ├── appsManage.ps1              # Package manager operations (scoop/choco/pip/npm)
+│   │   ├── InstallMissingTools.ps1     # Missing tool detection & install
+│   │   ├── UpdateApps.ps1              # App update orchestrator
+│   │   ├── UpdateAppsHelper.ps1        # Update helper functions
+│   │   ├── WindowsUpdateHelper.ps1     # Windows Update management
+│   │   └── Updates/SystemUpdater.ps1   # System-wide update management
+│   └── System/
+│       ├── chezmoi.ps1                 # Chezmoi dotfile manager
+│       ├── clean.ps1                   # Disk cleanup utilities
+│       ├── fzf.ps1                     # Fuzzy finder integration
+│       └── linuxLike.ps1              # Linux-like utility functions
 ├── Config/
 │   ├── starship.toml                   # Prompt configuration
 │   └── *-cache.*                       # Auto-generated caches
 └── tools/
+    ├── install-dependencies.ps1        # Dependency installer
     └── generate_function_docs.ps1      # Documentation generator
 ```
 
@@ -101,14 +118,14 @@ Set-Alias -Name myalias -Value My-CustomFunction
 
 ### Register External Modules
 
-Add to profile after `Initialize-ModuleCache`:
+Add custom modules to the profile using the lazy-loading pattern:
 
 ```powershell
-# Register custom modules
-Register-UnifiedModule -Name 'MyCompanyModule' -ScriptBlock {
-    Import-Module MyCompanyModule
-    Write-Host "Company tools loaded" -ForegroundColor Green
-}
+# In Microsoft.PowerShell_profile.ps1
+Register-EngineEvent -SourceIdentifier PowerShell.OnIdle -MaxTriggerCount 1 -Action {
+    $mod = Get-Module -ListAvailable -Name MyCompanyModule -ErrorAction SilentlyContinue
+    if ($mod) { Import-Module MyCompanyModule -ErrorAction SilentlyContinue }
+} | Out-Null
 ```
 
 ### Conditional Module Loading
@@ -116,9 +133,7 @@ Register-UnifiedModule -Name 'MyCompanyModule' -ScriptBlock {
 ```powershell
 # Load Azure modules only in work directories
 if ($PWD.Path -match 'C:\\Work') {
-    Register-UnifiedModule -Name 'Az' -ScriptBlock {
-        Import-Module Az.Accounts, Az.Resources
-    }
+    Import-Module Az.Accounts, Az.Resources -ErrorAction SilentlyContinue
 }
 ```
 
@@ -216,24 +231,24 @@ function Get-CachedData {
 
 ### Lazy Loading Pattern
 
-```powershell
-function Initialize-DockerEnvironment {
-    if (-not $script:DockerInitialized) {
-        Import-Module DockerCompletion
-        # Docker-specific setup
-        $script:DockerInitialized = $true
-    }
-}
+The profile uses `PowerShell.OnIdle` events to load modules after the prompt renders, adding zero startup cost:
 
-# Only initialize when needed
-Set-Alias -Name docker -Value Initialize-DockerEnvironment
+```powershell
+Register-EngineEvent -SourceIdentifier PowerShell.OnIdle -MaxTriggerCount 1 -Action {
+    $VerbosePreference = 'SilentlyContinue'
+    # Modules loaded here run after the first prompt appears
+    if (Get-Command my-tool -ErrorAction SilentlyContinue) {
+        $mod = Get-Module -ListAvailable -Name MyToolCompletion -ErrorAction SilentlyContinue
+        if ($mod) { Import-Module MyToolCompletion -ErrorAction SilentlyContinue }
+    }
+} | Out-Null
 ```
 
 ## Git Integration
 
 ### Custom Git Helpers
 
-Add to `Core/Utils/Development/gitHelpers.ps1`:
+Add to `Core/Utils/unified_aliases.ps1` or a custom utils file:
 
 ```powershell
 function New-FeatureBranch {

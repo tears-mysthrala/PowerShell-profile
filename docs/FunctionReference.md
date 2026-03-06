@@ -1,8 +1,8 @@
 # Function Reference
 
 > **Auto-generated documentation**
-> Last updated: 2026-02-26 15:43:42
-> Total functions: 174
+> Last updated: 2026-03-07 00:02:46
+> Total functions: 156
 
 ## Table of Contents
 
@@ -22,9 +22,9 @@ function Get-ChocoApp {
     $apps = $(choco list --id-only --no-color).Split("\n")
     $apps = $apps[1..($apps.Length - 2)]
     return $apps
-  }
+}
 
-  function Get-ScoopApp {
+function Get-ScoopApp {
 ```
 
 <sub>**Source:** `Core\Apps\appsManage.ps1`</sub>
@@ -37,9 +37,9 @@ function Get-ScoopApp {
     $apps = $(scoop list | Select-Object -ExpandProperty "Name").Split("\n")
     $apps = $apps[1..($apps.Length - 1)]
     return $apps
-  }
+}
 
-  function Select-App {
+function Select-App {
 ```
 
 <sub>**Source:** `Core\Apps\appsManage.ps1`</sub>
@@ -140,7 +140,7 @@ function Install-Ruby {
 ```powershell
 function Select-App {
     param (
-      [string[]] $apps
+        [string[]] $apps
     )
 ```
 
@@ -151,7 +151,7 @@ function Select-App {
 **Signature:**
 ```powershell
 function Test-CommandExist {
-    param([string]$Command)
+        param([string]$Command)
 ```
 
 <sub>**Source:** `Core\Apps\InstallMissingTools.ps1`</sub>
@@ -161,8 +161,19 @@ function Test-CommandExist {
 **Signature:**
 ```powershell
 function Uninstall-ChocoApp {
-      $apps = Select-App $(Get-ChocoApp)
-      if ($apps.Length -eq 0) {
+    $apps = Select-App $(Get-ChocoApp)
+    if ($apps.Length -eq 0) {
+```
+
+<sub>**Source:** `Core\Apps\appsManage.ps1`</sub>
+
+### `Uninstall-ScoopApp`
+
+**Signature:**
+```powershell
+function Uninstall-ScoopApp {
+    $apps = Select-App $(Get-ScoopApp)
+    if ($apps.Length -eq 0) {
 ```
 
 <sub>**Source:** `Core\Apps\appsManage.ps1`</sub>
@@ -346,8 +357,8 @@ function Update-Npm {
 **Signature:**
 ```powershell
 function Update-NpmApp {
-      [CmdletBinding(SupportsShouldProcess)]
-      param()
+    [CmdletBinding(SupportsShouldProcess)]
+    param()
 ```
 
 <sub>**Source:** `Core\Apps\appsManage.ps1`</sub>
@@ -696,33 +707,6 @@ Lazy loading functionality from LazyModuleManager
 
 <sub>**Source:** `Core\UnifiedModuleManager.ps1`</sub>
 
-### `Import-ModuleWithDependency`
-
-**Signature:**
-```powershell
-function Import-ModuleWithDependency {
-    param(
-        [string]$ModuleName,
-        [switch]$Force
-    )
-```
-
-<sub>**Source:** `Core\ModuleDependencyManager.ps1`</sub>
-
-### `Import-ModuleWithVersion`
-
-**Signature:**
-```powershell
-function Import-ModuleWithVersion {
-    param(
-        [string]$ModuleName,
-        [int]$MaxAttempts = 3,
-        [switch]$Force
-    )
-```
-
-<sub>**Source:** `Core\ModuleVersionManager.ps1`</sub>
-
 ### `Import-UnifiedModule`
 
 **Signature:**
@@ -810,35 +794,6 @@ function Register-ChocolateyProfile {
 
 <sub>**Source:** `Core\UnifiedModuleManager.ps1`</sub>
 
-### `Register-ModuleDependency`
-
-**Signature:**
-```powershell
-function Register-ModuleDependency {
-    param(
-        [string]$ModuleName,
-        [string]$MinVersion,
-        [string[]]$Dependencies = @(),
-        [scriptblock]$OnFailure
-    )
-```
-
-<sub>**Source:** `Core\ModuleDependencyManager.ps1`</sub>
-
-### `Register-ModuleVersion`
-
-**Signature:**
-```powershell
-function Register-ModuleVersion {
-    param(
-        [string]$ModuleName,
-        [string]$RequiredVersion,
-        [scriptblock]$OnVersionMismatch
-    )
-```
-
-<sub>**Source:** `Core\ModuleVersionManager.ps1`</sub>
-
 ### `Register-UnifiedModule`
 
 **Signature:**
@@ -907,26 +862,6 @@ function Test-ModuleInstalled {
 
 <sub>**Source:** `Core\ModuleInstaller.ps1`</sub>
 
-### `Test-ModuleRequirement`
-
-**Signature:**
-```powershell
-function Test-ModuleRequirement {
-    param([string]$ModuleName)
-```
-
-<sub>**Source:** `Core\ModuleDependencyManager.ps1`</sub>
-
-### `Test-ModuleVersion`
-
-**Signature:**
-```powershell
-function Test-ModuleVersion {
-    param([string]$ModuleName)
-```
-
-<sub>**Source:** `Core\ModuleVersionManager.ps1`</sub>
-
 ### `Test-UnifiedModuleRequirement`
 
 **Signature:**
@@ -939,20 +874,6 @@ function Test-UnifiedModuleRequirement {
 <sub>**Source:** `Core\UnifiedModuleManager.ps1`</sub>
 
 ## Other
-
-### `__gh_debug`
-
-**Signature:**
-```powershell
-function __gh_debug {
-    if ($env:BASH_COMP_DEBUG_FILE) {
-```
-
-**Description:**
-
-powershell completion for gh                                   -*- shell-script -*-
-
-<sub>**Source:** `Config\gh-completion-cache.ps1`</sub>
 
 ### `Disable-FullPSReadLine`
 
@@ -968,20 +889,6 @@ Provide a function to disable PSReadLine features if needed
 
 <sub>**Source:** `Microsoft.PowerShell_profile.ps1`</sub>
 
-### `Disable-TransientPrompt`
-
-**Signature:**
-```powershell
-function Disable-TransientPrompt {
-        Set-PSReadLineKeyHandler -Key Enter -Function AcceptLine
-        $script:TransientPrompt = $false
-    }
-
-    function global:prompt {
-```
-
-<sub>**Source:** `Config\starship-init-cache.ps1`</sub>
-
 ### `Enable-TerminalIcon`
 
 **Signature:**
@@ -996,110 +903,61 @@ Provide an explicit enable function for Terminal-Icons so nothing related to it 
 
 <sub>**Source:** `Microsoft.PowerShell_profile.ps1`</sub>
 
-### `Enable-TransientPrompt`
+### `Initialize-CachedToolInit`
 
 **Signature:**
 ```powershell
-function Enable-TransientPrompt {
-        Set-PSReadLineKeyHandler -Key Enter -ScriptBlock {
-```
-
-<sub>**Source:** `Config\starship-init-cache.ps1`</sub>
-
-### `Get-Cwd`
-
-**Signature:**
-```powershell
-function Get-Cwd {
-        $cwd = Get-Location
-        $provider_prefix = "$($cwd.Provider.ModuleName)\$($cwd.Provider.Name)::"
-        return @{
-```
-
-<sub>**Source:** `Config\starship-init-cache.ps1`</sub>
-
-### `global`
-
-**Signature:**
-```powershell
-function global:prompt {
-        $origDollarQuestion = $global:?
-        $origLastExitCode = $global:LASTEXITCODE
-
-        # Invoke precmd, if specified
-        try {
-```
-
-<sub>**Source:** `Config\starship-init-cache.ps1`</sub>
-
-### `Import-PSModule`
-
-**Signature:**
-```powershell
-function Import-PSModule {
-            param([string]$Name)
-```
-
-<sub>**Source:** `Microsoft.PowerShell_profile.ps1`</sub>
-
-### `Initialize-ProfileCore`
-
-**Signature:**
-```powershell
-function Initialize-ProfileCore {
-            if (-not (Get-Module -Name ProfileCore -ListAvailable)) {
-```
-
-<sub>**Source:** `Microsoft.PowerShell_profile.ps1`</sub>
-
-### `Initialize-ProfileManagement`
-
-**Signature:**
-```powershell
-function Initialize-ProfileManagement {
-            if (-not (Get-Module -Name ProfileManagement -ListAvailable)) {
+function Initialize-CachedToolInit {
+    param(
+        [string]$ToolName,
+        [scriptblock]$InitCommand,
+        [string]$CacheBaseName,
+        [string]$ConfigPath
+    )
 ```
 
 **Description:**
 
-Defer importing heavy profile modules until first use
+Reusable fingerprint-based cache for tool init scripts
 
 <sub>**Source:** `Microsoft.PowerShell_profile.ps1`</sub>
 
-### `Initialize-PSModule`
+### `Initialize-NuGetProvider`
 
 **Signature:**
 ```powershell
-function Initialize-PSModule {
-            Ensure-ProfileCore
-            $cmd = Get-Command -Module ProfileCore -Name Initialize-PSModule -ErrorAction SilentlyContinue
-            if ($cmd) { & $cmd @args } else { Write-Warning 'Initialize-PSModule not available' }
-```
-
-**Description:**
-
-Lightweight proxies that import the module on first use and then invoke the real function
-
-<sub>**Source:** `Microsoft.PowerShell_profile.ps1`</sub>
-
-### `Install-Bat`
-
-**Signature:**
-```powershell
-function Install-Bat {
-    Write-ColorOutput "Installing bat..." $Cyan
-    if ($WhatIf) {
+function Initialize-NuGetProvider {
+    # Ensure NuGet provider is installed so Install-Module doesn't hang prompting the user
+    $nuget = Get-PackageProvider -Name NuGet -ErrorAction SilentlyContinue
+    if (-not $nuget -or $nuget.Version -lt [version]'2.8.5.201') {
 ```
 
 <sub>**Source:** `tools\install-dependencies.ps1`</sub>
 
-### `Install-Chocolatey`
+### `Install-AiTools`
 
 **Signature:**
 ```powershell
-function Install-Chocolatey {
-    Write-ColorOutput "Installing Chocolatey..." $Cyan
-    if ($WhatIf) {
+function Install-AiTools {
+    Write-Host "`n===== AI CLI Tools =====" -ForegroundColor Cyan
+
+    # Ensure prerequisites are available before installing AI tools
+    Update-SessionPath
+
+    # uv - needed for Kimi CLI; manages its own Python downloads
+    if (-not (Test-CommandExist 'uv')) {
+```
+
+<sub>**Source:** `tools\install-dependencies.ps1`</sub>
+
+### `Install-CliTools`
+
+**Signature:**
+```powershell
+function Install-CliTools {
+    Write-Host "`n===== CLI Tools (main) =====" -ForegroundColor Cyan
+
+    foreach ($tool in $ScoopMainTools) {
 ```
 
 <sub>**Source:** `tools\install-dependencies.ps1`</sub>
@@ -1113,19 +971,21 @@ function Install-Dependency {
     .SYNOPSIS
         Install PowerShell profile dependencies
     .DESCRIPTION
-        Installs package managers and CLI tools required by the PowerShell profile
+        Installs package managers, CLI tools, and modules required by the PowerShell profile
     .PARAMETER All
-        Install all dependencies (package managers + CLI tools)
+        Install all dependencies
     .PARAMETER PackageManagers
         Install only package managers (Chocolatey, Scoop)
     .PARAMETER CliTools
         Install only CLI tools (git, fzf, bat, eza, etc.)
+    .PARAMETER Modules
+        Install only PowerShell modules
     .PARAMETER Tool
         Install a specific tool by name
     .EXAMPLE
         Install-Dependency -All
     .EXAMPLE
-        Install-Dependency -PackageManagers
+        Install-Dependency -Modules
     .EXAMPLE
         Install-Dependency -Tool git
     #>
@@ -1133,124 +993,146 @@ function Install-Dependency {
         [switch]$All,
         [switch]$PackageManagers,
         [switch]$CliTools,
+        [switch]$Modules,
         [string]$Tool
     )
 ```
 
-**Description:**
-
-Initialize startup modules - deferred to first use for faster startup Modules will be loaded on-demand via lazy-loading proxies Uncomment below to force eager loading: Initialize-PSModule
-
 <sub>**Source:** `Microsoft.PowerShell_profile.ps1`</sub>
 
-### `Install-Eza`
+### `Install-DevRuntimes`
 
 **Signature:**
 ```powershell
-function Install-Eza {
-    Write-ColorOutput "Installing eza..." $Cyan
-    if ($WhatIf) {
+function Install-DevRuntimes {
+    Write-Host "`n===== Development Runtimes =====" -ForegroundColor Cyan
+
+    # Node.js
+    Install-Tool -Name 'Node.js' -Command 'node' -ScoopPackage 'nodejs-lts' -WingetId 'OpenJS.NodeJS.LTS' -ChocoPackage 'nodejs-lts'
+    Update-SessionPath
+
+    # Python (scoop preferred - handles multiple versions, creates proper shims for python + pip)
+    if (-not (Test-CommandExist 'python')) {
 ```
 
 <sub>**Source:** `tools\install-dependencies.ps1`</sub>
 
-### `Install-Fd`
+### `Install-NpmPackages`
 
 **Signature:**
 ```powershell
-function Install-Fd {
-    Write-ColorOutput "Installing fd..." $Cyan
-    if ($WhatIf) {
+function Install-NpmPackages {
+    Write-Host "`n===== npm Global Packages =====" -ForegroundColor Cyan
+
+    if (-not (Test-CommandExist 'npm')) {
 ```
 
 <sub>**Source:** `tools\install-dependencies.ps1`</sub>
 
-### `Install-Fzf`
+### `Install-PackageManagers`
 
 **Signature:**
 ```powershell
-function Install-Fzf {
-    Write-ColorOutput "Installing fzf..." $Cyan
-    if ($WhatIf) {
+function Install-PackageManagers {
+    Write-Host "`n===== Package Managers =====" -ForegroundColor Cyan
+
+    # Scoop (no admin required)
+    Write-Status "Scoop" -Type Header
+    if (Test-CommandExist 'scoop') {
+```
+
+**Description:**
+
+region Installation Functions
+
+<sub>**Source:** `tools\install-dependencies.ps1`</sub>
+
+### `Install-PipPackages`
+
+**Signature:**
+```powershell
+function Install-PipPackages {
+    Write-Host "`n===== pip Packages =====" -ForegroundColor Cyan
+
+    if (-not (Test-CommandExist 'pip')) {
 ```
 
 <sub>**Source:** `tools\install-dependencies.ps1`</sub>
 
-### `Install-Git`
+### `Install-PowerShellModules`
 
 **Signature:**
 ```powershell
-function Install-Git {
-    Write-ColorOutput "Installing Git..." $Cyan
-    if ($WhatIf) {
+function Install-PowerShellModules {
+    Write-Host "`n===== PowerShell Modules =====" -ForegroundColor Cyan
+
+    # Ensure NuGet provider and PSGallery trust so Install-Module doesn't hang
+    Initialize-NuGetProvider
+
+    foreach ($mod in $RequiredModules) {
 ```
 
 <sub>**Source:** `tools\install-dependencies.ps1`</sub>
 
-### `Install-Lazygit`
+### `Install-Tool`
 
 **Signature:**
 ```powershell
-function Install-Lazygit {
-    Write-ColorOutput "Installing lazygit..." $Cyan
-    if ($WhatIf) {
+function Install-Tool {
+    param(
+        [string]$Name,
+        [string]$Command,
+        [string]$ScoopPackage,
+        [string]$ScoopBucket = 'main',
+        [string]$WingetId,
+        [string]$ChocoPackage
+    )
 ```
 
 <sub>**Source:** `tools\install-dependencies.ps1`</sub>
 
-### `Install-Ripgrep`
+### `Install-WithChoco`
 
 **Signature:**
 ```powershell
-function Install-Ripgrep {
-    Write-ColorOutput "Installing ripgrep..." $Cyan
-    if ($WhatIf) {
+function Install-WithChoco {
+    param([string]$Package)
 ```
 
 <sub>**Source:** `tools\install-dependencies.ps1`</sub>
 
-### `Install-Scoop`
+### `Install-WithScoop`
 
 **Signature:**
 ```powershell
-function Install-Scoop {
-    Write-ColorOutput "Installing Scoop..." $Cyan
-    if ($WhatIf) {
+function Install-WithScoop {
+    param(
+        [string]$Package,
+        [string]$Bucket = 'main'
+    )
 ```
 
 <sub>**Source:** `tools\install-dependencies.ps1`</sub>
 
-### `Install-Winget`
+### `Install-WithWinget`
 
 **Signature:**
 ```powershell
-function Install-Winget {
-    Write-ColorOutput "Checking Winget..." $Cyan
-    if (Test-CommandExist 'winget') {
+function Install-WithWinget {
+    param([string]$PackageId)
 ```
 
 <sub>**Source:** `tools\install-dependencies.ps1`</sub>
 
-### `Install-Zoxide`
+### `Invoke-Elevated`
 
 **Signature:**
 ```powershell
-function Install-Zoxide {
-    Write-ColorOutput "Installing zoxide..." $Cyan
-    if ($WhatIf) {
+function Invoke-Elevated {
+    param([string]$Command, [string[]]$Arguments)
 ```
 
 <sub>**Source:** `tools\install-dependencies.ps1`</sub>
-
-### `Invoke-Native`
-
-**Signature:**
-```powershell
-function Invoke-Native {
-        param($Executable, $Arguments)
-```
-
-<sub>**Source:** `Config\starship-init-cache.ps1`</sub>
 
 ### `Measure-Block`
 
@@ -1259,37 +1141,7 @@ function Invoke-Native {
 function Measure-Block {
     param(
         [string]$Name,
-        [scriptblock]$Block,
-        [switch]$Async
-    )
-```
-
-<sub>**Source:** `Microsoft.PowerShell_profile.ps1`</sub>
-
-### `Register-PSModule`
-
-**Signature:**
-```powershell
-function Register-PSModule {
-            param(
-                [string]$Name,
-                [string]$Description,
-                [string]$Category,
-                [scriptblock]$InitializerBlock
-            )
-```
-
-<sub>**Source:** `Microsoft.PowerShell_profile.ps1`</sub>
-
-### `Start-BackgroundJob`
-
-**Signature:**
-```powershell
-function Start-BackgroundJob {
-    [CmdletBinding(SupportsShouldProcess)]
-    param(
-        [scriptblock]$ScriptBlock,
-        [Parameter(ValueFromRemainingArguments = $true)] $ArgumentList
+        [scriptblock]$Block
     )
 ```
 
@@ -1309,12 +1161,49 @@ Helper function for cached Test-Path
 
 <sub>**Source:** `Microsoft.PowerShell_profile.ps1`</sub>
 
-### `Write-ColorOutput`
+### `Test-SudoAvailable`
 
 **Signature:**
 ```powershell
-function Write-ColorOutput {
-    param([string]$Message)
+function Test-SudoAvailable {
+    return (Test-CommandExist 'sudo')
+}
+
+function Invoke-Elevated {
+```
+
+<sub>**Source:** `tools\install-dependencies.ps1`</sub>
+
+### `Update-SessionPath`
+
+**Signature:**
+```powershell
+function Update-SessionPath {
+    # Refresh PATH from registry so newly installed tools are found in the current session
+    $machinePath = [System.Environment]::GetEnvironmentVariable('Path', 'Machine')
+    $userPath = [System.Environment]::GetEnvironmentVariable('Path', 'User')
+    $env:Path = "$userPath;$machinePath"
+}
+
+function Test-IsAdmin {
+```
+
+**Description:**
+
+region Helper Functions
+
+<sub>**Source:** `tools\install-dependencies.ps1`</sub>
+
+### `Write-Status`
+
+**Signature:**
+```powershell
+function Write-Status {
+    param(
+        [string]$Message,
+        [ValidateSet('Info', 'Success', 'Warning', 'Error', 'Header')]
+        [string]$Type = 'Info'
+    )
 ```
 
 <sub>**Source:** `tools\install-dependencies.ps1`</sub>
@@ -1356,9 +1245,9 @@ function _fzf_open_path
 **Signature:**
 ```powershell
 function Clear-All {
-  Clear-RecycleBin
-  Delete-TempData
-  Run-DiskCleanUp
+    Clear-RecycleBin
+    Clear-TempData
+    Clear-Disk
 }
 ```
 
@@ -1369,15 +1258,10 @@ function Clear-All {
 **Signature:**
 ```powershell
 function Clear-Disk {
-  #3# Using Disk cleanup Tool
-  # Display a message indicating the usage of the Disk Cleanup tool
-  Write-Verbose "Using Disk cleanup Tool" -ForegroundColor Yellow
-  # Run the Disk Cleanup tool with the specified sagerun parameter
-  cleanmgr /sagerun:1 | out-Null
-  # Emit a beep sound using ASCII code 7
-  Write-Verbose "$([char]7)"
-  # Display a success message indicating that Disk Cleanup was successfully done
-  Write-Verbose "Disk Cleanup Successfully done" -ForegroundColor Green
+    Write-Host "Running Disk Cleanup tool..." -ForegroundColor Yellow
+    cleanmgr /sagerun:1 | Out-Null
+    Write-Host "$([char]7)"
+    Write-Host "Disk Cleanup completed" -ForegroundColor Green
 }
 
 function Clear-All {
@@ -1390,16 +1274,11 @@ function Clear-All {
 **Signature:**
 ```powershell
 function Clear-RecycleBin {
-  #1# Removing recycle bin files
-  # Set the path to the recycle bin on the C drive
-  $Path = 'C' + ':\$Recycle.Bin'
-  # Get all items (files and directories) within the recycle bin path, including hidden ones
-  Write-Verbose "[INFO] Cleaning recycle bin with ErrorAction SilentlyContinue (errors will be suppressed)" -ForegroundColor Yellow
-  Get-ChildItem $Path -Force -Recurse -ErrorAction SilentlyContinue |
-  # Remove the items, excluding any files with the .ini extension
-  Remove-Item -Recurse -Exclude *.ini -ErrorAction SilentlyContinue
-  # Display a success message
-  Write-Verbose "All the necessary data removed from recycle bin successfully" -ForegroundColor Green
+    $Path = 'C:\$Recycle.Bin'
+    Write-Host "[INFO] Cleaning recycle bin..." -ForegroundColor Yellow
+    Get-ChildItem $Path -Force -Recurse -ErrorAction SilentlyContinue |
+        Remove-Item -Recurse -Exclude *.ini -ErrorAction SilentlyContinue
+    Write-Host "Recycle bin cleaned successfully" -ForegroundColor Green
 }
 
 function Clear-TempData {
@@ -1407,7 +1286,7 @@ function Clear-TempData {
 
 **Description:**
 
-Source: https://www.geeksforgeeks.org/disk-cleanup-using-powershell-scripts/
+Disk cleanup utilities Source: https://www.geeksforgeeks.org/disk-cleanup-using-powershell-scripts/
 
 <sub>**Source:** `Core\System\clean.ps1`</sub>
 
@@ -1416,28 +1295,15 @@ Source: https://www.geeksforgeeks.org/disk-cleanup-using-powershell-scripts/
 **Signature:**
 ```powershell
 function Clear-TempData {
-  #2# Remove Temp files from various locations
-  Write-Verbose "Erasing temporary files from various locations" -ForegroundColor Yellow
-  # Specify the path where temporary files are stored in the Windows Temp folder
-  $Path1 = 'C' + ':\Windows\Temp'
-  # Remove all items (files and directories) from the Windows Temp folder
-  Write-Verbose "[INFO] Cleaning Windows Temp folder with ErrorAction SilentlyContinue (errors will be suppressed)" -ForegroundColor Yellow
-  Get-ChildItem $Path1 -Force -Recurse -ErrorAction SilentlyContinue | Remove-Item -Recurse -Force -ErrorAction SilentlyContinue
-  # Specify the path where temporary files are stored in the Windows Prefetch folder
-  $Path2 = 'C' + ':\Windows\Prefetch'
-  # Remove all items (files and directories) from the Windows Prefetch folder
-  Write-Verbose "[INFO] Cleaning Windows Prefetch folder with ErrorAction SilentlyContinue (errors will be suppressed)" -ForegroundColor Yellow
-  Get-ChildItem $Path2 -Force -Recurse -ErrorAction SilentlyContinue | Remove-Item -Recurse -Force -ErrorAction SilentlyContinue
-  # Specify the path where temporary files are stored in the user's AppData\Local\Temp folder
-  $Path3 = 'C' + ':\Users\*\AppData\Local\Temp'
-  # Remove all items (files and directories) from the specified user's Temp folder
-  Write-Verbose "[INFO] Cleaning user Temp folder with ErrorAction SilentlyContinue (errors will be suppressed)" -ForegroundColor Yellow
-  Get-ChildItem $Path3 -Force -Recurse -ErrorAction SilentlyContinue | Remove-Item -Recurse -Force -ErrorAction SilentlyContinue
-  # Display a success message
-  Write-Verbose "removed all the temp files successfully" -ForegroundColor Green
-}
+    Write-Host "Erasing temporary files..." -ForegroundColor Yellow
 
-function Clear-Disk {
+    $tempPaths = @(
+        'C:\Windows\Temp',
+        'C:\Windows\Prefetch',
+        'C:\Users\*\AppData\Local\Temp'
+    )
+
+    foreach ($path in $tempPaths) {
 ```
 
 <sub>**Source:** `Core\System\clean.ps1`</sub>
@@ -1446,8 +1312,10 @@ function Clear-Disk {
 
 **Signature:**
 ```powershell
-function cma
-{
+function cma {
+    param (
+        [string[]] $files
+    )
 ```
 
 <sub>**Source:** `Core\System\chezmoi.ps1`</sub>
@@ -1456,8 +1324,10 @@ function cma
 
 **Signature:**
 ```powershell
-function cmc
-{
+function cmc {
+    param (
+        [string] $msg
+    )
 ```
 
 <sub>**Source:** `Core\System\chezmoi.ps1`</sub>
@@ -1466,8 +1336,11 @@ function cmc
 
 **Signature:**
 ```powershell
-function cmp
-{
+function cmp {
+    chezmoi git push
+}
+
+function cms {
 ```
 
 <sub>**Source:** `Core\System\chezmoi.ps1`</sub>
@@ -1476,8 +1349,10 @@ function cmp
 
 **Signature:**
 ```powershell
-function cms
-{
+function cms {
+    $current_dir = Get-Location
+    Set-Location ~
+    if (!(Get-Process "gpg-agent" -ErrorAction SilentlyContinue)) {
 ```
 
 <sub>**Source:** `Core\System\chezmoi.ps1`</sub>
@@ -1486,13 +1361,13 @@ function cms
 
 **Signature:**
 ```powershell
-function dirs
-{
+function dirs {
+    if ($args.Count -gt 0) {
 ```
 
 **Description:**
 
-Does the the rough equivalent of dir /s /b. For example, dirs *.png is dir /s /b *.png
+Recursive file listing (equivalent of dir /s /b)
 
 <sub>**Source:** `Core\System\linuxLike.ps1`</sub>
 
@@ -1500,8 +1375,10 @@ Does the the rough equivalent of dir /s /b. For example, dirs *.png is dir /s /b
 
 **Signature:**
 ```powershell
-function Env:
-{ Set-Location Env:
+function Env: { Set-Location Env: }
+
+# Recursive file listing (equivalent of dir /s /b)
+function dirs {
 ```
 
 <sub>**Source:** `Core\System\linuxLike.ps1`</sub>
@@ -1520,8 +1397,8 @@ function fdg
 
 **Signature:**
 ```powershell
-function HKCU:
-{ Set-Location HKCU:
+function HKCU: { Set-Location HKCU: }
+function Env: { Set-Location Env: }
 ```
 
 <sub>**Source:** `Core\System\linuxLike.ps1`</sub>
@@ -1530,8 +1407,8 @@ function HKCU:
 
 **Signature:**
 ```powershell
-function HKLM:
-{ Set-Location HKLM:
+function HKLM: { Set-Location HKLM: }
+function HKCU: { Set-Location HKCU: }
 ```
 
 **Description:**
@@ -1544,13 +1421,13 @@ Drive shortcuts
 
 **Signature:**
 ```powershell
-function n
-{ notepad $args
+function n {
+    notepad $args
+}
+
+# Drive shortcuts
+function HKLM: { Set-Location HKLM: }
 ```
-
-**Description:**
-
-Quick shortcut to start notepad
 
 <sub>**Source:** `Core\System\linuxLike.ps1`</sub>
 
@@ -1568,13 +1445,16 @@ function rgg
 
 **Signature:**
 ```powershell
-function sha256
-{ Get-FileHash -Algorithm SHA256 $args
+function sha256 {
+    Get-FileHash -Algorithm SHA256 $args
+}
+
+function n {
 ```
 
 **Description:**
 
-FROM https://github.com/ChrisTitusTech/powershell-profile/ If so and the current host is a command line, then change to red color as warning to user that they are operating in an elevated context Useful shortcuts for traversing directories Compute file hashes - useful for checking successful downloads
+Linux-like utility functions for PowerShell
 
 <sub>**Source:** `Core\System\linuxLike.ps1`</sub>
 
@@ -1619,7 +1499,8 @@ Networking Utilities
 **Signature:**
 ```powershell
 function df { get-volume }
-function which($name) { Get-Command $name | Select-Object -ExpandProperty Definition }
+
+function Set-EnvironmentVariable {
 ```
 
 **Description:**
@@ -1656,18 +1537,15 @@ function Expand-CustomArchive {
 
 <sub>**Source:** `Core\Utils\FileSystemUtils.ps1`</sub>
 
-### `Expand-MultipleArchive`
+### `Expand-MultipleArchives`
 
 **Signature:**
 ```powershell
-function Expand-MultipleArchive {
-  $CurrentDate = (Get-Date).ToString("yyyy-MM-dd_HH-mm-ss")
-  $Folder = "extracted_$($CurrentDate)"
-  New-Item -Path $Folder -ItemType Directory | Out-Null
-  foreach ($File in $args) {
+function Expand-MultipleArchives {
+    param([string[]]$Files)
 ```
 
-<sub>**Source:** `Core\Utils\unified_aliases.ps1`</sub>
+<sub>**Source:** `Core\Utils\FileSystemUtils.ps1`</sub>
 
 ### `Expand-ZipFile`
 
@@ -1675,7 +1553,7 @@ function Expand-MultipleArchive {
 ```powershell
 function Expand-ZipFile($file) {
   Write-Output("Extracting", $file, "to", $pwd)
-  $fullFile = Get-ChildItem -Path $pwd -Filter .\cove.zip | ForEach-Object { $_.FullName }
+  $fullFile = Get-ChildItem -Path $pwd -Filter $file | ForEach-Object { $_.FullName }
 ```
 
 <sub>**Source:** `Core\Utils\unified_aliases.ps1`</sub>
@@ -1742,9 +1620,6 @@ function Get-CommandPath($command) {
   Select-Object -ExpandProperty Path -ErrorAction SilentlyContinue
 }
 Set-Alias -Name which -Value Get-CommandPath
-
-# SSH Aliases
-function akkorokamui { ssh -p 54226 tears@192.168.1.100 }
 ```
 
 <sub>**Source:** `Core\Utils\unified_aliases.ps1`</sub>
@@ -1761,11 +1636,11 @@ function Get-Font {
 
 <sub>**Source:** `Core\Utils\unified_aliases.ps1`</sub>
 
-### `Get-FormatedUptime`
+### `Get-FormattedUptime`
 
 **Signature:**
 ```powershell
-function Get-FormatedUptime {
+function Get-FormattedUptime {
     $bootuptime = (Get-CimInstance -ClassName Win32_OperatingSystem).LastBootUpTime
     $CurrentDate = Get-Date
     $uptime = $CurrentDate - $bootuptime
@@ -1805,7 +1680,7 @@ function find-file($name) {
 **Signature:**
 ```powershell
 function Get-PubIP {
-    (Invoke-WebRequest http://ifconfig.me/ip).Content
+    (Invoke-WebRequest https://ifconfig.me/ip).Content
 }
 
 function Initialize-EncodingConfig {
@@ -1875,8 +1750,8 @@ function Initialize-EncodingConfig {
     [console]::InputEncoding = [console]::OutputEncoding = New-Object System.Text.UTF8Encoding
 }
 
-# Create module manifest if it doesn't exist
-if (-not (Test-Path "$moduleRoot\CommonUtils.psd1")) {
+# Export module members
+try {
 ```
 
 <sub>**Source:** `Core\Utils\CommonUtils.ps1`</sub>
@@ -1947,7 +1822,7 @@ function Test-IsAdmin {
 
 **Signature:**
 ```powershell
-function la_with_eza{
+function la_with_eza {
     $ezaOutput = eza --icons --git --color=always --group-directories-first --all
     if ($script:hasBat) {
 ```
@@ -2053,46 +1928,6 @@ function New-File {
 
 <sub>**Source:** `Core\Utils\unified_aliases.ps1`</sub>
 
-### `pretty_git_branch`
-
-**Signature:**
-```powershell
-function pretty_git_branch
-{
-```
-
-<sub>**Source:** `Core\Utils\Development\gitHelpers.ps1`</sub>
-
-### `pretty_git_branch_sorted`
-
-**Signature:**
-```powershell
-function pretty_git_branch_sorted
-{
-```
-
-<sub>**Source:** `Core\Utils\Development\gitHelpers.ps1`</sub>
-
-### `pretty_git_format`
-
-**Signature:**
-```powershell
-function pretty_git_format
-{
-```
-
-<sub>**Source:** `Core\Utils\Development\gitHelpers.ps1`</sub>
-
-### `pretty_git_log`
-
-**Signature:**
-```powershell
-function pretty_git_log
-{
-```
-
-<sub>**Source:** `Core\Utils\Development\gitHelpers.ps1`</sub>
-
 ### `Reset-ProfileState`
 
 **Signature:**
@@ -2159,16 +1994,6 @@ function Set-EnvironmentVariable {
 
 <sub>**Source:** `Core\Utils\unified_aliases.ps1`</sub>
 
-### `show_git_head`
-
-**Signature:**
-```powershell
-function show_git_head
-{
-```
-
-<sub>**Source:** `Core\Utils\Development\gitHelpers.ps1`</sub>
-
 ### `Stop-ProcessByName`
 
 **Signature:**
@@ -2214,7 +2039,7 @@ function Test-IsAdmin {
     return ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
 }
 
-function Get-FormatedUptime {
+function Get-FormattedUptime {
 ```
 
 <sub>**Source:** `Core\Utils\CommonUtils.ps1`</sub>
@@ -2251,17 +2076,6 @@ function v {
 **Description:**
 
 Lazy editor alias that initializes on first use
-
-<sub>**Source:** `Core\Utils\unified_aliases.ps1`</sub>
-
-### `which`
-
-**Signature:**
-```powershell
-function which($name) { Get-Command $name | Select-Object -ExpandProperty Definition }
-
-function Set-EnvironmentVariable {
-```
 
 <sub>**Source:** `Core\Utils\unified_aliases.ps1`</sub>
 
