@@ -2,7 +2,7 @@
 # Source: https://www.geeksforgeeks.org/disk-cleanup-using-powershell-scripts/
 
 function Clear-RecycleBin {
-    $Path = 'C:\$Recycle.Bin'
+    $Path = "$env:SystemDrive\`$Recycle.Bin"
     Write-Host "[INFO] Cleaning recycle bin..." -ForegroundColor Yellow
     Get-ChildItem $Path -Force -Recurse -ErrorAction SilentlyContinue |
         Remove-Item -Recurse -Exclude *.ini -ErrorAction SilentlyContinue
@@ -13,9 +13,9 @@ function Clear-TempData {
     Write-Host "Erasing temporary files..." -ForegroundColor Yellow
 
     $tempPaths = @(
-        'C:\Windows\Temp',
-        'C:\Windows\Prefetch',
-        'C:\Users\*\AppData\Local\Temp'
+        "$env:WinDir\Temp",
+        "$env:WinDir\Prefetch",
+        "$env:SystemDrive\Users\*\AppData\Local\Temp"
     )
 
     foreach ($path in $tempPaths) {

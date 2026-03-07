@@ -1,8 +1,5 @@
 # Common utility functions used across the PowerShell profile
 
-# Create module scope
-$script:moduleRoot = Split-Path -Parent $PSCommandPath
-
 if (-not (Get-Command Test-CommandExist -ErrorAction SilentlyContinue)) {
     function Test-CommandExist {
         [CmdletBinding()]
@@ -23,18 +20,15 @@ function Get-FormattedUptime {
 }
 
 function Get-PubIP {
-    (Invoke-WebRequest https://ifconfig.me/ip).Content
+    try {
+        (Invoke-WebRequest https://ifconfig.me/ip -TimeoutSec 10).Content
+    } catch {
+        Write-Warning "Failed to get public IP: $_"
+    }
 }
 
 function Initialize-EncodingConfig {
     $env:PYTHONIOENCODING = 'utf-8'
     [System.Console]::OutputEncoding = [System.Text.UTF8Encoding]::new()
     [console]::InputEncoding = [console]::OutputEncoding = New-Object System.Text.UTF8Encoding
-}
-
-# Export module members
-try {
-    Export-ModuleMember -Function Test-CommandExist, Test-IsAdmin, Get-FormattedUptime, Get-PubIP, Initialize-EncodingConfig
-} catch {
-    # Ignore if not in module context
 }

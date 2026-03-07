@@ -24,12 +24,15 @@ function cma {
         [string[]] $files
     )
     $current_dir = Get-Location
-    for ($i = 0; $i -lt $files.Length; $i++) {
-        $files[$i] = "$($current_dir)\$($files[$i])"
+    try {
+        for ($i = 0; $i -lt $files.Length; $i++) {
+            $files[$i] = "$($current_dir)\$($files[$i])"
+        }
+        Set-Location ~
+        chezmoi add $files $args
+    } finally {
+        Set-Location $current_dir
     }
-    Set-Location ~
-    chezmoi add $files $args
-    Set-Location $current_dir
 }
 
 function cmp {
@@ -38,12 +41,15 @@ function cmp {
 
 function cms {
     $current_dir = Get-Location
-    Set-Location ~
-    if (!(Get-Process "gpg-agent" -ErrorAction SilentlyContinue)) {
-        gpg-connect-agent /bye
+    try {
+        Set-Location ~
+        if (!(Get-Process "gpg-agent" -ErrorAction SilentlyContinue)) {
+            gpg-connect-agent /bye 2>$null
+        }
+        chezmoi re-add
+        Set-Location $(chezmoi source-path)
+        git fetch
+    } finally {
+        Set-Location $current_dir
     }
-    chezmoi re-add
-    Set-Location $(chezmoi source-path)
-    git fetch
-    Set-Location $current_dir
 }

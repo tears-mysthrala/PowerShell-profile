@@ -191,7 +191,7 @@ function hb {
 
   $uri = "https://bin.christitus.com/documents"
   try {
-    $response = Invoke-RestMethod -Uri $uri -Method Post -Body $Content -ErrorAction Stop
+    $response = Invoke-RestMethod -Uri $uri -Method Post -Body $Content -TimeoutSec 10 -ErrorAction Stop
     $hasteKey = $response.key
     $url = "https://bin.christitus.com/$hasteKey"
     Write-Output $url
@@ -212,7 +212,7 @@ function tail {
 }
 
 function ix ($file) {
-  curl.exe -F "f:1=@$file" ix.io
+  curl.exe -m 30 -F "f:1=@$file" ix.io
 }
 
 # Test-IsAdmin defined in CommonUtils.ps1
@@ -254,42 +254,22 @@ function Get-Font {
 }
 
 function Upgrade {
-  # Function to check if pwsh is installed
-  function Get-PwshInstalled {
-    return Get-Command pwsh -ErrorAction SilentlyContinue
-  }
-
-  # Function to install PowerShell 7 using winget
-  function Install-Pwsh {
-    Write-Verbose "Installing PowerShell 7..."
+  if (-not (Get-Command pwsh -ErrorAction SilentlyContinue)) {
+    Write-Host "Installing PowerShell 7..." -ForegroundColor Cyan
     winget install --id Microsoft.Powershell --source winget -y
-  }
-
-  # Check if pwsh is installed
-  if (-not (Get-PwshInstalled)) {
-    Install-Pwsh
-    # Optionally, you can exit the function or script here
-    Write-Verbose "Please restart your shell to use PowerShell 7."
+    Write-Host "Please restart your shell to use PowerShell 7." -ForegroundColor Yellow
     return
   }
 
-  # Check if the script is running with administrative privileges
-  $isAdmin = [bool](New-Object Security.Principal.WindowsPrincipal([Security.Principal.WindowsIdentity]::GetCurrent())).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
-
-  if (-not $isAdmin) {
-    # If not running as admin, try to run with sudo (if available)
+  if (-not (Test-IsAdmin)) {
     if (Get-Command sudo -ErrorAction SilentlyContinue) {
-      Write-Verbose "Running with sudo..."
       sudo pwsh -ExecutionPolicy Bypass -File "$PSScriptRoot\..\Apps\UpdateApps.ps1"
     }
     else {
-      # If sudo is not available, use runas
-      Write-Verbose "Running with runas..."
       Start-Process pwsh -ArgumentList "-ExecutionPolicy Bypass -File `"$PSScriptRoot\..\Apps\UpdateApps.ps1`"" -Verb RunAs
     }
   }
   else {
-    # If running as admin, execute the update script directly
     . "$PSScriptRoot\..\Apps\UpdateApps.ps1"
   }
 }

@@ -109,7 +109,7 @@ function Update-ChocoApp {
             }
         }
         if ($apps_set.Count) {
-            $apps_string = ($apps_set -split ",")
+            $apps_string = @($apps_set)
             if (Test-IsAdmin) {
                 choco upgrade $apps_string -y
             }
@@ -138,7 +138,7 @@ function Update-ScoopApp {
             }
         }
         if ($apps_set.Count) {
-            $apps_string = ($apps_set -split ",")
+            $apps_string = @($apps_set)
             scoop update $apps_string
         }
         else {
