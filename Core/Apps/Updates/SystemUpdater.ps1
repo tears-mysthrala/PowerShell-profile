@@ -26,27 +26,6 @@ function Write-UpdateErrorLog {
     Write-UpdateLog "Details: $($Error[0].Exception.Message)" $LogFile
 }
 
-# Helper function to write section headers
-function Write-UpdateHeader {
-    param([string]$Title)
-    Write-Host ""
-    Write-Host "============================================================" -ForegroundColor Magenta
-    Write-Host $Title -ForegroundColor Magenta
-    Write-Host "============================================================" -ForegroundColor Magenta
-}
-
-# Helper function to write status messages
-function Write-UpdateStatus {
-    param(
-        [string]$Message,
-        [ValidateSet('Info', 'Success', 'Warning', 'Error')]
-        [string]$Status = 'Info'
-    )
-    $colors = @{ Info = 'White'; Success = 'Green'; Warning = 'Yellow'; Error = 'Red' }
-    $prefixes = @{ Info = '>'; Success = 'OK'; Warning = '!!'; Error = 'XX' }
-    Write-Host "[$($prefixes[$Status])] $Message" -ForegroundColor $colors[$Status]
-}
-
 # Main update function with visual progress
 function Update-System {
     [CmdletBinding(SupportsShouldProcess)]

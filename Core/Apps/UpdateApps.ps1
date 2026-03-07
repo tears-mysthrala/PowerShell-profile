@@ -1,4 +1,4 @@
-﻿# Script to update all installed applications
+# Script to update all installed applications
 $ErrorActionPreference = 'Continue'
 $ProgressPreference = 'Continue'
 
@@ -31,76 +31,51 @@ catch {
     Write-ErrorLog "Failed to process Windows updates"
 }
 
-# Update package managers in parallel
-$jobs = @()
-
+# Load update helper functions
 . "$PSScriptRoot\UpdateAppsHelper.ps1"
 
-# Winget updates
+# Update package managers sequentially
 if (Test-CommandExist 'winget') {
-    if (Get-Command -Name Start-ThreadJob -ErrorAction SilentlyContinue) {
-        $jobs += Start-ThreadJob -ScriptBlock {
-            try {
-                Write-AppLog "Starting Winget update..."
-                Update-Winget -Silent
-                Write-AppLog "Winget update completed successfully"
-            }
-            catch {
-                Write-Output "ERROR: Winget update failed - $($_.Exception.Message)"
-            }
-        } -Name 'WingetUpdate'
-        Write-AppLog "Started Winget update job"
+    Write-AppLog "Starting Winget update..."
+    try {
+        Update-Winget
+        Write-AppLog "Winget update completed successfully"
+    }
+    catch {
+        Write-ErrorLog "Winget update failed - $($_.Exception.Message)"
     }
 }
 
-# Scoop updates
 if (Test-CommandExist 'scoop') {
-    if (Get-Command -Name Start-ThreadJob -ErrorAction SilentlyContinue) {
-        $jobs += Start-ThreadJob -ScriptBlock {
-            try {
-                Write-AppLog "Starting Scoop update..."
-                Update-Scoop -Silent
-                Write-AppLog "Scoop update completed successfully"
-            }
-            catch {
-                Write-Output "ERROR: Scoop update failed - $($_.Exception.Message)"
-            }
-        } -Name 'ScoopUpdate'
-        Write-AppLog "Started Scoop update job"
+    Write-AppLog "Starting Scoop update..."
+    try {
+        Update-Scoop
+        Write-AppLog "Scoop update completed successfully"
+    }
+    catch {
+        Write-ErrorLog "Scoop update failed - $($_.Exception.Message)"
     }
 }
 
-# Chocolatey updates
 if (Test-CommandExist 'choco') {
-    if (Get-Command -Name Start-ThreadJob -ErrorAction SilentlyContinue) {
-        $jobs += Start-ThreadJob -ScriptBlock {
-            try {
-                Write-AppLog "Starting Chocolatey update..."
-                Update-Choco -Silent
-                Write-AppLog "Chocolatey update completed successfully"
-            }
-            catch {
-                Write-Output "ERROR: Chocolatey update failed - $($_.Exception.Message)"
-            }
-        } -Name 'ChocolateyUpdate'
-        Write-AppLog "Started Chocolatey update job"
+    Write-AppLog "Starting Chocolatey update..."
+    try {
+        Update-Choco
+        Write-AppLog "Chocolatey update completed successfully"
+    }
+    catch {
+        Write-ErrorLog "Chocolatey update failed - $($_.Exception.Message)"
     }
 }
 
-# NPM global updates
 if (Test-CommandExist 'npm') {
-    if (Get-Command -Name Start-ThreadJob -ErrorAction SilentlyContinue) {
-        $jobs += Start-ThreadJob -ScriptBlock {
-            try {
-                Write-AppLog "Starting NPM global packages update..."
-                Update-Npm -Silent
-                Write-AppLog "NPM global packages update completed successfully"
-            }
-            catch {
-                Write-Output "ERROR: NPM update failed - $($_.Exception.Message)"
-            }
-        } -Name 'NpmUpdate'
-        Write-AppLog "Started NPM update job"
+    Write-AppLog "Starting NPM global packages update..."
+    try {
+        Update-Npm
+        Write-AppLog "NPM global packages update completed successfully"
+    }
+    catch {
+        Write-ErrorLog "NPM update failed - $($_.Exception.Message)"
     }
 }
 
@@ -114,7 +89,6 @@ try {
     Get-Module -ListAvailable | ForEach-Object {
         $currentModule = $_
         try {
-            #Write-Verbose "[INFO] Checking online version for module '$($currentModule.Name)' with ErrorAction SilentlyContinue (errors will be suppressed)" -ForegroundColor Yellow
             $online = Find-Module -Name $currentModule.Name -ErrorAction SilentlyContinue
             if ($online -and ($online.Version -gt $currentModule.Version)) {
                 $modulesToUpdate[$currentModule.Name] = @{
@@ -132,8 +106,6 @@ try {
     foreach ($moduleName in $modulesToUpdate.Keys) {
         $moduleInfo = $modulesToUpdate[$moduleName]
         try {
-            # Check if module is currently loaded
-            #Write-Verbose "[INFO] Checking if module '$moduleName' is loaded with ErrorAction SilentlyContinue (errors will be suppressed)" -ForegroundColor Yellow
             $loadedModule = Get-Module -Name $moduleName -ErrorAction SilentlyContinue
             if ($loadedModule) {
                 Write-AppLog "INFO: Unloading module '$moduleName' for update..."
@@ -187,34 +159,6 @@ try {
 }
 catch {
     Write-ErrorLog "Failed to process PowerShell module updates: $($_.Exception.Message)"
-}
-
-# Wait for all package manager jobs to complete
-Write-AppLog "Waiting for package manager updates to complete..."
-Wait-Job -Job $jobs | Out-Null
-
-
-# Color map for each job name
-$jobColors = @{
-    'WingetUpdate'     = 'Cyan'
-    'ScoopUpdate'      = 'Yellow'
-    'ChocolateyUpdate' = 'Magenta'
-    'NpmUpdate'        = 'Green'
-}
-
-# Process results from jobs with color
-foreach ($job in $jobs) {
-    $result = Receive-Job -Job $job
-    $color = $jobColors[$job.Name]
-    if (-not $color) { $color = 'White' }
-    Write-Information ("Results from $($job.Name):")
-    if ($result) {
-        $result | ForEach-Object { Write-Information $_ }
-    }
-    else {
-        Write-Verbose "(No output)"
-    }
-    Remove-Job -Job $job
 }
 
 Write-AppLog "All updates completed. Log file: $logFile"

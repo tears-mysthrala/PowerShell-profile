@@ -34,19 +34,6 @@ function Test-SudoAvailable {
     return (Test-CommandExist 'sudo')
 }
 
-function Invoke-Elevated {
-    param([string]$Command, [string[]]$Arguments)
-    if (Test-IsAdmin) {
-        & $Command @Arguments
-    } elseif (Test-SudoAvailable) {
-        sudo $Command @Arguments
-    } else {
-        Write-Status "Needs admin - enable sudo in Windows Settings > Developer or run as Administrator" -Type Error
-        return $false
-    }
-    return ($LASTEXITCODE -eq 0)
-}
-
 if (-not (Get-Command Test-CommandExist -ErrorAction SilentlyContinue)) {
     function Test-CommandExist {
         param([string]$Command)
