@@ -1,8 +1,8 @@
 # Function Reference
 
 > **Auto-generated documentation**
-> Last updated: 2026-03-07 00:02:46
-> Total functions: 156
+> Last updated: 2026-03-08 06:21:41
+> Total functions: 138
 
 ## Table of Contents
 
@@ -520,9 +520,7 @@ function Update-WindowsSystem {
 ```powershell
 function Update-WindowsUpdate {
     [CmdletBinding(SupportsShouldProcess)]
-    param(
-        [switch]$UseLog
-    )
+    param()
 ```
 
 <sub>**Source:** `Core\Apps\WindowsUpdateHelper.ps1`</sub>
@@ -623,7 +621,7 @@ function Write-UpdateHeader {
 
 Helper function to write section headers
 
-<sub>**Source:** `Core\Apps\Updates\SystemUpdater.ps1`</sub>
+<sub>**Source:** `Core\Apps\UpdateAppsHelper.ps1`</sub>
 
 ### `Write-UpdateLog`
 
@@ -655,120 +653,9 @@ function Write-UpdateStatus {
 
 Helper function to write status messages
 
-<sub>**Source:** `Core\Apps\Updates\SystemUpdater.ps1`</sub>
+<sub>**Source:** `Core\Apps\UpdateAppsHelper.ps1`</sub>
 
 ## Core
-
-### `Get-CachedModuleInfo`
-
-**Signature:**
-```powershell
-function Get-CachedModuleInfo {
-    param([string]$Name)
-```
-
-**Description:**
-
-Get module info from cache or scan
-
-<sub>**Source:** `Core\UnifiedModuleManager.ps1`</sub>
-
-### `Get-UnifiedModuleStatus`
-
-**Signature:**
-```powershell
-function Get-UnifiedModuleStatus {
-    $script:moduleRegistry.GetEnumerator() | ForEach-Object {
-```
-
-<sub>**Source:** `Core\UnifiedModuleManager.ps1`</sub>
-
-### `Get-UnifiedToolStatus`
-
-**Signature:**
-```powershell
-function Get-UnifiedToolStatus {
-    $script:loadedTools.GetEnumerator() | ForEach-Object {
-```
-
-<sub>**Source:** `Core\UnifiedModuleManager.ps1`</sub>
-
-### `Import-LazyModule`
-
-**Signature:**
-```powershell
-function Import-LazyModule {
-    param([string]$Name)
-```
-
-**Description:**
-
-Lazy loading functionality from LazyModuleManager
-
-<sub>**Source:** `Core\UnifiedModuleManager.ps1`</sub>
-
-### `Import-UnifiedModule`
-
-**Signature:**
-```powershell
-function Import-UnifiedModule {
-    [CmdletBinding(SupportsShouldProcess)]
-    param(
-        [string]$Name,
-        [switch]$Force
-    )
-```
-
-<sub>**Source:** `Core\UnifiedModuleManager.ps1`</sub>
-
-### `Import-UnifiedTool`
-
-**Signature:**
-```powershell
-function Import-UnifiedTool {
-    param([string]$Name)
-```
-
-<sub>**Source:** `Core\UnifiedModuleManager.ps1`</sub>
-
-### `Initialize-ModuleCache`
-
-**Signature:**
-```powershell
-function Initialize-ModuleCache {
-    if (Test-Path $script:moduleCachePath) {
-```
-
-**Description:**
-
-Initialize module cache from disk
-
-<sub>**Source:** `Core\UnifiedModuleManager.ps1`</sub>
-
-### `Initialize-StartupModule`
-
-**Signature:**
-```powershell
-function Initialize-StartupModule {
-    [CmdletBinding(SupportsShouldProcess)]
-    $startupModules = $script:moduleRegistry.GetEnumerator() |
-    Where-Object { $_.Value.LoadOnStartup } |
-```
-
-<sub>**Source:** `Core\UnifiedModuleManager.ps1`</sub>
-
-### `Initialize-StartupTool`
-
-**Signature:**
-```powershell
-function Initialize-StartupTool {
-    # Mantener compatibilidad pero evitar trabajo innecesario: solo
-    # se inicializarán herramientas marcadas explícitamente como LoadOnStartup.
-    $script:toolRegistry.GetEnumerator() |
-    Where-Object { $_.Value.LoadOnStartup } |
-```
-
-<sub>**Source:** `Core\UnifiedModuleManager.ps1`</sub>
 
 ### `Install-RequiredModule`
 
@@ -780,74 +667,6 @@ function Install-RequiredModule {
 ```
 
 <sub>**Source:** `Core\ModuleInstaller.ps1`</sub>
-
-### `Register-ChocolateyProfile`
-
-**Signature:**
-```powershell
-function Register-ChocolateyProfile {
-    $chocoModule = "chocolatey-profile"
-    $chocoPath = "$env:ChocolateyInstall\helpers\chocolateyProfile.psm1"
-
-    if (-not $env:ChocolateyInstall) {
-```
-
-<sub>**Source:** `Core\UnifiedModuleManager.ps1`</sub>
-
-### `Register-UnifiedModule`
-
-**Signature:**
-```powershell
-function Register-UnifiedModule {
-    [CmdletBinding()]
-    param(
-        [string]$Name,
-        [string]$MinVersion,
-        [string]$RequiredVersion,
-        [string[]]$Dependencies = @(),
-        [scriptblock]$InitializerBlock,
-        [scriptblock]$OnFailure,
-        [scriptblock]$OnVersionMismatch,
-        [bool]$LoadOnStartup = $false,
-        [int]$MaxAttempts = 3,
-        [switch]$IgnoreIfMissing,
-        [string]$ModulePath
-    )
-```
-
-<sub>**Source:** `Core\UnifiedModuleManager.ps1`</sub>
-
-### `Register-UnifiedTool`
-
-**Signature:**
-```powershell
-function Register-UnifiedTool {
-    param(
-        [string]$Name,
-        [scriptblock]$InitializerBlock,
-        [bool]$LoadOnStartup = $false
-    )
-```
-
-**Description:**
-
-Tool management functionality from LazyToolManager
-
-<sub>**Source:** `Core\UnifiedModuleManager.ps1`</sub>
-
-### `Save-ModuleCache`
-
-**Signature:**
-```powershell
-function Save-ModuleCache {
-    try {
-```
-
-**Description:**
-
-Save module cache to disk
-
-<sub>**Source:** `Core\UnifiedModuleManager.ps1`</sub>
 
 ### `Test-ModuleInstalled`
 
@@ -861,17 +680,6 @@ function Test-ModuleInstalled {
 ```
 
 <sub>**Source:** `Core\ModuleInstaller.ps1`</sub>
-
-### `Test-UnifiedModuleRequirement`
-
-**Signature:**
-```powershell
-function Test-UnifiedModuleRequirement {
-    [CmdletBinding()]
-    param([string]$Name)
-```
-
-<sub>**Source:** `Core\UnifiedModuleManager.ps1`</sub>
 
 ## Other
 
@@ -1124,16 +932,6 @@ function Install-WithWinget {
 
 <sub>**Source:** `tools\install-dependencies.ps1`</sub>
 
-### `Invoke-Elevated`
-
-**Signature:**
-```powershell
-function Invoke-Elevated {
-    param([string]$Command, [string[]]$Arguments)
-```
-
-<sub>**Source:** `tools\install-dependencies.ps1`</sub>
-
 ### `Measure-Block`
 
 **Signature:**
@@ -1169,7 +967,7 @@ function Test-SudoAvailable {
     return (Test-CommandExist 'sudo')
 }
 
-function Invoke-Elevated {
+if (-not (Get-Command Test-CommandExist -ErrorAction SilentlyContinue)) {
 ```
 
 <sub>**Source:** `tools\install-dependencies.ps1`</sub>
@@ -1274,7 +1072,7 @@ function Clear-All {
 **Signature:**
 ```powershell
 function Clear-RecycleBin {
-    $Path = 'C:\$Recycle.Bin'
+    $Path = "$env:SystemDrive\`$Recycle.Bin"
     Write-Host "[INFO] Cleaning recycle bin..." -ForegroundColor Yellow
     Get-ChildItem $Path -Force -Recurse -ErrorAction SilentlyContinue |
         Remove-Item -Recurse -Exclude *.ini -ErrorAction SilentlyContinue
@@ -1298,9 +1096,9 @@ function Clear-TempData {
     Write-Host "Erasing temporary files..." -ForegroundColor Yellow
 
     $tempPaths = @(
-        'C:\Windows\Temp',
-        'C:\Windows\Prefetch',
-        'C:\Users\*\AppData\Local\Temp'
+        "$env:WinDir\Temp",
+        "$env:WinDir\Prefetch",
+        "$env:SystemDrive\Users\*\AppData\Local\Temp"
     )
 
     foreach ($path in $tempPaths) {
@@ -1351,8 +1149,7 @@ function cms {
 ```powershell
 function cms {
     $current_dir = Get-Location
-    Set-Location ~
-    if (!(Get-Process "gpg-agent" -ErrorAction SilentlyContinue)) {
+    try {
 ```
 
 <sub>**Source:** `Core\System\chezmoi.ps1`</sub>
@@ -1680,31 +1477,10 @@ function find-file($name) {
 **Signature:**
 ```powershell
 function Get-PubIP {
-    (Invoke-WebRequest https://ifconfig.me/ip).Content
-}
-
-function Initialize-EncodingConfig {
+    try {
 ```
 
 <sub>**Source:** `Core\Utils\CommonUtils.ps1`</sub>
-
-### `Get-PwshInstalled`
-
-**Signature:**
-```powershell
-function Get-PwshInstalled {
-    return Get-Command pwsh -ErrorAction SilentlyContinue
-  }
-
-  # Function to install PowerShell 7 using winget
-  function Install-Pwsh {
-```
-
-**Description:**
-
-Function to check if pwsh is installed
-
-<sub>**Source:** `Core\Utils\unified_aliases.ps1`</sub>
 
 ### `hb`
 
@@ -1749,31 +1525,9 @@ function Initialize-EncodingConfig {
     [System.Console]::OutputEncoding = [System.Text.UTF8Encoding]::new()
     [console]::InputEncoding = [console]::OutputEncoding = New-Object System.Text.UTF8Encoding
 }
-
-# Export module members
-try {
 ```
 
 <sub>**Source:** `Core\Utils\CommonUtils.ps1`</sub>
-
-### `Install-Pwsh`
-
-**Signature:**
-```powershell
-function Install-Pwsh {
-    Write-Verbose "Installing PowerShell 7..."
-    winget install --id Microsoft.Powershell --source winget -y
-  }
-
-  # Check if pwsh is installed
-  if (-not (Get-PwshInstalled)) {
-```
-
-**Description:**
-
-Function to install PowerShell 7 using winget
-
-<sub>**Source:** `Core\Utils\unified_aliases.ps1`</sub>
 
 ### `Invoke-GitPull`
 
@@ -1810,10 +1564,12 @@ if ($script:hasLazygit) {
 **Signature:**
 ```powershell
 function ix ($file) {
-  curl.exe -F "f:1=@$file" ix.io
+  curl.exe -m 30 -F "f:1=@$file" ix.io
 }
 
-function Test-IsAdmin {
+# Test-IsAdmin defined in CommonUtils.ps1
+
+function Restart-BIOS {
 ```
 
 <sub>**Source:** `Core\Utils\unified_aliases.ps1`</sub>
@@ -1844,8 +1600,8 @@ function ll {
   Remove-Alias -Name ll -ErrorAction SilentlyContinue
 }
 
-# File and directory management
-function mkcd { param($dir) mkdir $dir -Force; Set-Location $dir }
+# File and directory management (mkcd/New-DirectoryAndEnter defined in FileSystemUtils.ps1)
+function New-File {
 ```
 
 <sub>**Source:** `Core\Utils\unified_aliases.ps1`</sub>
@@ -1888,20 +1644,6 @@ else {
 
 <sub>**Source:** `Core\Utils\unified_aliases.ps1`</sub>
 
-### `mkcd`
-
-**Signature:**
-```powershell
-function mkcd { param($dir) mkdir $dir -Force; Set-Location $dir }
-function New-File {
-```
-
-**Description:**
-
-File and directory management
-
-<sub>**Source:** `Core\Utils\unified_aliases.ps1`</sub>
-
 ### `New-DirectoryAndEnter`
 
 **Signature:**
@@ -1926,6 +1668,10 @@ function New-File {
     param($file)
 ```
 
+**Description:**
+
+File and directory management (mkcd/New-DirectoryAndEnter defined in FileSystemUtils.ps1)
+
 <sub>**Source:** `Core\Utils\unified_aliases.ps1`</sub>
 
 ### `Reset-ProfileState`
@@ -1949,6 +1695,10 @@ function Restart-BIOS {
     [CmdletBinding(SupportsShouldProcess)]
     param()
 ```
+
+**Description:**
+
+Test-IsAdmin defined in CommonUtils.ps1
 
 <sub>**Source:** `Core\Utils\unified_aliases.ps1`</sub>
 
@@ -2049,8 +1799,7 @@ function Get-FormattedUptime {
 **Signature:**
 ```powershell
 function Upgrade {
-  # Function to check if pwsh is installed
-  function Get-PwshInstalled {
+  if (-not (Get-Command pwsh -ErrorAction SilentlyContinue)) {
 ```
 
 <sub>**Source:** `Core\Utils\unified_aliases.ps1`</sub>
@@ -2062,6 +1811,10 @@ function Upgrade {
 function uptime {
   If ($PSVersionTable.PSVersion.Major -eq 5) {
 ```
+
+**Description:**
+
+System information and utilities (Get-PubIP, Get-FormattedUptime defined in CommonUtils.ps1)
 
 <sub>**Source:** `Core\Utils\unified_aliases.ps1`</sub>
 

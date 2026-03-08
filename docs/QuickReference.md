@@ -1,7 +1,7 @@
 # Quick Reference
 
 > **Auto-generated documentation**
-> Last updated: 2026-03-07 00:02:46
+> Last updated: 2026-03-08 06:21:41
 
 ## Functions
 
@@ -33,7 +33,6 @@
 | `Find-File` | Utilities | Search utilities for PowerShell profile |
 | `Find-PowerShellCommand` | Utilities |  |
 | `Find-String` | Utilities |  |
-| `Get-CachedModuleInfo` | Core | Get module info from cache or scan |
 | `Get-ChocoApp` | Applications |  |
 | `Get-ClipboardContent` | Utilities |  |
 | `Get-CommandPath` | Utilities |  |
@@ -42,24 +41,15 @@
 | `Get-GitStatus` | Utilities |  |
 | `Get-ProcessByName` | Utilities |  |
 | `Get-PubIP` | Utilities |  |
-| `Get-PwshInstalled` | Utilities | Function to check if pwsh is installed |
 | `Get-ScoopApp` | Applications |  |
-| `Get-UnifiedModuleStatus` | Core |  |
-| `Get-UnifiedToolStatus` | Core |  |
 | `hb` | Utilities |  |
 | `head` | Utilities |  |
 | `HKCU` | System |  |
 | `HKLM` | System | Drive shortcuts |
-| `Import-LazyModule` | Core | Lazy loading functionality from LazyModuleManager |
-| `Import-UnifiedModule` | Core |  |
-| `Import-UnifiedTool` | Core |  |
 | `Initialize-CachedToolInit` | Other | Reusable fingerprint-based cache for tool init scripts |
 | `Initialize-Editor` | Utilities | Editor detection and configuration - lazy loaded |
 | `Initialize-EncodingConfig` | Utilities |  |
-| `Initialize-ModuleCache` | Core | Initialize module cache from disk |
 | `Initialize-NuGetProvider` | Other |  |
-| `Initialize-StartupModule` | Core |  |
-| `Initialize-StartupTool` | Core |  |
 | `Initialize-UpdateLog` | Applications | Initialize logging |
 | `Install-AiTools` | Other |  |
 | `Install-AllMissingTools` | Applications |  |
@@ -74,14 +64,12 @@
 | `Install-PackageManagers` | Other | region Installation Functions |
 | `Install-PipPackages` | Other |  |
 | `Install-PowerShellModules` | Other |  |
-| `Install-Pwsh` | Utilities | Function to install PowerShell 7 using winget |
 | `Install-RequiredModule` | Core |  |
 | `Install-Ruby` | Applications |  |
 | `Install-Tool` | Other |  |
 | `Install-WithChoco` | Other |  |
 | `Install-WithScoop` | Other |  |
 | `Install-WithWinget` | Other |  |
-| `Invoke-Elevated` | Other |  |
 | `Invoke-GitPull` | Utilities |  |
 | `Invoke-GitPush` | Utilities |  |
 | `ix` | Utilities |  |
@@ -91,17 +79,12 @@
 | `ls_with_eza` | Utilities |  |
 | `lt_with_eza` | Utilities |  |
 | `Measure-Block` | Other |  |
-| `mkcd` | Utilities | File and directory management |
 | `n` | System |  |
 | `New-DirectoryAndEnter` | Utilities | File system utilities for PowerShell profile |
-| `New-File` | Utilities |  |
-| `Register-ChocolateyProfile` | Core |  |
-| `Register-UnifiedModule` | Core |  |
-| `Register-UnifiedTool` | Core | Tool management functionality from LazyToolManager |
+| `New-File` | Utilities | File and directory management (mkcd/New-DirectoryAndEnter defined in FileSyst... |
 | `Reset-ProfileState` | Utilities |  |
-| `Restart-BIOS` | Utilities |  |
+| `Restart-BIOS` | Utilities | Test-IsAdmin defined in CommonUtils.ps1 |
 | `rgg` | System |  |
-| `Save-ModuleCache` | Core | Save module cache to disk |
 | `Search-FileContent` | Utilities |  |
 | `Select-App` | Applications |  |
 | `Set-ClipboardContent` | Utilities | Clipboard Utilities |
@@ -115,7 +98,6 @@
 | `Test-IsAdmin` | Utilities |  |
 | `Test-ModuleInstalled` | Core |  |
 | `Test-SudoAvailable` | Other |  |
-| `Test-UnifiedModuleRequirement` | Core |  |
 | `Uninstall-ChocoApp` | Applications |  |
 | `Uninstall-ScoopApp` | Applications |  |
 | `Update-AllApp` | Applications |  |
@@ -152,7 +134,7 @@
 | `Update-Winget` | Applications |  |
 | `Update-WSL` | Applications |  |
 | `Upgrade` | Utilities |  |
-| `uptime` | Utilities |  |
+| `uptime` | Utilities | System information and utilities (Get-PubIP, Get-FormattedUptime defined in C... |
 | `v` | Utilities | Lazy editor alias that initializes on first use |
 | `Write-AppLog` | Applications |  |
 | `Write-ErrorLog` | Applications | Function to handle errors |
