@@ -138,6 +138,10 @@ Measure-Block 'Core Setup' {
             $sb = {
                 # Remove the proxy function
                 Remove-Item "Function:\$command"
+                # Install missing modules before importing the real command implementation
+                if ($script:LazyLoadModules) {
+                    & $script:LazyLoadModules
+                }
                 # Load the actual module
                 Import-Module $moduleName -ErrorAction Stop
                 # For PSFzf, also initialize fzf configuration
@@ -252,6 +256,10 @@ Register-EngineEvent -SourceIdentifier PowerShell.OnIdle -MaxTriggerCount 1 -Act
     # Suppress verbose output from module imports (inherits 'Continue' from profile)
     $VerbosePreference = 'SilentlyContinue'
     $WarningPreference = 'SilentlyContinue'
+
+    if ($script:LazyLoadModules) {
+        try { & $script:LazyLoadModules } catch { Write-Verbose "Required module installation failed: $_" }
+    }
 
     # DockerCompletion - docker/docker-compose tab completion
     if (Get-Command docker -ErrorAction SilentlyContinue) {

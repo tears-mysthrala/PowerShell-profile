@@ -24,7 +24,50 @@ function Write-UpdateStatus {
     )
     $colors = @{ Info = 'White'; Success = 'Green'; Warning = 'Yellow'; Error = 'Red' }
     $prefixes = @{ Info = '>'; Success = 'OK'; Warning = '!!'; Error = 'XX' }
-    Write-Host "[$($prefixes[$Status])] $Message" -ForegroundColor $colors[$Status]
+    $formattedMessage = "[$($prefixes[$Status])] $Message"
+    Write-Host $formattedMessage -ForegroundColor $colors[$Status]
+
+    if ($script:CurrentUpdateLogFile -and (Get-Command Write-UpdateLog -ErrorAction SilentlyContinue)) {
+        Write-UpdateLog "${Status}: $Message" $script:CurrentUpdateLogFile
+    }
+}
+
+function Initialize-PowerShellGallery {
+    try {
+        $nuget = Get-PackageProvider -Name NuGet -ErrorAction SilentlyContinue
+        if (-not $nuget -or $nuget.Version -lt [version]'2.8.5.201') {
+            Install-PackageProvider -Name NuGet -MinimumVersion 2.8.5.201 -Scope CurrentUser -Force -ErrorAction Stop | Out-Null
+        }
+    }
+    catch {
+        Write-UpdateStatus "Failed to initialize NuGet provider: $_" -Status Warning
+    }
+
+    try {
+        $repo = Get-PSRepository -Name PSGallery -ErrorAction SilentlyContinue
+        if ($repo -and $repo.InstallationPolicy -ne 'Trusted') {
+            Set-PSRepository -Name PSGallery -InstallationPolicy Trusted -ErrorAction Stop
+        }
+    }
+    catch {
+        Write-UpdateStatus "Failed to trust PSGallery: $_" -Status Warning
+    }
+}
+
+function Invoke-RequiredModuleRepair {
+    $moduleInstallerPath = Join-Path (Split-Path $PSScriptRoot -Parent) 'ModuleInstaller.ps1'
+    if (-not (Test-Path $moduleInstallerPath)) {
+        Write-UpdateStatus "Module installer not found, skipping required module repair" -Status Warning
+        return
+    }
+
+    try {
+        Import-Module $moduleInstallerPath -Force -ErrorAction Stop
+        Install-RequiredModule
+    }
+    catch {
+        Write-UpdateStatus "Required module repair failed: $_" -Status Warning
+    }
 }
 
 function Update-Winget {
@@ -353,16 +396,30 @@ function Update-PowerShellModule {
     Write-UpdateHeader "Layer 3: PowerShell Modules"
     
     if ($PSCmdlet.ShouldProcess("PowerShell modules", "Update")) {
-        Write-UpdateStatus "Checking for PowerShell module updates..." -Status Info
+        Write-UpdateStatus "Repairing required PowerShell modules before update..." -Status Info
+        Initialize-PowerShellGallery
+        Invoke-RequiredModuleRepair
+
+        if (-not (Get-Command Get-InstalledModule -ErrorAction SilentlyContinue)) {
+            Write-UpdateStatus "PowerShellGet is not available, skipping module updates" -Status Warning
+            return
+        }
+
+        Write-UpdateStatus "Checking installed PowerShell Gallery modules for updates..." -Status Info
         
         $modulesToUpdate = @()
-        $allModules = Get-Module -ListAvailable | 
-            Group-Object Name | 
-            ForEach-Object { $_.Group | Sort-Object Version -Descending | Select-Object -First 1 }
+        $allModules = @(Get-InstalledModule -ErrorAction SilentlyContinue |
+            Group-Object Name |
+            ForEach-Object { $_.Group | Sort-Object Version -Descending | Select-Object -First 1 })
+
+        if ($allModules.Count -eq 0) {
+            Write-UpdateStatus "No PowerShell Gallery modules are currently installed" -Status Success
+            return
+        }
         
         $checked = 0
         $total = $allModules.Count
-        
+
         foreach ($currentModule in $allModules) {
             $checked++
             if ($checked % 10 -eq 0) {
@@ -379,7 +436,7 @@ function Update-PowerShellModule {
                     }
                 }
             } catch {
-                # Silently continue
+                Write-UpdateStatus "Failed to query $($currentModule.Name) in PSGallery: $_" -Status Warning
             }
         }
         
@@ -390,7 +447,8 @@ function Update-PowerShellModule {
             foreach ($mod in $modulesToUpdate) {
                 Write-Host "  -> $($mod.Name): $($mod.CurrentVersion) -> $($mod.NewVersion)" -ForegroundColor Gray
                 try {
-                    Update-Module -Name $mod.Name -Force -ErrorAction Stop
+                    Write-UpdateStatus "Updating $($mod.Name) from $($mod.CurrentVersion) to $($mod.NewVersion)..." -Status Info
+                    Update-Module -Name $mod.Name -Force -AcceptLicense -ErrorAction Stop
                     Write-UpdateStatus "Updated $($mod.Name)" -Status Success
                 } catch {
                     Write-UpdateStatus "Failed to update $($mod.Name): $_" -Status Error

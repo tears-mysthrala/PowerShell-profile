@@ -32,6 +32,7 @@ function Update-System {
     param()
     
     $logFile = Initialize-UpdateLog
+    $script:CurrentUpdateLogFile = $logFile
     
     # Import helper functions
     . "$PSScriptRoot\..\UpdateAppsHelper.ps1"
@@ -114,6 +115,7 @@ function Update-System {
     Write-Host ""
     
     Write-UpdateLog "System update completed" $logFile
+    $script:CurrentUpdateLogFile = $null
 }
 
 # Create aliases
