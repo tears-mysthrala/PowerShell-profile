@@ -1,7 +1,7 @@
 # Quick Reference
 
 > **Auto-generated documentation**
-> Last updated: 2026-03-08 06:21:41
+> Last updated: 2026-03-15 06:30:27
 
 ## Functions
 
@@ -49,7 +49,9 @@
 | `Initialize-CachedToolInit` | Other | Reusable fingerprint-based cache for tool init scripts |
 | `Initialize-Editor` | Utilities | Editor detection and configuration - lazy loaded |
 | `Initialize-EncodingConfig` | Utilities |  |
+| `Initialize-ModuleInstallationEnvironment` | Core |  |
 | `Initialize-NuGetProvider` | Other |  |
+| `Initialize-PowerShellGallery` | Applications |  |
 | `Initialize-UpdateLog` | Applications | Initialize logging |
 | `Install-AiTools` | Other |  |
 | `Install-AllMissingTools` | Applications |  |
@@ -72,6 +74,7 @@
 | `Install-WithWinget` | Other |  |
 | `Invoke-GitPull` | Utilities |  |
 | `Invoke-GitPush` | Utilities |  |
+| `Invoke-RequiredModuleRepair` | Applications |  |
 | `ix` | Utilities |  |
 | `la_with_eza` | Utilities | this should be the same as ls -al no tree |
 | `ll` | Utilities |  |
@@ -85,6 +88,7 @@
 | `Reset-ProfileState` | Utilities |  |
 | `Restart-BIOS` | Utilities | Test-IsAdmin defined in CommonUtils.ps1 |
 | `rgg` | System |  |
+| `Save-ModuleCache` | Core |  |
 | `Search-FileContent` | Utilities |  |
 | `Select-App` | Applications |  |
 | `Set-ClipboardContent` | Utilities | Clipboard Utilities |
@@ -97,6 +101,7 @@
 | `Test-CommandExist` | Applications |  |
 | `Test-IsAdmin` | Utilities |  |
 | `Test-ModuleInstalled` | Core |  |
+| `Test-ModulePathHealthy` | Core |  |
 | `Test-SudoAvailable` | Other |  |
 | `Uninstall-ChocoApp` | Applications |  |
 | `Uninstall-ScoopApp` | Applications |  |
@@ -113,6 +118,7 @@
 | `Update-GitSubmodule` | Applications |  |
 | `Update-GoTools` | Applications |  |
 | `Update-Homebrew` | Applications |  |
+| `Update-ModuleCacheEntry` | Core |  |
 | `Update-NodeEnvironment` | Applications |  |
 | `Update-Npm` | Applications |  |
 | `Update-NpmApp` | Applications |  |
