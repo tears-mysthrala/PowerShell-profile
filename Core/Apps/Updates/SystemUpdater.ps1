@@ -77,6 +77,7 @@ function Update-System {
         Update-Gem
         Update-GoTools
         Update-Composer
+        Update-Gcloud
 
         # ============================================================
         # LAYER 3: APP STORES & FRAMEWORKS

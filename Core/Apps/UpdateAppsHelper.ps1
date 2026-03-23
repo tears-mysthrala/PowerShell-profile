@@ -78,16 +78,16 @@ function Update-Winget {
     if ($PSCmdlet.ShouldProcess("Winget packages", "Update")) {
         if (Test-CommandExist 'winget') {
             Write-UpdateStatus "Updating Winget packages to latest versions (this may take a while)..." -Status Info
-            Write-Host "  Running: winget upgrade -rhu --include-unknown --force" -ForegroundColor DarkGray
+            Write-Host "  Running: winget upgrade -rhu" -ForegroundColor DarkGray
             Write-Host ""
-            
-            # --include-unknown: Include packages with unknown versions
-            # --force: Force upgrade even if hash mismatch
-            # Use sudo to ensure admin privileges for system-wide packages
+
+            # Pinned packages (e.g. Google.CloudSDK) are respected — no --force
+            # Packages with unknown versions are skipped — they should be updated
+            # by their own tooling (e.g. gcloud components update)
             if (Test-CommandExist 'sudo') {
-                sudo winget upgrade -rhu --accept-source-agreements --accept-package-agreements --disable-interactivity --include-unknown --force
+                sudo winget upgrade -rhu --accept-source-agreements --accept-package-agreements --disable-interactivity
             } else {
-                & winget upgrade -rhu --accept-source-agreements --accept-package-agreements --disable-interactivity --include-unknown --force
+                & winget upgrade -rhu --accept-source-agreements --accept-package-agreements --disable-interactivity
             }
             
             if ($LASTEXITCODE -eq 0 -or $LASTEXITCODE -eq -1978335189) {
@@ -105,29 +105,30 @@ function Update-Scoop {
     [CmdletBinding(SupportsShouldProcess)]
     param()
     Write-UpdateHeader "Layer 1: Windows Package Managers - Scoop"
-    
+
     if ($PSCmdlet.ShouldProcess("Scoop packages", "Update")) {
         if (Test-CommandExist 'scoop') {
+            # Run scoop in isolated pwsh processes to avoid .NET type resolution
+            # issues caused by prior steps (e.g. sudo winget) contaminating the
+            # current session's assembly loader.
             Write-UpdateStatus "Updating Scoop to latest version..." -Status Info
-            scoop update
-            
+            pwsh -NoProfile -Command "scoop update"
+
             Write-UpdateStatus "Updating all Scoop apps to latest versions..." -Status Info
-            # scoop update * updates all installed apps
-            # Using -g flag to update global apps as well (requires admin)
             if (Test-CommandExist 'sudo') {
-                sudo scoop update * -g
+                sudo pwsh -NoProfile -Command "scoop update * -g"
             } else {
-                scoop update * -g
+                pwsh -NoProfile -Command "scoop update * -g"
             }
-            
+
             # Cleanup old versions
             Write-UpdateStatus "Cleaning up old Scoop versions..." -Status Info
             if (Test-CommandExist 'sudo') {
-                sudo scoop cleanup * -g
+                sudo pwsh -NoProfile -Command "scoop cleanup * -g"
             } else {
-                scoop cleanup * -g
+                pwsh -NoProfile -Command "scoop cleanup * -g"
             }
-            
+
             Write-UpdateStatus "Scoop update completed" -Status Success
         } else {
             Write-UpdateStatus "Scoop not installed, skipping..." -Status Warning
@@ -884,6 +885,28 @@ function Update-Composer {
     }
 }
 
+function Update-Gcloud {
+    [CmdletBinding(SupportsShouldProcess)]
+    param()
+    Write-UpdateHeader "Layer 2: Development Tools - Google Cloud SDK"
+
+    if ($PSCmdlet.ShouldProcess("Google Cloud SDK", "Update")) {
+        if (Test-CommandExist 'gcloud') {
+            Write-UpdateStatus "Updating Google Cloud SDK components..." -Status Info
+            Write-Host "  Running: gcloud components update --quiet" -ForegroundColor DarkGray
+            Write-Host ""
+            & gcloud components update --quiet
+            if ($LASTEXITCODE -eq 0) {
+                Write-UpdateStatus "Google Cloud SDK update completed" -Status Success
+            } else {
+                Write-UpdateStatus "Google Cloud SDK update finished with exit code: $LASTEXITCODE" -Status Warning
+            }
+        } else {
+            Write-UpdateStatus "Google Cloud SDK not installed, skipping..." -Status Warning
+        }
+    }
+}
+
 function Update-Homebrew {
     [CmdletBinding(SupportsShouldProcess)]
     param()
@@ -1141,23 +1164,34 @@ function Update-WSL {
                 Write-Host "  Updating default WSL distro..." -ForegroundColor DarkGray
                 
                 # Use wsl.exe directly without specifying distro (uses default)
+                # Note: Uses NOPASSWD-safe commands and async stream reads to avoid deadlocks
+                $timeoutSeconds = 300
                 $psi = New-Object System.Diagnostics.ProcessStartInfo
                 $psi.FileName = "wsl.exe"
-                $psi.Arguments = '-e sh -c "if command -v apt-get >/dev/null 2>&1; then sudo apt-get update && sudo apt-get upgrade -y; elif command -v dnf >/dev/null 2>&1; then sudo dnf upgrade -y; elif command -v pacman >/dev/null 2>&1; then sudo pacman -Syu --noconfirm; else echo No package manager found; fi"'
+                $psi.Arguments = '-e sh -c "if command -v apt-get >/dev/null 2>&1; then sudo -n apt-get update -qq && sudo -n apt-get upgrade -y -qq; elif command -v dnf >/dev/null 2>&1; then sudo -n dnf upgrade -y --quiet; elif command -v pacman >/dev/null 2>&1; then sudo -n pacman -Syu --noconfirm; else echo No package manager found; fi"'
                 $psi.RedirectStandardOutput = $true
                 $psi.RedirectStandardError = $true
                 $psi.UseShellExecute = $false
                 $psi.CreateNoWindow = $true
-                
+
                 $process = New-Object System.Diagnostics.Process
                 $process.StartInfo = $psi
                 $process.Start() | Out-Null
+
+                # Read stderr asynchronously to prevent deadlock
+                $stderrTask = $process.StandardError.ReadToEndAsync()
                 $stdout = $process.StandardOutput.ReadToEnd()
-                $stderr = $process.StandardError.ReadToEnd()
-                $process.WaitForExit()
-                
-                if ($process.ExitCode -eq 0) {
+                $stderrTask.Wait()
+                $stderr = $stderrTask.Result
+
+                $exited = $process.WaitForExit($timeoutSeconds * 1000)
+                if (-not $exited) {
+                    $process.Kill()
+                    Write-UpdateStatus "WSL update timed out after ${timeoutSeconds}s (killed)" -Status Warning
+                } elseif ($process.ExitCode -eq 0) {
                     Write-UpdateStatus "Default WSL distro updated successfully" -Status Success
+                } elseif ($stderr -match 'sudo.*password|a password is required') {
+                    Write-UpdateStatus "WSL update skipped: sudo requires a password. Configure NOPASSWD for package manager commands." -Status Warning
                 } else {
                     Write-UpdateStatus "WSL update completed (some distros may need manual update)" -Status Warning
                     if ($stderr -and ($stderr -notmatch 'Could not resolve')) {
