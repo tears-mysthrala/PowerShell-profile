@@ -1,8 +1,8 @@
 # Function Reference
 
 > **Auto-generated documentation**
-> Last updated: 2026-03-15 06:30:27
-> Total functions: 144
+> Last updated: 2026-03-29 06:34:36
+> Total functions: 145
 
 ## Table of Contents
 
@@ -48,11 +48,8 @@ function Select-App {
 
 **Signature:**
 ```powershell
-Write-UpdateLog "${Status}: $Message" $script:CurrentUpdateLogFile
-    }
-}
-
 function Initialize-PowerShellGallery {
+    try {
 ```
 
 <sub>**Source:** `Core\Apps\UpdateAppsHelper.ps1`</sub>
@@ -151,11 +148,9 @@ function Install-Ruby {
 
 **Signature:**
 ```powershell
-Write-UpdateStatus "Failed to trust PSGallery: $_" -Status Warning
-    }
-}
-
 function Invoke-RequiredModuleRepair {
+    $moduleInstallerPath = Join-Path (Split-Path $PSScriptRoot -Parent) 'ModuleInstaller.ps1'
+    if (-not (Test-Path $moduleInstallerPath)) {
 ```
 
 <sub>**Source:** `Core\Apps\UpdateAppsHelper.ps1`</sub>
@@ -219,12 +214,9 @@ function Update-AllApp {
 
 **Signature:**
 ```powershell
-Write-UpdateStatus "Pipx not installed, skipping..." -Status Warning
-        }
-    }
-}
-
 function Update-Cargo {
+    [CmdletBinding(SupportsShouldProcess)]
+    param()
 ```
 
 <sub>**Source:** `Core\Apps\UpdateAppsHelper.ps1`</sub>
@@ -233,12 +225,9 @@ function Update-Cargo {
 
 **Signature:**
 ```powershell
-Write-UpdateStatus "Homebrew not installed in WSL, skipping..." -Status Warning
-        }
-    }
-}
-
 function Update-Chezmoi {
+    [CmdletBinding(SupportsShouldProcess)]
+    param()
 ```
 
 <sub>**Source:** `Core\Apps\UpdateAppsHelper.ps1`</sub>
@@ -247,12 +236,9 @@ function Update-Chezmoi {
 
 **Signature:**
 ```powershell
-Write-UpdateStatus "Scoop not installed, skipping..." -Status Warning
-        }
-    }
-}
-
 function Update-Choco {
+    [CmdletBinding(SupportsShouldProcess)]
+    param()
 ```
 
 <sub>**Source:** `Core\Apps\UpdateAppsHelper.ps1`</sub>
@@ -272,13 +258,9 @@ function Update-ChocoApp {
 
 **Signature:**
 ```powershell
-} else {
-            Write-UpdateStatus "Go not installed, skipping..." -Status Warning
-        }
-    }
-}
-
 function Update-Composer {
+    [CmdletBinding(SupportsShouldProcess)]
+    param()
 ```
 
 <sub>**Source:** `Core\Apps\UpdateAppsHelper.ps1`</sub>
@@ -287,15 +269,9 @@ function Update-Composer {
 
 **Signature:**
 ```powershell
-finally {
-            Set-Location $originalLocation
-        }
-    }
-}
-
-# Additional Development Tools
-
 function Update-Conda {
+    [CmdletBinding(SupportsShouldProcess)]
+    param()
 ```
 
 **Description:**
@@ -308,12 +284,9 @@ Additional Development Tools
 
 **Signature:**
 ```powershell
-Write-UpdateStatus "Conda/Mamba not installed, skipping..." -Status Warning
-        }
-    }
-}
-
 function Update-DotnetTool {
+    [CmdletBinding(SupportsShouldProcess)]
+    param()
 ```
 
 <sub>**Source:** `Core\Apps\UpdateAppsHelper.ps1`</sub>
@@ -322,12 +295,20 @@ function Update-DotnetTool {
 
 **Signature:**
 ```powershell
-Write-UpdateStatus "Starship not installed, skipping..." -Status Warning
-        }
-    }
-}
-
 function Update-Fzf {
+    [CmdletBinding(SupportsShouldProcess)]
+    param()
+```
+
+<sub>**Source:** `Core\Apps\UpdateAppsHelper.ps1`</sub>
+
+### `Update-Gcloud`
+
+**Signature:**
+```powershell
+function Update-Gcloud {
+    [CmdletBinding(SupportsShouldProcess)]
+    param()
 ```
 
 <sub>**Source:** `Core\Apps\UpdateAppsHelper.ps1`</sub>
@@ -336,12 +317,9 @@ function Update-Fzf {
 
 **Signature:**
 ```powershell
-Write-UpdateStatus ".NET SDK not installed, skipping..." -Status Warning
-        }
-    }
-}
-
 function Update-Gem {
+    [CmdletBinding(SupportsShouldProcess)]
+    param()
 ```
 
 <sub>**Source:** `Core\Apps\UpdateAppsHelper.ps1`</sub>
@@ -350,13 +328,11 @@ function Update-Gem {
 
 **Signature:**
 ```powershell
-} else {
-            Write-UpdateStatus "fzf not installed, skipping..." -Status Warning
-        }
-    }
-}
-
 function Update-GitSubmodule {
+    [CmdletBinding(SupportsShouldProcess)]
+    param(
+        [string]$Path = $PWD
+    )
 ```
 
 <sub>**Source:** `Core\Apps\UpdateAppsHelper.ps1`</sub>
@@ -365,12 +341,9 @@ function Update-GitSubmodule {
 
 **Signature:**
 ```powershell
-Write-UpdateStatus "Ruby/Gem not installed, skipping..." -Status Warning
-        }
-    }
-}
-
 function Update-GoTools {
+    [CmdletBinding(SupportsShouldProcess)]
+    param()
 ```
 
 <sub>**Source:** `Core\Apps\UpdateAppsHelper.ps1`</sub>
@@ -379,12 +352,9 @@ function Update-GoTools {
 
 **Signature:**
 ```powershell
-Write-UpdateStatus "Composer not installed, skipping..." -Status Warning
-        }
-    }
-}
-
 function Update-Homebrew {
+    [CmdletBinding(SupportsShouldProcess)]
+    param()
 ```
 
 <sub>**Source:** `Core\Apps\UpdateAppsHelper.ps1`</sub>
@@ -393,13 +363,12 @@ function Update-Homebrew {
 
 **Signature:**
 ```powershell
-} else {
-            Write-UpdateStatus "Python not installed, skipping..." -Status Warning
-        }
-    }
-}
-
 function Update-NodeEnvironment {
+    [CmdletBinding(SupportsShouldProcess)]
+    param(
+        [switch]$CleanCache,
+        [switch]$ForceReinstall
+    )
 ```
 
 <sub>**Source:** `Core\Apps\UpdateAppsHelper.ps1`</sub>
@@ -408,12 +377,9 @@ function Update-NodeEnvironment {
 
 **Signature:**
 ```powershell
-Write-UpdateStatus "Chocolatey not installed, skipping..." -Status Warning
-        }
-    }
-}
-
 function Update-Npm {
+    [CmdletBinding(SupportsShouldProcess)]
+    param()
 ```
 
 <sub>**Source:** `Core\Apps\UpdateAppsHelper.ps1`</sub>
@@ -444,12 +410,9 @@ function Update-PipApp {
 
 **Signature:**
 ```powershell
-Write-UpdateStatus "NPM not installed, skipping..." -Status Warning
-        }
-    }
-}
-
 function Update-Pipx {
+    [CmdletBinding(SupportsShouldProcess)]
+    param()
 ```
 
 <sub>**Source:** `Core\Apps\UpdateAppsHelper.ps1`</sub>
@@ -469,13 +432,11 @@ function Update-PowershellModule {
 
 **Signature:**
 ```powershell
-} else {
-            Write-UpdateStatus "WSL not installed, skipping..." -Status Warning
-        }
-    }
-}
-
 function Update-PythonEnvironment {
+    [CmdletBinding(SupportsShouldProcess)]
+    param(
+        [switch]$CleanCache
+    )
 ```
 
 <sub>**Source:** `Core\Apps\UpdateAppsHelper.ps1`</sub>
@@ -484,12 +445,9 @@ function Update-PythonEnvironment {
 
 **Signature:**
 ```powershell
-Write-UpdateStatus "Winget not installed, skipping..." -Status Warning
-        }
-    }
-}
-
 function Update-Scoop {
+    [CmdletBinding(SupportsShouldProcess)]
+    param()
 ```
 
 <sub>**Source:** `Core\Apps\UpdateAppsHelper.ps1`</sub>
@@ -509,12 +467,9 @@ function Update-ScoopApp {
 
 **Signature:**
 ```powershell
-Write-UpdateStatus "Chezmoi not installed, skipping..." -Status Warning
-        }
-    }
-}
-
 function Update-Starship {
+    [CmdletBinding(SupportsShouldProcess)]
+    param()
 ```
 
 <sub>**Source:** `Core\Apps\UpdateAppsHelper.ps1`</sub>
@@ -523,13 +478,9 @@ function Update-Starship {
 
 **Signature:**
 ```powershell
-Write-UpdateStatus "Windows Update via usoclient failed: $_" -Status Error
-            }
-        }
-    }
-}
-
 function Update-StoreApp {
+    [CmdletBinding(SupportsShouldProcess)]
+    param()
 ```
 
 <sub>**Source:** `Core\Apps\UpdateAppsHelper.ps1`</sub>
@@ -553,12 +504,9 @@ Main update function with visual progress
 
 **Signature:**
 ```powershell
-Write-UpdateStatus "Cargo not installed, skipping..." -Status Warning
-        }
-    }
-}
-
 function Update-Uv {
+    [CmdletBinding(SupportsShouldProcess)]
+    param()
 ```
 
 <sub>**Source:** `Core\Apps\UpdateAppsHelper.ps1`</sub>
@@ -567,12 +515,11 @@ function Update-Uv {
 
 **Signature:**
 ```powershell
-Write-UpdateStatus "Winget not available, skipping Store check..." -Status Warning
-        }
-    }
-}
-
 function Update-Vcpkg {
+    [CmdletBinding(SupportsShouldProcess)]
+    param(
+        [string[]]$VcpkgRoots = @('C:\vcpkg', 'D:\opt\vcpkg', 'C:\tools\vcpkg')
+    )
 ```
 
 <sub>**Source:** `Core\Apps\UpdateAppsHelper.ps1`</sub>
@@ -581,13 +528,9 @@ function Update-Vcpkg {
 
 **Signature:**
 ```powershell
-} else {
-            Write-UpdateStatus "Git not installed, skipping..." -Status Warning
-        }
-    }
-}
-
 function Update-VSCodeExtension {
+    [CmdletBinding(SupportsShouldProcess)]
+    param()
 ```
 
 <sub>**Source:** `Core\Apps\UpdateAppsHelper.ps1`</sub>
@@ -596,14 +539,9 @@ function Update-VSCodeExtension {
 
 **Signature:**
 ```powershell
-Write-UpdateStatus "Failed to update $($mod.Name): $_" -Status Error
-                }
-            }
-        }
-    }
-}
-
 function Update-WindowsSystem {
+    [CmdletBinding(SupportsShouldProcess)]
+    param()
 ```
 
 <sub>**Source:** `Core\Apps\UpdateAppsHelper.ps1`</sub>
@@ -623,11 +561,9 @@ function Update-WindowsUpdate {
 
 **Signature:**
 ```powershell
-Write-UpdateStatus "Required module repair failed: $_" -Status Warning
-    }
-}
-
 function Update-Winget {
+    [CmdletBinding(SupportsShouldProcess)]
+    param()
 ```
 
 <sub>**Source:** `Core\Apps\UpdateAppsHelper.ps1`</sub>
@@ -636,13 +572,9 @@ function Update-Winget {
 
 **Signature:**
 ```powershell
-} else {
-            Write-UpdateStatus "VS Code not found, skipping..." -Status Warning
-        }
-    }
-}
-
 function Update-WSL {
+    [CmdletBinding(SupportsShouldProcess)]
+    param()
 ```
 
 <sub>**Source:** `Core\Apps\UpdateAppsHelper.ps1`</sub>

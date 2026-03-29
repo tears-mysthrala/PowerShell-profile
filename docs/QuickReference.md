@@ -1,7 +1,7 @@
 # Quick Reference
 
 > **Auto-generated documentation**
-> Last updated: 2026-03-15 06:30:27
+> Last updated: 2026-03-29 06:34:36
 
 ## Functions
 
@@ -114,6 +114,7 @@
 | `Update-Conda` | Applications | Additional Development Tools |
 | `Update-DotnetTool` | Applications |  |
 | `Update-Fzf` | Applications |  |
+| `Update-Gcloud` | Applications |  |
 | `Update-Gem` | Applications |  |
 | `Update-GitSubmodule` | Applications |  |
 | `Update-GoTools` | Applications |  |
