@@ -207,7 +207,7 @@ function Update-Npm {
     [CmdletBinding(SupportsShouldProcess)]
     param()
     Write-UpdateHeader "Layer 2: Development Tools - NPM"
-    
+
     if ($PSCmdlet.ShouldProcess("NPM global packages", "Update")) {
         if (Test-CommandExist 'npm') {
             # ============================================================
@@ -375,8 +375,14 @@ function Update-Uv {
     
     if ($PSCmdlet.ShouldProcess("Uv tool packages", "Update")) {
         if (Test-CommandExist 'uv') {
+            # Use the standalone installer's uv for self-update to avoid conflict with pip-installed copy
+            $uvStandalone = "$env:USERPROFILE\.local\bin\uv.exe"
             Write-UpdateStatus "Updating Uv self to latest version..." -Status Info
-            & uv self update
+            if (Test-Path $uvStandalone) {
+                & $uvStandalone self update
+            } else {
+                Write-Host "  Skipping uv self update (standalone binary not found at $uvStandalone)" -ForegroundColor DarkGray
+            }
             
             Write-UpdateStatus "Updating all Uv tool packages to latest versions..." -Status Info
             Write-Host "  Running: uv tool upgrade --all" -ForegroundColor DarkGray
@@ -455,6 +461,97 @@ function Update-PowerShellModule {
                     Write-UpdateStatus "Failed to update $($mod.Name): $_" -Status Error
                 }
             }
+        }
+    }
+}
+
+function Update-PowerShellRuntime {
+    [CmdletBinding(SupportsShouldProcess)]
+    param()
+    Write-UpdateHeader "Layer 5: PowerShell Runtime"
+
+    if (-not $IsWindows) {
+        Write-UpdateStatus "PowerShell runtime MSI updater is Windows-only, skipping..." -Status Warning
+        return
+    }
+
+    if (-not [Environment]::Is64BitOperatingSystem) {
+        Write-UpdateStatus "PowerShell runtime updater only handles win-x64, skipping..." -Status Warning
+        return
+    }
+
+    if (-not $PSCmdlet.ShouldProcess("PowerShell runtime", "Update from official GitHub MSI")) {
+        return
+    }
+
+    $currentVersion = [version]$PSVersionTable.PSVersion
+    Write-UpdateStatus "Checking latest stable PowerShell release..." -Status Info
+
+    try {
+        $headers = @{ 'User-Agent' = 'PowerShell-SystemUpdater' }
+        $releases = Invoke-RestMethod -Uri 'https://api.github.com/repos/PowerShell/PowerShell/releases?per_page=20' -Headers $headers -ErrorAction Stop
+        $latestStable = @($releases |
+            Where-Object { -not $_.prerelease -and -not $_.draft -and $_.tag_name -match '^v\d+\.\d+\.\d+$' } |
+            Select-Object -First 1)[0]
+
+        if (-not $latestStable) {
+            Write-UpdateStatus "Could not determine latest stable PowerShell release" -Status Warning
+            return
+        }
+
+        $latestVersion = [version]($latestStable.tag_name.TrimStart('v'))
+        if ($currentVersion -ge $latestVersion) {
+            Write-UpdateStatus "PowerShell is already current ($currentVersion)" -Status Success
+            return
+        }
+
+        $asset = @($latestStable.assets |
+            Where-Object { $_.name -eq "PowerShell-$latestVersion-win-x64.msi" } |
+            Select-Object -First 1)[0]
+
+        if (-not $asset) {
+            Write-UpdateStatus "PowerShell MSI asset not found for $latestVersion" -Status Warning
+            return
+        }
+
+        Write-UpdateStatus "PowerShell: $currentVersion -> $latestVersion" -Status Info
+        $downloadDir = Join-Path $env:TEMP "powershell-$latestVersion-update"
+        New-Item -ItemType Directory -Force -Path $downloadDir | Out-Null
+        $msiPath = Join-Path $downloadDir $asset.name
+
+        Write-UpdateStatus "Downloading official PowerShell MSI..." -Status Info
+        Invoke-WebRequest -Uri $asset.browser_download_url -OutFile $msiPath -UseBasicParsing -ErrorAction Stop
+
+        $signature = Get-AuthenticodeSignature -FilePath $msiPath
+        if ($signature.Status -ne 'Valid' -or $signature.SignerCertificate.Subject -notlike '*Microsoft Corporation*') {
+            Write-UpdateStatus "Downloaded MSI signature is not valid Microsoft-signed content; refusing install" -Status Error
+            return
+        }
+
+        Write-UpdateStatus "MSI signature validated: $($signature.SignerCertificate.Subject)" -Status Success
+
+        if (-not (Test-CommandExist 'sudo')) {
+            Write-UpdateStatus "sudo not available; PowerShell runtime update requires elevation" -Status Warning
+            return
+        }
+
+        Write-UpdateStatus "Installing PowerShell $latestVersion with msiexec via sudo..." -Status Info
+        Write-Host "  Running: sudo msiexec /i $msiPath /qn /norestart" -ForegroundColor DarkGray
+        sudo msiexec.exe /i $msiPath /qn /norestart USE_MU=1 ENABLE_MU=1 ADD_PATH=1 REGISTER_MANIFEST=1
+        $installExitCode = $LASTEXITCODE
+
+        if ($installExitCode -eq 0) {
+            Write-UpdateStatus "PowerShell runtime update completed. Restart terminals to use $latestVersion everywhere." -Status Success
+        } else {
+            Write-UpdateStatus "PowerShell runtime update finished with exit code: $installExitCode" -Status Warning
+        }
+    }
+    catch {
+        Write-UpdateStatus "PowerShell runtime update failed: $_" -Status Error
+    }
+    finally {
+        if ($downloadDir -and (Test-Path $downloadDir)) {
+            Remove-Item -LiteralPath $downloadDir -Recurse -Force -ErrorAction SilentlyContinue
         }
     }
 }
@@ -749,11 +846,15 @@ function Update-Gem {
                 # But we want latest, so no conservative flag
                 if (Test-CommandExist 'sudo') {
                     sudo gem update
-                    Write-Host "  Running: gem cleanup" -ForegroundColor DarkGray
-                    sudo gem cleanup
                 } else {
                     & gem update
-                    Write-Host "  Running: gem cleanup" -ForegroundColor DarkGray
+                }
+                # gem update exits non-zero if any gem fails (e.g. version incompatibility) — ignore exit code
+                $global:LASTEXITCODE = 0
+                Write-Host "  Running: gem cleanup" -ForegroundColor DarkGray
+                if (Test-CommandExist 'sudo') {
+                    sudo gem cleanup
+                } else {
                     & gem cleanup
                 }
                 
@@ -893,9 +994,15 @@ function Update-Gcloud {
     if ($PSCmdlet.ShouldProcess("Google Cloud SDK", "Update")) {
         if (Test-CommandExist 'gcloud') {
             Write-UpdateStatus "Updating Google Cloud SDK components..." -Status Info
-            Write-Host "  Running: gcloud components update --quiet" -ForegroundColor DarkGray
+            # gcloud requires CLOUDSDK_PYTHON within the same elevated process — set it inline via sudo powershell
+            $gcloudPython = & gcloud components copy-bundled-python 2>$null
+            Write-Host "  Running: sudo gcloud components update --quiet" -ForegroundColor DarkGray
             Write-Host ""
-            & gcloud components update --quiet
+            if ($gcloudPython) {
+                sudo powershell -NoProfile -Command "`$env:CLOUDSDK_PYTHON='$gcloudPython'; gcloud components update --quiet"
+            } else {
+                sudo gcloud components update --quiet
+            }
             if ($LASTEXITCODE -eq 0) {
                 Write-UpdateStatus "Google Cloud SDK update completed" -Status Success
             } else {
@@ -1303,7 +1410,7 @@ function Update-NodeEnvironment {
         [switch]$ForceReinstall
     )
     Write-UpdateHeader "Layer 3: Node.js Projects"
-    
+
     if ($PSCmdlet.ShouldProcess("Node.js projects", "Update")) {
         if (Test-CommandExist 'npm') {
             Write-UpdateStatus "Checking for Node.js projects with outdated packages..." -Status Info

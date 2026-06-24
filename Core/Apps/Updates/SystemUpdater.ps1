@@ -95,6 +95,9 @@ function Update-System {
         Update-Fzf
         Update-VSCodeExtension
         Update-GitSubmodule
+
+        # Keep this last: updating pwsh can interrupt the current host process.
+        Update-PowerShellRuntime
     }
     catch {
         Write-UpdateErrorLog $_.Exception.Message "System Update" $logFile

@@ -476,3 +476,63 @@ Measure-Block 'Starship Init' {
         Initialize-CachedToolInit -ToolName 'starship' -InitCommand { starship init powershell --print-full-init } -CacheBaseName 'starship-init-cache' -ConfigPath $starshipConfigPath
     }
 }
+
+# Codex CLI wrappers
+$script:CodexCliCandidates = @(
+    "$env:USERPROFILE\AppData\Roaming\npm\codex.cmd",
+    "$env:USERPROFILE\Tools\codex\codex.exe",
+    "$env:USERPROFILE\AppData\Local\Microsoft\WinGet\Links\codex.exe"
+)
+
+function Get-CodexCliPath {
+    return $script:CodexCliCandidates | Where-Object { Test-Path -LiteralPath $_ } | Select-Object -First 1
+}
+
+$script:CodexCliPath = Get-CodexCliPath
+function codex {
+    [CmdletBinding()]
+    param(
+        [Parameter(ValueFromRemainingArguments = $true)]
+        [string[]]$Arguments
+    )
+
+    if (-not $script:CodexCliPath -or -not (Test-Path -LiteralPath $script:CodexCliPath)) {
+        throw "Codex CLI not found at $script:CodexCliPath"
+    }
+
+    $hasModeOverride = $false
+    foreach ($arg in @($Arguments)) {
+        if ($arg -in @(
+            '--dangerously-bypass-approvals-and-sandbox',
+            '--full-auto',
+            '--sandbox',
+            '-s',
+            '--ask-for-approval',
+            '-a'
+        )) {
+            $hasModeOverride = $true
+            break
+        }
+    }
+
+    if ($hasModeOverride) {
+        & $script:CodexCliPath @Arguments
+    }
+    else {
+        & $script:CodexCliPath --dangerously-bypass-approvals-and-sandbox @Arguments
+    }
+}
+
+function codex-safe {
+    [CmdletBinding()]
+    param(
+        [Parameter(ValueFromRemainingArguments = $true)]
+        [string[]]$Arguments
+    )
+
+    if (-not $script:CodexCliPath -or -not (Test-Path -LiteralPath $script:CodexCliPath)) {
+        throw "Codex CLI not found at $script:CodexCliPath"
+    }
+
+    & $script:CodexCliPath @Arguments
+}

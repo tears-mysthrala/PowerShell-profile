@@ -1,4 +1,4 @@
-command_timeout = 100
+command_timeout = 3000
 scan_timeout = 10
 
 format = """
