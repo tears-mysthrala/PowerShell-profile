@@ -1,0 +1,82 @@
+name: CI
+
+on:
+    push:
+        branches: [main]
+    pull_request:
+        branches: [main]
+    workflow_dispatch:
+
+jobs:
+    lint-and-load:
+        runs-on: windows-latest
+
+        steps:
+            - name: Checkout repository
+              uses: actions/checkout@v4
+
+            - name: Show PowerShell version
+              shell: pwsh
+              run: |
+                  Write-Host "PowerShell Version: $($PSVersionTable.PSVersion)"
+                  Write-Host "OS: $($PSVersionTable.OS)"
+
+            - name: Validate syntax of all PowerShell scripts
+              shell: pwsh
+              run: |
+                  $failed = $false
+                  $files = Get-ChildItem -Path . -Recurse -Include *.ps1, *.psm1, *.psd1 -File
+                  foreach ($file in $files) {
+                      $tokens = $null
+                      $errors = $null
+                      $null = [System.Management.Automation.Language.Parser]::ParseFile(
+                          $file.FullName, [ref]$tokens, [ref]$errors)
+                      if ($errors.Count -gt 0) {
+                          $failed = $true
+                          foreach ($err in $errors) {
+                              Write-Host "::error file=$($file.FullName),line=$($err.Extent.StartLineNumber)::$($err.Message)"
+                          }
+                      }
+                  }
+                  Write-Host "Parsed $($files.Count) PowerShell files."
+                  if ($failed) { exit 1 }
+                  Write-Host "Syntax validation passed."
+
+            - name: Install PSScriptAnalyzer
+              shell: pwsh
+              run: |
+                  Set-PSRepository -Name PSGallery -InstallationPolicy Trusted
+                  Install-Module PSScriptAnalyzer -Scope CurrentUser -Force -MinimumVersion 1.21.0
+
+            - name: Run PSScriptAnalyzer
+              shell: pwsh
+              run: |
+                  $results = Invoke-ScriptAnalyzer -Path . -Recurse -Settings .psscriptanalyzersettings.psd1
+                  $results | ForEach-Object {
+                      $level = if ($_.Severity -eq 'Error') { 'error' } else { 'warning' }
+                      Write-Host "::$level file=$($_.ScriptPath),line=$($_.Line)::$($_.RuleName): $($_.Message)"
+                  }
+                  $errors = @($results | Where-Object Severity -eq 'Error')
+                  $warnings = @($results | Where-Object Severity -ne 'Error')
+                  Write-Host "PSScriptAnalyzer: $($errors.Count) errors, $($warnings.Count) warnings/information."
+                  if ($errors.Count -gt 0) { exit 1 }
+
+            - name: Smoke test - dot-source the profile
+              shell: pwsh
+              run: |
+                  # Best-effort load test. Optional CLI tools (starship, zoxide, gh, ...)
+                  # are not installed on the runner; the profile guards their init behind
+                  # command-existence checks, so they are skipped. In a non-interactive
+                  # session the profile returns early after its base setup, so this test
+                  # covers the always-executed section plus whatever the runner session
+                  # allows. Full interactive behavior (prompt, PSReadLine handlers) is
+                  # not covered here.
+                  $ErrorActionPreference = 'Stop'
+                  try {
+                      . ./Microsoft.PowerShell_profile.ps1
+                  }
+                  catch {
+                      Write-Host "::error::Profile dot-source failed: $_"
+                      exit 1
+                  }
+                  Write-Host "Profile dot-source succeeded."
