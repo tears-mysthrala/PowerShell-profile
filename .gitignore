@@ -29,6 +29,14 @@ env-cache.clixml
 utils-cache.clixml
 ModuleCache/
 
+# Generated tool init caches (regenerated automatically at profile load)
+Config/*-cache.ps1
+
+# Generated analysis reports (PSScriptAnalyzer and similar tooling)
+pssa_*.json
+*-pssa-report*.json
+*.sarif
+
 # Runtime state databases
 .zo/
 
