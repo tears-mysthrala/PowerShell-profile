@@ -75,7 +75,7 @@ The profile includes aggressive caching optimizations:
 - **Command cache**: Pre-cached existence checks for common tools
 - **Init cache**: Starship/Zoxide/GH CLI initialization cached and auto-invalidated
 
-**Expected load time:** ~500-600ms on modern hardware
+**Expected load time:** ~500-600ms as measured on the author's machine. Your actual load time will vary with hardware, installed tools, and configuration — this is a reference data point, not a guarantee.
 
 ### Cache Management
 

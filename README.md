@@ -19,8 +19,9 @@ git clone https://github.com/tears-mysthrala/PowerShell-profile.git $HOME\Docume
 
 - **[⚙️ Installation Guide](docs/INSTALLATION.md)** - Setup instructions, requirements & troubleshooting
 - **[🔧 Customization Guide](docs/CUSTOMIZATION.md)** - Extend and modify the environment
-- **[📖 Function Reference](docs/FunctionReference.md)** - Complete function signatures and documentation (628 functions)
+- **[📖 Function Reference](docs/FunctionReference.md)** - Complete function signatures and documentation (145 functions)
 - **[📋 Quick Reference](docs/QuickReference.md)** - Fast lookup table for functions and aliases
+- **[🗺️ Roadmap](ROADMAP.md)** - Current state, plans, and explicit non-goals
 
 ## Key Features
 
@@ -33,7 +34,7 @@ git clone https://github.com/tears-mysthrala/PowerShell-profile.git $HOME\Docume
 
 ## Performance
 
-**Current load time: ~500-600ms** (optimized with aggressive caching)
+**Load time measured on the author's machine: ~500-600ms** (optimized with aggressive caching). Actual load time depends on your hardware, installed tools, and network drives — treat this as a reference data point, not a guarantee. Measure your own with the built-in timing breakdown shown at profile load.
 
 ### Optimization Features
 
@@ -78,7 +79,7 @@ This project uses local validation and documentation generation. Before committi
 
 When adding new tools or dependencies:
 
-1. Update `tools/DependencyInstaller.ps1` with the new tool definition
+1. Update `tools/install-dependencies.ps1` with the new tool definition
 2. Add installation methods for supported package managers (winget, choco, scoop)
 3. Update the documentation in `docs/INSTALLATION.md`
 4. Test the installation: `Install-Dependencies -Tool <toolname>`
@@ -86,8 +87,8 @@ When adding new tools or dependencies:
 
 ## 📊 Statistics
 
-- **Functions:** 156
+- **Functions:** 145 in the profile itself (`Core/` + main profile script); 179 across all repository scripts including `tools/`. Measured with the PowerShell AST parser.
 - **Aliases:** 40
 - **Categories:** 5
-- **Last Updated:** 2026-03-07
+- **Last Updated:** 2026-07-28
 
