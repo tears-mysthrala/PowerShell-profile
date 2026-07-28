@@ -92,3 +92,6 @@ When adding new tools or dependencies:
 - **Categories:** 5
 - **Last Updated:** 2026-07-28
 
+## License
+
+Released under the [MIT License](LICENSE).
