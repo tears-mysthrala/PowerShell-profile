@@ -182,9 +182,11 @@ Measure-Block 'Core Setup' {
 
 # Initialize shell enhancements - PSReadLine
 # Configure PSReadLine with full features enabled
+$supportsVirtualTerminal = $Host.UI.SupportsVirtualTerminal -and
+    -not [Console]::IsOutputRedirected -and
+    $env:TERM -ne 'dumb'
+
 $PSReadLineOptions = @{
-    PredictionSource              = 'History'
-    PredictionViewStyle           = 'ListView'
     HistorySearchCursorMovesToEnd = $true
     HistoryNoDuplicates           = $true
     MaximumHistoryCount           = 10000
@@ -193,6 +195,10 @@ $PSReadLineOptions = @{
         # Don't save commands containing secrets to history on disk
         $Line -notmatch '(?i)(password|secret|token|apikey|api_key|api-key|credential|secure[-_]?string|convertto-securestring)'
     }
+}
+if ($supportsVirtualTerminal) {
+    $PSReadLineOptions.PredictionSource = 'History'
+    $PSReadLineOptions.PredictionViewStyle = 'ListView'
 }
 try {
     Set-PSReadLineOption @PSReadLineOptions
@@ -203,8 +209,10 @@ try {
     # Undo/redo
     Set-PSReadLineKeyHandler -Key Ctrl+z -Function Undo
     Set-PSReadLineKeyHandler -Key Ctrl+y -Function Redo
-    # Toggle between ListView and InlineView
-    Set-PSReadLineKeyHandler -Key F2 -Function SwitchPredictionView
+    if ($supportsVirtualTerminal) {
+        # Toggle between ListView and InlineView
+        Set-PSReadLineKeyHandler -Key F2 -Function SwitchPredictionView
+    }
     # Force menu complete
     Set-PSReadLineKeyHandler -Key Ctrl+Spacebar -Function MenuComplete
     # Select all
@@ -230,10 +238,6 @@ Register-EngineEvent -SourceIdentifier PowerShell.OnIdle -MaxTriggerCount 1 -Act
     # Suppress verbose output from module imports (inherits 'Continue' from profile)
     $VerbosePreference = 'SilentlyContinue'
     $WarningPreference = 'SilentlyContinue'
-
-    if ($script:LazyLoadModules) {
-        try { & $script:LazyLoadModules } catch { Write-Verbose "Required module installation failed: $_" }
-    }
 
     # DockerCompletion - docker/docker-compose tab completion
     if (Get-Command docker -ErrorAction SilentlyContinue) {
@@ -444,7 +448,7 @@ if (-not $script:ProfileSuppressInfoLogs -and $script:profileTiming) {
 
 # Initialize Starship with a proper full-init cache (no process spawn on each load)
 Measure-Block 'Starship Init' {
-    if ($script:CommandExistsCache['starship']) {
+    if ($supportsVirtualTerminal -and $script:CommandExistsCache['starship']) {
         $starshipConfigPath = Join-Path $PSScriptRoot 'Config\starship.toml'
         $ENV:STARSHIP_CONFIG = $starshipConfigPath
         Initialize-CachedToolInit -ToolName 'starship' -InitCommand { starship init powershell --print-full-init } -CacheBaseName 'starship-init-cache' -ConfigPath $starshipConfigPath

@@ -19,9 +19,21 @@ $commonCommands = @('bat', 'eza', 'lazygit', 'fd', 'nvim', 'code', 'zoxide', 'gh
 foreach ($cmd in $commonCommands) {
     Test-CommandExist $cmd | Out-Null
 }
-# SSH alias for Proxmox
-function akkorokamui { ssh -p 54226 tears@192.168.1.100 }
-Set-Alias -Name proxmox -Value akkorokamui
+# SSH helper for Proxmox. Configure PROXMOX_SSH_TARGET (for example, user@host)
+# and optionally PROXMOX_SSH_PORT outside the repository.
+function Connect-Proxmox {
+  param(
+    [string]$Target = $env:PROXMOX_SSH_TARGET,
+    [int]$Port = $(if ($env:PROXMOX_SSH_PORT) { $env:PROXMOX_SSH_PORT } else { 22 })
+  )
+
+  if ([string]::IsNullOrWhiteSpace($Target)) {
+    throw 'Set PROXMOX_SSH_TARGET or pass -Target user@host.'
+  }
+
+  ssh -p $Port $Target
+}
+Set-Alias -Name proxmox -Value Connect-Proxmox
 
 # Navigation aliases and utilities
 function .. { Set-Location .\.. }
@@ -85,14 +97,11 @@ if ($script:hasLazygit) {
 $script:hasBat = Test-CommandExist 'bat'
 if ($script:hasBat) {
   $env:BAT_THEME = 'Nord'
-  Remove-Item Alias:cat -Force -ErrorAction SilentlyContinue
-  Set-Alias -Name cat -Value bat -Force -Option AllScope -Scope Global
 }
 
 # Configure eza if available
 $script:hasEza = Test-CommandExist 'eza'
 if ($script:hasEza) {
-  Remove-Item Alias:ls -Force -ErrorAction SilentlyContinue
   function ls_with_eza {
     param([Parameter(ValueFromRemainingArguments = $true)]$params)
     $ezaOutput = $(if ($params) {
@@ -130,7 +139,7 @@ if ($script:hasEza) {
   function lt_with_eza {
     eza --icons --git --color=always --group-directories-first --long --header --tree --sort=name
   }
-  Set-Alias -Name ls -Value ls_with_eza -Force -Option AllScope -Scope Global
+  Set-Alias -Name l -Value ls_with_eza -Force -Option AllScope -Scope Global
   Set-Alias -Name ll -Value ll_with_eza -Force -Option AllScope -Scope Global
   Set-Alias -Name la -Value la_with_eza -Force -Option AllScope -Scope Global
   Set-Alias -Name lt -Value lt_with_eza -Force -Option AllScope -Scope Global
@@ -173,34 +182,6 @@ function Expand-ZipFile($file) {
 }
 Set-Alias -Name unzip -Value Expand-ZipFile
 
-function hb {
-  if ($args.Length -eq 0) {
-    Write-Error "No file path specified."
-    return
-  }
-
-  $FilePath = $args[0]
-
-  if (Test-Path $FilePath) {
-    $Content = Get-Content $FilePath -Raw
-  }
-  else {
-    Write-Error "File path does not exist."
-    return
-  }
-
-  $uri = "https://bin.christitus.com/documents"
-  try {
-    $response = Invoke-RestMethod -Uri $uri -Method Post -Body $Content -TimeoutSec 10 -ErrorAction Stop
-    $hasteKey = $response.key
-    $url = "https://bin.christitus.com/$hasteKey"
-    Write-Output $url
-  }
-  catch {
-    Write-Error "Failed to upload the document. Error: $_"
-  }
-}
-
 function head {
   param($Path, $n = 10)
   Get-Content $Path -Head $n
@@ -209,10 +190,6 @@ function head {
 function tail {
   param($Path, $n = 10)
   Get-Content $Path -Tail $n
-}
-
-function ix ($file) {
-  curl.exe -m 30 -F "f:1=@$file" ix.io
 }
 
 # Test-IsAdmin defined in CommonUtils.ps1
@@ -313,11 +290,6 @@ function Find-String($regex, $dir) {
   $input | Select-String $regex
 }
 Set-Alias -Name grep -Value Find-String
-
-function Edit-FileContent($file, $find, $replace) {
-  (Get-Content $file).replace("$find", $replace) | Set-Content $file
-}
-Set-Alias -Name sed -Value Edit-FileContent
 
 function Get-CommandPath($command) {
   Get-Command -Name $command -ErrorAction SilentlyContinue |
