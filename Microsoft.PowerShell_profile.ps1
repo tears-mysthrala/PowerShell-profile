@@ -109,9 +109,6 @@ if ($MyInvocation.Line -notmatch '--no-suppress') {
     $script:ProfileSuppressInfoLogs = $true
 }
 
-# Load core configuration
-$global:WarningPreference = $global:VerbosePreference = $global:InformationPreference = 'SilentlyContinue'
-
 Measure-Block 'Core Setup' {
     try {
         # Create module cache directory if it doesn't exist
@@ -178,31 +175,6 @@ Measure-Block 'Core Setup' {
     catch {
         Write-Error "Failed to load core modules: $_"
         Write-Warning "Some features may not be available"
-    }
-}
-
-# Configure shell environment
-# Load aliases
-$aliasPath = "$ProfileDir\Core\Utils\unified_aliases.ps1"
-if (Test-CachedPath $aliasPath) {
-    try {
-        # Temporarily suppress warnings (log this action)
-        if (-not $script:ProfileSuppressInfoLogs) {
-            Write-Host "[INFO] Suppressing warnings and verbose output for alias loading..." -ForegroundColor Yellow
-        }
-        $WarningPreference = 'SilentlyContinue'
-        $VerbosePreference = 'SilentlyContinue'
-        try {
-            . $aliasPath
-        }
-        finally {
-            # Restore preferences (keep SilentlyContinue as set at profile top)
-            $WarningPreference = 'SilentlyContinue'
-            $VerbosePreference = 'SilentlyContinue'
-        }
-    }
-    catch {
-        Write-Warning "Failed to load aliases: $_"
     }
 }
 
@@ -475,64 +447,4 @@ Measure-Block 'Starship Init' {
         $ENV:STARSHIP_CONFIG = $starshipConfigPath
         Initialize-CachedToolInit -ToolName 'starship' -InitCommand { starship init powershell --print-full-init } -CacheBaseName 'starship-init-cache' -ConfigPath $starshipConfigPath
     }
-}
-
-# Codex CLI wrappers
-$script:CodexCliCandidates = @(
-    "$env:USERPROFILE\AppData\Roaming\npm\codex.cmd",
-    "$env:USERPROFILE\Tools\codex\codex.exe",
-    "$env:USERPROFILE\AppData\Local\Microsoft\WinGet\Links\codex.exe"
-)
-
-function Get-CodexCliPath {
-    return $script:CodexCliCandidates | Where-Object { Test-Path -LiteralPath $_ } | Select-Object -First 1
-}
-
-$script:CodexCliPath = Get-CodexCliPath
-function codex {
-    [CmdletBinding()]
-    param(
-        [Parameter(ValueFromRemainingArguments = $true)]
-        [string[]]$Arguments
-    )
-
-    if (-not $script:CodexCliPath -or -not (Test-Path -LiteralPath $script:CodexCliPath)) {
-        throw "Codex CLI not found at $script:CodexCliPath"
-    }
-
-    $hasModeOverride = $false
-    foreach ($arg in @($Arguments)) {
-        if ($arg -in @(
-            '--dangerously-bypass-approvals-and-sandbox',
-            '--full-auto',
-            '--sandbox',
-            '-s',
-            '--ask-for-approval',
-            '-a'
-        )) {
-            $hasModeOverride = $true
-            break
-        }
-    }
-
-    if ($hasModeOverride) {
-        & $script:CodexCliPath @Arguments
-    }
-    else {
-        & $script:CodexCliPath --dangerously-bypass-approvals-and-sandbox @Arguments
-    }
-}
-
-function codex-safe {
-    [CmdletBinding()]
-    param(
-        [Parameter(ValueFromRemainingArguments = $true)]
-        [string[]]$Arguments
-    )
-
-    if (-not $script:CodexCliPath -or -not (Test-Path -LiteralPath $script:CodexCliPath)) {
-        throw "Codex CLI not found at $script:CodexCliPath"
-    }
-
-    & $script:CodexCliPath @Arguments
 }

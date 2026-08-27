@@ -253,27 +253,6 @@ function Get-Font {
   return $AllFonts
 }
 
-function Upgrade {
-  if (-not (Get-Command pwsh -ErrorAction SilentlyContinue)) {
-    Write-Host "Installing PowerShell 7..." -ForegroundColor Cyan
-    winget install --id Microsoft.Powershell --source winget -y
-    Write-Host "Please restart your shell to use PowerShell 7." -ForegroundColor Yellow
-    return
-  }
-
-  if (-not (Test-IsAdmin)) {
-    if (Get-Command sudo -ErrorAction SilentlyContinue) {
-      sudo pwsh -ExecutionPolicy Bypass -File "$PSScriptRoot\..\Apps\UpdateApps.ps1"
-    }
-    else {
-      Start-Process pwsh -ArgumentList "-ExecutionPolicy Bypass -File `"$PSScriptRoot\..\Apps\UpdateApps.ps1`"" -Verb RunAs
-    }
-  }
-  else {
-    . "$PSScriptRoot\..\Apps\UpdateApps.ps1"
-  }
-}
-
 # Quick Access to System Information
 function sysinfo { Get-ComputerInfo }
 

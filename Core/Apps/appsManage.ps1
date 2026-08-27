@@ -12,7 +12,7 @@ function Update-AllApp {
         Write-Host "Starting system-wide update..." -ForegroundColor Cyan
 
         try {
-            . "$script:ModuleRoot\UpdateApps.ps1"
+            Update-System
             Write-Host "Update completed successfully." -ForegroundColor Green
         }
         catch {
