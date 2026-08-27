@@ -126,7 +126,7 @@ function Install-Chezmoi {
     Write-InstallStatus "Installing Chezmoi..." -Status Info
     try {
         # Intentar con winget primero
-        $result = winget install twpayne.chezmoi --silent --accept-source-agreements --accept-package-agreements 2>&1
+        winget install twpayne.chezmoi --silent --accept-source-agreements --accept-package-agreements
         
         if ($LASTEXITCODE -eq 0) {
             Write-InstallStatus "Chezmoi installed successfully!" -Status Success

@@ -17,7 +17,7 @@ $ErrorActionPreference = 'Continue'
 
 #region Helper Functions
 
-function Update-SessionPath {
+function Sync-SessionPath {
     # Refresh PATH from registry so newly installed tools are found in the current session
     $machinePath = [System.Environment]::GetEnvironmentVariable('Path', 'Machine')
     $userPath = [System.Environment]::GetEnvironmentVariable('Path', 'User')
@@ -69,11 +69,6 @@ function Initialize-NuGetProvider {
         }
     }
 
-    # Trust PSGallery so Install-Module doesn't prompt
-    $repo = Get-PSRepository -Name PSGallery -ErrorAction SilentlyContinue
-    if ($repo -and $repo.InstallationPolicy -ne 'Trusted') {
-        Set-PSRepository -Name PSGallery -InstallationPolicy Trusted -ErrorAction SilentlyContinue
-    }
 }
 
 function Install-WithScoop {
@@ -102,8 +97,14 @@ function Install-WithWinget {
         $output = winget install --id $PackageId -e --source winget --silent --accept-source-agreements --accept-package-agreements 2>&1
         $exitCode = $LASTEXITCODE
         # winget returns 0 on success, -1978335189 (0x8A150019) if already installed
+        if ($exitCode -ne 0 -and $exitCode -ne -1978335189) {
+            Write-Status "winget: $($output | Out-String)" -Type Warning
+        }
         return ($exitCode -eq 0 -or $exitCode -eq -1978335189)
-    } catch { return $false }
+    } catch {
+        Write-Status "winget exception: $_" -Type Warning
+        return $false
+    }
 }
 
 function Install-WithChoco {
@@ -116,7 +117,10 @@ function Install-WithChoco {
             Write-Status "choco: $($output | Out-String)" -Type Warning
         }
         return ($exitCode -eq 0)
-    } catch { return $false }
+    } catch {
+        Write-Status "choco exception: $_" -Type Warning
+        return $false
+    }
 }
 
 function Install-Tool {
@@ -311,7 +315,7 @@ function Install-PackageManagers {
     if ((Test-CommandExist 'scoop') -and -not (Test-CommandExist 'git')) {
         Write-Status "Installing git (required by scoop for buckets)..." -Type Info
         scoop install git 2>&1 | Out-Null
-        Update-SessionPath
+        Sync-SessionPath
     }
 
     # Add scoop buckets
@@ -319,7 +323,9 @@ function Install-PackageManagers {
         $existingBuckets = @()
         try {
             $existingBuckets = @(scoop bucket list 2>$null | Select-Object -ExpandProperty Name -ErrorAction SilentlyContinue)
-        } catch {}
+        } catch {
+            Write-Status "Could not read Scoop buckets: $_" -Type Warning
+        }
         foreach ($bucket in @('main', 'extras')) {
             if ($existingBuckets -notcontains $bucket) {
                 Write-Status "Adding scoop bucket: $bucket" -Type Info
@@ -356,7 +362,7 @@ function Install-PackageManagers {
                 throw "WinGet exited with code $LASTEXITCODE"
             }
 
-            Update-SessionPath
+            Sync-SessionPath
             if (Test-CommandExist 'choco') {
                 Write-Status "Chocolatey installed" -Type Success
             } else {
@@ -382,7 +388,9 @@ function Install-CliTools {
     if (Test-CommandExist 'scoop') {
         try {
             $scoopInstalledApps = @(scoop list 2>$null | Select-Object -ExpandProperty Name -ErrorAction SilentlyContinue)
-        } catch {}
+        } catch {
+            Write-Status "Could not read installed Scoop apps: $_" -Type Warning
+        }
     }
 
     foreach ($tool in $ScoopExtrasTools) {
@@ -510,7 +518,7 @@ function Install-PipPackages {
     }
 
     foreach ($pkg in $PipGlobalPackages) {
-        $installed = pip show $pkg 2>$null
+        pip show $pkg 2>$null | Out-Null
         if ($LASTEXITCODE -eq 0) {
             Write-Status "$pkg already installed" -Type Success
             continue
@@ -536,7 +544,7 @@ function Install-DevRuntimes {
 
     # Node.js
     Install-Tool -Name 'Node.js' -Command 'node' -ScoopPackage 'nodejs-lts' -WingetId 'OpenJS.NodeJS.LTS' -ChocoPackage 'nodejs-lts'
-    Update-SessionPath
+    Sync-SessionPath
 
     # Python (scoop preferred - handles multiple versions, creates proper shims for python + pip)
     if (-not (Test-CommandExist 'python')) {
@@ -550,16 +558,16 @@ function Install-DevRuntimes {
             if (Test-CommandExist 'scoop') {
                 $pyInstalled = Install-WithScoop -Package 'python'
                 if ($pyInstalled) {
-                    Update-SessionPath
+                    Sync-SessionPath
                     # Reset shims to ensure python/pip are correctly linked
                     scoop reset python 2>&1 | Out-Null
-                    Update-SessionPath
+                    Sync-SessionPath
                 }
             }
             if (-not $pyInstalled) { $pyInstalled = Install-WithWinget -PackageId 'Python.Python.3.12' }
             if (-not $pyInstalled) { $pyInstalled = Install-WithChoco -Package 'python3' }
 
-            Update-SessionPath
+            Sync-SessionPath
 
             if ($pyInstalled -or (Test-CommandExist 'python')) {
                 Write-Status "Python installed" -Type Success
@@ -572,13 +580,15 @@ function Install-DevRuntimes {
     }
 
     # Ensure pip is available
-    Update-SessionPath
+    Sync-SessionPath
     if ((Test-CommandExist 'python') -and -not (Test-CommandExist 'pip')) {
         Write-Status "pip not found, bootstrapping..." -Type Info
         try {
             python -m ensurepip --upgrade 2>&1 | Out-Null
-            Update-SessionPath
-        } catch {}
+            Sync-SessionPath
+        } catch {
+            Write-Status "Failed to bootstrap pip: $_" -Type Warning
+        }
         if (-not (Test-CommandExist 'pip')) {
             Write-Status "pip still not found - try restarting terminal" -Type Warning
         }
@@ -586,7 +596,7 @@ function Install-DevRuntimes {
 
     # Ruby
     Install-Tool -Name 'Ruby' -Command 'ruby' -ScoopPackage 'ruby' -WingetId 'RubyInstallerTeam.RubyWithDevKit.3.2' -ChocoPackage 'ruby'
-    Update-SessionPath
+    Sync-SessionPath
 
     # Conda/Mamba - check PATH and common install locations
     $condaFound = Test-CommandExist 'conda'
@@ -613,7 +623,7 @@ function Install-DevRuntimes {
         } else {
             Write-Status "Installing Miniforge3..." -Type Info
             $installed = Install-WithWinget -PackageId 'CondaForge.Miniforge3'
-            Update-SessionPath
+            Sync-SessionPath
             if ($installed) {
                 Write-Status "Miniforge3 installed (run 'conda init powershell' then restart terminal)" -Type Success
             } else {
@@ -632,10 +642,10 @@ function Install-DevRuntimes {
             Write-Status "Installing Rust (rustup + cargo)..." -Type Info
             $rustInstalled = Install-WithScoop -Package 'rustup'
             if (-not $rustInstalled) { $rustInstalled = Install-WithWinget -PackageId 'Rustlang.Rustup' }
-            Update-SessionPath
+            Sync-SessionPath
             if (Test-CommandExist 'rustup') {
                 rustup default stable 2>&1 | Out-Null
-                Update-SessionPath
+                Sync-SessionPath
                 Write-Status "Rust installed" -Type Success
             } else {
                 Write-Status "Failed to install Rust" -Type Error
@@ -647,11 +657,11 @@ function Install-DevRuntimes {
 
     # Go
     Install-Tool -Name 'Go' -Command 'go' -ScoopPackage 'go' -WingetId 'GoLang.Go' -ChocoPackage 'golang'
-    Update-SessionPath
+    Sync-SessionPath
 
     # .NET SDK
     Install-Tool -Name '.NET SDK' -Command 'dotnet' -ScoopPackage 'dotnet-sdk' -WingetId 'Microsoft.DotNet.SDK.8' -ChocoPackage 'dotnet-sdk'
-    Update-SessionPath
+    Sync-SessionPath
 
     # pipx (isolated Python app runner, used by upgrade for global Python tools)
     if (-not (Test-CommandExist 'pipx')) {
@@ -667,10 +677,10 @@ function Install-DevRuntimes {
                 pip install --user pipx 2>&1 | Out-Null
                 $pipxInstalled = ($LASTEXITCODE -eq 0)
             }
-            Update-SessionPath
+            Sync-SessionPath
             if (Test-CommandExist 'pipx') {
                 pipx ensurepath 2>&1 | Out-Null
-                Update-SessionPath
+                Sync-SessionPath
                 Write-Status "pipx installed" -Type Success
             } else {
                 Write-Status "Failed to install pipx" -Type Error
@@ -695,7 +705,7 @@ function Install-DevRuntimes {
                     $composerInstalled = Install-WithWinget -PackageId 'Composer.Composer'
                 }
             }
-            Update-SessionPath
+            Sync-SessionPath
             if ($composerInstalled -or (Test-CommandExist 'composer')) {
                 Write-Status "Composer installed" -Type Success
             } else {
@@ -714,14 +724,14 @@ function Install-AiTools {
     Write-Host "`n===== AI CLI Tools =====" -ForegroundColor Cyan
 
     # Ensure prerequisites are available before installing AI tools
-    Update-SessionPath
+    Sync-SessionPath
 
     # uv - needed for Kimi CLI; manages its own Python downloads
     if (-not (Test-CommandExist 'uv')) {
         Write-Status "Installing uv (required for Python-based AI tools)..." -Type Info
         $uvInstalled = Install-WithScoop -Package 'uv'
         if (-not $uvInstalled) { $uvInstalled = Install-WithWinget -PackageId 'astral-sh.uv' }
-        Update-SessionPath
+        Sync-SessionPath
         if (Test-CommandExist 'uv') {
             Write-Status "uv installed" -Type Success
         } else {
@@ -736,7 +746,7 @@ function Install-AiTools {
         if ($pyInstalled) {
             scoop reset python 2>&1 | Out-Null
         }
-        Update-SessionPath
+        Sync-SessionPath
         if (Test-CommandExist 'python') {
             Write-Status "Python installed" -Type Success
         } else {
@@ -748,7 +758,7 @@ function Install-AiTools {
     if (-not (Test-CommandExist 'npm')) {
         Write-Status "npm not found - installing Node.js..." -Type Info
         Install-Tool -Name 'Node.js' -Command 'node' -ScoopPackage 'nodejs-lts' -WingetId 'OpenJS.NodeJS.LTS' -ChocoPackage 'nodejs-lts'
-        Update-SessionPath
+        Sync-SessionPath
     }
 
     foreach ($tool in $AiCliTools) {
@@ -772,12 +782,12 @@ function Install-AiTools {
             'winget' {
                 if ($tool.WingetId) { $installed = Install-WithWinget -PackageId $tool.WingetId }
                 if (-not $installed -and $tool.NpmPackage -and (Test-CommandExist 'npm')) {
-                    try { npm install -g $tool.NpmPackage 2>&1 | Out-Null; $installed = $true } catch {}
+                    try { npm install -g $tool.NpmPackage 2>&1 | Out-Null; $installed = $true } catch { Write-Status "npm fallback failed for $name`: $_" -Type Warning }
                 }
             }
             'npm' {
                 if ($tool.NpmPackage -and (Test-CommandExist 'npm')) {
-                    try { npm install -g $tool.NpmPackage 2>&1 | Out-Null; $installed = $true } catch {}
+                    try { npm install -g $tool.NpmPackage 2>&1 | Out-Null; $installed = $true } catch { Write-Status "npm install failed for $name`: $_" -Type Warning }
                 } elseif (-not (Test-CommandExist 'npm')) {
                     Write-Status "$name requires npm - install Node.js first" -Type Warning
                     continue
@@ -816,7 +826,7 @@ function Install-AiTools {
             }
             'pip' {
                 if ($tool.PipPackage -and (Test-CommandExist 'pip')) {
-                    try { pip install $tool.PipPackage 2>&1 | Out-Null; $installed = $true } catch {}
+                    try { pip install $tool.PipPackage 2>&1 | Out-Null; $installed = $true } catch { Write-Status "pip install failed for $name`: $_" -Type Warning }
                 } elseif (-not (Test-CommandExist 'pip')) {
                     Write-Status "$name requires pip - install Python first" -Type Warning
                     continue
@@ -827,12 +837,12 @@ function Install-AiTools {
                 if (-not $installed -and $tool.WingetId) { $installed = Install-WithWinget -PackageId $tool.WingetId }
                 if (-not $installed -and $tool.ChocoPackage) { $installed = Install-WithChoco -Package $tool.ChocoPackage }
                 if (-not $installed -and $tool.NpmPackage -and (Test-CommandExist 'npm')) {
-                    try { npm install -g $tool.NpmPackage 2>&1 | Out-Null; $installed = $true } catch {}
+                    try { npm install -g $tool.NpmPackage 2>&1 | Out-Null; $installed = $true } catch { Write-Status "npm fallback failed for $name`: $_" -Type Warning }
                 }
             }
         }
 
-        Update-SessionPath
+        Sync-SessionPath
 
         if ($installed -or (Test-CommandExist $command)) {
             Write-Status "$name installed" -Type Success
@@ -880,7 +890,7 @@ if ($noSwitch) {
 if ($All -or $PackageManagers) { Install-PackageManagers }
 if ($All -or $CliTools)        { Install-CliTools }
 if ($All -or $Modules)         { Install-PowerShellModules }
-if ($All -or $DevTools)        { Install-DevRuntimes; Update-SessionPath }
+if ($All -or $DevTools)        { Install-DevRuntimes; Sync-SessionPath }
 if ($All -or $AiTools)         { Install-AiTools }
 if ($All -or $NpmPackages)     { Install-NpmPackages }
 if ($All -or $PipPackages)     { Install-PipPackages }
