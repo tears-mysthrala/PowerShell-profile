@@ -42,11 +42,12 @@ jobs:
                   if ($failed) { exit 1 }
                   Write-Host "Syntax validation passed."
 
-            - name: Install PSScriptAnalyzer
+            - name: Install validation modules
               shell: pwsh
               run: |
                   Set-PSRepository -Name PSGallery -InstallationPolicy Trusted
                   Install-Module PSScriptAnalyzer -Scope CurrentUser -Force -MinimumVersion 1.21.0
+                  Install-Module Pester -Scope CurrentUser -Force -MinimumVersion 5.0.0
 
             - name: Run PSScriptAnalyzer
               shell: pwsh
@@ -56,10 +57,18 @@ jobs:
                       $level = if ($_.Severity -eq 'Error') { 'error' } else { 'warning' }
                       Write-Host "::$level file=$($_.ScriptPath),line=$($_.Line)::$($_.RuleName): $($_.Message)"
                   }
-                  $errors = @($results | Where-Object Severity -eq 'Error')
-                  $warnings = @($results | Where-Object Severity -ne 'Error')
-                  Write-Host "PSScriptAnalyzer: $($errors.Count) errors, $($warnings.Count) warnings/information."
-                  if ($errors.Count -gt 0) { exit 1 }
+                  Write-Host "PSScriptAnalyzer: $($results.Count) total findings."
+                  if ($results.Count -gt 0) { exit 1 }
+
+            - name: Run Pester tests
+              shell: pwsh
+              run: |
+                  $configuration = New-PesterConfiguration
+                  $configuration.Run.Path = @('tests')
+                  $configuration.Run.PassThru = $true
+                  $configuration.Output.Verbosity = 'Detailed'
+                  $result = Invoke-Pester -Configuration $configuration
+                  if ($result.Result -ne 'Passed') { exit 1 }
 
             - name: Smoke test - dot-source the profile
               shell: pwsh
