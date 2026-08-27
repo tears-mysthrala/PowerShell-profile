@@ -1,8 +1,8 @@
 # Function Reference
 
 > **Auto-generated documentation**
-> Last updated: 2026-08-27 16:32:01
-> Total functions: 142
+> Last updated: 2026-08-27 16:33:02
+> Total functions: 129
 
 ## Table of Contents
 
@@ -14,28 +14,6 @@
 - [Utilities](#utilities)
 
 ## Applications
-
-### `ConvertFrom-ChocoListOutput`
-
-**Signature:**
-```powershell
-function ConvertFrom-ChocoListOutput {
-param([object[]]$Output)
-}
-```
-
-<sub>**Source:** `Core\Apps\appsManage.ps1`</sub>
-
-### `ConvertFrom-ScoopListOutput`
-
-**Signature:**
-```powershell
-function ConvertFrom-ScoopListOutput {
-param([object[]]$Output)
-}
-```
-
-<sub>**Source:** `Core\Apps\appsManage.ps1`</sub>
 
 ### `ConvertFrom-ScoopStatusOutput`
 
@@ -64,24 +42,6 @@ param([object[]]$Output)
 ```
 
 <sub>**Source:** `Core\Apps\UpdateAppsHelper.ps1`</sub>
-
-### `Get-ChocoApp`
-
-**Signature:**
-```powershell
-function Get-ChocoApp
-```
-
-<sub>**Source:** `Core\Apps\appsManage.ps1`</sub>
-
-### `Get-ScoopApp`
-
-**Signature:**
-```powershell
-function Get-ScoopApp
-```
-
-<sub>**Source:** `Core\Apps\appsManage.ps1`</sub>
 
 ### `Get-ScoopPackageBlockers`
 
@@ -151,19 +111,6 @@ function Invoke-RequiredModuleRepair
 
 <sub>**Source:** `Core\Apps\UpdateAppsHelper.ps1`</sub>
 
-### `Select-App`
-
-**Signature:**
-```powershell
-function Select-App {
-param (
-        [string[]] $apps
-    )
-}
-```
-
-<sub>**Source:** `Core\Apps\appsManage.ps1`</sub>
-
 ### `Test-CommandExist`
 
 **Signature:**
@@ -196,36 +143,6 @@ param([string]$Id)
 ```
 
 <sub>**Source:** `Core\Apps\UpdateAppsHelper.ps1`</sub>
-
-### `Uninstall-ChocoApp`
-
-**Signature:**
-```powershell
-function Uninstall-ChocoApp
-```
-
-<sub>**Source:** `Core\Apps\appsManage.ps1`</sub>
-
-### `Uninstall-ScoopApp`
-
-**Signature:**
-```powershell
-function Uninstall-ScoopApp
-```
-
-<sub>**Source:** `Core\Apps\appsManage.ps1`</sub>
-
-### `Update-AllApp`
-
-**Signature:**
-```powershell
-function Update-AllApp {
-[CmdletBinding(SupportsShouldProcess)]
-param()
-}
-```
-
-<sub>**Source:** `Core\Apps\appsManage.ps1`</sub>
 
 ### `Update-Cargo`
 
@@ -262,18 +179,6 @@ param()
 ```
 
 <sub>**Source:** `Core\Apps\UpdateAppsHelper.ps1`</sub>
-
-### `Update-ChocoApp`
-
-**Signature:**
-```powershell
-function Update-ChocoApp {
-[CmdletBinding(SupportsShouldProcess)]
-param()
-}
-```
-
-<sub>**Source:** `Core\Apps\appsManage.ps1`</sub>
 
 ### `Update-Composer`
 
@@ -416,30 +321,6 @@ param()
 
 <sub>**Source:** `Core\Apps\UpdateAppsHelper.ps1`</sub>
 
-### `Update-NpmApp`
-
-**Signature:**
-```powershell
-function Update-NpmApp {
-[CmdletBinding(SupportsShouldProcess)]
-param()
-}
-```
-
-<sub>**Source:** `Core\Apps\appsManage.ps1`</sub>
-
-### `Update-PipApp`
-
-**Signature:**
-```powershell
-function Update-PipApp {
-[CmdletBinding(SupportsShouldProcess)]
-param()
-}
-```
-
-<sub>**Source:** `Core\Apps\appsManage.ps1`</sub>
-
 ### `Update-Pipx`
 
 **Signature:**
@@ -452,17 +333,17 @@ param()
 
 <sub>**Source:** `Core\Apps\UpdateAppsHelper.ps1`</sub>
 
-### `Update-PowershellModule`
+### `Update-PowerShellModule`
 
 **Signature:**
 ```powershell
-function Update-PowershellModule {
+function Update-PowerShellModule {
 [CmdletBinding(SupportsShouldProcess)]
 param()
 }
 ```
 
-<sub>**Source:** `Core\Apps\appsManage.ps1`</sub>
+<sub>**Source:** `Core\Apps\UpdateAppsHelper.ps1`</sub>
 
 ### `Update-PowerShellRuntime`
 
@@ -501,18 +382,6 @@ param()
 ```
 
 <sub>**Source:** `Core\Apps\UpdateAppsHelper.ps1`</sub>
-
-### `Update-ScoopApp`
-
-**Signature:**
-```powershell
-function Update-ScoopApp {
-[CmdletBinding(SupportsShouldProcess)]
-param()
-}
-```
-
-<sub>**Source:** `Core\Apps\appsManage.ps1`</sub>
 
 ### `Update-Starship`
 
@@ -717,19 +586,6 @@ param(
 ```
 
 <sub>**Source:** `Core\ModuleInstaller.ps1`</sub>
-
-### `Remove-TempFolder`
-
-**Signature:**
-```powershell
-function Remove-TempFolder {
-[CmdletBinding(SupportsShouldProcess, ConfirmImpact = 'High')]
-[OutputType([int64])]
-param([Parameter(Mandatory)][string]$Path)
-}
-```
-
-<sub>**Source:** `Core\Maintenance\CleanTemp.ps1`</sub>
 
 ### `Save-ModuleCache`
 

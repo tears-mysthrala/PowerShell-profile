@@ -171,7 +171,7 @@ function Install-Tool {
 
 #region Tool Definitions
 
-# CLI tools used by the profile (matching appsManage.ps1 scoop lists)
+# CLI tools used by the profile
 $ScoopMainTools = @(
     @{ Name = 'Git';        Command = 'git';       ScoopPackage = 'git';       WingetId = 'Git.Git';                      ChocoPackage = 'git' }
     @{ Name = 'fzf';        Command = 'fzf';       ScoopPackage = 'fzf';       WingetId = 'junegunn.fzf';                 ChocoPackage = 'fzf' }
@@ -208,7 +208,7 @@ $ScoopExtrasTools = @(
     @{ Name = 'Docker Completion';    Command = $null;               ScoopPackage = 'dockercompletion';  ScoopBucket = 'extras'; WingetId = $null;                         ChocoPackage = $null }
 )
 
-# PowerShell modules (from ModuleInstaller.ps1 + appsManage.ps1)
+# PowerShell modules used by the profile
 $RequiredModules = @(
     @{ Name = 'PSReadLine';                    MinVersion = '2.2.0' }
     @{ Name = 'Terminal-Icons';                MinVersion = '0.10.0' }

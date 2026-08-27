@@ -14,7 +14,6 @@ PowerShell-profile/
 │   │   ├── SearchUtils.ps1             # Search utilities (ff, search)
 │   │   └── profile_management.ps1      # Profile state reset
 │   ├── Apps/
-│   │   ├── appsManage.ps1              # Package manager operations (scoop/choco/pip/npm)
 │   │   ├── UpdateAppsHelper.ps1        # Update helper functions
 │   │   └── Updates/SystemUpdater.ps1   # System-wide update management
 │   └── System/

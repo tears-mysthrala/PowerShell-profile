@@ -1,7 +1,7 @@
 # Quick Reference
 
 > **Auto-generated documentation**
-> Last updated: 2026-08-27 16:32:01
+> Last updated: 2026-08-27 16:33:02
 
 ## Functions
 
@@ -23,8 +23,6 @@
 | `cmp` | System |  |
 | `cms` | System |  |
 | `Connect-Proxmox` | Utilities | SSH helper for Proxmox. Configure PROXMOX_SSH_TARGET (for example, user@host)... |
-| `ConvertFrom-ChocoListOutput` | Applications |  |
-| `ConvertFrom-ScoopListOutput` | Applications |  |
 | `ConvertFrom-ScoopStatusOutput` | Applications |  |
 | `ConvertFrom-WingetUpgradeOutput` | Applications |  |
 | `df` | Utilities | System utilities |
@@ -38,7 +36,6 @@
 | `Find-File` | Utilities | Search utilities for PowerShell profile |
 | `Find-PowerShellCommand` | Utilities |  |
 | `Find-String` | Utilities |  |
-| `Get-ChocoApp` | Applications |  |
 | `Get-ClipboardContent` | Utilities |  |
 | `Get-CommandPath` | Utilities |  |
 | `Get-DependencyInstallerWinget` | Tools | region Installation Functions |
@@ -46,7 +43,6 @@
 | `Get-FormattedUptime` | Utilities |  |
 | `Get-ProcessByName` | Utilities |  |
 | `Get-PubIP` | Utilities |  |
-| `Get-ScoopApp` | Applications |  |
 | `Get-ScoopPackageBlockers` | Applications |  |
 | `Get-UvSelfUpdateCommandPath` | Applications |  |
 | `Get-WingetExecutable` | Applications |  |
@@ -85,12 +81,10 @@
 | `New-DirectoryAndEnter` | Utilities | File system utilities for PowerShell profile |
 | `New-File` | Utilities | File and directory management (mkcd/New-DirectoryAndEnter defined in FileSyst... |
 | `Remove-FzfSelectedPath` | System |  |
-| `Remove-TempFolder` | Core |  |
 | `Restart-BIOS` | Utilities | Test-IsAdmin defined in CommonUtils.ps1 |
 | `rgg` | System |  |
 | `Save-ModuleCache` | Core |  |
 | `Search-FileContent` | Utilities |  |
-| `Select-App` | Applications |  |
 | `Set-ClipboardContent` | Utilities | Clipboard Utilities |
 | `Set-EnvironmentVariable` | Utilities |  |
 | `sha256` | System | Linux-like utility functions for PowerShell |
@@ -106,13 +100,9 @@
 | `Test-SudoAvailable` | Tools |  |
 | `Test-WingetManagedCommandPath` | Applications |  |
 | `Test-WingetPackageInstalled` | Applications |  |
-| `Uninstall-ChocoApp` | Applications |  |
-| `Uninstall-ScoopApp` | Applications |  |
-| `Update-AllApp` | Applications |  |
 | `Update-Cargo` | Applications |  |
 | `Update-Chezmoi` | Applications |  |
 | `Update-Choco` | Applications |  |
-| `Update-ChocoApp` | Applications |  |
 | `Update-Composer` | Applications |  |
 | `Update-Conda` | Applications | Additional Development Tools |
 | `Update-DotnetTool` | Applications |  |
@@ -124,14 +114,11 @@
 | `Update-Homebrew` | Applications |  |
 | `Update-NodeEnvironment` | Applications |  |
 | `Update-Npm` | Applications |  |
-| `Update-NpmApp` | Applications |  |
-| `Update-PipApp` | Applications |  |
 | `Update-Pipx` | Applications |  |
-| `Update-PowershellModule` | Applications |  |
+| `Update-PowerShellModule` | Applications |  |
 | `Update-PowerShellRuntime` | Applications |  |
 | `Update-PythonEnvironment` | Applications |  |
 | `Update-Scoop` | Applications |  |
-| `Update-ScoopApp` | Applications |  |
 | `Update-Starship` | Applications |  |
 | `Update-StoreApp` | Applications |  |
 | `Update-System` | Applications | Main update function with visual progress |
