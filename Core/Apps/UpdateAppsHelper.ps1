@@ -231,15 +231,6 @@ function Initialize-PowerShellGallery {
         Write-UpdateStatus "Failed to initialize NuGet provider: $_" -Status Warning
     }
 
-    try {
-        $repo = Get-PSRepository -Name PSGallery -ErrorAction SilentlyContinue
-        if ($repo -and $repo.InstallationPolicy -ne 'Trusted') {
-            Set-PSRepository -Name PSGallery -InstallationPolicy Trusted -ErrorAction Stop
-        }
-    }
-    catch {
-        Write-UpdateStatus "Failed to trust PSGallery: $_" -Status Warning
-    }
 }
 
 function Invoke-RequiredModuleRepair {
