@@ -6,6 +6,7 @@ Describe 'CI quality policy' {
     It 'fails on every PSScriptAnalyzer finding regardless of severity' {
         $script:workflow | Should -Match 'if \(\$results\.Count -gt 0\) \{ exit 1 \}'
         $script:workflow | Should -Not -Match 'Where-Object Severity -eq ''Error'''
+        $script:workflow | Should -Match "git ls-files '\*\.ps1' '\*\.psm1' '\*\.psd1'"
     }
 
     It 'runs the complete Pester suite' {

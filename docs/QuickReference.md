@@ -1,7 +1,7 @@
 # Quick Reference
 
 > **Auto-generated documentation**
-> Last updated: 2026-08-27 16:56:50
+> Last updated: 2026-08-27 17:04:34
 
 ## Functions
 

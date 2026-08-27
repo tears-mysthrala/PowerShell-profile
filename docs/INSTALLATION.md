@@ -69,19 +69,18 @@ Get-Command Test-CommandExist -ErrorAction SilentlyContinue
 
 ## Performance Optimization
 
-The profile includes aggressive caching optimizations:
+The profile minimizes startup work through:
 
-- **Module cache**: JSON-based caching in `$env:TEMP\PSModuleCache.json`
-- **Command cache**: Pre-cached existence checks for common tools
+- **Module autoloading**: interactive commands and `upgrade` load on first use
+- **Early exit**: non-interactive sessions skip interactive setup
 - **Init cache**: Starship/Zoxide/GH CLI initialization cached and auto-invalidated
 
-**Expected load time:** ~500-600ms as measured on the author's machine. Your actual load time will vary with hardware, installed tools, and configuration — this is a reference data point, not a guarantee.
+Compare your own median startup time with and without `-NoProfile`; filesystem, antivirus and installed tools materially affect the result.
 
 ### Cache Management
 
 ```powershell
 # Clear all caches
-Remove-Item $env:TEMP\PSModuleCache.json -ErrorAction SilentlyContinue
 Remove-Item Config\*-cache.* -ErrorAction SilentlyContinue
 
 # Rebuild cache on next profile load

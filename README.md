@@ -34,20 +34,18 @@ git clone https://github.com/tears-mysthrala/PowerShell-profile.git $HOME\Docume
 
 ## Performance
 
-**Load time measured on the author's machine: ~500-600ms** (optimized with aggressive caching). Actual load time depends on your hardware, installed tools, and network drives — treat this as a reference data point, not a guarantee. Measure your own with the built-in timing breakdown shown at profile load.
+Interactive commands and `upgrade` are exposed through PowerShell module autoloading. Their implementation is parsed only on first use. Actual load time depends on the host, installed tools and filesystem; measure it with `$script:profileTiming` or against `pwsh -NoProfile`.
 
 ### Optimization Features
 
-- **Module caching**: JSON-based cache in `$env:TEMP\PSModuleCache.json` eliminates repeated `Get-Module -ListAvailable` calls
-- **Command pre-caching**: Common tools (bat, eza, fd, zoxide, etc.) checked once at startup
+- **Command autoloading**: general commands, Chezmoi and `upgrade` live in separate manifests under `Modules/`
+- **Early non-interactive exit**: automation avoids aliases, PSReadLine and prompt setup
 - **Starship init cache**: Full PowerShell init script cached and auto-invalidated on binary/config changes
-- **Path caching**: Repeated path checks cached in session memory
-- **Parallel updates**: Module updates run in parallel using `Start-ThreadJob`
+- **Deferred integrations**: optional completions run after the first prompt or on first use
 
 **Cache management:**
 ```powershell
 # Clear all caches
-Remove-Item $env:TEMP\PSModuleCache.json
 Remove-Item Config\*-cache.*
 . $PROFILE  # Rebuild on reload
 ```
@@ -63,7 +61,7 @@ This project uses local validation and documentation generation. Before committi
 
 1. **Run local checks**:
    - Syntax validation: `pwsh -Command "Get-ChildItem -Recurse *.ps1,*.psm1 | ForEach-Object { try { $null = [scriptblock]::Create((Get-Content $_.FullName -Raw)) } catch { Write-Error \"Syntax error in $($_.Name): $_\" } }"`
-   - PSScriptAnalyzer: `Install-Module PSScriptAnalyzer; Invoke-ScriptAnalyzer -Path . -Recurse`
+   - PSScriptAnalyzer: analyze the PowerShell files returned by `git ls-files`, matching CI
    - Performance test: Load time check manually
 
 2. **Update documentation** (automated via GitHub Actions):
@@ -72,7 +70,7 @@ This project uses local validation and documentation generation. Before committi
    - Or trigger manually from GitHub Actions UI
 
 3. **When adding new functions**:
-   - Place them in appropriate files under `Core/Utils/`
+   - Place them in the appropriate implementation file and export them from the corresponding manifest under `Modules/`
    - Add descriptive comments above function definitions
 
 ### Adding New Dependencies
@@ -90,7 +88,7 @@ When adding new tools or dependencies:
 - **Functions:** 127 across Core/, tools/install-dependencies.ps1, and the main profile
 - **Aliases:** 35
 - **Categories:** 6
-- **Last Updated:** 2026-08-27 16:56:50
+- **Last Updated:** 2026-08-27 17:04:34
 
 ## License
 

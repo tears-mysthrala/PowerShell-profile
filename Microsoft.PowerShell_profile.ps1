@@ -54,14 +54,6 @@ if ($MyInvocation.Line -notmatch '--no-suppress') {
     $script:ProfileSuppressInfoLogs = $true
 }
 
-Measure-Block 'Aliases' {
-    . "$PSScriptRoot/Core/Utils/unified_aliases.ps1"
-}
-
-Measure-Block 'System updater' {
-    . "$PSScriptRoot/Core/Apps/Updates/SystemUpdater.ps1"
-}
-
 $coreSetupTimer = [System.Diagnostics.Stopwatch]::StartNew()
 try {
         # Import ModuleInstaller and install required modules only when needed
@@ -112,18 +104,6 @@ try {
             }
         }
 
-        # Load utility modules directly (small files, ~200 lines total, negligible startup cost)
-        foreach ($utility in @('CommonUtils.ps1', 'FileSystemUtils.ps1', 'SearchUtils.ps1')) {
-            $utilityPath = Join-Path $ProfileDir "Core\Utils\$utility"
-            try { . $utilityPath } catch { Write-Warning "Failed to load $utility`: $_" }
-        }
-
-        # Load lightweight system helpers. PSFzf remains separately lazy-loaded
-        # because it depends on an optional module and interactive key handlers.
-        foreach ($systemHelper in @('linuxLike.ps1', 'clean.ps1', 'chezmoi.ps1')) {
-            $helperPath = Join-Path $ProfileDir "Core\System\$systemHelper"
-            try { . $helperPath } catch { Write-Warning "Failed to load $systemHelper`: $_" }
-        }
 }
 
 catch {
@@ -137,6 +117,7 @@ finally {
 
 # Initialize shell enhancements - PSReadLine
 # Configure PSReadLine with full features enabled
+$psReadLineTimer = [System.Diagnostics.Stopwatch]::StartNew()
 $supportsVirtualTerminal = $Host.UI.SupportsVirtualTerminal -and
     -not [Console]::IsOutputRedirected -and
     $env:TERM -ne 'dumb'
@@ -187,8 +168,13 @@ try {
 catch {
     Write-Warning "PSReadLine configuration failed: $_"
 }
+finally {
+    $psReadLineTimer.Stop()
+    $script:profileTiming['PSReadLine'] = $psReadLineTimer.ElapsedMilliseconds
+}
 
 # Deferred module loading - runs once after the first prompt renders (zero startup cost)
+$onIdleTimer = [System.Diagnostics.Stopwatch]::StartNew()
 Register-EngineEvent -SourceIdentifier PowerShell.OnIdle -MaxTriggerCount 1 -Action {
     # Suppress verbose output from module imports (inherits 'Continue' from profile)
     $VerbosePreference = 'SilentlyContinue'
@@ -219,7 +205,13 @@ Register-EngineEvent -SourceIdentifier PowerShell.OnIdle -MaxTriggerCount 1 -Act
         Import-Module Microsoft.WinGet.CommandNotFound -ErrorAction SilentlyContinue
     }
 
+    if (Get-Command gh -ErrorAction SilentlyContinue) {
+        Initialize-CachedToolInit -ToolName 'gh' -InitCommand { gh completion -s powershell } -CacheBaseName 'gh-completion-cache'
+    }
+
 } | Out-Null
+$onIdleTimer.Stop()
+$script:profileTiming['OnIdle registration'] = $onIdleTimer.ElapsedMilliseconds
 
 # Import PSFzf for enhanced history search with fzf (lazy-loaded)
 try {
@@ -317,15 +309,14 @@ function Initialize-CachedToolInit {
     catch { Write-Verbose "$ToolName initialization failed: $_" }
 }
 
-# Initialize shell tools (cached to avoid blocking startup)
-if (Test-CommandExist 'zoxide') {
+# Initialize directory navigation before the first prompt so cd is consistent.
+$zoxideTimer = [System.Diagnostics.Stopwatch]::StartNew()
+if (Get-Command zoxide -ErrorAction SilentlyContinue) {
     $env:_ZO_DATA_DIR = "$ProfileDir\.zo"
     Initialize-CachedToolInit -ToolName 'zoxide' -InitCommand { zoxide init powershell --cmd cd } -CacheBaseName 'zoxide-init-cache'
 }
-
-if (Test-CommandExist 'gh') {
-    Initialize-CachedToolInit -ToolName 'gh' -InitCommand { gh completion -s powershell } -CacheBaseName 'gh-completion-cache'
-}
+$zoxideTimer.Stop()
+$script:profileTiming['Zoxide init'] = $zoxideTimer.ElapsedMilliseconds
 
 function Install-Dependency {
     <#
@@ -389,7 +380,7 @@ function Install-Dependency {
 # Initialize Starship with a proper full-init cache (no process spawn on each load)
 $starshipTimer = [System.Diagnostics.Stopwatch]::StartNew()
 try {
-    if ($supportsVirtualTerminal -and (Test-CommandExist 'starship')) {
+    if ($supportsVirtualTerminal -and (Get-Command starship -ErrorAction SilentlyContinue)) {
         $starshipConfigPath = Join-Path $PSScriptRoot 'Config\starship.toml'
         $ENV:STARSHIP_CONFIG = $starshipConfigPath
         Initialize-CachedToolInit -ToolName 'starship' -InitCommand { starship init powershell --print-full-init } -CacheBaseName 'starship-init-cache' -ConfigPath $starshipConfigPath

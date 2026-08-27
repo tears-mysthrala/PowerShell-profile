@@ -1,6 +1,9 @@
 BeforeAll {
     $script:profileText = Get-Content "$PSScriptRoot\..\Microsoft.PowerShell_profile.ps1" -Raw
     $script:aliasesText = Get-Content "$PSScriptRoot\..\Core\Utils\unified_aliases.ps1" -Raw
+    $script:commandsManifest = Import-PowerShellDataFile "$PSScriptRoot\..\Modules\Profile.Commands\Profile.Commands.psd1"
+    $script:chezmoiManifest = Import-PowerShellDataFile "$PSScriptRoot\..\Modules\Profile.Chezmoi\Profile.Chezmoi.psd1"
+    $script:updateManifest = Import-PowerShellDataFile "$PSScriptRoot\..\Modules\Profile.Update\Profile.Update.psd1"
 }
 
 Describe 'Profile safety defaults' {
@@ -18,11 +21,22 @@ Describe 'Profile safety defaults' {
         $script:profileText | Should -Match '\$env:TERM -ne ''dumb'''
     }
 
-    It 'loads documented lightweight system helpers' {
-        foreach ($helper in @('linuxLike.ps1', 'clean.ps1', 'chezmoi.ps1')) {
-            $pattern = [regex]::Escape($helper)
-            $script:profileText | Should -Match $pattern
-        }
+    It 'autoloads interactive commands instead of dot-sourcing their implementation' {
+        $script:commandsManifest.FunctionsToExport | Should -Contain 'Clear-All'
+        $script:commandsManifest.AliasesToExport | Should -Contain 'ff'
+        $script:profileText | Should -Not -Match 'Core[\\/]Utils[\\/]unified_aliases\.ps1'
+    }
+
+    It 'keeps Chezmoi completion out of the general command module' {
+        $script:chezmoiManifest.FunctionsToExport | Should -Contain 'cmc'
+        $script:chezmoiManifest.AliasesToExport | Should -Contain 'cm'
+        $script:commandsManifest.FunctionsToExport | Should -Not -Contain 'cmc'
+    }
+
+    It 'autoloads upgrade from its own module' {
+        $script:updateManifest.FunctionsToExport | Should -Contain 'Update-System'
+        $script:updateManifest.AliasesToExport | Should -Contain 'upgrade'
+        $script:profileText | Should -Not -Match 'SystemUpdater\.ps1'
     }
 
     It 'loads function-defining helpers in profile scope' {

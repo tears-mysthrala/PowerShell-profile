@@ -47,6 +47,15 @@ Help/
 
 # Third-party modules (exclude all except explicitly maintained ones)
 Modules/*
+!Modules/Profile.Commands/
+!Modules/Profile.Commands/Profile.Commands.psd1
+!Modules/Profile.Commands/Profile.Commands.psm1
+!Modules/Profile.Chezmoi/
+!Modules/Profile.Chezmoi/Profile.Chezmoi.psd1
+!Modules/Profile.Chezmoi/Profile.Chezmoi.psm1
+!Modules/Profile.Update/
+!Modules/Profile.Update/Profile.Update.psd1
+!Modules/Profile.Update/Profile.Update.psm1
 
 # Development and testing artifacts
 test-results/

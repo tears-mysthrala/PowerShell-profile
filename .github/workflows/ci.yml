@@ -25,7 +25,7 @@ jobs:
               shell: pwsh
               run: |
                   $failed = $false
-                  $files = Get-ChildItem -Path . -Recurse -Include *.ps1, *.psm1, *.psd1 -File
+                  $files = @(git ls-files '*.ps1' '*.psm1' '*.psd1' | ForEach-Object { Get-Item -LiteralPath $_ })
                   foreach ($file in $files) {
                       $tokens = $null
                       $errors = $null
@@ -52,7 +52,8 @@ jobs:
             - name: Run PSScriptAnalyzer
               shell: pwsh
               run: |
-                  $results = Invoke-ScriptAnalyzer -Path . -Recurse -Settings .psscriptanalyzersettings.psd1
+                  $results = @(git ls-files '*.ps1' '*.psm1' '*.psd1' |
+                      ForEach-Object { Invoke-ScriptAnalyzer -Path $_ -Settings .psscriptanalyzersettings.psd1 })
                   $results | ForEach-Object {
                       $level = if ($_.Severity -eq 'Error') { 'error' } else { 'warning' }
                       Write-Host "::$level file=$($_.ScriptPath),line=$($_.Line)::$($_.RuleName): $($_.Message)"

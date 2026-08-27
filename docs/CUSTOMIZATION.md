@@ -12,7 +12,6 @@ PowerShell-profile/
 │   │   ├── CommonUtils.ps1             # Common utility functions
 │   │   ├── FileSystemUtils.ps1         # File/archive operations
 │   │   ├── SearchUtils.ps1             # Search utilities (ff, search)
-│   │   └── profile_management.ps1      # Profile state reset
 │   ├── Apps/
 │   │   ├── UpdateAppsHelper.ps1        # Update helper functions
 │   │   └── Updates/SystemUpdater.ps1   # System-wide update management
@@ -21,6 +20,10 @@ PowerShell-profile/
 │       ├── clean.ps1                   # Disk cleanup utilities
 │       ├── fzf.ps1                     # Fuzzy finder integration
 │       └── linuxLike.ps1              # Linux-like utility functions
+├── Modules/
+│   ├── Profile.Commands/              # Autoload manifest for interactive commands
+│   ├── Profile.Chezmoi/               # Autoload manifest for Chezmoi commands
+│   └── Profile.Update/                # Autoload manifest for upgrade
 ├── Config/
 │   ├── starship.toml                   # Prompt configuration
 │   └── *-cache.*                       # Auto-generated caches
@@ -44,7 +47,7 @@ function My-CustomFunction {
 }
 ```
 
-### Option 2: Separate Module (Recommended)
+### Option 2: Autoloaded Module (Recommended)
 
 Create `Core/Utils/MyCustomUtils.ps1`:
 
@@ -76,11 +79,19 @@ function Deploy-Application {
 Export-ModuleMember -Function Deploy-Application
 ```
 
-Then load in profile:
+Then export the command explicitly from a module manifest placed under `Modules/`. Because that directory is part of `PSModulePath`, do not import or dot-source the implementation from the main profile; PowerShell will load it on first use.
 
 ```powershell
-# In Microsoft.PowerShell_profile.ps1
-. "$PSScriptRoot\Core\Utils\MyCustomUtils.ps1"
+# Modules/My.Commands/My.Commands.psd1
+@{
+    RootModule = 'My.Commands.psm1'
+    ModuleVersion = '1.0.0'
+    GUID = 'replace-with-a-stable-guid'
+    FunctionsToExport = @('Deploy-Application')
+    AliasesToExport = @()
+    CmdletsToExport = @()
+    VariablesToExport = @()
+}
 ```
 
 ## Adding Aliases
