@@ -33,6 +33,8 @@ function Update-System {
     
     $logFile = Initialize-UpdateLog
     $script:CurrentUpdateLogFile = $logFile
+    $script:UpdateWarningCount = 0
+    $script:UpdateErrorCount = 0
     
     # Import helper functions
     . "$PSScriptRoot\..\UpdateAppsHelper.ps1"
@@ -111,10 +113,15 @@ function Update-System {
     # Footer
     Write-Host ""
     Write-Host "============================================================" -ForegroundColor Green
-    Write-Host "            SYSTEM UPGRADE COMPLETED                        " -ForegroundColor Green
+    if ($script:UpdateErrorCount -gt 0 -or $script:UpdateWarningCount -gt 0) {
+        Write-Host "       SYSTEM UPGRADE COMPLETED WITH WARNINGS               " -ForegroundColor Yellow
+    } else {
+        Write-Host "            SYSTEM UPGRADE COMPLETED                        " -ForegroundColor Green
+    }
     Write-Host "============================================================" -ForegroundColor Green
     Write-Host ""
     Write-UpdateStatus "Total duration: $($duration.ToString('hh\:mm\:ss'))" -Status Success
+    Write-UpdateStatus "Warnings: $script:UpdateWarningCount; errors: $script:UpdateErrorCount" -Status Info
     Write-UpdateStatus "Log saved to: $logFile" -Status Info
     Write-Host ""
     

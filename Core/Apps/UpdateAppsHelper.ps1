@@ -6,6 +6,189 @@ if (-not (Get-Command Test-CommandExist -ErrorAction SilentlyContinue)) {
     }
 }
 
+function Test-WingetManagedCommandPath {
+    param([string]$CommandPath)
+
+    if ([string]::IsNullOrWhiteSpace($CommandPath)) {
+        return $false
+    }
+
+    $normalizedPath = $CommandPath -replace '/', '\'
+    return $normalizedPath -match '\\Microsoft\\WinGet\\Links\\'
+}
+
+function Get-WingetExecutable {
+    $command = Get-Command winget -ErrorAction SilentlyContinue
+    if ($command -and $command.Source -and (Test-Path -LiteralPath $command.Source)) {
+        return $command.Source
+    }
+
+    $appInstaller = Get-AppxPackage Microsoft.DesktopAppInstaller -ErrorAction SilentlyContinue |
+        Sort-Object Version -Descending |
+        Select-Object -First 1
+    if ($appInstaller) {
+        $fallback = Join-Path $appInstaller.InstallLocation 'winget.exe'
+        if (Test-Path -LiteralPath $fallback) {
+            return $fallback
+        }
+    }
+
+    return $null
+}
+
+function Test-WingetPackageInstalled {
+    param([string]$Id)
+
+    $winget = Get-WingetExecutable
+    if (-not $winget) {
+        return $false
+    }
+
+    $null = & $winget list --id $Id --source winget --exact --accept-source-agreements 2>$null
+    return $LASTEXITCODE -eq 0
+}
+
+function ConvertFrom-WingetUpgradeOutput {
+    [CmdletBinding()]
+    param([object[]]$Output)
+
+    $insideMainTable = $false
+    $idStart = $null
+    $versionStart = $null
+    foreach ($item in $Output) {
+        $line = ($item -replace "`e\[[0-9;]*m", '').TrimEnd()
+        if (-not $insideMainTable) {
+            if ($line -match '^(?<NameHeader>.+?)\s{2,}(?<IdHeader>Id)\s{2,}(?<VersionHeader>\S+)\s{2,}') {
+                $idStart = $line.IndexOf($Matches['IdHeader'], $Matches['NameHeader'].Length)
+                $versionStart = $line.IndexOf($Matches['VersionHeader'], $idStart + $Matches['IdHeader'].Length)
+                continue
+            }
+            if ($line -match '^-{3,}') {
+                $insideMainTable = $true
+            }
+            continue
+        }
+
+        if ([string]::IsNullOrWhiteSpace($line)) {
+            break
+        }
+
+        if ($null -ne $idStart -and $null -ne $versionStart -and $line.Length -gt $versionStart) {
+            $name = $line.Substring(0, [Math]::Min($idStart, $line.Length)).Trim()
+            $id = $line.Substring($idStart, [Math]::Min($versionStart, $line.Length) - $idStart).Trim()
+        }
+        else {
+            $columns = @($line.Trim() -split '\s{2,}')
+            $name = if ($columns.Count -ge 1) { $columns[0] } else { $null }
+            $id = if ($columns.Count -ge 2) { $columns[1] } else { $null }
+        }
+
+        if ($id -match '^[A-Za-z0-9][A-Za-z0-9._+-]+$') {
+            [pscustomobject]@{
+                Name = $name
+                Id   = $id
+            }
+        }
+    }
+}
+
+function ConvertFrom-ScoopStatusOutput {
+    [CmdletBinding()]
+    param(
+        [Parameter(ValueFromPipeline)]
+        [AllowEmptyString()]
+        [object[]]$Output
+    )
+
+    begin {
+        $lines = @()
+    }
+
+    process {
+        if ($null -ne $Output) {
+            $lines += $Output
+        }
+    }
+
+    end {
+        foreach ($item in $lines) {
+            if ($item -isnot [string]) {
+                $packageName = $item.Name
+                $installedVersion = $item.'Installed Version'
+                $latestVersion = $item.'Latest Version'
+                if ($packageName -and $latestVersion -match '\d' -and $installedVersion -ne $latestVersion) {
+                    [PSCustomObject]@{
+                        Name             = $packageName
+                        InstalledVersion = $installedVersion
+                        LatestVersion    = $latestVersion
+                    }
+                }
+                continue
+            }
+
+            $cleanLine = ($item -replace "`e\[[0-9;]*m", '').Trim()
+            if ([string]::IsNullOrWhiteSpace($cleanLine)) {
+                continue
+            }
+            if ($cleanLine -match '^(WARN|Name\s+|----|Installed apps:|Latest versions)') {
+                continue
+            }
+
+            if ($cleanLine -match '^(?<Name>\S+)\s+(?<Installed>\S+)\s+(?<Latest>\S+)(?:\s+.*)?$') {
+                $packageName = $Matches['Name']
+                $installedVersion = $Matches['Installed']
+                $latestVersion = $Matches['Latest']
+                if ($latestVersion -match '\d' -and $installedVersion -ne $latestVersion) {
+                    [PSCustomObject]@{
+                        Name             = $packageName
+                        InstalledVersion = $installedVersion
+                        LatestVersion    = $latestVersion
+                    }
+                }
+            }
+        }
+    }
+}
+
+function Get-ScoopPackageBlockers {
+    param(
+        [string]$Name,
+        [object[]]$Process = @(Get-Process -ErrorAction SilentlyContinue)
+    )
+
+    $knownBlockers = @{
+        'erlang'     = @('erl', 'beam.smp', 'epmd', 'inet_gethost')
+        'postgresql' = @('postgres', 'pg_ctl')
+    }
+
+    $blockerNames = $knownBlockers[$Name.ToLowerInvariant()]
+    if (-not $blockerNames) {
+        return @()
+    }
+
+    @($Process |
+        Where-Object { $blockerNames -contains $_.ProcessName } |
+        Select-Object -ExpandProperty ProcessName -Unique)
+}
+
+function Get-UvSelfUpdateCommandPath {
+    param(
+        [string]$ActiveCommandPath,
+        [string]$LegacyStandalonePath
+    )
+
+    if (-not [string]::IsNullOrWhiteSpace($ActiveCommandPath)) {
+        return $ActiveCommandPath
+    }
+
+    if (-not [string]::IsNullOrWhiteSpace($LegacyStandalonePath) -and
+        (Test-Path -LiteralPath $LegacyStandalonePath)) {
+        return $LegacyStandalonePath
+    }
+
+    return $null
+}
+
 # Helper function to write section headers
 function Write-UpdateHeader {
     param([string]$Title)
@@ -26,6 +209,11 @@ function Write-UpdateStatus {
     $prefixes = @{ Info = '>'; Success = 'OK'; Warning = '!!'; Error = 'XX' }
     $formattedMessage = "[$($prefixes[$Status])] $Message"
     Write-Host $formattedMessage -ForegroundColor $colors[$Status]
+
+    if ($script:CurrentUpdateLogFile) {
+        if ($Status -eq 'Warning') { $script:UpdateWarningCount++ }
+        if ($Status -eq 'Error') { $script:UpdateErrorCount++ }
+    }
 
     if ($script:CurrentUpdateLogFile -and (Get-Command Write-UpdateLog -ErrorAction SilentlyContinue)) {
         Write-UpdateLog "${Status}: $Message" $script:CurrentUpdateLogFile
@@ -76,24 +264,38 @@ function Update-Winget {
     Write-UpdateHeader "Layer 1: Windows Package Managers - Winget"
     
     if ($PSCmdlet.ShouldProcess("Winget packages", "Update")) {
-        if (Test-CommandExist 'winget') {
+        $winget = Get-WingetExecutable
+        if ($winget) {
             Write-UpdateStatus "Updating Winget packages to latest versions (this may take a while)..." -Status Info
-            Write-Host "  Running: winget upgrade -rhu" -ForegroundColor DarkGray
+            Write-Host "  Discovering Winget upgrades..." -ForegroundColor DarkGray
             Write-Host ""
 
             # Pinned packages (e.g. Google.CloudSDK) are respected — no --force
             # Packages with unknown versions are skipped — they should be updated
             # by their own tooling (e.g. gcloud components update)
-            if (Test-CommandExist 'sudo') {
-                sudo winget upgrade -rhu --accept-source-agreements --accept-package-agreements --disable-interactivity
-            } else {
-                & winget upgrade -rhu --accept-source-agreements --accept-package-agreements --disable-interactivity
+            # Keep winget non-elevated by default: elevated winget cannot upgrade
+            # user-scope packages such as chezmoi's WinGet shim.
+            $upgradeOutput = @(& $winget upgrade --accept-source-agreements --disable-interactivity 2>&1)
+            $queryExitCode = $LASTEXITCODE
+            $packages = @(ConvertFrom-WingetUpgradeOutput -Output $upgradeOutput)
+            $failedPackages = @()
+
+            foreach ($package in $packages) {
+                Write-Host "  Updating: $($package.Name) [$($package.Id)]" -ForegroundColor DarkGray
+                & $winget upgrade --id $package.Id --exact --silent --accept-source-agreements --accept-package-agreements --disable-interactivity
+                if ($LASTEXITCODE -ne 0 -and $LASTEXITCODE -ne -1978335189) {
+                    $failedPackages += "$($package.Id) ($LASTEXITCODE)"
+                }
             }
-            
-            if ($LASTEXITCODE -eq 0 -or $LASTEXITCODE -eq -1978335189) {
+
+            if ($queryExitCode -ne 0 -and $packages.Count -eq 0) {
+                Write-UpdateStatus "Winget could not enumerate upgrades (exit code $queryExitCode): $($upgradeOutput -join ' ')" -Status Error
+            } elseif ($packages.Count -eq 0) {
+                Write-UpdateStatus "No Winget package updates available" -Status Success
+            } elseif ($failedPackages.Count -eq 0) {
                 Write-UpdateStatus "Winget update completed" -Status Success
             } else {
-                Write-UpdateStatus "Winget update finished with exit code: $LASTEXITCODE" -Status Warning
+                Write-UpdateStatus "Winget updated the remaining packages, but these require manual handling: $($failedPackages -join ', ')" -Status Warning
             }
         } else {
             Write-UpdateStatus "Winget not installed, skipping..." -Status Warning
@@ -114,22 +316,52 @@ function Update-Scoop {
             Write-UpdateStatus "Updating Scoop to latest version..." -Status Info
             pwsh -NoProfile -Command "scoop update"
 
-            Write-UpdateStatus "Updating all Scoop apps to latest versions..." -Status Info
-            if (Test-CommandExist 'sudo') {
-                sudo pwsh -NoProfile -Command "scoop update * -g"
+            Write-UpdateStatus "Updating all unblocked Scoop apps to latest versions..." -Status Info
+            $statusOutput = @(pwsh -NoProfile -Command "scoop status" 2>&1)
+            $candidates = @(ConvertFrom-ScoopStatusOutput -Output $statusOutput)
+            $processes = @(Get-Process -ErrorAction SilentlyContinue)
+            $appsToUpdate = @()
+
+            foreach ($candidate in $candidates) {
+                $blockers = @(Get-ScoopPackageBlockers -Name $candidate.Name -Process $processes)
+                if ($blockers.Count -gt 0) {
+                    Write-UpdateStatus "Skipping Scoop $($candidate.Name) $($candidate.InstalledVersion) -> $($candidate.LatestVersion); running process(es): $($blockers -join ', ')" -Status Warning
+                } else {
+                    $appsToUpdate += $candidate.Name
+                }
+            }
+
+            $updatedApps = @()
+            $failedApps = @()
+            if ($appsToUpdate.Count -gt 0) {
+                foreach ($app in $appsToUpdate) {
+                    Write-Host "  Running: scoop update $app" -ForegroundColor DarkGray
+                    pwsh -NoProfile -Command "scoop update $app"
+                    if ($LASTEXITCODE -eq 0) {
+                        $updatedApps += $app
+                    } else {
+                        $failedApps += $app
+                        Write-UpdateStatus "Scoop failed to update $app (exit code $LASTEXITCODE); continuing with other apps" -Status Warning
+                    }
+                }
             } else {
-                pwsh -NoProfile -Command "scoop update * -g"
+                Write-Host "  No unblocked Scoop app updates found" -ForegroundColor DarkGray
             }
 
             # Cleanup old versions
             Write-UpdateStatus "Cleaning up old Scoop versions..." -Status Info
-            if (Test-CommandExist 'sudo') {
-                sudo pwsh -NoProfile -Command "scoop cleanup * -g"
+            if ($updatedApps.Count -gt 0) {
+                $appList = $updatedApps -join ' '
+                pwsh -NoProfile -Command "scoop cleanup $appList"
             } else {
-                pwsh -NoProfile -Command "scoop cleanup * -g"
+                Write-Host "  No Scoop cleanup needed for skipped updates" -ForegroundColor DarkGray
             }
 
-            Write-UpdateStatus "Scoop update completed" -Status Success
+            if ($failedApps.Count -eq 0) {
+                Write-UpdateStatus "Scoop update completed" -Status Success
+            } else {
+                Write-UpdateStatus "Scoop completed with failed packages: $($failedApps -join ', ')" -Status Warning
+            }
         } else {
             Write-UpdateStatus "Scoop not installed, skipping..." -Status Warning
         }
@@ -145,7 +377,11 @@ function Update-Choco {
         if (Test-CommandExist 'choco') {
             # Clean up cache before updating
             Write-UpdateStatus "Cleaning Chocolatey cache..." -Status Info
-            & choco cache remove --all --confirm 2>$null
+            if (Test-CommandExist 'sudo') {
+                sudo choco cache remove --all --confirm
+            } else {
+                & choco cache remove --all --confirm
+            }
             
             Write-UpdateStatus "Updating all Chocolatey packages to latest versions (requires admin)..." -Status Info
             Write-Host "  Running: sudo choco upgrade all -y" -ForegroundColor DarkGray
@@ -348,8 +584,10 @@ function Update-Cargo {
                 Write-Host "  Running: cargo install-update -a" -ForegroundColor DarkGray
                 Write-Host ""
                 
-                # -a = update all, -f = force
-                & cargo install-update -a -f
+                # -a updates all packages that actually have a newer version.
+                # Do not force reinstall current packages: it is slow and can
+                # collide with binaries that are currently in use.
+                & cargo install-update -a
                 
                 Write-UpdateStatus "Cargo update completed" -Status Success
             } else {
@@ -375,13 +613,21 @@ function Update-Uv {
     
     if ($PSCmdlet.ShouldProcess("Uv tool packages", "Update")) {
         if (Test-CommandExist 'uv') {
-            # Use the standalone installer's uv for self-update to avoid conflict with pip-installed copy
+            $uvCommand = Get-Command uv -ErrorAction SilentlyContinue
             $uvStandalone = "$env:USERPROFILE\.local\bin\uv.exe"
+            $uvSelfUpdatePath = Get-UvSelfUpdateCommandPath -ActiveCommandPath $uvCommand.Source -LegacyStandalonePath $uvStandalone
             Write-UpdateStatus "Updating Uv self to latest version..." -Status Info
-            if (Test-Path $uvStandalone) {
-                & $uvStandalone self update
+            if ($uvSelfUpdatePath) {
+                $selfUpdateProbe = @(& $uvSelfUpdatePath self update --dry-run 2>&1)
+                if ($LASTEXITCODE -eq 0) {
+                    & $uvSelfUpdatePath self update
+                } elseif (($selfUpdateProbe -join "`n") -match 'Self-update is only available') {
+                    Write-Host "  Skipping uv self update (current uv was not installed by the standalone updater)" -ForegroundColor DarkGray
+                } else {
+                    Write-UpdateStatus "uv self-update check failed: $($selfUpdateProbe -join ' ')" -Status Warning
+                }
             } else {
-                Write-Host "  Skipping uv self update (standalone binary not found at $uvStandalone)" -ForegroundColor DarkGray
+                Write-Host "  Skipping uv self update (uv executable not found)" -ForegroundColor DarkGray
             }
             
             Write-UpdateStatus "Updating all Uv tool packages to latest versions..." -Status Info
@@ -389,8 +635,12 @@ function Update-Uv {
             Write-Host ""
             
             & uv tool upgrade --all
-            
-            Write-UpdateStatus "Uv update completed" -Status Success
+
+            if ($LASTEXITCODE -eq 0) {
+                Write-UpdateStatus "Uv update completed" -Status Success
+            } else {
+                Write-UpdateStatus "Uv tool upgrade finished with exit code: $LASTEXITCODE" -Status Warning
+            }
         } else {
             Write-UpdateStatus "Uv not installed, skipping..." -Status Warning
         }
@@ -612,11 +862,12 @@ function Update-StoreApp {
     if ($PSCmdlet.ShouldProcess("Store apps", "Update")) {
         Write-UpdateStatus "Checking Microsoft Store apps..." -Status Info
         
-        if (Test-CommandExist 'winget') {
+        $winget = Get-WingetExecutable
+        if ($winget) {
             Write-Host "  Using winget to check Store apps..." -ForegroundColor DarkGray
             try {
                 # winget upgrade -rhu ya incluye apps de msstore
-                $outdated = winget upgrade --source msstore --accept-source-agreements 2>$null | 
+                $outdated = & $winget upgrade --source msstore --accept-source-agreements 2>$null |
                     Select-String -Pattern '\S+.*\d+\.\d+.*\d+\.\d+.*msstore'
                 
                 if ($outdated) {
@@ -795,10 +1046,14 @@ function Update-DotnetTool {
     
     if ($PSCmdlet.ShouldProcess(".NET global tools", "Update")) {
         if (Test-CommandExist 'dotnet') {
-            Write-UpdateStatus "Updating .NET SDK to latest version..." -Status Info
-            # Try to update .NET SDK via winget if available
-            if (Test-CommandExist 'winget') {
-                & winget upgrade Microsoft.DotNet.SDK.8 --silent --accept-source-agreements 2>$null
+            Write-UpdateStatus "Checking .NET SDK package manager updates..." -Status Info
+            # The broad Winget/Chocolatey layers handle SDK packages. Only call
+            # this exact WinGet package when it is actually installed via WinGet.
+            if (Test-WingetPackageInstalled 'Microsoft.DotNet.SDK.8') {
+                $winget = Get-WingetExecutable
+                & $winget upgrade --id Microsoft.DotNet.SDK.8 --source winget --exact --silent --accept-source-agreements --accept-package-agreements --disable-interactivity 2>$null
+            } else {
+                Write-Host "  .NET SDK is not managed by WinGet package Microsoft.DotNet.SDK.8; skipping SDK package step" -ForegroundColor DarkGray
             }
             
             Write-UpdateStatus "Updating all .NET global tools to latest versions..." -Status Info
@@ -830,14 +1085,24 @@ function Update-Gem {
     Write-UpdateHeader "Layer 2: Development Tools - Ruby Gems"
     
     if ($PSCmdlet.ShouldProcess("Ruby gems", "Update")) {
-        if (Test-CommandExist 'gem') {
+        if ((Test-CommandExist 'ruby') -and (Test-CommandExist 'gem')) {
+            $rubyProbe = @(& ruby --version 2>&1)
+            $rubyExitCode = $LASTEXITCODE
+            $gemProbe = @(& gem --version 2>&1)
+            $gemExitCode = $LASTEXITCODE
+            if ($rubyExitCode -ne 0 -or $gemExitCode -ne 0) {
+                Write-UpdateStatus "Ruby toolchain is broken; ruby: $($rubyProbe -join ' '); gem: $($gemProbe -join ' ')" -Status Error
+                return
+            }
+
             Write-UpdateStatus "Updating RubyGems itself to latest version..." -Status Info
             # Updating RubyGems system requires admin privileges (installs to C:/Ruby32-x64)
             if (Test-CommandExist 'sudo') {
-                sudo gem update --system
+                sudo gem update --system --no-document --silent
             } else {
-                & gem update --system
+                & gem update --system --no-document --silent
             }
+            $gemSystemExitCode = $LASTEXITCODE
             
             Write-UpdateStatus "Updating all Ruby gems to latest versions..." -Status Info
             try {
@@ -845,12 +1110,11 @@ function Update-Gem {
                 # --conservative: Skip updates that downgrade gems
                 # But we want latest, so no conservative flag
                 if (Test-CommandExist 'sudo') {
-                    sudo gem update
+                    sudo gem update --no-document
                 } else {
-                    & gem update
+                    & gem update --no-document
                 }
-                # gem update exits non-zero if any gem fails (e.g. version incompatibility) — ignore exit code
-                $global:LASTEXITCODE = 0
+                $gemUpdateExitCode = $LASTEXITCODE
                 Write-Host "  Running: gem cleanup" -ForegroundColor DarkGray
                 if (Test-CommandExist 'sudo') {
                     sudo gem cleanup
@@ -858,12 +1122,17 @@ function Update-Gem {
                     & gem cleanup
                 }
                 
-                Write-UpdateStatus "Ruby gems update completed" -Status Success
+                $gemCleanupExitCode = $LASTEXITCODE
+                if ($gemSystemExitCode -eq 0 -and $gemUpdateExitCode -eq 0 -and $gemCleanupExitCode -eq 0) {
+                    Write-UpdateStatus "Ruby gems update completed" -Status Success
+                } else {
+                    Write-UpdateStatus "Ruby gems finished with failures (system: $gemSystemExitCode, update: $gemUpdateExitCode, cleanup: $gemCleanupExitCode)" -Status Warning
+                }
             } catch {
                 Write-UpdateStatus "Ruby gems update failed: $_" -Status Error
             }
         } else {
-            Write-UpdateStatus "Ruby/Gem not installed, skipping..." -Status Warning
+            Write-UpdateStatus "Ruby and Gem are not both available; skipping Ruby updates" -Status Warning
         }
     }
 }
@@ -968,15 +1237,14 @@ function Update-Composer {
             Write-UpdateStatus "Updating Composer itself..." -Status Info
             try {
                 Write-Host "  Running: composer self-update" -ForegroundColor DarkGray
-                # Deshabilitar TLS verification temporalmente si OpenSSL no está disponible
-                & $composerCmd self-update 2>&1 | ForEach-Object {
-                    if ($_ -match "openssl|tls|ssl") {
-                        Write-Host "  Note: OpenSSL issue detected, trying with disable-tls..." -ForegroundColor Yellow
-                        & $composerCmd self-update --disable-tls 2>$null
-                    }
+                $composerOutput = @(& $composerCmd self-update 2>&1)
+                if ($LASTEXITCODE -eq 0) {
+                    $composerOutput | ForEach-Object { Write-Host $_ }
+                    Write-UpdateStatus "Composer update completed" -Status Success
+                    Write-UpdateStatus "Note: Project dependencies not updated (run 'composer update' in project dirs)" -Status Info
+                } else {
+                    Write-UpdateStatus "Composer self-update failed securely; TLS verification was not disabled: $($composerOutput -join ' ')" -Status Error
                 }
-                Write-UpdateStatus "Composer update completed" -Status Success
-                Write-UpdateStatus "Note: Project dependencies not updated (run 'composer update' in project dirs)" -Status Info
             } catch {
                 Write-UpdateStatus "Composer update failed: $_" -Status Warning
             }
@@ -1064,8 +1332,16 @@ function Update-Chezmoi {
         if (Test-CommandExist 'chezmoi') {
             Write-UpdateStatus "Updating chezmoi..." -Status Info
             try {
-                Write-Host "  Running: chezmoi upgrade" -ForegroundColor DarkGray
-                & chezmoi upgrade
+                $chezmoiCommand = Get-Command chezmoi -ErrorAction Stop
+                if (Test-WingetManagedCommandPath $chezmoiCommand.Source) {
+                    Write-Host "  Chezmoi is managed by WinGet; package updates are handled by the Winget layer" -ForegroundColor DarkGray
+                } elseif ($chezmoiCommand.Source -match '\\scoop\\') {
+                    Write-Host "  Running: scoop update chezmoi" -ForegroundColor DarkGray
+                    & scoop update chezmoi
+                } else {
+                    Write-Host "  Running: chezmoi upgrade" -ForegroundColor DarkGray
+                    & chezmoi upgrade
+                }
                 Write-UpdateStatus "Chezmoi upgrade completed" -Status Success
             } catch {
                 Write-UpdateStatus "Chezmoi upgrade failed: $_" -Status Error
@@ -1085,9 +1361,10 @@ function Update-Starship {
         if (Test-CommandExist 'starship') {
             Write-UpdateStatus "Updating Starship prompt..." -Status Info
             try {
-                if (Test-CommandExist 'winget') {
+                $winget = Get-WingetExecutable
+                if ($winget) {
                     Write-Host "  Attempting update via winget..." -ForegroundColor DarkGray
-                    & winget upgrade Starship.Starship --silent 2>$null
+                    & $winget upgrade Starship.Starship --silent 2>$null
                 }
                 elseif (Test-CommandExist 'scoop') {
                     Write-Host "  Attempting update via scoop..." -ForegroundColor DarkGray
@@ -1138,9 +1415,9 @@ function Update-Fzf {
                     Write-Host "  Updating via choco..." -ForegroundColor DarkGray
                     & choco upgrade fzf -y
                 }
-                elseif (Test-CommandExist 'winget') {
+                elseif ($winget = Get-WingetExecutable) {
                     Write-Host "  Updating via winget..." -ForegroundColor DarkGray
-                    & winget upgrade junegunn.fzf --silent
+                    & $winget upgrade junegunn.fzf --silent
                 }
                 else {
                     Write-UpdateStatus "fzf update method not available" -Status Warning
@@ -1233,6 +1510,8 @@ function Update-VSCodeExtension {
         if ($vscodePath) {
             Write-UpdateStatus "Updating VS Code extensions..." -Status Info
             try {
+                $oldNodeNoWarnings = $env:NODE_NO_WARNINGS
+                $env:NODE_NO_WARNINGS = '1'
                 Write-Host "  Running: code --update-extensions" -ForegroundColor DarkGray
                 & $vscodePath --update-extensions
                 
@@ -1245,6 +1524,12 @@ function Update-VSCodeExtension {
                 Write-UpdateStatus "VS Code extensions update completed" -Status Success
             } catch {
                 Write-UpdateStatus "VS Code extensions update failed: $_" -Status Error
+            } finally {
+                if ($null -eq $oldNodeNoWarnings) {
+                    Remove-Item Env:NODE_NO_WARNINGS -ErrorAction SilentlyContinue
+                } else {
+                    $env:NODE_NO_WARNINGS = $oldNodeNoWarnings
+                }
             }
         } else {
             Write-UpdateStatus "VS Code not found, skipping..." -Status Warning
