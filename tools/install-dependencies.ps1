@@ -274,6 +274,25 @@ $AiCliTools = @(
 
 #region Installation Functions
 
+function Get-DependencyInstallerWinget {
+    $command = Get-Command winget -ErrorAction SilentlyContinue
+    if ($command.Source -and (Test-Path -LiteralPath $command.Source)) {
+        return $command.Source
+    }
+
+    $appInstaller = Get-AppxPackage Microsoft.DesktopAppInstaller -ErrorAction SilentlyContinue |
+        Sort-Object Version -Descending |
+        Select-Object -First 1
+    if ($appInstaller) {
+        $fallback = Join-Path $appInstaller.InstallLocation 'winget.exe'
+        if (Test-Path -LiteralPath $fallback) {
+            return $fallback
+        }
+    }
+
+    return $null
+}
+
 function Install-PackageManagers {
     Write-Host "`n===== Package Managers =====" -ForegroundColor Cyan
 
@@ -284,15 +303,8 @@ function Install-PackageManagers {
     } elseif ($WhatIfPreference) {
         Write-Status "Would install Scoop" -Type Warning
     } else {
-        Write-Status "Installing Scoop..." -Type Info
-        try {
-            Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser -Force -ErrorAction SilentlyContinue
-            Invoke-RestMethod -Uri 'https://get.scoop.sh' | Invoke-Expression
-            Update-SessionPath
-            Write-Status "Scoop installed" -Type Success
-        } catch {
-            Write-Status "Failed to install Scoop: $_" -Type Error
-        }
+        Write-Status "Scoop is not installed; automatic bootstrap is disabled because it would execute an unverified remote script" -Type Warning
+        Write-Status "Review and follow the official installation instructions: https://scoop.sh" -Type Info
     }
 
     # Scoop needs git for adding buckets - install it early
@@ -333,19 +345,22 @@ function Install-PackageManagers {
     } else {
         Write-Status "Installing Chocolatey..." -Type Info
         try {
-            if (Test-IsAdmin) {
-                Set-ExecutionPolicy Bypass -Scope Process -Force
-                [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072
-                $installScript = (New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1')
-                & ([scriptblock]::Create($installScript))
-            } elseif (Test-SudoAvailable) {
-                sudo powershell -NoProfile -Command "Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))"
-            } else {
-                Write-Status "Chocolatey requires admin - enable sudo or run as Administrator" -Type Warning
+            $winget = Get-DependencyInstallerWinget
+            if (-not $winget) {
+                Write-Status "Chocolatey installation requires WinGet; install Microsoft App Installer first" -Type Warning
+                return
             }
+
+            & $winget install --id Chocolatey.Chocolatey --exact --source winget --silent --accept-source-agreements --accept-package-agreements --disable-interactivity
+            if ($LASTEXITCODE -ne 0 -and $LASTEXITCODE -ne -1978335189) {
+                throw "WinGet exited with code $LASTEXITCODE"
+            }
+
             Update-SessionPath
             if (Test-CommandExist 'choco') {
                 Write-Status "Chocolatey installed" -Type Success
+            } else {
+                Write-Status "Chocolatey installation completed; restart PowerShell to refresh PATH" -Type Info
             }
         } catch {
             Write-Status "Failed to install Chocolatey: $_" -Type Error
