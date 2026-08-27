@@ -7,7 +7,6 @@ PowerShell-profile/
 ├── Microsoft.PowerShell_profile.ps1    # Main orchestrator
 ├── Core/
 │   ├── ModuleInstaller.ps1             # Module installation & caching
-│   ├── UnifiedModuleManager.ps1        # Module loading & caching
 │   ├── Utils/
 │   │   ├── unified_aliases.ps1         # Centralized aliases & command cache
 │   │   ├── CommonUtils.ps1             # Common utility functions
@@ -17,9 +16,7 @@ PowerShell-profile/
 │   ├── Apps/
 │   │   ├── appsManage.ps1              # Package manager operations (scoop/choco/pip/npm)
 │   │   ├── InstallMissingTools.ps1     # Missing tool detection & install
-│   │   ├── UpdateApps.ps1              # App update orchestrator
 │   │   ├── UpdateAppsHelper.ps1        # Update helper functions
-│   │   ├── WindowsUpdateHelper.ps1     # Windows Update management
 │   │   └── Updates/SystemUpdater.ps1   # System-wide update management
 │   └── System/
 │       ├── chezmoi.ps1                 # Chezmoi dotfile manager

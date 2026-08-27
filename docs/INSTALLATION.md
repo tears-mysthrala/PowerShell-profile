@@ -129,8 +129,7 @@ Get-Item $env:TEMP\PSModuleCache.json | Select-Object LastWriteTime
 ```powershell
 # Force cache rebuild
 Remove-Item $env:TEMP\PSModuleCache.json
-Import-Module "$HOME\Documents\PowerShell\Core\UnifiedModuleManager.ps1" -Force
-Initialize-ModuleCache -Force
+. $PROFILE
 ```
 
 ## Verification
@@ -138,7 +137,7 @@ Initialize-ModuleCache -Force
 ```powershell
 # Test unified aliases
 ll          # Should use 'eza' if available
-cat --version  # Should use 'bat' if available
+Get-ChildItem | Select-Object -First 3  # Native object pipeline remains intact
 
 # Test navigation
 z docs      # Zoxide navigation

@@ -127,52 +127,33 @@ function Get-FunctionSignature {
     .SYNOPSIS
         Extract complete function signature including parameters.
     #>
+    param([System.Management.Automation.Language.FunctionDefinitionAst]$FunctionAst)
+
+    $declaration = "function $($FunctionAst.Name)"
+    if (-not $FunctionAst.Body.ParamBlock) {
+        return $declaration
+    }
+
+    $paramAst = $FunctionAst.Body.ParamBlock
+    $attributes = @($paramAst.Attributes | ForEach-Object { $_.Extent.Text.Trim() })
+    $paramBlock = (($paramAst.Extent.Text.Trim() -split "\r?\n") |
+        ForEach-Object { $_.TrimEnd() }) -join "`n"
+    $signatureParts = @($declaration + ' {') + $attributes + $paramBlock + '}'
+    return ($signatureParts -join "`n")
+}
+
+function Write-Utf8File {
     param(
-        [string]$Text,
-        [int]$MatchIndex
+        [Parameter(Mandatory)][string]$Path,
+        [Parameter(Mandatory)][string]$Content
     )
 
-    $lines = $Text -split "\r?\n"
-    $currentPos = 0
-    $startLine = 0
-
-    # Find starting line
-    for ($i = 0; $i -lt $lines.Length; $i++) {
-        if ($currentPos + $lines[$i].Length -ge $MatchIndex) {
-            $startLine = $i
-            break
-        }
-        $currentPos += $lines[$i].Length + 2
-    }
-
-    $signatureLines = @($lines[$startLine].Trim())
-    $braceCount = 0
-    $parenCount = 0
-    $inParam = $false
-
-    for ($i = $startLine + 1; $i -lt [Math]::Min($startLine + 100, $lines.Length); $i++) {
-        $line = $lines[$i]
-        
-        if ($line -match 'param\s*\(') {
-            $inParam = $true
-        }
-        
-        $parenCount += ($line.ToCharArray() | Where-Object { $_ -eq '(' }).Count
-        $parenCount -= ($line.ToCharArray() | Where-Object { $_ -eq ')' }).Count
-        $braceCount += ($line.ToCharArray() | Where-Object { $_ -eq '{' }).Count
-
-        $signatureLines += $line.TrimEnd()
-
-        if ($inParam -and $parenCount -eq 0) {
-            break
-        }
-        
-        if (-not $inParam -and $braceCount -gt 0) {
-            break
-        }
-    }
-
-    return ($signatureLines -join "`n").Trim()
+    $normalized = ($Content -replace "`r`n", "`n").TrimEnd() + "`n"
+    [System.IO.File]::WriteAllText(
+        $Path,
+        $normalized,
+        [System.Text.UTF8Encoding]::new($false)
+    )
 }
 
 function Get-SourceCategory {
@@ -188,8 +169,8 @@ function Get-SourceCategory {
     if ($relativePath -match '^Core\\Apps') { return 'Applications' }
     if ($relativePath -match '^Core\\System') { return 'System' }
     if ($relativePath -match '^Core') { return 'Core' }
-    if ($relativePath -match '^Modules') { return 'Modules' }
-    if ($relativePath -match '^Scripts') { return 'Scripts' }
+    if ($relativePath -match '^tools') { return 'Tools' }
+    if ($relativePath -eq 'Microsoft.PowerShell_profile.ps1') { return 'Profile' }
     
     return 'Other'
 }
@@ -200,15 +181,16 @@ function Get-SourceCategory {
 
 Write-Verbose "Scanning for PowerShell files..."
 
-$files = Get-ChildItem -Path $RepoRoot -Recurse -Include *.ps1, *.psm1 -File -ErrorAction SilentlyContinue |
-Where-Object {
-    $_.FullName -notmatch '[\\/]\.(git|vscode|claude)[\\/]' -and
-    $_.FullName -notmatch '[\\/]docs[\\/]' -and
-    $_.FullName -notmatch '[\\/]tools[\\/]generate_' -and
-    $_.FullName -notmatch '[\\/]node_modules[\\/]' -and
-    $_.FullName -notmatch '[\\/]Modules[\\/]' -and
-    $_.FullName -notmatch '[\\/]Config[\\/].*-cache'
-}
+$sourcePaths = @(
+    (Join-Path $RepoRoot 'Core'),
+    (Join-Path $RepoRoot 'tools'),
+    (Join-Path $RepoRoot 'Microsoft.PowerShell_profile.ps1')
+)
+$files = @(
+    Get-ChildItem -Path $sourcePaths -Recurse -Include *.ps1, *.psm1 -File -ErrorAction SilentlyContinue |
+        Where-Object { $_.FullName -ne $PSCommandPath } |
+        Sort-Object FullName
+)
 
 Write-Verbose "Found $($files.Count) PowerShell files to scan"
 
@@ -216,7 +198,6 @@ $functions = @{}
 $aliases = @{}
 $categories = @{}
 
-$functionPattern = '(?m)^[ \t]*function[ \t]+([A-Za-z0-9_\-]+)\b'
 $aliasPattern = '(?m)Set-Alias\s+-Name\s+([A-Za-z0-9_\-]+)\s+-Value\s+([A-Za-z0-9_\-]+)'
 
 foreach ($file in $files) {
@@ -227,15 +208,30 @@ foreach ($file in $files) {
         if (-not $content) { continue }
         
         $category = Get-SourceCategory $file.FullName
-        
-        # Extract functions
-        $functionMatches = [regex]::Matches($content, $functionPattern)
-        foreach ($match in $functionMatches) {
-            $name = $match.Groups[1].Value
-            
+
+        $tokens = $null
+        $parseErrors = $null
+        $ast = [System.Management.Automation.Language.Parser]::ParseFile(
+            $file.FullName,
+            [ref]$tokens,
+            [ref]$parseErrors
+        )
+        if ($parseErrors.Count -gt 0) {
+            throw "Cannot document a file with syntax errors: $($parseErrors.Message -join '; ')"
+        }
+
+        # Extract functions from the parsed syntax tree so multiline parameter
+        # blocks and line endings cannot corrupt signatures.
+        $functionAsts = $ast.FindAll({
+            param($node)
+            $node -is [System.Management.Automation.Language.FunctionDefinitionAst]
+        }, $true)
+        foreach ($functionAst in $functionAsts) {
+            $name = $functionAst.Name
+
             if (-not $functions.ContainsKey($name)) {
-                $sig = Get-FunctionSignature $content $match.Index
-                $doc = Get-PrecedingCommentBlock $content $match.Index
+                $sig = Get-FunctionSignature -FunctionAst $functionAst
+                $doc = Get-PrecedingCommentBlock $content $functionAst.Extent.StartOffset
                 
                 $functions[$name] = @{
                     Name          = $name
@@ -349,7 +345,7 @@ foreach ($cat in ($categories.Keys | Sort-Object)) {
     }
 }
 
-Set-Content -LiteralPath "$OutputDir\FunctionReference.md" -Value ($output -join "`n") -Encoding UTF8
+Write-Utf8File -Path "$OutputDir\FunctionReference.md" -Content ($output -join "`n")
 
 # 2. Quick Reference (aliases and functions list)
 Write-Verbose "Generating QuickReference.md..."
@@ -387,7 +383,7 @@ foreach ($aliasName in ($aliases.Keys | Sort-Object)) {
     $output += "| ``$($alias.Alias)`` | ``$($alias.Target)`` | ``$($alias.Source)`` |"
 }
 
-Set-Content -LiteralPath "$OutputDir\QuickReference.md" -Value ($output -join "`n") -Encoding UTF8
+Write-Utf8File -Path "$OutputDir\QuickReference.md" -Content ($output -join "`n")
 
 # 3. Generate/Update README sections
 Write-Verbose "Updating README.md sections..."
@@ -400,7 +396,7 @@ if (Test-Path $readmePath) {
     $statsBlock = @"
 ## 📊 Statistics
 
-- **Functions:** $($functions.Count)
+- **Functions:** $($functions.Count) across Core/, tools/install-dependencies.ps1, and the main profile
 - **Aliases:** $($aliases.Count)
 - **Categories:** $($categories.Count)
 - **Last Updated:** $timestamp
@@ -413,7 +409,7 @@ if (Test-Path $readmePath) {
     } else {
         $readmeContent += "`n`n$statsBlock"
     }
-    Set-Content -LiteralPath $readmePath -Value $readmeContent -Encoding UTF8
+    Write-Utf8File -Path $readmePath -Content $readmeContent
 }
 
 #endregion

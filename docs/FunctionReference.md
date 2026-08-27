@@ -1,30 +1,75 @@
 # Function Reference
 
 > **Auto-generated documentation**
-> Last updated: 2026-03-29 06:34:36
-> Total functions: 145
+> Last updated: 2026-08-27 15:52:40
+> Total functions: 156
 
 ## Table of Contents
 
 - [Applications](#applications)
 - [Core](#core)
-- [Other](#other)
+- [Profile](#profile)
 - [System](#system)
+- [Tools](#tools)
 - [Utilities](#utilities)
 
 ## Applications
+
+### `ConvertFrom-ChocoListOutput`
+
+**Signature:**
+```powershell
+function ConvertFrom-ChocoListOutput {
+param([object[]]$Output)
+}
+```
+
+<sub>**Source:** `Core\Apps\appsManage.ps1`</sub>
+
+### `ConvertFrom-ScoopListOutput`
+
+**Signature:**
+```powershell
+function ConvertFrom-ScoopListOutput {
+param([object[]]$Output)
+}
+```
+
+<sub>**Source:** `Core\Apps\appsManage.ps1`</sub>
+
+### `ConvertFrom-ScoopStatusOutput`
+
+**Signature:**
+```powershell
+function ConvertFrom-ScoopStatusOutput {
+[CmdletBinding()]
+param(
+        [Parameter(ValueFromPipeline)]
+        [AllowEmptyString()]
+        [object[]]$Output
+    )
+}
+```
+
+<sub>**Source:** `Core\Apps\UpdateAppsHelper.ps1`</sub>
+
+### `ConvertFrom-WingetUpgradeOutput`
+
+**Signature:**
+```powershell
+function ConvertFrom-WingetUpgradeOutput {
+[CmdletBinding()]
+param([object[]]$Output)
+}
+```
+
+<sub>**Source:** `Core\Apps\UpdateAppsHelper.ps1`</sub>
 
 ### `Get-ChocoApp`
 
 **Signature:**
 ```powershell
-function Get-ChocoApp {
-    $apps = $(choco list --id-only --no-color).Split("\n")
-    $apps = $apps[1..($apps.Length - 2)]
-    return $apps
-}
-
-function Get-ScoopApp {
+function Get-ChocoApp
 ```
 
 <sub>**Source:** `Core\Apps\appsManage.ps1`</sub>
@@ -33,23 +78,53 @@ function Get-ScoopApp {
 
 **Signature:**
 ```powershell
-function Get-ScoopApp {
-    $apps = $(scoop list | Select-Object -ExpandProperty "Name").Split("\n")
-    $apps = $apps[1..($apps.Length - 1)]
-    return $apps
-}
-
-function Select-App {
+function Get-ScoopApp
 ```
 
 <sub>**Source:** `Core\Apps\appsManage.ps1`</sub>
+
+### `Get-ScoopPackageBlockers`
+
+**Signature:**
+```powershell
+function Get-ScoopPackageBlockers {
+param(
+        [string]$Name,
+        [object[]]$Process = @(Get-Process -ErrorAction SilentlyContinue)
+    )
+}
+```
+
+<sub>**Source:** `Core\Apps\UpdateAppsHelper.ps1`</sub>
+
+### `Get-UvSelfUpdateCommandPath`
+
+**Signature:**
+```powershell
+function Get-UvSelfUpdateCommandPath {
+param(
+        [string]$ActiveCommandPath,
+        [string]$LegacyStandalonePath
+    )
+}
+```
+
+<sub>**Source:** `Core\Apps\UpdateAppsHelper.ps1`</sub>
+
+### `Get-WingetExecutable`
+
+**Signature:**
+```powershell
+function Get-WingetExecutable
+```
+
+<sub>**Source:** `Core\Apps\UpdateAppsHelper.ps1`</sub>
 
 ### `Initialize-PowerShellGallery`
 
 **Signature:**
 ```powershell
-function Initialize-PowerShellGallery {
-    try {
+function Initialize-PowerShellGallery
 ```
 
 <sub>**Source:** `Core\Apps\UpdateAppsHelper.ps1`</sub>
@@ -58,13 +133,7 @@ function Initialize-PowerShellGallery {
 
 **Signature:**
 ```powershell
-function Initialize-UpdateLog {
-    $logFile = Join-Path $env:TEMP "SystemUpdate_$(Get-Date -Format 'yyyyMMdd_HHmmss').log"
-    return $logFile
-}
-
-# Logging function
-function Write-UpdateLog {
+function Initialize-UpdateLog
 ```
 
 **Description:**
@@ -78,8 +147,9 @@ Initialize logging
 **Signature:**
 ```powershell
 function Install-AllMissingTools {
-    [CmdletBinding(SupportsShouldProcess)]
-    param()
+[CmdletBinding(SupportsShouldProcess)]
+param()
+}
 ```
 
 <sub>**Source:** `Core\Apps\InstallMissingTools.ps1`</sub>
@@ -88,10 +158,7 @@ function Install-AllMissingTools {
 
 **Signature:**
 ```powershell
-function Install-Chezmoi {
-    Write-InstallHeader "Installing Chezmoi (Dotfiles Manager)"
-
-    if (Test-CommandExist 'chezmoi') {
+function Install-Chezmoi
 ```
 
 <sub>**Source:** `Core\Apps\InstallMissingTools.ps1`</sub>
@@ -100,10 +167,7 @@ function Install-Chezmoi {
 
 **Signature:**
 ```powershell
-function Install-Composer {
-    Write-InstallHeader "Installing PHP and Composer"
-
-    if (Test-CommandExist 'composer') {
+function Install-Composer
 ```
 
 <sub>**Source:** `Core\Apps\InstallMissingTools.ps1`</sub>
@@ -112,10 +176,7 @@ function Install-Composer {
 
 **Signature:**
 ```powershell
-function Install-Conda {
-    Write-InstallHeader "Installing Conda (Miniforge/Mamba)"
-
-    if (Test-CommandExist 'conda') {
+function Install-Conda
 ```
 
 <sub>**Source:** `Core\Apps\InstallMissingTools.ps1`</sub>
@@ -124,10 +185,7 @@ function Install-Conda {
 
 **Signature:**
 ```powershell
-function Install-Homebrew-WSL {
-    Write-InstallHeader "Installing Homebrew in WSL"
-
-    if (-not (Test-CommandExist 'wsl')) {
+function Install-Homebrew-WSL
 ```
 
 <sub>**Source:** `Core\Apps\InstallMissingTools.ps1`</sub>
@@ -136,10 +194,7 @@ function Install-Homebrew-WSL {
 
 **Signature:**
 ```powershell
-function Install-Ruby {
-    Write-InstallHeader "Installing Ruby with DevKit"
-
-    if (Test-CommandExist 'ruby') {
+function Install-Ruby
 ```
 
 <sub>**Source:** `Core\Apps\InstallMissingTools.ps1`</sub>
@@ -148,9 +203,7 @@ function Install-Ruby {
 
 **Signature:**
 ```powershell
-function Invoke-RequiredModuleRepair {
-    $moduleInstallerPath = Join-Path (Split-Path $PSScriptRoot -Parent) 'ModuleInstaller.ps1'
-    if (-not (Test-Path $moduleInstallerPath)) {
+function Invoke-RequiredModuleRepair
 ```
 
 <sub>**Source:** `Core\Apps\UpdateAppsHelper.ps1`</sub>
@@ -160,9 +213,10 @@ function Invoke-RequiredModuleRepair {
 **Signature:**
 ```powershell
 function Select-App {
-    param (
+param (
         [string[]] $apps
     )
+}
 ```
 
 <sub>**Source:** `Core\Apps\appsManage.ps1`</sub>
@@ -172,18 +226,39 @@ function Select-App {
 **Signature:**
 ```powershell
 function Test-CommandExist {
-        param([string]$Command)
+param([string]$Command)
+}
 ```
 
 <sub>**Source:** `Core\Apps\InstallMissingTools.ps1`</sub>
+
+### `Test-WingetManagedCommandPath`
+
+**Signature:**
+```powershell
+function Test-WingetManagedCommandPath {
+param([string]$CommandPath)
+}
+```
+
+<sub>**Source:** `Core\Apps\UpdateAppsHelper.ps1`</sub>
+
+### `Test-WingetPackageInstalled`
+
+**Signature:**
+```powershell
+function Test-WingetPackageInstalled {
+param([string]$Id)
+}
+```
+
+<sub>**Source:** `Core\Apps\UpdateAppsHelper.ps1`</sub>
 
 ### `Uninstall-ChocoApp`
 
 **Signature:**
 ```powershell
-function Uninstall-ChocoApp {
-    $apps = Select-App $(Get-ChocoApp)
-    if ($apps.Length -eq 0) {
+function Uninstall-ChocoApp
 ```
 
 <sub>**Source:** `Core\Apps\appsManage.ps1`</sub>
@@ -192,9 +267,7 @@ function Uninstall-ChocoApp {
 
 **Signature:**
 ```powershell
-function Uninstall-ScoopApp {
-    $apps = Select-App $(Get-ScoopApp)
-    if ($apps.Length -eq 0) {
+function Uninstall-ScoopApp
 ```
 
 <sub>**Source:** `Core\Apps\appsManage.ps1`</sub>
@@ -204,8 +277,9 @@ function Uninstall-ScoopApp {
 **Signature:**
 ```powershell
 function Update-AllApp {
-    [CmdletBinding(SupportsShouldProcess)]
-    param()
+[CmdletBinding(SupportsShouldProcess)]
+param()
+}
 ```
 
 <sub>**Source:** `Core\Apps\appsManage.ps1`</sub>
@@ -215,8 +289,9 @@ function Update-AllApp {
 **Signature:**
 ```powershell
 function Update-Cargo {
-    [CmdletBinding(SupportsShouldProcess)]
-    param()
+[CmdletBinding(SupportsShouldProcess)]
+param()
+}
 ```
 
 <sub>**Source:** `Core\Apps\UpdateAppsHelper.ps1`</sub>
@@ -226,8 +301,9 @@ function Update-Cargo {
 **Signature:**
 ```powershell
 function Update-Chezmoi {
-    [CmdletBinding(SupportsShouldProcess)]
-    param()
+[CmdletBinding(SupportsShouldProcess)]
+param()
+}
 ```
 
 <sub>**Source:** `Core\Apps\UpdateAppsHelper.ps1`</sub>
@@ -237,8 +313,9 @@ function Update-Chezmoi {
 **Signature:**
 ```powershell
 function Update-Choco {
-    [CmdletBinding(SupportsShouldProcess)]
-    param()
+[CmdletBinding(SupportsShouldProcess)]
+param()
+}
 ```
 
 <sub>**Source:** `Core\Apps\UpdateAppsHelper.ps1`</sub>
@@ -248,8 +325,9 @@ function Update-Choco {
 **Signature:**
 ```powershell
 function Update-ChocoApp {
-    [CmdletBinding(SupportsShouldProcess)]
-    param()
+[CmdletBinding(SupportsShouldProcess)]
+param()
+}
 ```
 
 <sub>**Source:** `Core\Apps\appsManage.ps1`</sub>
@@ -259,8 +337,9 @@ function Update-ChocoApp {
 **Signature:**
 ```powershell
 function Update-Composer {
-    [CmdletBinding(SupportsShouldProcess)]
-    param()
+[CmdletBinding(SupportsShouldProcess)]
+param()
+}
 ```
 
 <sub>**Source:** `Core\Apps\UpdateAppsHelper.ps1`</sub>
@@ -270,8 +349,9 @@ function Update-Composer {
 **Signature:**
 ```powershell
 function Update-Conda {
-    [CmdletBinding(SupportsShouldProcess)]
-    param()
+[CmdletBinding(SupportsShouldProcess)]
+param()
+}
 ```
 
 **Description:**
@@ -285,8 +365,9 @@ Additional Development Tools
 **Signature:**
 ```powershell
 function Update-DotnetTool {
-    [CmdletBinding(SupportsShouldProcess)]
-    param()
+[CmdletBinding(SupportsShouldProcess)]
+param()
+}
 ```
 
 <sub>**Source:** `Core\Apps\UpdateAppsHelper.ps1`</sub>
@@ -296,8 +377,9 @@ function Update-DotnetTool {
 **Signature:**
 ```powershell
 function Update-Fzf {
-    [CmdletBinding(SupportsShouldProcess)]
-    param()
+[CmdletBinding(SupportsShouldProcess)]
+param()
+}
 ```
 
 <sub>**Source:** `Core\Apps\UpdateAppsHelper.ps1`</sub>
@@ -307,8 +389,9 @@ function Update-Fzf {
 **Signature:**
 ```powershell
 function Update-Gcloud {
-    [CmdletBinding(SupportsShouldProcess)]
-    param()
+[CmdletBinding(SupportsShouldProcess)]
+param()
+}
 ```
 
 <sub>**Source:** `Core\Apps\UpdateAppsHelper.ps1`</sub>
@@ -318,8 +401,9 @@ function Update-Gcloud {
 **Signature:**
 ```powershell
 function Update-Gem {
-    [CmdletBinding(SupportsShouldProcess)]
-    param()
+[CmdletBinding(SupportsShouldProcess)]
+param()
+}
 ```
 
 <sub>**Source:** `Core\Apps\UpdateAppsHelper.ps1`</sub>
@@ -329,10 +413,11 @@ function Update-Gem {
 **Signature:**
 ```powershell
 function Update-GitSubmodule {
-    [CmdletBinding(SupportsShouldProcess)]
-    param(
+[CmdletBinding(SupportsShouldProcess)]
+param(
         [string]$Path = $PWD
     )
+}
 ```
 
 <sub>**Source:** `Core\Apps\UpdateAppsHelper.ps1`</sub>
@@ -342,8 +427,9 @@ function Update-GitSubmodule {
 **Signature:**
 ```powershell
 function Update-GoTools {
-    [CmdletBinding(SupportsShouldProcess)]
-    param()
+[CmdletBinding(SupportsShouldProcess)]
+param()
+}
 ```
 
 <sub>**Source:** `Core\Apps\UpdateAppsHelper.ps1`</sub>
@@ -353,8 +439,9 @@ function Update-GoTools {
 **Signature:**
 ```powershell
 function Update-Homebrew {
-    [CmdletBinding(SupportsShouldProcess)]
-    param()
+[CmdletBinding(SupportsShouldProcess)]
+param()
+}
 ```
 
 <sub>**Source:** `Core\Apps\UpdateAppsHelper.ps1`</sub>
@@ -364,11 +451,12 @@ function Update-Homebrew {
 **Signature:**
 ```powershell
 function Update-NodeEnvironment {
-    [CmdletBinding(SupportsShouldProcess)]
-    param(
+[CmdletBinding(SupportsShouldProcess)]
+param(
         [switch]$CleanCache,
         [switch]$ForceReinstall
     )
+}
 ```
 
 <sub>**Source:** `Core\Apps\UpdateAppsHelper.ps1`</sub>
@@ -378,8 +466,9 @@ function Update-NodeEnvironment {
 **Signature:**
 ```powershell
 function Update-Npm {
-    [CmdletBinding(SupportsShouldProcess)]
-    param()
+[CmdletBinding(SupportsShouldProcess)]
+param()
+}
 ```
 
 <sub>**Source:** `Core\Apps\UpdateAppsHelper.ps1`</sub>
@@ -389,8 +478,9 @@ function Update-Npm {
 **Signature:**
 ```powershell
 function Update-NpmApp {
-    [CmdletBinding(SupportsShouldProcess)]
-    param()
+[CmdletBinding(SupportsShouldProcess)]
+param()
+}
 ```
 
 <sub>**Source:** `Core\Apps\appsManage.ps1`</sub>
@@ -400,8 +490,9 @@ function Update-NpmApp {
 **Signature:**
 ```powershell
 function Update-PipApp {
-    [CmdletBinding(SupportsShouldProcess)]
-    param()
+[CmdletBinding(SupportsShouldProcess)]
+param()
+}
 ```
 
 <sub>**Source:** `Core\Apps\appsManage.ps1`</sub>
@@ -411,8 +502,9 @@ function Update-PipApp {
 **Signature:**
 ```powershell
 function Update-Pipx {
-    [CmdletBinding(SupportsShouldProcess)]
-    param()
+[CmdletBinding(SupportsShouldProcess)]
+param()
+}
 ```
 
 <sub>**Source:** `Core\Apps\UpdateAppsHelper.ps1`</sub>
@@ -422,21 +514,35 @@ function Update-Pipx {
 **Signature:**
 ```powershell
 function Update-PowershellModule {
-    [CmdletBinding(SupportsShouldProcess)]
-    param()
+[CmdletBinding(SupportsShouldProcess)]
+param()
+}
 ```
 
 <sub>**Source:** `Core\Apps\appsManage.ps1`</sub>
+
+### `Update-PowerShellRuntime`
+
+**Signature:**
+```powershell
+function Update-PowerShellRuntime {
+[CmdletBinding(SupportsShouldProcess)]
+param()
+}
+```
+
+<sub>**Source:** `Core\Apps\UpdateAppsHelper.ps1`</sub>
 
 ### `Update-PythonEnvironment`
 
 **Signature:**
 ```powershell
 function Update-PythonEnvironment {
-    [CmdletBinding(SupportsShouldProcess)]
-    param(
+[CmdletBinding(SupportsShouldProcess)]
+param(
         [switch]$CleanCache
     )
+}
 ```
 
 <sub>**Source:** `Core\Apps\UpdateAppsHelper.ps1`</sub>
@@ -446,8 +552,9 @@ function Update-PythonEnvironment {
 **Signature:**
 ```powershell
 function Update-Scoop {
-    [CmdletBinding(SupportsShouldProcess)]
-    param()
+[CmdletBinding(SupportsShouldProcess)]
+param()
+}
 ```
 
 <sub>**Source:** `Core\Apps\UpdateAppsHelper.ps1`</sub>
@@ -457,8 +564,9 @@ function Update-Scoop {
 **Signature:**
 ```powershell
 function Update-ScoopApp {
-    [CmdletBinding(SupportsShouldProcess)]
-    param()
+[CmdletBinding(SupportsShouldProcess)]
+param()
+}
 ```
 
 <sub>**Source:** `Core\Apps\appsManage.ps1`</sub>
@@ -468,8 +576,9 @@ function Update-ScoopApp {
 **Signature:**
 ```powershell
 function Update-Starship {
-    [CmdletBinding(SupportsShouldProcess)]
-    param()
+[CmdletBinding(SupportsShouldProcess)]
+param()
+}
 ```
 
 <sub>**Source:** `Core\Apps\UpdateAppsHelper.ps1`</sub>
@@ -479,8 +588,9 @@ function Update-Starship {
 **Signature:**
 ```powershell
 function Update-StoreApp {
-    [CmdletBinding(SupportsShouldProcess)]
-    param()
+[CmdletBinding(SupportsShouldProcess)]
+param()
+}
 ```
 
 <sub>**Source:** `Core\Apps\UpdateAppsHelper.ps1`</sub>
@@ -490,8 +600,9 @@ function Update-StoreApp {
 **Signature:**
 ```powershell
 function Update-System {
-    [CmdletBinding(SupportsShouldProcess)]
-    param()
+[CmdletBinding(SupportsShouldProcess)]
+param()
+}
 ```
 
 **Description:**
@@ -505,8 +616,9 @@ Main update function with visual progress
 **Signature:**
 ```powershell
 function Update-Uv {
-    [CmdletBinding(SupportsShouldProcess)]
-    param()
+[CmdletBinding(SupportsShouldProcess)]
+param()
+}
 ```
 
 <sub>**Source:** `Core\Apps\UpdateAppsHelper.ps1`</sub>
@@ -516,10 +628,11 @@ function Update-Uv {
 **Signature:**
 ```powershell
 function Update-Vcpkg {
-    [CmdletBinding(SupportsShouldProcess)]
-    param(
+[CmdletBinding(SupportsShouldProcess)]
+param(
         [string[]]$VcpkgRoots = @('C:\vcpkg', 'D:\opt\vcpkg', 'C:\tools\vcpkg')
     )
+}
 ```
 
 <sub>**Source:** `Core\Apps\UpdateAppsHelper.ps1`</sub>
@@ -529,8 +642,9 @@ function Update-Vcpkg {
 **Signature:**
 ```powershell
 function Update-VSCodeExtension {
-    [CmdletBinding(SupportsShouldProcess)]
-    param()
+[CmdletBinding(SupportsShouldProcess)]
+param()
+}
 ```
 
 <sub>**Source:** `Core\Apps\UpdateAppsHelper.ps1`</sub>
@@ -540,30 +654,21 @@ function Update-VSCodeExtension {
 **Signature:**
 ```powershell
 function Update-WindowsSystem {
-    [CmdletBinding(SupportsShouldProcess)]
-    param()
+[CmdletBinding(SupportsShouldProcess)]
+param()
+}
 ```
 
 <sub>**Source:** `Core\Apps\UpdateAppsHelper.ps1`</sub>
-
-### `Update-WindowsUpdate`
-
-**Signature:**
-```powershell
-function Update-WindowsUpdate {
-    [CmdletBinding(SupportsShouldProcess)]
-    param()
-```
-
-<sub>**Source:** `Core\Apps\WindowsUpdateHelper.ps1`</sub>
 
 ### `Update-Winget`
 
 **Signature:**
 ```powershell
 function Update-Winget {
-    [CmdletBinding(SupportsShouldProcess)]
-    param()
+[CmdletBinding(SupportsShouldProcess)]
+param()
+}
 ```
 
 <sub>**Source:** `Core\Apps\UpdateAppsHelper.ps1`</sub>
@@ -573,42 +678,20 @@ function Update-Winget {
 **Signature:**
 ```powershell
 function Update-WSL {
-    [CmdletBinding(SupportsShouldProcess)]
-    param()
+[CmdletBinding(SupportsShouldProcess)]
+param()
+}
 ```
 
 <sub>**Source:** `Core\Apps\UpdateAppsHelper.ps1`</sub>
-
-### `Write-AppLog`
-
-**Signature:**
-```powershell
-function Write-AppLog {
-    param($Message)
-```
-
-<sub>**Source:** `Core\Apps\UpdateApps.ps1`</sub>
-
-### `Write-ErrorLog`
-
-**Signature:**
-```powershell
-function Write-ErrorLog {
-    param($ErrorMessage)
-```
-
-**Description:**
-
-Function to handle errors
-
-<sub>**Source:** `Core\Apps\UpdateApps.ps1`</sub>
 
 ### `Write-InstallHeader`
 
 **Signature:**
 ```powershell
 function Write-InstallHeader {
-    param([string]$Title)
+param([string]$Title)
+}
 ```
 
 <sub>**Source:** `Core\Apps\InstallMissingTools.ps1`</sub>
@@ -618,11 +701,12 @@ function Write-InstallHeader {
 **Signature:**
 ```powershell
 function Write-InstallStatus {
-    param(
+param(
         [string]$Message,
         [ValidateSet('Info', 'Success', 'Warning', 'Error')]
         [string]$Status = 'Info'
     )
+}
 ```
 
 <sub>**Source:** `Core\Apps\InstallMissingTools.ps1`</sub>
@@ -632,7 +716,8 @@ function Write-InstallStatus {
 **Signature:**
 ```powershell
 function Write-UpdateErrorLog {
-    param($ErrorMessage, $Source, $LogFile)
+param($ErrorMessage, $Source, $LogFile)
+}
 ```
 
 **Description:**
@@ -646,7 +731,8 @@ Error handling function
 **Signature:**
 ```powershell
 function Write-UpdateHeader {
-    param([string]$Title)
+param([string]$Title)
+}
 ```
 
 **Description:**
@@ -660,7 +746,8 @@ Helper function to write section headers
 **Signature:**
 ```powershell
 function Write-UpdateLog {
-    param($Message, $LogFile)
+param($Message, $LogFile)
+}
 ```
 
 **Description:**
@@ -674,11 +761,12 @@ Logging function
 **Signature:**
 ```powershell
 function Write-UpdateStatus {
-    param(
+param(
         [string]$Message,
         [ValidateSet('Info', 'Success', 'Warning', 'Error')]
         [string]$Status = 'Info'
     )
+}
 ```
 
 **Description:**
@@ -693,11 +781,7 @@ Helper function to write status messages
 
 **Signature:**
 ```powershell
-Write-Verbose "Failed to write module cache: $_"
-    }
-}
-
-function Initialize-ModuleInstallationEnvironment {
+function Initialize-ModuleInstallationEnvironment
 ```
 
 <sub>**Source:** `Core\ModuleInstaller.ps1`</sub>
@@ -706,27 +790,35 @@ function Initialize-ModuleInstallationEnvironment {
 
 **Signature:**
 ```powershell
-if ($MinVersion -and ($module.Version -lt [version]$MinVersion)) {
-            return $false
-        }
-        return $true
-    }
-
-    return $false
-}
-
 function Install-RequiredModule {
+[CmdletBinding()]
+param(
+        [ValidateNotNullOrEmpty()]
+        [string[]]$Name = @($requiredModules.Keys)
+    )
+}
 ```
 
 <sub>**Source:** `Core\ModuleInstaller.ps1`</sub>
+
+### `Remove-TempFolder`
+
+**Signature:**
+```powershell
+function Remove-TempFolder {
+[CmdletBinding(SupportsShouldProcess, ConfirmImpact = 'High')]
+[OutputType([int64])]
+param([Parameter(Mandatory)][string]$Path)
+}
+```
+
+<sub>**Source:** `Core\Maintenance\CleanTemp.ps1`</sub>
 
 ### `Save-ModuleCache`
 
 **Signature:**
 ```powershell
-}
-
-function Save-ModuleCache {
+function Save-ModuleCache
 ```
 
 <sub>**Source:** `Core\ModuleInstaller.ps1`</sub>
@@ -735,12 +827,12 @@ function Save-ModuleCache {
 
 **Signature:**
 ```powershell
-Path    = $Module.Path
-    }) -Force
-    Save-ModuleCache
-}
-
 function Test-ModuleInstalled {
+param(
+        [string]$ModuleName,
+        [string]$MinVersion
+    )
+}
 ```
 
 <sub>**Source:** `Core\ModuleInstaller.ps1`</sub>
@@ -749,37 +841,34 @@ function Test-ModuleInstalled {
 
 **Signature:**
 ```powershell
-Write-Warning "[ModuleInstaller] Failed to trust PSGallery: $_"
-    }
-}
-
 function Test-ModulePathHealthy {
+param([string]$ModulePath)
+}
 ```
 
 <sub>**Source:** `Core\ModuleInstaller.ps1`</sub>
 
-### `Update-ModuleCacheEntry`
+### `Write-ModuleCacheEntry`
 
 **Signature:**
 ```powershell
-Where-Object { $_.Extension -in '.psd1', '.psm1', '.dll' }
-
-    return [bool]$moduleFiles
+function Write-ModuleCacheEntry {
+param(
+        [string]$ModuleName,
+        [object]$Module
+    )
 }
-
-function Update-ModuleCacheEntry {
 ```
 
 <sub>**Source:** `Core\ModuleInstaller.ps1`</sub>
 
-## Other
+## Profile
 
 ### `Disable-FullPSReadLine`
 
 **Signature:**
 ```powershell
-# Provide a function to disable PSReadLine features if needed
-function Disable-FullPSReadLine {
+function Disable-FullPSReadLine
 ```
 
 **Description:**
@@ -792,8 +881,7 @@ Provide a function to disable PSReadLine features if needed
 
 **Signature:**
 ```powershell
-# Provide an explicit enable function for Terminal-Icons so nothing related to it is created at startup
-        function Enable-TerminalIcon {
+function Enable-TerminalIcon
 ```
 
 **Description:**
@@ -806,8 +894,14 @@ Provide an explicit enable function for Terminal-Icons so nothing related to it 
 
 **Signature:**
 ```powershell
-# Reusable fingerprint-based cache for tool init scripts
 function Initialize-CachedToolInit {
+param(
+        [string]$ToolName,
+        [scriptblock]$InitCommand,
+        [string]$CacheBaseName,
+        [string]$ConfigPath
+    )
+}
 ```
 
 **Description:**
@@ -816,191 +910,33 @@ Reusable fingerprint-based cache for tool init scripts
 
 <sub>**Source:** `Microsoft.PowerShell_profile.ps1`</sub>
 
-### `Initialize-NuGetProvider`
-
-**Signature:**
-```powershell
-function Initialize-NuGetProvider {
-    # Ensure NuGet provider is installed so Install-Module doesn't hang prompting the user
-    $nuget = Get-PackageProvider -Name NuGet -ErrorAction SilentlyContinue
-    if (-not $nuget -or $nuget.Version -lt [version]'2.8.5.201') {
-```
-
-<sub>**Source:** `tools\install-dependencies.ps1`</sub>
-
-### `Install-AiTools`
-
-**Signature:**
-```powershell
-function Install-AiTools {
-    Write-Host "`n===== AI CLI Tools =====" -ForegroundColor Cyan
-
-    # Ensure prerequisites are available before installing AI tools
-    Update-SessionPath
-
-    # uv - needed for Kimi CLI; manages its own Python downloads
-    if (-not (Test-CommandExist 'uv')) {
-```
-
-<sub>**Source:** `tools\install-dependencies.ps1`</sub>
-
-### `Install-CliTools`
-
-**Signature:**
-```powershell
-function Install-CliTools {
-    Write-Host "`n===== CLI Tools (main) =====" -ForegroundColor Cyan
-
-    foreach ($tool in $ScoopMainTools) {
-```
-
-<sub>**Source:** `tools\install-dependencies.ps1`</sub>
-
 ### `Install-Dependency`
 
 **Signature:**
 ```powershell
-Initialize-CachedToolInit -ToolName 'gh' -InitCommand { gh completion -s powershell } -CacheBaseName 'gh-completion-cache'
-}
-
 function Install-Dependency {
+param(
+        [switch]$All,
+        [switch]$PackageManagers,
+        [switch]$CliTools,
+        [switch]$Modules,
+        [string]$Tool
+    )
+}
 ```
 
 <sub>**Source:** `Microsoft.PowerShell_profile.ps1`</sub>
-
-### `Install-DevRuntimes`
-
-**Signature:**
-```powershell
-function Install-DevRuntimes {
-    Write-Host "`n===== Development Runtimes =====" -ForegroundColor Cyan
-
-    # Node.js
-    Install-Tool -Name 'Node.js' -Command 'node' -ScoopPackage 'nodejs-lts' -WingetId 'OpenJS.NodeJS.LTS' -ChocoPackage 'nodejs-lts'
-    Update-SessionPath
-
-    # Python (scoop preferred - handles multiple versions, creates proper shims for python + pip)
-    if (-not (Test-CommandExist 'python')) {
-```
-
-<sub>**Source:** `tools\install-dependencies.ps1`</sub>
-
-### `Install-NpmPackages`
-
-**Signature:**
-```powershell
-function Install-NpmPackages {
-    Write-Host "`n===== npm Global Packages =====" -ForegroundColor Cyan
-
-    if (-not (Test-CommandExist 'npm')) {
-```
-
-<sub>**Source:** `tools\install-dependencies.ps1`</sub>
-
-### `Install-PackageManagers`
-
-**Signature:**
-```powershell
-function Install-PackageManagers {
-    Write-Host "`n===== Package Managers =====" -ForegroundColor Cyan
-
-    # Scoop (no admin required)
-    Write-Status "Scoop" -Type Header
-    if (Test-CommandExist 'scoop') {
-```
-
-**Description:**
-
-region Installation Functions
-
-<sub>**Source:** `tools\install-dependencies.ps1`</sub>
-
-### `Install-PipPackages`
-
-**Signature:**
-```powershell
-function Install-PipPackages {
-    Write-Host "`n===== pip Packages =====" -ForegroundColor Cyan
-
-    if (-not (Test-CommandExist 'pip')) {
-```
-
-<sub>**Source:** `tools\install-dependencies.ps1`</sub>
-
-### `Install-PowerShellModules`
-
-**Signature:**
-```powershell
-function Install-PowerShellModules {
-    Write-Host "`n===== PowerShell Modules =====" -ForegroundColor Cyan
-
-    # Ensure NuGet provider and PSGallery trust so Install-Module doesn't hang
-    Initialize-NuGetProvider
-
-    foreach ($mod in $RequiredModules) {
-```
-
-<sub>**Source:** `tools\install-dependencies.ps1`</sub>
-
-### `Install-Tool`
-
-**Signature:**
-```powershell
-function Install-Tool {
-    param(
-        [string]$Name,
-        [string]$Command,
-        [string]$ScoopPackage,
-        [string]$ScoopBucket = 'main',
-        [string]$WingetId,
-        [string]$ChocoPackage
-    )
-```
-
-<sub>**Source:** `tools\install-dependencies.ps1`</sub>
-
-### `Install-WithChoco`
-
-**Signature:**
-```powershell
-function Install-WithChoco {
-    param([string]$Package)
-```
-
-<sub>**Source:** `tools\install-dependencies.ps1`</sub>
-
-### `Install-WithScoop`
-
-**Signature:**
-```powershell
-function Install-WithScoop {
-    param(
-        [string]$Package,
-        [string]$Bucket = 'main'
-    )
-```
-
-<sub>**Source:** `tools\install-dependencies.ps1`</sub>
-
-### `Install-WithWinget`
-
-**Signature:**
-```powershell
-function Install-WithWinget {
-    param([string]$PackageId)
-```
-
-<sub>**Source:** `tools\install-dependencies.ps1`</sub>
 
 ### `Measure-Block`
 
 **Signature:**
 ```powershell
 function Measure-Block {
-    param(
+param(
         [string]$Name,
         [scriptblock]$Block
     )
+}
 ```
 
 <sub>**Source:** `Microsoft.PowerShell_profile.ps1`</sub>
@@ -1010,7 +946,8 @@ function Measure-Block {
 **Signature:**
 ```powershell
 function Test-CachedPath {
-    param([string]$Path)
+param([string]$Path)
+}
 ```
 
 **Description:**
@@ -1019,53 +956,6 @@ Helper function for cached Test-Path
 
 <sub>**Source:** `Microsoft.PowerShell_profile.ps1`</sub>
 
-### `Test-SudoAvailable`
-
-**Signature:**
-```powershell
-function Test-SudoAvailable {
-    return (Test-CommandExist 'sudo')
-}
-
-if (-not (Get-Command Test-CommandExist -ErrorAction SilentlyContinue)) {
-```
-
-<sub>**Source:** `tools\install-dependencies.ps1`</sub>
-
-### `Update-SessionPath`
-
-**Signature:**
-```powershell
-function Update-SessionPath {
-    # Refresh PATH from registry so newly installed tools are found in the current session
-    $machinePath = [System.Environment]::GetEnvironmentVariable('Path', 'Machine')
-    $userPath = [System.Environment]::GetEnvironmentVariable('Path', 'User')
-    $env:Path = "$userPath;$machinePath"
-}
-
-function Test-IsAdmin {
-```
-
-**Description:**
-
-region Helper Functions
-
-<sub>**Source:** `tools\install-dependencies.ps1`</sub>
-
-### `Write-Status`
-
-**Signature:**
-```powershell
-function Write-Status {
-    param(
-        [string]$Message,
-        [ValidateSet('Info', 'Success', 'Warning', 'Error', 'Header')]
-        [string]$Type = 'Info'
-    )
-```
-
-<sub>**Source:** `tools\install-dependencies.ps1`</sub>
-
 ## System
 
 ### `_fzf_get_path_using_fd`
@@ -1073,7 +963,6 @@ function Write-Status {
 **Signature:**
 ```powershell
 function _fzf_get_path_using_fd
-{
 ```
 
 <sub>**Source:** `Core\System\fzf.ps1`</sub>
@@ -1083,7 +972,6 @@ function _fzf_get_path_using_fd
 **Signature:**
 ```powershell
 function _fzf_get_path_using_rg
-{
 ```
 
 <sub>**Source:** `Core\System\fzf.ps1`</sub>
@@ -1092,8 +980,12 @@ function _fzf_get_path_using_rg
 
 **Signature:**
 ```powershell
-function _fzf_open_path
-{
+function _fzf_open_path {
+param (
+    [Parameter(Mandatory=$true)]
+    [string]$input_path
+  )
+}
 ```
 
 <sub>**Source:** `Core\System\fzf.ps1`</sub>
@@ -1103,9 +995,8 @@ function _fzf_open_path
 **Signature:**
 ```powershell
 function Clear-All {
-    Clear-RecycleBin
-    Clear-TempData
-    Clear-Disk
+[CmdletBinding(SupportsShouldProcess, ConfirmImpact = 'High')]
+param()
 }
 ```
 
@@ -1115,14 +1006,7 @@ function Clear-All {
 
 **Signature:**
 ```powershell
-function Clear-Disk {
-    Write-Host "Running Disk Cleanup tool..." -ForegroundColor Yellow
-    cleanmgr /sagerun:1 | Out-Null
-    Write-Host "$([char]7)"
-    Write-Host "Disk Cleanup completed" -ForegroundColor Green
-}
-
-function Clear-All {
+function Clear-Disk
 ```
 
 <sub>**Source:** `Core\System\clean.ps1`</sub>
@@ -1132,14 +1016,9 @@ function Clear-All {
 **Signature:**
 ```powershell
 function Clear-RecycleBin {
-    $Path = "$env:SystemDrive\`$Recycle.Bin"
-    Write-Host "[INFO] Cleaning recycle bin..." -ForegroundColor Yellow
-    Get-ChildItem $Path -Force -Recurse -ErrorAction SilentlyContinue |
-        Remove-Item -Recurse -Exclude *.ini -ErrorAction SilentlyContinue
-    Write-Host "Recycle bin cleaned successfully" -ForegroundColor Green
+[CmdletBinding(SupportsShouldProcess, ConfirmImpact = 'High')]
+param()
 }
-
-function Clear-TempData {
 ```
 
 **Description:**
@@ -1153,15 +1032,9 @@ Disk cleanup utilities Source: https://www.geeksforgeeks.org/disk-cleanup-using-
 **Signature:**
 ```powershell
 function Clear-TempData {
-    Write-Host "Erasing temporary files..." -ForegroundColor Yellow
-
-    $tempPaths = @(
-        "$env:WinDir\Temp",
-        "$env:WinDir\Prefetch",
-        "$env:SystemDrive\Users\*\AppData\Local\Temp"
-    )
-
-    foreach ($path in $tempPaths) {
+[CmdletBinding(SupportsShouldProcess, ConfirmImpact = 'High')]
+param()
+}
 ```
 
 <sub>**Source:** `Core\System\clean.ps1`</sub>
@@ -1171,9 +1044,10 @@ function Clear-TempData {
 **Signature:**
 ```powershell
 function cma {
-    param (
+param (
         [string[]] $files
     )
+}
 ```
 
 <sub>**Source:** `Core\System\chezmoi.ps1`</sub>
@@ -1183,9 +1057,10 @@ function cma {
 **Signature:**
 ```powershell
 function cmc {
-    param (
+param (
         [string] $msg
     )
+}
 ```
 
 <sub>**Source:** `Core\System\chezmoi.ps1`</sub>
@@ -1194,11 +1069,7 @@ function cmc {
 
 **Signature:**
 ```powershell
-function cmp {
-    chezmoi git push
-}
-
-function cms {
+function cmp
 ```
 
 <sub>**Source:** `Core\System\chezmoi.ps1`</sub>
@@ -1207,9 +1078,7 @@ function cms {
 
 **Signature:**
 ```powershell
-function cms {
-    $current_dir = Get-Location
-    try {
+function cms
 ```
 
 <sub>**Source:** `Core\System\chezmoi.ps1`</sub>
@@ -1218,8 +1087,7 @@ function cms {
 
 **Signature:**
 ```powershell
-function dirs {
-    if ($args.Count -gt 0) {
+function dirs
 ```
 
 **Description:**
@@ -1228,14 +1096,11 @@ Recursive file listing (equivalent of dir /s /b)
 
 <sub>**Source:** `Core\System\linuxLike.ps1`</sub>
 
-### `Env`
+### `Env:`
 
 **Signature:**
 ```powershell
-function Env: { Set-Location Env: }
-
-# Recursive file listing (equivalent of dir /s /b)
-function dirs {
+function Env:
 ```
 
 <sub>**Source:** `Core\System\linuxLike.ps1`</sub>
@@ -1245,27 +1110,24 @@ function dirs {
 **Signature:**
 ```powershell
 function fdg
-{
 ```
 
 <sub>**Source:** `Core\System\fzf.ps1`</sub>
 
-### `HKCU`
+### `HKCU:`
 
 **Signature:**
 ```powershell
-function HKCU: { Set-Location HKCU: }
-function Env: { Set-Location Env: }
+function HKCU:
 ```
 
 <sub>**Source:** `Core\System\linuxLike.ps1`</sub>
 
-### `HKLM`
+### `HKLM:`
 
 **Signature:**
 ```powershell
-function HKLM: { Set-Location HKLM: }
-function HKCU: { Set-Location HKCU: }
+function HKLM:
 ```
 
 **Description:**
@@ -1278,22 +1140,28 @@ Drive shortcuts
 
 **Signature:**
 ```powershell
-function n {
-    notepad $args
-}
-
-# Drive shortcuts
-function HKLM: { Set-Location HKLM: }
+function n
 ```
 
 <sub>**Source:** `Core\System\linuxLike.ps1`</sub>
+
+### `Remove-FzfSelectedPath`
+
+**Signature:**
+```powershell
+function Remove-FzfSelectedPath {
+[CmdletBinding(SupportsShouldProcess, ConfirmImpact = 'High')]
+param([Parameter(Mandatory)][string]$Path)
+}
+```
+
+<sub>**Source:** `Core\System\fzf.ps1`</sub>
 
 ### `rgg`
 
 **Signature:**
 ```powershell
 function rgg
-{
 ```
 
 <sub>**Source:** `Core\System\fzf.ps1`</sub>
@@ -1302,11 +1170,7 @@ function rgg
 
 **Signature:**
 ```powershell
-function sha256 {
-    Get-FileHash -Algorithm SHA256 $args
-}
-
-function n {
+function sha256
 ```
 
 **Description:**
@@ -1315,22 +1179,232 @@ Linux-like utility functions for PowerShell
 
 <sub>**Source:** `Core\System\linuxLike.ps1`</sub>
 
-## Utilities
+## Tools
 
-### `akkorokamui`
+### `Get-DependencyInstallerWinget`
 
 **Signature:**
 ```powershell
-function akkorokamui { ssh -p 54226 tears@192.168.1.100 }
-Set-Alias -Name proxmox -Value akkorokamui
-
-# Navigation aliases and utilities
-function .. { Set-Location .\.. }
+function Get-DependencyInstallerWinget
 ```
 
 **Description:**
 
-SSH alias for Proxmox
+region Installation Functions
+
+<sub>**Source:** `tools\install-dependencies.ps1`</sub>
+
+### `Initialize-NuGetProvider`
+
+**Signature:**
+```powershell
+function Initialize-NuGetProvider
+```
+
+<sub>**Source:** `tools\install-dependencies.ps1`</sub>
+
+### `Install-AiTools`
+
+**Signature:**
+```powershell
+function Install-AiTools
+```
+
+<sub>**Source:** `tools\install-dependencies.ps1`</sub>
+
+### `Install-CliTools`
+
+**Signature:**
+```powershell
+function Install-CliTools
+```
+
+<sub>**Source:** `tools\install-dependencies.ps1`</sub>
+
+### `Install-DevRuntimes`
+
+**Signature:**
+```powershell
+function Install-DevRuntimes
+```
+
+<sub>**Source:** `tools\install-dependencies.ps1`</sub>
+
+### `Install-NpmPackages`
+
+**Signature:**
+```powershell
+function Install-NpmPackages
+```
+
+<sub>**Source:** `tools\install-dependencies.ps1`</sub>
+
+### `Install-PackageManagers`
+
+**Signature:**
+```powershell
+function Install-PackageManagers
+```
+
+<sub>**Source:** `tools\install-dependencies.ps1`</sub>
+
+### `Install-PipPackages`
+
+**Signature:**
+```powershell
+function Install-PipPackages
+```
+
+<sub>**Source:** `tools\install-dependencies.ps1`</sub>
+
+### `Install-PowerShellModules`
+
+**Signature:**
+```powershell
+function Install-PowerShellModules
+```
+
+<sub>**Source:** `tools\install-dependencies.ps1`</sub>
+
+### `Install-Tool`
+
+**Signature:**
+```powershell
+function Install-Tool {
+param(
+        [string]$Name,
+        [string]$Command,
+        [string]$ScoopPackage,
+        [string]$ScoopBucket = 'main',
+        [string]$WingetId,
+        [string]$ChocoPackage
+    )
+}
+```
+
+<sub>**Source:** `tools\install-dependencies.ps1`</sub>
+
+### `Install-WithChoco`
+
+**Signature:**
+```powershell
+function Install-WithChoco {
+param([string]$Package)
+}
+```
+
+<sub>**Source:** `tools\install-dependencies.ps1`</sub>
+
+### `Install-WithScoop`
+
+**Signature:**
+```powershell
+function Install-WithScoop {
+param(
+        [string]$Package,
+        [string]$Bucket = 'main'
+    )
+}
+```
+
+<sub>**Source:** `tools\install-dependencies.ps1`</sub>
+
+### `Install-WithWinget`
+
+**Signature:**
+```powershell
+function Install-WithWinget {
+param([string]$PackageId)
+}
+```
+
+<sub>**Source:** `tools\install-dependencies.ps1`</sub>
+
+### `Sync-SessionPath`
+
+**Signature:**
+```powershell
+function Sync-SessionPath
+```
+
+**Description:**
+
+region Helper Functions
+
+<sub>**Source:** `tools\install-dependencies.ps1`</sub>
+
+### `Test-SudoAvailable`
+
+**Signature:**
+```powershell
+function Test-SudoAvailable
+```
+
+<sub>**Source:** `tools\install-dependencies.ps1`</sub>
+
+### `Write-Status`
+
+**Signature:**
+```powershell
+function Write-Status {
+param(
+        [string]$Message,
+        [ValidateSet('Info', 'Success', 'Warning', 'Error', 'Header')]
+        [string]$Type = 'Info'
+    )
+}
+```
+
+<sub>**Source:** `tools\install-dependencies.ps1`</sub>
+
+## Utilities
+
+### `..`
+
+**Signature:**
+```powershell
+function ..
+```
+
+**Description:**
+
+Navigation aliases and utilities
+
+<sub>**Source:** `Core\Utils\unified_aliases.ps1`</sub>
+
+### `...`
+
+**Signature:**
+```powershell
+function ...
+```
+
+<sub>**Source:** `Core\Utils\unified_aliases.ps1`</sub>
+
+### `.3`
+
+**Signature:**
+```powershell
+function .3
+```
+
+<sub>**Source:** `Core\Utils\unified_aliases.ps1`</sub>
+
+### `.4`
+
+**Signature:**
+```powershell
+function .4
+```
+
+<sub>**Source:** `Core\Utils\unified_aliases.ps1`</sub>
+
+### `.5`
+
+**Signature:**
+```powershell
+function .5
+```
 
 <sub>**Source:** `Core\Utils\unified_aliases.ps1`</sub>
 
@@ -1338,11 +1412,7 @@ SSH alias for Proxmox
 
 **Signature:**
 ```powershell
-function Clear-DnsCache { Clear-DnsClientCache }
-Set-Alias -Name flushdns -Value Clear-DnsCache
-
-# Clipboard Utilities
-function Set-ClipboardContent {
+function Clear-DnsCache
 ```
 
 **Description:**
@@ -1351,13 +1421,29 @@ Networking Utilities
 
 <sub>**Source:** `Core\Utils\unified_aliases.ps1`</sub>
 
+### `Connect-Proxmox`
+
+**Signature:**
+```powershell
+function Connect-Proxmox {
+param(
+    [string]$Target = $env:PROXMOX_SSH_TARGET,
+    [int]$Port = $(if ($env:PROXMOX_SSH_PORT) { $env:PROXMOX_SSH_PORT } else { 22 })
+  )
+}
+```
+
+**Description:**
+
+SSH helper for Proxmox. Configure PROXMOX_SSH_TARGET (for example, user@host) and optionally PROXMOX_SSH_PORT outside the repository.
+
+<sub>**Source:** `Core\Utils\unified_aliases.ps1`</sub>
+
 ### `df`
 
 **Signature:**
 ```powershell
-function df { get-volume }
-
-function Set-EnvironmentVariable {
+function df
 ```
 
 **Description:**
@@ -1366,30 +1452,17 @@ System utilities
 
 <sub>**Source:** `Core\Utils\unified_aliases.ps1`</sub>
 
-### `Edit-FileContent`
-
-**Signature:**
-```powershell
-function Edit-FileContent($file, $find, $replace) {
-  (Get-Content $file).replace("$find", $replace) | Set-Content $file
-}
-Set-Alias -Name sed -Value Edit-FileContent
-
-function Get-CommandPath($command) {
-```
-
-<sub>**Source:** `Core\Utils\unified_aliases.ps1`</sub>
-
 ### `Expand-CustomArchive`
 
 **Signature:**
 ```powershell
 function Expand-CustomArchive {
-    param (
+param (
         [Parameter(Mandatory=$true)]
         [string]$File,
         [string]$Folder
     )
+}
 ```
 
 <sub>**Source:** `Core\Utils\FileSystemUtils.ps1`</sub>
@@ -1399,7 +1472,8 @@ function Expand-CustomArchive {
 **Signature:**
 ```powershell
 function Expand-MultipleArchives {
-    param([string[]]$Files)
+param([string[]]$Files)
+}
 ```
 
 <sub>**Source:** `Core\Utils\FileSystemUtils.ps1`</sub>
@@ -1408,9 +1482,7 @@ function Expand-MultipleArchives {
 
 **Signature:**
 ```powershell
-function Expand-ZipFile($file) {
-  Write-Output("Extracting", $file, "to", $pwd)
-  $fullFile = Get-ChildItem -Path $pwd -Filter $file | ForEach-Object { $_.FullName }
+function Expand-ZipFile
 ```
 
 <sub>**Source:** `Core\Utils\unified_aliases.ps1`</sub>
@@ -1420,13 +1492,14 @@ function Expand-ZipFile($file) {
 **Signature:**
 ```powershell
 function Find-File {
-    param(
+param(
         [Parameter(Position=0)]
         [string]$pattern = "*",
         [string]$path = ".",
         [switch]$recurse,
         [int]$depth = 3
     )
+}
 ```
 
 **Description:**
@@ -1440,7 +1513,8 @@ Search utilities for PowerShell profile
 **Signature:**
 ```powershell
 function Find-PowerShellCommand {
-    param([string]$name)
+param([string]$name)
+}
 ```
 
 <sub>**Source:** `Core\Utils\SearchUtils.ps1`</sub>
@@ -1449,8 +1523,7 @@ function Find-PowerShellCommand {
 
 **Signature:**
 ```powershell
-function Find-String($regex, $dir) {
-  if ($dir) {
+function Find-String
 ```
 
 <sub>**Source:** `Core\Utils\unified_aliases.ps1`</sub>
@@ -1459,11 +1532,7 @@ function Find-String($regex, $dir) {
 
 **Signature:**
 ```powershell
-function Get-ClipboardContent { Get-Clipboard }
-Set-Alias -Name pst -Value Get-ClipboardContent
-
-# System utilities
-function df { get-volume }
+function Get-ClipboardContent
 ```
 
 <sub>**Source:** `Core\Utils\unified_aliases.ps1`</sub>
@@ -1472,11 +1541,7 @@ function df { get-volume }
 
 **Signature:**
 ```powershell
-function Get-CommandPath($command) {
-  Get-Command -Name $command -ErrorAction SilentlyContinue |
-  Select-Object -ExpandProperty Path -ErrorAction SilentlyContinue
-}
-Set-Alias -Name which -Value Get-CommandPath
+function Get-CommandPath
 ```
 
 <sub>**Source:** `Core\Utils\unified_aliases.ps1`</sub>
@@ -1486,9 +1551,10 @@ Set-Alias -Name which -Value Get-CommandPath
 **Signature:**
 ```powershell
 function Get-Font {
-  param (
+param (
     $regex
   )
+}
 ```
 
 <sub>**Source:** `Core\Utils\unified_aliases.ps1`</sub>
@@ -1497,14 +1563,7 @@ function Get-Font {
 
 **Signature:**
 ```powershell
-function Get-FormattedUptime {
-    $bootuptime = (Get-CimInstance -ClassName Win32_OperatingSystem).LastBootUpTime
-    $CurrentDate = Get-Date
-    $uptime = $CurrentDate - $bootuptime
-    Write-Output "Uptime: $($uptime.Days) Days, $($uptime.Hours) Hours, $($uptime.Minutes) Minutes"
-}
-
-function Get-PubIP {
+function Get-FormattedUptime
 ```
 
 <sub>**Source:** `Core\Utils\CommonUtils.ps1`</sub>
@@ -1513,8 +1572,7 @@ function Get-PubIP {
 
 **Signature:**
 ```powershell
-function Get-GitStatus { git status }
-function Invoke-GitPull { git pull }
+function Get-GitStatus
 ```
 
 <sub>**Source:** `Core\Utils\unified_aliases.ps1`</sub>
@@ -1523,11 +1581,7 @@ function Invoke-GitPull { git pull }
 
 **Signature:**
 ```powershell
-function Get-ProcessByName($name) { Get-Process $name }
-Set-Alias -Name pgrep -Value Get-ProcessByName
-
-# Search and find utilities
-function find-file($name) {
+function Get-ProcessByName
 ```
 
 <sub>**Source:** `Core\Utils\unified_aliases.ps1`</sub>
@@ -1536,28 +1590,18 @@ function find-file($name) {
 
 **Signature:**
 ```powershell
-function Get-PubIP {
-    try {
+function Get-PubIP
 ```
 
 <sub>**Source:** `Core\Utils\CommonUtils.ps1`</sub>
-
-### `hb`
-
-**Signature:**
-```powershell
-function hb {
-  if ($args.Length -eq 0) {
-```
-
-<sub>**Source:** `Core\Utils\unified_aliases.ps1`</sub>
 
 ### `head`
 
 **Signature:**
 ```powershell
 function head {
-  param($Path, $n = 10)
+param($Path, $n = 10)
+}
 ```
 
 <sub>**Source:** `Core\Utils\unified_aliases.ps1`</sub>
@@ -1566,8 +1610,7 @@ function head {
 
 **Signature:**
 ```powershell
-function Initialize-Editor {
-  if ($script:EditorInitialized) { return }
+function Initialize-Editor
 ```
 
 **Description:**
@@ -1580,11 +1623,7 @@ Editor detection and configuration - lazy loaded
 
 **Signature:**
 ```powershell
-function Initialize-EncodingConfig {
-    $env:PYTHONIOENCODING = 'utf-8'
-    [System.Console]::OutputEncoding = [System.Text.UTF8Encoding]::new()
-    [console]::InputEncoding = [console]::OutputEncoding = New-Object System.Text.UTF8Encoding
-}
+function Initialize-EncodingConfig
 ```
 
 <sub>**Source:** `Core\Utils\CommonUtils.ps1`</sub>
@@ -1593,8 +1632,7 @@ function Initialize-EncodingConfig {
 
 **Signature:**
 ```powershell
-function Invoke-GitPull { git pull }
-function Invoke-GitPush { git push }
+function Invoke-GitPull
 ```
 
 <sub>**Source:** `Core\Utils\unified_aliases.ps1`</sub>
@@ -1603,33 +1641,7 @@ function Invoke-GitPush { git push }
 
 **Signature:**
 ```powershell
-function Invoke-GitPush { git push }
-Set-Alias -Name gst -Value Get-GitStatus
-Set-Alias -Name pull -Value Invoke-GitPull
-Set-Alias -Name push -Value Invoke-GitPush
-
-# Docker aliases
-Set-Alias -Name d -Value docker
-Set-Alias -Name dc -Value docker-compose
-
-# Conditional aliases
-$script:hasLazygit = Test-CommandExist 'lazygit'
-if ($script:hasLazygit) {
-```
-
-<sub>**Source:** `Core\Utils\unified_aliases.ps1`</sub>
-
-### `ix`
-
-**Signature:**
-```powershell
-function ix ($file) {
-  curl.exe -m 30 -F "f:1=@$file" ix.io
-}
-
-# Test-IsAdmin defined in CommonUtils.ps1
-
-function Restart-BIOS {
+function Invoke-GitPush
 ```
 
 <sub>**Source:** `Core\Utils\unified_aliases.ps1`</sub>
@@ -1638,9 +1650,7 @@ function Restart-BIOS {
 
 **Signature:**
 ```powershell
-function la_with_eza {
-    $ezaOutput = eza --icons --git --color=always --group-directories-first --all
-    if ($script:hasBat) {
+function la_with_eza
 ```
 
 **Description:**
@@ -1653,15 +1663,7 @@ this should be the same as ls -al no tree
 
 **Signature:**
 ```powershell
-function ll {
-    Get-ChildItem | Format-Table -AutoSize -Property Mode, LastWriteTime, Length, Name
-  }
-  # Remove the alias if it exists to avoid circular reference
-  Remove-Alias -Name ll -ErrorAction SilentlyContinue
-}
-
-# File and directory management (mkcd/New-DirectoryAndEnter defined in FileSystemUtils.ps1)
-function New-File {
+function ll
 ```
 
 <sub>**Source:** `Core\Utils\unified_aliases.ps1`</sub>
@@ -1670,9 +1672,7 @@ function New-File {
 
 **Signature:**
 ```powershell
-function ll_with_eza {
-    $ezaOutput = eza --icons --git --color=always --group-directories-first --long --header
-    if ($script:hasBat) {
+function ll_with_eza
 ```
 
 <sub>**Source:** `Core\Utils\unified_aliases.ps1`</sub>
@@ -1682,7 +1682,8 @@ function ll_with_eza {
 **Signature:**
 ```powershell
 function ls_with_eza {
-    param([Parameter(ValueFromRemainingArguments = $true)]$params)
+param([Parameter(ValueFromRemainingArguments = $true)]$params)
+}
 ```
 
 <sub>**Source:** `Core\Utils\unified_aliases.ps1`</sub>
@@ -1691,15 +1692,7 @@ function ls_with_eza {
 
 **Signature:**
 ```powershell
-function lt_with_eza {
-    eza --icons --git --color=always --group-directories-first --long --header --tree --sort=name
-  }
-  Set-Alias -Name ls -Value ls_with_eza -Force -Option AllScope -Scope Global
-  Set-Alias -Name ll -Value ll_with_eza -Force -Option AllScope -Scope Global
-  Set-Alias -Name la -Value la_with_eza -Force -Option AllScope -Scope Global
-  Set-Alias -Name lt -Value lt_with_eza -Force -Option AllScope -Scope Global
-}
-else {
+function lt_with_eza
 ```
 
 <sub>**Source:** `Core\Utils\unified_aliases.ps1`</sub>
@@ -1709,8 +1702,9 @@ else {
 **Signature:**
 ```powershell
 function New-DirectoryAndEnter {
-    [CmdletBinding(SupportsShouldProcess)]
-    param([string]$dir)
+[CmdletBinding(SupportsShouldProcess)]
+param([string]$dir)
+}
 ```
 
 **Description:**
@@ -1724,8 +1718,9 @@ File system utilities for PowerShell profile
 **Signature:**
 ```powershell
 function New-File {
-    [CmdletBinding(SupportsShouldProcess)]
-    param($file)
+[CmdletBinding(SupportsShouldProcess)]
+param($file)
+}
 ```
 
 **Description:**
@@ -1739,10 +1734,11 @@ File and directory management (mkcd/New-DirectoryAndEnter defined in FileSystemU
 **Signature:**
 ```powershell
 function Reset-ProfileState {
-    [CmdletBinding(SupportsShouldProcess)]
-    param(
+[CmdletBinding(SupportsShouldProcess)]
+param(
         [switch]$Quiet
     )
+}
 ```
 
 <sub>**Source:** `Core\Utils\profile_management.ps1`</sub>
@@ -1752,8 +1748,9 @@ function Reset-ProfileState {
 **Signature:**
 ```powershell
 function Restart-BIOS {
-    [CmdletBinding(SupportsShouldProcess)]
-    param()
+[CmdletBinding(SupportsShouldProcess)]
+param()
+}
 ```
 
 **Description:**
@@ -1767,13 +1764,14 @@ Test-IsAdmin defined in CommonUtils.ps1
 **Signature:**
 ```powershell
 function Search-FileContent {
-    param(
+param(
         [Parameter(Mandatory=$true)]
         [string]$pattern,
         [string]$path = ".",
         [string]$filter = "*.*",
         [switch]$caseSensitive
     )
+}
 ```
 
 <sub>**Source:** `Core\Utils\SearchUtils.ps1`</sub>
@@ -1783,8 +1781,9 @@ function Search-FileContent {
 **Signature:**
 ```powershell
 function Set-ClipboardContent {
-    [CmdletBinding(SupportsShouldProcess)]
-    param($content)
+[CmdletBinding(SupportsShouldProcess)]
+param($content)
+}
 ```
 
 **Description:**
@@ -1798,8 +1797,9 @@ Clipboard Utilities
 **Signature:**
 ```powershell
 function Set-EnvironmentVariable {
-    [CmdletBinding(SupportsShouldProcess)]
-    param($name, $value)
+[CmdletBinding(SupportsShouldProcess)]
+param($name, $value)
+}
 ```
 
 <sub>**Source:** `Core\Utils\unified_aliases.ps1`</sub>
@@ -1809,8 +1809,9 @@ function Set-EnvironmentVariable {
 **Signature:**
 ```powershell
 function Stop-ProcessByName {
-    [CmdletBinding(SupportsShouldProcess)]
-    param($name)
+[CmdletBinding(SupportsShouldProcess)]
+param($name)
+}
 ```
 
 <sub>**Source:** `Core\Utils\unified_aliases.ps1`</sub>
@@ -1819,10 +1820,7 @@ function Stop-ProcessByName {
 
 **Signature:**
 ```powershell
-function sysinfo { Get-ComputerInfo }
-
-# Networking Utilities
-function Clear-DnsCache { Clear-DnsClientCache }
+function sysinfo
 ```
 
 **Description:**
@@ -1836,7 +1834,8 @@ Quick Access to System Information
 **Signature:**
 ```powershell
 function tail {
-  param($Path, $n = 10)
+param($Path, $n = 10)
+}
 ```
 
 <sub>**Source:** `Core\Utils\unified_aliases.ps1`</sub>
@@ -1845,31 +1844,16 @@ function tail {
 
 **Signature:**
 ```powershell
-function Test-IsAdmin {
-    return ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
-}
-
-function Get-FormattedUptime {
+function Test-IsAdmin
 ```
 
 <sub>**Source:** `Core\Utils\CommonUtils.ps1`</sub>
-
-### `Upgrade`
-
-**Signature:**
-```powershell
-function Upgrade {
-  if (-not (Get-Command pwsh -ErrorAction SilentlyContinue)) {
-```
-
-<sub>**Source:** `Core\Utils\unified_aliases.ps1`</sub>
 
 ### `uptime`
 
 **Signature:**
 ```powershell
-function uptime {
-  If ($PSVersionTable.PSVersion.Major -eq 5) {
+function uptime
 ```
 
 **Description:**
@@ -1882,8 +1866,7 @@ System information and utilities (Get-PubIP, Get-FormattedUptime defined in Comm
 
 **Signature:**
 ```powershell
-function v {
-  if (-not $script:EditorInitialized) { Initialize-Editor }
+function v
 ```
 
 **Description:**
@@ -1891,4 +1874,3 @@ function v {
 Lazy editor alias that initializes on first use
 
 <sub>**Source:** `Core\Utils\unified_aliases.ps1`</sub>
-

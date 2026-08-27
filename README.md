@@ -19,16 +19,16 @@ git clone https://github.com/tears-mysthrala/PowerShell-profile.git $HOME\Docume
 
 - **[⚙️ Installation Guide](docs/INSTALLATION.md)** - Setup instructions, requirements & troubleshooting
 - **[🔧 Customization Guide](docs/CUSTOMIZATION.md)** - Extend and modify the environment
-- **[📖 Function Reference](docs/FunctionReference.md)** - Complete function signatures and documentation (145 functions)
+- **[📖 Function Reference](docs/FunctionReference.md)** - Generated function signatures and source locations
 - **[📋 Quick Reference](docs/QuickReference.md)** - Fast lookup table for functions and aliases
 - **[🗺️ Roadmap](ROADMAP.md)** - Current state, plans, and explicit non-goals
 
 ## Key Features
 
-- **File Operations**: Enhanced file manipulation with aliases like `touch`, `grep`, `sed`
+- **File Operations**: Explicit helpers for file creation, archive extraction, and content search
 - **Navigation**: Smart directory navigation with `..`, `...`, and fuzzy finding
 - **Git Integration**: Streamlined git operations with aliases and helpers
-- **Package Management**: Support for Chocolatey, Scoop, and system updates
+- **Package Management**: A manual `upgrade` command for system, package-manager, runtime, and development-tool updates
 - **Development Tools**: Integration with `bat`, `fzf`, `eza`, and other modern CLI tools
 - **Performance Monitoring**: Built-in timing and optimization features
 
@@ -87,10 +87,10 @@ When adding new tools or dependencies:
 
 ## 📊 Statistics
 
-- **Functions:** 145 in the profile itself (`Core/` + main profile script); 179 across all repository scripts including `tools/`. Measured with the PowerShell AST parser.
-- **Aliases:** 40
-- **Categories:** 5
-- **Last Updated:** 2026-07-28
+- **Functions:** 156 across Core/, tools/install-dependencies.ps1, and the main profile
+- **Aliases:** 38
+- **Categories:** 6
+- **Last Updated:** 2026-08-27 15:52:40
 
 ## License
 
