@@ -31,6 +31,21 @@ $env:FZF_DEFAULT_OPTS=@"
 
 $commandOverride = [ScriptBlock]{ param($Location) Write-Output $Location }
 
+function Remove-FzfSelectedPath {
+  [CmdletBinding(SupportsShouldProcess, ConfirmImpact = 'High')]
+  param([Parameter(Mandatory)][string]$Path)
+
+  $resolvedPath = Resolve-Path -LiteralPath $Path -ErrorAction Stop
+  $root = [System.IO.Path]::GetPathRoot($resolvedPath.ProviderPath)
+  if ($resolvedPath.ProviderPath.TrimEnd('\') -eq $root.TrimEnd('\')) {
+    throw "Refusing to remove filesystem root: $resolvedPath"
+  }
+
+  if ($PSCmdlet.ShouldProcess($resolvedPath.ProviderPath, 'Remove selected path recursively')) {
+    Remove-Item -LiteralPath $resolvedPath.ProviderPath -Recurse -Force -ErrorAction Stop
+  }
+}
+
 Set-PsFzfOption -AltCCommand $commandOverride
 
 Set-PSReadLineKeyHandler -Key Tab -ScriptBlock { Invoke-FzfTabCompletion }
@@ -62,7 +77,7 @@ function _fzf_open_path
       Set-Location $input_path
     }
     'nvim' = { nvim $input_path }
-    'remove' = { Remove-Item -Recurse -Force $input_path }
+    'remove' = { Remove-FzfSelectedPath -Path $input_path }
     'echo' = { Write-Output $input_path }
   }
   $cmd = $cmds.Keys | fzf --prompt 'Select command> '

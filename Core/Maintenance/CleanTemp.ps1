@@ -1,15 +1,33 @@
-$ErrorActionPreference = 'SilentlyContinue'
-$log = "C:\temp\CleanTemp_$(Get-Date -Format 'yyyyMMdd').log"
+[CmdletBinding(SupportsShouldProcess, ConfirmImpact = 'High')]
+param()
+
+$logDirectory = Join-Path $env:TEMP 'PowerShellProfile'
+New-Item -Path $logDirectory -ItemType Directory -Force -ErrorAction Stop | Out-Null
+$log = Join-Path $logDirectory "CleanTemp_$(Get-Date -Format 'yyyyMMdd').log"
 $freed = 0
 
 function Remove-TempFolder {
-    param($Path)
-    if (-not (Test-Path $Path)) { return 0 }
-    $before = (Get-ChildItem $Path -Recurse -Force -ErrorAction SilentlyContinue |
+    [CmdletBinding(SupportsShouldProcess, ConfirmImpact = 'High')]
+    [OutputType([int64])]
+    param([Parameter(Mandatory)][string]$Path)
+
+    $resolvedPath = Resolve-Path -LiteralPath $Path -ErrorAction SilentlyContinue
+    if (-not $resolvedPath) { return 0 }
+
+    $root = [System.IO.Path]::GetPathRoot($resolvedPath.ProviderPath)
+    if ($resolvedPath.ProviderPath.TrimEnd('\') -eq $root.TrimEnd('\')) {
+        throw "Refusing to clean filesystem root: $resolvedPath"
+    }
+
+    $before = (Get-ChildItem -LiteralPath $resolvedPath.ProviderPath -Recurse -Force -ErrorAction SilentlyContinue |
         Where-Object { -not $_.PSIsContainer } | Measure-Object Length -Sum).Sum
-    Get-ChildItem $Path -Force -ErrorAction SilentlyContinue |
-        Remove-Item -Recurse -Force -ErrorAction SilentlyContinue
-    $after = (Get-ChildItem $Path -Recurse -Force -ErrorAction SilentlyContinue |
+
+    if ($PSCmdlet.ShouldProcess($resolvedPath.ProviderPath, 'Delete temporary contents')) {
+        Get-ChildItem -LiteralPath $resolvedPath.ProviderPath -Force -ErrorAction SilentlyContinue |
+            Remove-Item -Recurse -Force -ErrorAction Stop
+    }
+
+    $after = (Get-ChildItem -LiteralPath $resolvedPath.ProviderPath -Recurse -Force -ErrorAction SilentlyContinue |
         Where-Object { -not $_.PSIsContainer } | Measure-Object Length -Sum).Sum
     return ($before - $after)
 }
@@ -17,24 +35,19 @@ function Remove-TempFolder {
 $targets = @(
     "$env:LOCALAPPDATA\Temp",
     "$env:WINDIR\Temp",
-    "$env:WINDIR\SoftwareDistribution\Download",
-    "C:\temp\*.log",
-    "C:\temp\*.ps1"
+    "$env:WINDIR\SoftwareDistribution\Download"
 )
 
 Add-Content $log "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') - CleanTemp started"
 
 foreach ($target in $targets) {
-    if ($target -match '\*') {
-        # Glob pattern - borrar archivos directamente
-        $before = (Get-Item $target -ErrorAction SilentlyContinue | Measure-Object Length -Sum).Sum
-        Remove-Item $target -Force -ErrorAction SilentlyContinue
-        $freed += $before
-        Add-Content $log "  Cleaned: $target"
-    } else {
-        $delta = Remove-TempFolder $target
+    try {
+        $delta = Remove-TempFolder -Path $target
         $freed += $delta
         Add-Content $log "  Cleaned: $target (+$([math]::Round($delta/1MB,1)) MB)"
+    } catch {
+        Add-Content $log "  Failed: $target ($($_.Exception.Message))"
+        Write-Error "Failed to clean '$target': $_"
     }
 }
 
