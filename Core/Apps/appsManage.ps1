@@ -71,16 +71,40 @@ $POWERSHELL_MODULES_TO_UPDATE = @(
     "posh-wakatime"
 )
 
+function ConvertFrom-ChocoListOutput {
+    param([object[]]$Output)
+
+    @(
+        $Output |
+            ForEach-Object {
+                $line = "$_".Trim()
+                if ($line -match '^(?<Name>[A-Za-z0-9][A-Za-z0-9._+-]*)\|') {
+                    $Matches['Name']
+                }
+            }
+    )
+}
+
+function ConvertFrom-ScoopListOutput {
+    param([object[]]$Output)
+
+    @(
+        $Output |
+            ForEach-Object {
+                $name = if ($_ -is [string]) { $_.Trim() } else { $_.Name }
+                if ($name -ne 'Name' -and $name -match '^[A-Za-z0-9][A-Za-z0-9._+-]*$') {
+                    $name
+                }
+            }
+    )
+}
+
 function Get-ChocoApp {
-    $apps = $(choco list --id-only --no-color).Split("\n")
-    $apps = $apps[1..($apps.Length - 2)]
-    return $apps
+    ConvertFrom-ChocoListOutput -Output @(choco list --limit-output --no-color)
 }
 
 function Get-ScoopApp {
-    $apps = $(scoop list | Select-Object -ExpandProperty "Name").Split("\n")
-    $apps = $apps[1..($apps.Length - 1)]
-    return $apps
+    ConvertFrom-ScoopListOutput -Output @(scoop list)
 }
 
 function Select-App {
@@ -151,8 +175,7 @@ function Update-NpmApp {
     [CmdletBinding(SupportsShouldProcess)]
     param()
     if ($PSCmdlet.ShouldProcess("NPM apps", "Update")) {
-        $apps_string = $NPM_APPS_TO_UPGRADE -join " "
-        npm upgrade $apps_string
+        npm upgrade @NPM_APPS_TO_UPGRADE
     }
 }
 
@@ -160,8 +183,7 @@ function Update-PipApp {
     [CmdletBinding(SupportsShouldProcess)]
     param()
     if ($PSCmdlet.ShouldProcess("PIP apps", "Update")) {
-        $apps_string = $PIP_APPS_TO_UPGRADE -join " "
-        pip install --upgrade $apps_string
+        pip install --upgrade @PIP_APPS_TO_UPGRADE
     }
 }
 
