@@ -1,7 +1,7 @@
 # Quick Reference
 
 > **Auto-generated documentation**
-> Last updated: 2026-08-27 15:52:40
+> Last updated: 2026-08-27 15:57:44
 
 ## Functions
 
@@ -65,20 +65,14 @@
 | `Initialize-PowerShellGallery` | Applications |  |
 | `Initialize-UpdateLog` | Applications | Initialize logging |
 | `Install-AiTools` | Tools |  |
-| `Install-AllMissingTools` | Applications |  |
-| `Install-Chezmoi` | Applications |  |
 | `Install-CliTools` | Tools |  |
-| `Install-Composer` | Applications |  |
-| `Install-Conda` | Applications |  |
 | `Install-Dependency` | Profile |  |
 | `Install-DevRuntimes` | Tools |  |
-| `Install-Homebrew-WSL` | Applications |  |
 | `Install-NpmPackages` | Tools |  |
 | `Install-PackageManagers` | Tools |  |
 | `Install-PipPackages` | Tools |  |
 | `Install-PowerShellModules` | Tools |  |
 | `Install-RequiredModule` | Core |  |
-| `Install-Ruby` | Applications |  |
 | `Install-Tool` | Tools |  |
 | `Install-WithChoco` | Tools |  |
 | `Install-WithScoop` | Tools |  |
@@ -155,8 +149,6 @@
 | `Update-WSL` | Applications |  |
 | `uptime` | Utilities | System information and utilities (Get-PubIP, Get-FormattedUptime defined in C... |
 | `v` | Utilities | Lazy editor alias that initializes on first use |
-| `Write-InstallHeader` | Applications |  |
-| `Write-InstallStatus` | Applications |  |
 | `Write-ModuleCacheEntry` | Core |  |
 | `Write-Status` | Tools |  |
 | `Write-UpdateErrorLog` | Applications | Error handling function |
@@ -185,7 +177,6 @@
 | `g` | `git` | `Core\Utils\unified_aliases.ps1` |
 | `grep` | `Find-String` | `Core\Utils\unified_aliases.ps1` |
 | `gst` | `Get-GitStatus` | `Core\Utils\unified_aliases.ps1` |
-| `install-dev-tools` | `Install-AllMissingTools` | `Core\Apps\InstallMissingTools.ps1` |
 | `l` | `ls_with_eza` | `Core\Utils\unified_aliases.ps1` |
 | `la` | `la_with_eza` | `Core\Utils\unified_aliases.ps1` |
 | `lg` | `lazygit` | `Core\Utils\unified_aliases.ps1` |

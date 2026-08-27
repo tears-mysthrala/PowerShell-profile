@@ -1,8 +1,8 @@
 # Function Reference
 
 > **Auto-generated documentation**
-> Last updated: 2026-08-27 15:52:40
-> Total functions: 156
+> Last updated: 2026-08-27 15:57:44
+> Total functions: 148
 
 ## Table of Contents
 
@@ -142,63 +142,6 @@ Initialize logging
 
 <sub>**Source:** `Core\Apps\Updates\SystemUpdater.ps1`</sub>
 
-### `Install-AllMissingTools`
-
-**Signature:**
-```powershell
-function Install-AllMissingTools {
-[CmdletBinding(SupportsShouldProcess)]
-param()
-}
-```
-
-<sub>**Source:** `Core\Apps\InstallMissingTools.ps1`</sub>
-
-### `Install-Chezmoi`
-
-**Signature:**
-```powershell
-function Install-Chezmoi
-```
-
-<sub>**Source:** `Core\Apps\InstallMissingTools.ps1`</sub>
-
-### `Install-Composer`
-
-**Signature:**
-```powershell
-function Install-Composer
-```
-
-<sub>**Source:** `Core\Apps\InstallMissingTools.ps1`</sub>
-
-### `Install-Conda`
-
-**Signature:**
-```powershell
-function Install-Conda
-```
-
-<sub>**Source:** `Core\Apps\InstallMissingTools.ps1`</sub>
-
-### `Install-Homebrew-WSL`
-
-**Signature:**
-```powershell
-function Install-Homebrew-WSL
-```
-
-<sub>**Source:** `Core\Apps\InstallMissingTools.ps1`</sub>
-
-### `Install-Ruby`
-
-**Signature:**
-```powershell
-function Install-Ruby
-```
-
-<sub>**Source:** `Core\Apps\InstallMissingTools.ps1`</sub>
-
 ### `Invoke-RequiredModuleRepair`
 
 **Signature:**
@@ -230,7 +173,7 @@ param([string]$Command)
 }
 ```
 
-<sub>**Source:** `Core\Apps\InstallMissingTools.ps1`</sub>
+<sub>**Source:** `Core\Apps\UpdateAppsHelper.ps1`</sub>
 
 ### `Test-WingetManagedCommandPath`
 
@@ -684,32 +627,6 @@ param()
 ```
 
 <sub>**Source:** `Core\Apps\UpdateAppsHelper.ps1`</sub>
-
-### `Write-InstallHeader`
-
-**Signature:**
-```powershell
-function Write-InstallHeader {
-param([string]$Title)
-}
-```
-
-<sub>**Source:** `Core\Apps\InstallMissingTools.ps1`</sub>
-
-### `Write-InstallStatus`
-
-**Signature:**
-```powershell
-function Write-InstallStatus {
-param(
-        [string]$Message,
-        [ValidateSet('Info', 'Success', 'Warning', 'Error')]
-        [string]$Status = 'Info'
-    )
-}
-```
-
-<sub>**Source:** `Core\Apps\InstallMissingTools.ps1`</sub>
 
 ### `Write-UpdateErrorLog`
 

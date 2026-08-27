@@ -17,6 +17,18 @@ Describe 'Profile safety defaults' {
         $script:profileText | Should -Match '\$supportsVirtualTerminal'
         $script:profileText | Should -Match '\$env:TERM -ne ''dumb'''
     }
+
+    It 'loads documented lightweight system helpers' {
+        foreach ($helper in @('linuxLike.ps1', 'clean.ps1', 'chezmoi.ps1')) {
+            $pattern = [regex]::Escape($helper)
+            $script:profileText | Should -Match $pattern
+        }
+    }
+
+    It 'loads function-defining helpers in profile scope' {
+        $script:profileText | Should -Not -Match "Measure-Block 'Core Setup'"
+        $script:profileText | Should -Match '\$coreSetupTimer'
+    }
 }
 
 Describe 'Alias safety' {

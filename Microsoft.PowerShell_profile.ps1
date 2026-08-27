@@ -109,8 +109,8 @@ if ($MyInvocation.Line -notmatch '--no-suppress') {
     $script:ProfileSuppressInfoLogs = $true
 }
 
-Measure-Block 'Core Setup' {
-    try {
+$coreSetupTimer = [System.Diagnostics.Stopwatch]::StartNew()
+try {
         # Create module cache directory if it doesn't exist
         $moduleCacheDir = Join-Path $ProfileDir 'Config\ModuleCache'
         if (-not (Test-Path $moduleCacheDir)) {
@@ -173,11 +173,23 @@ Measure-Block 'Core Setup' {
                 try { . $file.FullName } catch { Write-Warning "Failed to load $($file.Name): $_" }
             }
         }
-    }
-    catch {
-        Write-Error "Failed to load core modules: $_"
-        Write-Warning "Some features may not be available"
-    }
+
+        # Load lightweight system helpers. PSFzf remains separately lazy-loaded
+        # because it depends on an optional module and interactive key handlers.
+        foreach ($systemHelper in @('linuxLike.ps1', 'clean.ps1', 'chezmoi.ps1')) {
+            $helperPath = Join-Path $ProfileDir "Core\System\$systemHelper"
+            if (Test-CachedPath $helperPath) {
+                try { . $helperPath } catch { Write-Warning "Failed to load $systemHelper`: $_" }
+            }
+        }
+}
+catch {
+    Write-Error "Failed to load core modules: $_"
+    Write-Warning "Some features may not be available"
+}
+finally {
+    $coreSetupTimer.Stop()
+    $script:profileTiming['Core Setup'] = $coreSetupTimer.ElapsedMilliseconds
 }
 
 # Initialize shell enhancements - PSReadLine
@@ -447,10 +459,15 @@ if (-not $script:ProfileSuppressInfoLogs -and $script:profileTiming) {
 }
 
 # Initialize Starship with a proper full-init cache (no process spawn on each load)
-Measure-Block 'Starship Init' {
+$starshipTimer = [System.Diagnostics.Stopwatch]::StartNew()
+try {
     if ($supportsVirtualTerminal -and $script:CommandExistsCache['starship']) {
         $starshipConfigPath = Join-Path $PSScriptRoot 'Config\starship.toml'
         $ENV:STARSHIP_CONFIG = $starshipConfigPath
         Initialize-CachedToolInit -ToolName 'starship' -InitCommand { starship init powershell --print-full-init } -CacheBaseName 'starship-init-cache' -ConfigPath $starshipConfigPath
     }
+}
+finally {
+    $starshipTimer.Stop()
+    $script:profileTiming['Starship Init'] = $starshipTimer.ElapsedMilliseconds
 }
