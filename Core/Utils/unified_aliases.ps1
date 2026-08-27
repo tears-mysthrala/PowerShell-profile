@@ -38,9 +38,7 @@ Set-Alias -Name proxmox -Value Connect-Proxmox
 # Navigation aliases and utilities
 function .. { Set-Location .\.. }
 function ... { Set-Location .\..\..\ }
-function .3 { Set-Location .\..\..\..\.. }
 function .4 { Set-Location .\..\..\..\..\ }
-function .5 { Set-Location .\..\..\..\..\..\.. }
 
 # Editor detection and configuration - lazy loaded
 function Initialize-Editor {
@@ -69,14 +67,12 @@ function v {
 # Note: 'v' alias is now a function that lazy-loads the editor
 Set-Alias -Name e -Value explorer.exe
 Set-Alias -Name c -Value cls
-Set-Alias -Name csl -Value cls
 Set-Alias -Name ss -Value Select-String
 Set-Alias -Name shutdownnow -Value Stop-Computer
 Set-Alias -Name rebootnow -Value Restart-Computer
 
 # Git aliases
 Set-Alias -Name g -Value git
-function Get-GitStatus { git status }
 function Invoke-GitPull { git pull }
 function Invoke-GitPush { git push }
 Set-Alias -Name gst -Value Get-GitStatus
@@ -175,12 +171,7 @@ function uptime {
   }
 }
 
-function Expand-ZipFile($file) {
-  Write-Output("Extracting", $file, "to", $pwd)
-  $fullFile = Get-ChildItem -Path $pwd -Filter $file | ForEach-Object { $_.FullName }
-  Expand-Archive -Path $fullFile -DestinationPath $pwd
-}
-Set-Alias -Name unzip -Value Expand-ZipFile
+Set-Alias -Name unzip -Value Expand-CustomArchive
 
 function head {
   param($Path, $n = 10)
@@ -215,8 +206,6 @@ function Restart-BIOS {
 # Powershell profile from https://github.com/craftzdog/dotfiles-public/blob/master/.config/powershell/user_profile.ps1
 
 [console]::InputEncoding = [console]::OutputEncoding = New-Object System.Text.UTF8Encoding
-
-Set-Alias -Name extract_multi -Value Expand-MultipleArchives
 
 function Get-Font {
   param (
@@ -273,14 +262,6 @@ Set-Alias -Name pkill -Value Stop-ProcessByName
 
 function Get-ProcessByName($name) { Get-Process $name }
 Set-Alias -Name pgrep -Value Get-ProcessByName
-
-# Search and find utilities
-function find-file($name) {
-  Get-ChildItem -recurse -filter "*${name}*" -ErrorAction SilentlyContinue | ForEach-Object {
-    $place_path = $_.directory
-    Write-Output "${place_path}\${_}"
-  }
-}
 
 function Find-String($regex, $dir) {
   if ($dir) {

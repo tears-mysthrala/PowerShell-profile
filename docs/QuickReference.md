@@ -1,7 +1,7 @@
 # Quick Reference
 
 > **Auto-generated documentation**
-> Last updated: 2026-08-27 15:57:44
+> Last updated: 2026-08-27 16:32:01
 
 ## Functions
 
@@ -12,9 +12,7 @@
 | `_fzf_open_path` | System |  |
 | `..` | Utilities | Navigation aliases and utilities |
 | `...` | Utilities |  |
-| `.3` | Utilities |  |
 | `.4` | Utilities |  |
-| `.5` | Utilities |  |
 | `Clear-All` | System |  |
 | `Clear-Disk` | System |  |
 | `Clear-DnsCache` | Utilities | Networking Utilities |
@@ -36,7 +34,6 @@
 | `Env:` | System |  |
 | `Expand-CustomArchive` | Utilities |  |
 | `Expand-MultipleArchives` | Utilities |  |
-| `Expand-ZipFile` | Utilities |  |
 | `fdg` | System |  |
 | `Find-File` | Utilities | Search utilities for PowerShell profile |
 | `Find-PowerShellCommand` | Utilities |  |
@@ -47,7 +44,6 @@
 | `Get-DependencyInstallerWinget` | Tools | region Installation Functions |
 | `Get-Font` | Utilities |  |
 | `Get-FormattedUptime` | Utilities |  |
-| `Get-GitStatus` | Utilities |  |
 | `Get-ProcessByName` | Utilities |  |
 | `Get-PubIP` | Utilities |  |
 | `Get-ScoopApp` | Applications |  |
@@ -59,7 +55,6 @@
 | `HKLM:` | System | Drive shortcuts |
 | `Initialize-CachedToolInit` | Profile | Reusable fingerprint-based cache for tool init scripts |
 | `Initialize-Editor` | Utilities | Editor detection and configuration - lazy loaded |
-| `Initialize-EncodingConfig` | Utilities |  |
 | `Initialize-ModuleInstallationEnvironment` | Core |  |
 | `Initialize-NuGetProvider` | Tools |  |
 | `Initialize-PowerShellGallery` | Applications |  |
@@ -91,7 +86,6 @@
 | `New-File` | Utilities | File and directory management (mkcd/New-DirectoryAndEnter defined in FileSyst... |
 | `Remove-FzfSelectedPath` | System |  |
 | `Remove-TempFolder` | Core |  |
-| `Reset-ProfileState` | Utilities |  |
 | `Restart-BIOS` | Utilities | Test-IsAdmin defined in CommonUtils.ps1 |
 | `rgg` | System |  |
 | `Save-ModuleCache` | Core |  |
@@ -163,13 +157,11 @@
 | `c` | `cls` | `Core\Utils\unified_aliases.ps1` |
 | `cm` | `chezmoi` | `Core\System\chezmoi.ps1` |
 | `cpy` | `Set-ClipboardContent` | `Core\Utils\unified_aliases.ps1` |
-| `csl` | `cls` | `Core\Utils\unified_aliases.ps1` |
 | `d` | `docker` | `Core\Utils\unified_aliases.ps1` |
 | `dc` | `docker-compose` | `Core\Utils\unified_aliases.ps1` |
 | `e` | `explorer` | `Core\Utils\unified_aliases.ps1` |
 | `export` | `Set-EnvironmentVariable` | `Core\Utils\unified_aliases.ps1` |
 | `extract` | `Expand-CustomArchive` | `Core\Utils\FileSystemUtils.ps1` |
-| `extract_multi` | `Expand-MultipleArchives` | `Core\Utils\unified_aliases.ps1` |
 | `extract-multi` | `Expand-MultipleArchives` | `Core\Utils\FileSystemUtils.ps1` |
 | `ff` | `Find-File` | `Core\Utils\SearchUtils.ps1` |
 | `find-cmd` | `Find-PowerShellCommand` | `Core\Utils\SearchUtils.ps1` |
@@ -194,6 +186,6 @@
 | `shutdownnow` | `Stop-Computer` | `Core\Utils\unified_aliases.ps1` |
 | `ss` | `Select-String` | `Core\Utils\unified_aliases.ps1` |
 | `touch` | `New-File` | `Core\Utils\unified_aliases.ps1` |
-| `unzip` | `Expand-ZipFile` | `Core\Utils\unified_aliases.ps1` |
+| `unzip` | `Expand-CustomArchive` | `Core\Utils\unified_aliases.ps1` |
 | `upgrade` | `Update-System` | `Core\Apps\Updates\SystemUpdater.ps1` |
 | `which` | `Get-CommandPath` | `Core\Utils\unified_aliases.ps1` |

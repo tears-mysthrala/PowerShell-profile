@@ -27,9 +27,3 @@ function Get-PubIP {
         Write-Warning "Failed to get public IP: $_"
     }
 }
-
-function Initialize-EncodingConfig {
-    $env:PYTHONIOENCODING = 'utf-8'
-    [System.Console]::OutputEncoding = [System.Text.UTF8Encoding]::new()
-    [console]::InputEncoding = [console]::OutputEncoding = New-Object System.Text.UTF8Encoding
-}

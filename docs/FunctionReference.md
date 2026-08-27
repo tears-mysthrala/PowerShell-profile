@@ -1,8 +1,8 @@
 # Function Reference
 
 > **Auto-generated documentation**
-> Last updated: 2026-08-27 15:57:44
-> Total functions: 148
+> Last updated: 2026-08-27 16:32:01
+> Total functions: 142
 
 ## Table of Contents
 
@@ -1298,29 +1298,11 @@ function ...
 
 <sub>**Source:** `Core\Utils\unified_aliases.ps1`</sub>
 
-### `.3`
-
-**Signature:**
-```powershell
-function .3
-```
-
-<sub>**Source:** `Core\Utils\unified_aliases.ps1`</sub>
-
 ### `.4`
 
 **Signature:**
 ```powershell
 function .4
-```
-
-<sub>**Source:** `Core\Utils\unified_aliases.ps1`</sub>
-
-### `.5`
-
-**Signature:**
-```powershell
-function .5
 ```
 
 <sub>**Source:** `Core\Utils\unified_aliases.ps1`</sub>
@@ -1394,15 +1376,6 @@ param([string[]]$Files)
 ```
 
 <sub>**Source:** `Core\Utils\FileSystemUtils.ps1`</sub>
-
-### `Expand-ZipFile`
-
-**Signature:**
-```powershell
-function Expand-ZipFile
-```
-
-<sub>**Source:** `Core\Utils\unified_aliases.ps1`</sub>
 
 ### `Find-File`
 
@@ -1485,15 +1458,6 @@ function Get-FormattedUptime
 
 <sub>**Source:** `Core\Utils\CommonUtils.ps1`</sub>
 
-### `Get-GitStatus`
-
-**Signature:**
-```powershell
-function Get-GitStatus
-```
-
-<sub>**Source:** `Core\Utils\unified_aliases.ps1`</sub>
-
 ### `Get-ProcessByName`
 
 **Signature:**
@@ -1535,15 +1499,6 @@ function Initialize-Editor
 Editor detection and configuration - lazy loaded
 
 <sub>**Source:** `Core\Utils\unified_aliases.ps1`</sub>
-
-### `Initialize-EncodingConfig`
-
-**Signature:**
-```powershell
-function Initialize-EncodingConfig
-```
-
-<sub>**Source:** `Core\Utils\CommonUtils.ps1`</sub>
 
 ### `Invoke-GitPull`
 
@@ -1645,20 +1600,6 @@ param($file)
 File and directory management (mkcd/New-DirectoryAndEnter defined in FileSystemUtils.ps1)
 
 <sub>**Source:** `Core\Utils\unified_aliases.ps1`</sub>
-
-### `Reset-ProfileState`
-
-**Signature:**
-```powershell
-function Reset-ProfileState {
-[CmdletBinding(SupportsShouldProcess)]
-param(
-        [switch]$Quiet
-    )
-}
-```
-
-<sub>**Source:** `Core\Utils\profile_management.ps1`</sub>
 
 ### `Restart-BIOS`
 
