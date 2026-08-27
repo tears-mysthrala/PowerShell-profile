@@ -1,7 +1,7 @@
 # Quick Reference
 
 > **Auto-generated documentation**
-> Last updated: 2026-08-27 16:35:06
+> Last updated: 2026-08-27 16:56:50
 
 ## Functions
 
@@ -92,7 +92,6 @@
 | `Sync-SessionPath` | Tools | region Helper Functions |
 | `sysinfo` | Utilities | Quick Access to System Information |
 | `tail` | Utilities |  |
-| `Test-CachedPath` | Profile | Helper function for cached Test-Path |
 | `Test-CommandExist` | Applications |  |
 | `Test-IsAdmin` | Utilities |  |
 | `Test-ModuleInstalled` | Core |  |

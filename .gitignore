@@ -25,7 +25,6 @@
 
 # PowerShell cache files (do not track runtime caches)
 Config/*.clixml
-env-cache.clixml
 utils-cache.clixml
 ModuleCache/
 

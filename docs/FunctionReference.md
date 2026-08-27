@@ -1,8 +1,8 @@
 # Function Reference
 
 > **Auto-generated documentation**
-> Last updated: 2026-08-27 16:35:06
-> Total functions: 128
+> Last updated: 2026-08-27 16:56:50
+> Total functions: 127
 
 ## Table of Contents
 
@@ -697,21 +697,6 @@ param(
     )
 }
 ```
-
-<sub>**Source:** `Microsoft.PowerShell_profile.ps1`</sub>
-
-### `Test-CachedPath`
-
-**Signature:**
-```powershell
-function Test-CachedPath {
-param([string]$Path)
-}
-```
-
-**Description:**
-
-Helper function for cached Test-Path
 
 <sub>**Source:** `Microsoft.PowerShell_profile.ps1`</sub>
 

@@ -87,10 +87,10 @@ When adding new tools or dependencies:
 
 ## 📊 Statistics
 
-- **Functions:** 128 across Core/, tools/install-dependencies.ps1, and the main profile
+- **Functions:** 127 across Core/, tools/install-dependencies.ps1, and the main profile
 - **Aliases:** 35
 - **Categories:** 6
-- **Last Updated:** 2026-08-27 16:35:06
+- **Last Updated:** 2026-08-27 16:56:50
 
 ## License
 

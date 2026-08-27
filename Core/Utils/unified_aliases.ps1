@@ -14,11 +14,6 @@ function Test-CommandExist {
   $script:CommandExistsCache[$Command] = $exists
   return $exists
 }
-# Pre-cache common commands to avoid repeated lookups
-$commonCommands = @('bat', 'eza', 'lazygit', 'fd', 'nvim', 'code', 'zoxide', 'gh', 'starship')
-foreach ($cmd in $commonCommands) {
-    Test-CommandExist $cmd | Out-Null
-}
 # SSH helper for Proxmox. Configure PROXMOX_SSH_TARGET (for example, user@host)
 # and optionally PROXMOX_SSH_PORT outside the repository.
 function Connect-Proxmox {

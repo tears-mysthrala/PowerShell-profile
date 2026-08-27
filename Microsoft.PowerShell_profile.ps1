@@ -1,18 +1,6 @@
 # Initialize profiling
 $script:profileStopwatch = [System.Diagnostics.Stopwatch]::StartNew()
 $script:profileTiming = @{}
-$script:pathCache = @{}  # Cache Test-Path results
-
-# Helper function for cached Test-Path
-function Test-CachedPath {
-    param([string]$Path)
-    if ($script:pathCache.ContainsKey($Path)) {
-        return $script:pathCache[$Path]
-    }
-    $exists = Test-Path $Path
-    $script:pathCache[$Path] = $exists
-    return $exists
-}
 
 function Measure-Block {
     param(
@@ -29,74 +17,26 @@ function Measure-Block {
     }
 }
 
-Measure-Block 'Aliases' {
-    . "$PSScriptRoot/Core/Utils/unified_aliases.ps1"
-}
-
-Measure-Block 'System updater' {
-    . "$PSScriptRoot/Core/Apps/Updates/SystemUpdater.ps1"
-}
-
 # Set essential environment variables
 $ProfileDir = $PSScriptRoot
 Measure-Block 'Environment Setup' {
-    # Use cached environment settings if available
-    $envCachePath = "$ProfileDir\Config\env-cache.clixml"
+    $env:PYTHONIOENCODING = 'utf-8'
+    [System.Console]::OutputEncoding = [System.Text.UTF8Encoding]::new()
 
-    if (Test-CachedPath $envCachePath) {
-        $cachedEnv = Import-Clixml $envCachePath
-        foreach ($key in $cachedEnv.Keys) {
-            Set-Item "env:$key" -Value $cachedEnv[$key]
-        }
-        [System.Console]::OutputEncoding = [System.Text.UTF8Encoding]::new()
+    $customModulePath = "$ProfileDir\Modules"
+    if ($env:PSModulePath -notlike "*$customModulePath*") {
+        $env:PSModulePath = "$customModulePath;" + $env:PSModulePath
     }
-    else {
-        # Encoding settings
-        $env:PYTHONIOENCODING = 'utf-8'
-        [System.Console]::OutputEncoding = [System.Text.UTF8Encoding]::new()
 
-        # Module path
-        $customModulePath = "$ProfileDir\Modules"
-        if ($env:PSModulePath -notlike "*$customModulePath*") {
-            $env:PSModulePath = "$customModulePath;" + $env:PSModulePath
-        }
-
-        # Scoop modules path (DockerCompletion, scoop-completion, etc.)
-        $scoopModulePath = "$env:USERPROFILE\scoop\modules"
-        if ((Test-Path $scoopModulePath) -and $env:PSModulePath -notlike "*$scoopModulePath*") {
-            $env:PSModulePath = "$scoopModulePath;" + $env:PSModulePath
-        }
-
-        # Editor preferences with fallbacks
-        $editors = @(
-            @{ Command = 'nvim'; EnvVar = 'EDITOR' },
-            @{ Command = 'code'; EnvVar = 'VISUAL' },
-            @{ Command = 'notepad'; EnvVar = 'EDITOR' }
-        )
-
-        foreach ($editor in $editors) {
-            if (Get-Command $editor.Command -ErrorAction SilentlyContinue) {
-                Set-Item "env:$($editor.EnvVar)" -Value $editor.Command
-                break
-            }
-        }
-
-        # Performance optimizations
-        $env:POWERSHELL_TELEMETRY_OPTOUT = 1
-        $env:POWERSHELL_UPDATECHECK = 'Off'
-        $env:GIT_IPVERSION = '4'
-
-        # Cache the environment settings
-        $envToCache = @{
-            PYTHONIOENCODING            = $env:PYTHONIOENCODING
-            EDITOR                      = $env:EDITOR
-            VISUAL                      = $env:VISUAL
-            POWERSHELL_TELEMETRY_OPTOUT = $env:POWERSHELL_TELEMETRY_OPTOUT
-            POWERSHELL_UPDATECHECK      = $env:POWERSHELL_UPDATECHECK
-            GIT_IPVERSION               = $env:GIT_IPVERSION
-        }
-        $envToCache | Export-Clixml -Path $envCachePath
+    $scoopModulePath = "$env:USERPROFILE\scoop\modules"
+    if ((Test-Path $scoopModulePath) -and $env:PSModulePath -notlike "*$scoopModulePath*") {
+        $env:PSModulePath = "$scoopModulePath;" + $env:PSModulePath
     }
+
+    if (-not $env:EDITOR) { $env:EDITOR = 'notepad' }
+    $env:POWERSHELL_TELEMETRY_OPTOUT = 1
+    $env:POWERSHELL_UPDATECHECK = 'Off'
+    $env:GIT_IPVERSION = '4'
 }
 
 # If is in non-interactive shell, then return early
@@ -114,14 +54,16 @@ if ($MyInvocation.Line -notmatch '--no-suppress') {
     $script:ProfileSuppressInfoLogs = $true
 }
 
+Measure-Block 'Aliases' {
+    . "$PSScriptRoot/Core/Utils/unified_aliases.ps1"
+}
+
+Measure-Block 'System updater' {
+    . "$PSScriptRoot/Core/Apps/Updates/SystemUpdater.ps1"
+}
+
 $coreSetupTimer = [System.Diagnostics.Stopwatch]::StartNew()
 try {
-        # Create module cache directory if it doesn't exist
-        $moduleCacheDir = Join-Path $ProfileDir 'Config\ModuleCache'
-        if (-not (Test-Path $moduleCacheDir)) {
-            New-Item -ItemType Directory -Path $moduleCacheDir -Force | Out-Null
-        }
-
         # Import ModuleInstaller and install required modules only when needed
         $script:LazyLoadModule = {
             param([Parameter(Mandatory)][string]$Name)
@@ -171,22 +113,16 @@ try {
         }
 
         # Load utility modules directly (small files, ~200 lines total, negligible startup cost)
-        $utilsPath = "$ProfileDir\Core\Utils"
-        if (Test-CachedPath $utilsPath) {
-            foreach ($file in (Get-ChildItem -Path $utilsPath -Filter "*.ps1")) {
-                # unified_aliases is already loaded at startup (line 2)
-                if ($file.Name -eq 'unified_aliases.ps1') { continue }
-                try { . $file.FullName } catch { Write-Warning "Failed to load $($file.Name): $_" }
-            }
+        foreach ($utility in @('CommonUtils.ps1', 'FileSystemUtils.ps1', 'SearchUtils.ps1')) {
+            $utilityPath = Join-Path $ProfileDir "Core\Utils\$utility"
+            try { . $utilityPath } catch { Write-Warning "Failed to load $utility`: $_" }
         }
 
         # Load lightweight system helpers. PSFzf remains separately lazy-loaded
         # because it depends on an optional module and interactive key handlers.
         foreach ($systemHelper in @('linuxLike.ps1', 'clean.ps1', 'chezmoi.ps1')) {
             $helperPath = Join-Path $ProfileDir "Core\System\$systemHelper"
-            if (Test-CachedPath $helperPath) {
-                try { . $helperPath } catch { Write-Warning "Failed to load $systemHelper`: $_" }
-            }
+            try { . $helperPath } catch { Write-Warning "Failed to load $systemHelper`: $_" }
         }
 }
 
@@ -382,12 +318,12 @@ function Initialize-CachedToolInit {
 }
 
 # Initialize shell tools (cached to avoid blocking startup)
-if ($script:CommandExistsCache['zoxide']) {
+if (Test-CommandExist 'zoxide') {
     $env:_ZO_DATA_DIR = "$ProfileDir\.zo"
     Initialize-CachedToolInit -ToolName 'zoxide' -InitCommand { zoxide init powershell --cmd cd } -CacheBaseName 'zoxide-init-cache'
 }
 
-if ($script:CommandExistsCache['gh']) {
+if (Test-CommandExist 'gh') {
     Initialize-CachedToolInit -ToolName 'gh' -InitCommand { gh completion -s powershell } -CacheBaseName 'gh-completion-cache'
 }
 
@@ -453,7 +389,7 @@ function Install-Dependency {
 # Initialize Starship with a proper full-init cache (no process spawn on each load)
 $starshipTimer = [System.Diagnostics.Stopwatch]::StartNew()
 try {
-    if ($supportsVirtualTerminal -and $script:CommandExistsCache['starship']) {
+    if ($supportsVirtualTerminal -and (Test-CommandExist 'starship')) {
         $starshipConfigPath = Join-Path $PSScriptRoot 'Config\starship.toml'
         $ENV:STARSHIP_CONFIG = $starshipConfigPath
         Initialize-CachedToolInit -ToolName 'starship' -InitCommand { starship init powershell --print-full-init } -CacheBaseName 'starship-init-cache' -ConfigPath $starshipConfigPath
