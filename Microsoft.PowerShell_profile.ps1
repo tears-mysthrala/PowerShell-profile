@@ -118,11 +118,13 @@ Measure-Block 'Core Setup' {
         }
 
         # Import ModuleInstaller and install required modules only when needed
-        $script:LazyLoadModules = {
+        $script:LazyLoadModule = {
+            param([Parameter(Mandatory)][string]$Name)
+
             if (-not (Get-Module -Name ModuleInstaller -ErrorAction SilentlyContinue)) {
                 Import-Module "$ProfileDir\Core\ModuleInstaller.ps1" -Force -ErrorAction Stop
             }
-            Install-RequiredModule
+            Install-RequiredModule -Name $Name
         }
 
         # Create lazy-loading proxy functions for commonly used module commands
@@ -136,8 +138,8 @@ Measure-Block 'Core Setup' {
                 # Remove the proxy function
                 Remove-Item "Function:\$command"
                 # Install missing modules before importing the real command implementation
-                if ($script:LazyLoadModules) {
-                    & $script:LazyLoadModules
+                if ($script:LazyLoadModule) {
+                    & $script:LazyLoadModule -Name $moduleName
                 }
                 # Load the actual module
                 Import-Module $moduleName -ErrorAction Stop
@@ -345,7 +347,7 @@ function Initialize-CachedToolInit {
                     ConfigMTime        = $cfgMTime
                 } | Export-Clixml -Path $metaPath -Force
             }
-            catch { <# Ignore cache write failures; current session is already initialized #> }
+            catch { Write-Verbose "$ToolName cache write failed; current session is already initialized: $_" }
         }
         else {
             try { . $cachePath }

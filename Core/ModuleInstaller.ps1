@@ -66,15 +66,6 @@ function Initialize-ModuleInstallationEnvironment {
         Write-Warning "[ModuleInstaller] Failed to initialize NuGet provider: $_"
     }
 
-    try {
-        $repo = Get-PSRepository -Name PSGallery -ErrorAction SilentlyContinue
-        if ($repo -and $repo.InstallationPolicy -ne 'Trusted') {
-            Set-PSRepository -Name PSGallery -InstallationPolicy Trusted -ErrorAction Stop
-        }
-    }
-    catch {
-        Write-Warning "[ModuleInstaller] Failed to trust PSGallery: $_"
-    }
 }
 
 function Test-ModulePathHealthy {
@@ -99,7 +90,7 @@ function Test-ModulePathHealthy {
     return [bool]$moduleFiles
 }
 
-function Update-ModuleCacheEntry {
+function Write-ModuleCacheEntry {
     param(
         [string]$ModuleName,
         [object]$Module
@@ -166,7 +157,7 @@ function Test-ModuleInstalled {
     }
 
     if ($module) {
-        Update-ModuleCacheEntry -ModuleName $ModuleName -Module $module
+        Write-ModuleCacheEntry -ModuleName $ModuleName -Module $module
 
         if ($MinVersion -and ($module.Version -lt [version]$MinVersion)) {
             return $false
@@ -179,15 +170,23 @@ function Test-ModuleInstalled {
 
 function Install-RequiredModule {
     [CmdletBinding()]
-    param()
+    param(
+        [ValidateNotNullOrEmpty()]
+        [string[]]$Name = @($requiredModules.Keys)
+    )
+
+    foreach ($moduleName in $Name) {
+        if (-not $requiredModules.ContainsKey($moduleName)) {
+            throw "Unknown required module: $moduleName"
+        }
+    }
 
     Initialize-ModuleInstallationEnvironment
 
     # Collect missing modules (fast checks)
     $missing = @()
-    foreach ($module in $requiredModules.GetEnumerator()) {
-        $moduleName = $module.Key
-        $moduleInfo = $module.Value
+    foreach ($moduleName in $Name) {
+        $moduleInfo = $requiredModules[$moduleName]
         if (-not (Test-ModuleInstalled -ModuleName $moduleName -MinVersion $moduleInfo.MinVersion)) {
             $missing += @{ Name = $moduleName; MinVersion = $moduleInfo.MinVersion }
         }
@@ -213,7 +212,7 @@ function Install-RequiredModule {
                 Sort-Object Version -Descending |
                 Select-Object -First 1
             if ($installedModule -and $script:PSModuleCache) {
-                Update-ModuleCacheEntry -ModuleName $moduleName -Module $installedModule
+                Write-ModuleCacheEntry -ModuleName $moduleName -Module $installedModule
             }
         }
         catch {
