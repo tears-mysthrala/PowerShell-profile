@@ -1,10 +1,5 @@
-# Load aliases
-. "$PSScriptRoot/Core/Utils/unified_aliases.ps1"
-
-# Load system updater
-. "$PSScriptRoot/Core/Apps/Updates/SystemUpdater.ps1"
-
 # Initialize profiling
+$script:profileStopwatch = [System.Diagnostics.Stopwatch]::StartNew()
 $script:profileTiming = @{}
 $script:pathCache = @{}  # Cache Test-Path results
 
@@ -32,6 +27,14 @@ function Measure-Block {
         $sw.Stop()
         $script:profileTiming[$Name] = $sw.ElapsedMilliseconds
     }
+}
+
+Measure-Block 'Aliases' {
+    . "$PSScriptRoot/Core/Utils/unified_aliases.ps1"
+}
+
+Measure-Block 'System updater' {
+    . "$PSScriptRoot/Core/Apps/Updates/SystemUpdater.ps1"
 }
 
 # Set essential environment variables
@@ -98,6 +101,8 @@ Measure-Block 'Environment Setup' {
 
 # If is in non-interactive shell, then return early
 if (!([Environment]::UserInteractive -and -not $([Environment]::GetCommandLineArgs() | Where-Object { $_ -like '-NonI*' }))) {
+    $script:profileStopwatch.Stop()
+    $script:profileTiming['Total execution'] = $script:profileStopwatch.ElapsedMilliseconds
     return
 }
 
@@ -184,6 +189,7 @@ try {
             }
         }
 }
+
 catch {
     Write-Error "Failed to load core modules: $_"
     Write-Warning "Some features may not be available"
@@ -444,16 +450,6 @@ function Install-Dependency {
     & $installerPath @installerArgs
 }
 
-# Display profile loading timing if not suppressed
-if (-not $script:ProfileSuppressInfoLogs -and $script:profileTiming) {
-    $totalTime = ($script:profileTiming.GetEnumerator() | Measure-Object -Property Value -Sum).Sum
-    Write-Host "Profile loaded in ${totalTime}ms" -ForegroundColor Green
-    Write-Host "Timing breakdown:" -ForegroundColor Yellow
-    $script:profileTiming.GetEnumerator() | Sort-Object -Property Value -Descending | ForEach-Object {
-        Write-Host ("  {0}: {1}ms" -f $_.Key, $_.Value) -ForegroundColor Gray
-    }
-}
-
 # Initialize Starship with a proper full-init cache (no process spawn on each load)
 $starshipTimer = [System.Diagnostics.Stopwatch]::StartNew()
 try {
@@ -466,4 +462,18 @@ try {
 finally {
     $starshipTimer.Stop()
     $script:profileTiming['Starship Init'] = $starshipTimer.ElapsedMilliseconds
+}
+
+$script:profileStopwatch.Stop()
+$script:profileTiming['Total execution'] = $script:profileStopwatch.ElapsedMilliseconds
+
+if (-not $script:ProfileSuppressInfoLogs) {
+    Write-Host "Profile executed in $($script:profileStopwatch.ElapsedMilliseconds)ms" -ForegroundColor Green
+    Write-Host "Timing breakdown:" -ForegroundColor Yellow
+    $script:profileTiming.GetEnumerator() |
+        Where-Object Key -ne 'Total execution' |
+        Sort-Object Value -Descending |
+        ForEach-Object {
+            Write-Host ("  {0}: {1}ms" -f $_.Key, $_.Value) -ForegroundColor Gray
+        }
 }
