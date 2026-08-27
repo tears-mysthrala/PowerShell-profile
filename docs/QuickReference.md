@@ -1,7 +1,7 @@
 # Quick Reference
 
 > **Auto-generated documentation**
-> Last updated: 2026-08-27 16:33:02
+> Last updated: 2026-08-27 16:34:05
 
 ## Functions
 
@@ -109,7 +109,6 @@
 | `Update-Fzf` | Applications |  |
 | `Update-Gcloud` | Applications |  |
 | `Update-Gem` | Applications |  |
-| `Update-GitSubmodule` | Applications |  |
 | `Update-GoTools` | Applications |  |
 | `Update-Homebrew` | Applications |  |
 | `Update-NodeEnvironment` | Applications |  |

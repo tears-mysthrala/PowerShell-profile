@@ -89,4 +89,14 @@ Describe 'UpdateAppsHelper upgrade noise handling' {
 
         Get-UvSelfUpdateCommandPath -ActiveCommandPath $active -LegacyStandalonePath $legacy | Should -Be $active
     }
+
+    It 'keeps Winget community and Microsoft Store updates in separate layers' {
+        ${function:Update-Winget}.ToString() | Should -Match 'upgrade --source winget'
+        ${function:Update-Winget}.ToString() | Should -Match '--exact --source winget'
+        ${function:Update-StoreApp}.ToString() | Should -Match 'upgrade --all --source msstore'
+    }
+
+    It 'does not expose an implicit repository submodule updater' {
+        Get-Command Update-GitSubmodule -ErrorAction SilentlyContinue | Should -BeNullOrEmpty
+    }
 }

@@ -266,14 +266,14 @@ function Update-Winget {
             # by their own tooling (e.g. gcloud components update)
             # Keep winget non-elevated by default: elevated winget cannot upgrade
             # user-scope packages such as chezmoi's WinGet shim.
-            $upgradeOutput = @(& $winget upgrade --accept-source-agreements --disable-interactivity 2>&1)
+            $upgradeOutput = @(& $winget upgrade --source winget --accept-source-agreements --disable-interactivity 2>&1)
             $queryExitCode = $LASTEXITCODE
             $packages = @(ConvertFrom-WingetUpgradeOutput -Output $upgradeOutput)
             $failedPackages = @()
 
             foreach ($package in $packages) {
                 Write-Host "  Updating: $($package.Name) [$($package.Id)]" -ForegroundColor DarkGray
-                & $winget upgrade --id $package.Id --exact --silent --accept-source-agreements --accept-package-agreements --disable-interactivity
+                & $winget upgrade --id $package.Id --exact --source winget --silent --accept-source-agreements --accept-package-agreements --disable-interactivity
                 if ($LASTEXITCODE -ne 0 -and $LASTEXITCODE -ne -1978335189) {
                     $failedPackages += "$($package.Id) ($LASTEXITCODE)"
                 }
@@ -852,30 +852,23 @@ function Update-StoreApp {
     Write-UpdateHeader "Layer 3: Microsoft Store Apps"
     
     if ($PSCmdlet.ShouldProcess("Store apps", "Update")) {
-        Write-UpdateStatus "Checking Microsoft Store apps..." -Status Info
-        
         $winget = Get-WingetExecutable
         if ($winget) {
-            Write-Host "  Using winget to check Store apps..." -ForegroundColor DarkGray
+            Write-UpdateStatus "Updating Microsoft Store apps..." -Status Info
             try {
-                # winget upgrade -rhu ya incluye apps de msstore
-                $outdated = & $winget upgrade --source msstore --accept-source-agreements 2>$null |
-                    Select-String -Pattern '\S+.*\d+\.\d+.*\d+\.\d+.*msstore'
-                
-                if ($outdated) {
-                    $count = ($outdated | Measure-Object).Count
-                    Write-Host "    Found $count Store app(s) with updates available" -ForegroundColor DarkGray
-                    Write-Host "    (These will be updated by winget in Layer 1)" -ForegroundColor DarkGray
-                } else {
-                    Write-Host "    No Store apps need updates" -ForegroundColor DarkGray
+                & $winget upgrade --all --source msstore --silent --accept-source-agreements --accept-package-agreements --disable-interactivity
+                $exitCode = $LASTEXITCODE
+                if ($exitCode -eq 0 -or $exitCode -eq -1978335189) {
+                    Write-UpdateStatus "Microsoft Store app update completed" -Status Success
                 }
-                
-                Write-UpdateStatus "Microsoft Store apps check completed" -Status Success
+                else {
+                    Write-UpdateStatus "Microsoft Store app update failed with exit code $exitCode" -Status Warning
+                }
             } catch {
-                Write-UpdateStatus "Store check failed: $_" -Status Warning
+                Write-UpdateStatus "Microsoft Store app update failed: $_" -Status Warning
             }
         } else {
-            Write-UpdateStatus "Winget not available, skipping Store check..." -Status Warning
+            Write-UpdateStatus "Winget not available, skipping Microsoft Store apps..." -Status Warning
         }
     }
 }
@@ -1421,57 +1414,6 @@ function Update-Fzf {
             }
         } else {
             Write-UpdateStatus "fzf not installed, skipping..." -Status Warning
-        }
-    }
-}
-
-function Update-GitSubmodule {
-    [CmdletBinding(SupportsShouldProcess)]
-    param(
-        [string]$Path = $PWD
-    )
-    Write-UpdateHeader "Layer 4: Git Submodules"
-    
-    if ($PSCmdlet.ShouldProcess("Git submodules in $Path", "Update")) {
-        if (Test-CommandExist 'git') {
-            $repos = Get-ChildItem -Path $Path -Directory -Force | Where-Object {
-                Test-Path (Join-Path $_.FullName ".git")
-            }
-            
-            if (-not $repos) {
-                Write-UpdateStatus "No git repositories found in $Path" -Status Warning
-                return
-            }
-            
-            $updatedCount = 0
-            foreach ($repo in $repos) {
-                $gitmodulesPath = Join-Path $repo.FullName ".gitmodules"
-                if (Test-Path $gitmodulesPath) {
-                    Write-UpdateStatus "Updating submodules in: $($repo.Name)" -Status Info
-                    try {
-                        $originalLocation = Get-Location
-                        Set-Location $repo.FullName
-                        
-                        Write-Host "  Running: git submodule update --remote" -ForegroundColor DarkGray
-                        & git submodule update --remote --merge
-                        
-                        if ($LASTEXITCODE -eq 0) {
-                            $updatedCount++
-                            Write-UpdateStatus "Updated submodules in $($repo.Name)" -Status Success
-                        }
-                        
-                        Set-Location $originalLocation
-                    } catch {
-                        Write-UpdateStatus "Failed to update submodules in $($repo.Name): $_" -Status Error
-                    }
-                }
-            }
-            
-            if ($updatedCount -eq 0) {
-                Write-UpdateStatus "No repositories with submodules found" -Status Success
-            }
-        } else {
-            Write-UpdateStatus "Git not installed, skipping..." -Status Warning
         }
     }
 }

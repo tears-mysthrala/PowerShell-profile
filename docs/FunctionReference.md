@@ -1,8 +1,8 @@
 # Function Reference
 
 > **Auto-generated documentation**
-> Last updated: 2026-08-27 16:33:02
-> Total functions: 129
+> Last updated: 2026-08-27 16:34:05
+> Total functions: 128
 
 ## Table of Contents
 
@@ -251,20 +251,6 @@ param()
 function Update-Gem {
 [CmdletBinding(SupportsShouldProcess)]
 param()
-}
-```
-
-<sub>**Source:** `Core\Apps\UpdateAppsHelper.ps1`</sub>
-
-### `Update-GitSubmodule`
-
-**Signature:**
-```powershell
-function Update-GitSubmodule {
-[CmdletBinding(SupportsShouldProcess)]
-param(
-        [string]$Path = $PWD
-    )
 }
 ```
 

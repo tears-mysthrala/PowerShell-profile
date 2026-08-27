@@ -96,7 +96,6 @@ function Update-System {
         Update-Starship
         Update-Fzf
         Update-VSCodeExtension
-        Update-GitSubmodule
 
         # Keep this last: updating pwsh can interrupt the current host process.
         Update-PowerShellRuntime
