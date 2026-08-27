@@ -500,9 +500,10 @@ function Update-Npm {
                 
                 # Also clean npm cache if it has issues
                 Write-UpdateStatus "Verifying npm cache integrity..." -Status Info
-                $cacheVerify = & npm cache verify 2>&1
+                $cacheOutput = & npm cache verify 2>&1
                 if ($LASTEXITCODE -ne 0) {
-                    Write-UpdateStatus "Cache issues detected, cleaning npm cache..." -Status Warning
+                    Write-UpdateStatus "Cache verification failed: $($cacheOutput -join ' ')" -Status Warning
+                    Write-UpdateStatus "Cleaning npm cache..." -Status Info
                     & npm cache clean --force 2>&1 | Out-Null
                     Write-Host "  Cache cleaned" -ForegroundColor DarkGray
                 } else {
@@ -1181,12 +1182,12 @@ function Update-GoTools {
                             $pkg = $toolMap[$tool]
                             if ($pkg) {
                                 Write-Host "  Updating: $tool from $pkg" -ForegroundColor DarkGray
-                                $result = & go install $pkg 2>&1
+                                $goOutput = & go install $pkg 2>&1
                                 if ($LASTEXITCODE -eq 0) {
                                     Write-Host "    Updated $tool successfully" -ForegroundColor DarkGray
                                     $updatedCount++
                                 } else {
-                                    Write-Host "    Failed to update $tool" -ForegroundColor Yellow
+                                    Write-Host "    Failed to update $tool`: $($goOutput -join ' ')" -ForegroundColor Yellow
                                 }
                             } else {
                                 Write-Host "  Unknown package for: $tool (skipping)" -ForegroundColor Yellow
@@ -1294,12 +1295,12 @@ function Update-Homebrew {
         if (Test-CommandExist 'wsl') {
             try {
                 # Verificar si el directorio de homebrew existe en WSL
-                $wslCheck = & wsl test -d /home/linuxbrew/.linuxbrew 2>&1
+                & wsl test -d /home/linuxbrew/.linuxbrew 2>&1 | Out-Null
                 if ($LASTEXITCODE -eq 0) {
                     $brewInstalled = $true
                 }
             } catch {
-                # No hay brew en WSL
+                Write-Verbose "Homebrew detection in WSL failed: $_"
             }
         }
         
@@ -1586,6 +1587,9 @@ function Update-WSL {
                     Write-UpdateStatus "WSL update skipped: sudo requires a password. Configure NOPASSWD for package manager commands." -Status Warning
                 } else {
                     Write-UpdateStatus "WSL update completed (some distros may need manual update)" -Status Warning
+                    if ($stdout) {
+                        Write-Host "  Output: $($stdout.Trim())" -ForegroundColor DarkGray
+                    }
                     if ($stderr -and ($stderr -notmatch 'Could not resolve')) {
                         Write-Host "  Note: $($stderr.Trim())" -ForegroundColor DarkGray
                     }
@@ -1653,7 +1657,6 @@ function Update-PythonEnvironment {
                                     Write-Host "  Found $($packages.Count) outdated package(s)" -ForegroundColor DarkGray
                                     
                                     # Actualizar todos de una vez (más rápido)
-                                    $pkgList = $packages -join ' '
                                     & $pipPath install --upgrade @packages 2>&1 | ForEach-Object { 
                                         if ($_ -match 'Successfully installed|Requirement already satisfied') { 
                                             Write-Host "    $_" -ForegroundColor DarkGray 

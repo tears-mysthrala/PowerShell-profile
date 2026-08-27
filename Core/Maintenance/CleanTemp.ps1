@@ -12,7 +12,7 @@ function Remove-TempFolder {
     param([Parameter(Mandatory)][string]$Path)
 
     $resolvedPath = Resolve-Path -LiteralPath $Path -ErrorAction SilentlyContinue
-    if (-not $resolvedPath) { return 0 }
+    if (-not $resolvedPath) { return [int64]0 }
 
     $root = [System.IO.Path]::GetPathRoot($resolvedPath.ProviderPath)
     if ($resolvedPath.ProviderPath.TrimEnd('\') -eq $root.TrimEnd('\')) {

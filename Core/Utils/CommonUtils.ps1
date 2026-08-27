@@ -3,6 +3,7 @@
 if (-not (Get-Command Test-CommandExist -ErrorAction SilentlyContinue)) {
     function Test-CommandExist {
         [CmdletBinding()]
+        [OutputType([bool])]
         param([string]$command)
         return [bool](Get-Command $command -ErrorAction SilentlyContinue)
     }
