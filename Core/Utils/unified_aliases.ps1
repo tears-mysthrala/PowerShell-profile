@@ -75,7 +75,6 @@ Set-Alias -Name rebootnow -Value Restart-Computer
 Set-Alias -Name g -Value git
 function Invoke-GitPull { git pull }
 function Invoke-GitPush { git push }
-Set-Alias -Name gst -Value Get-GitStatus
 Set-Alias -Name pull -Value Invoke-GitPull
 Set-Alias -Name push -Value Invoke-GitPush
 

@@ -153,6 +153,7 @@ try {
             }.GetNewClosure()
             Set-Item "Function:\$command" -Value $sb
         }
+        Set-Alias -Name gst -Value Get-GitStatus
 
         # Provide an explicit enable function for Terminal-Icons so nothing related to it is created at startup
         function Enable-TerminalIcon {

@@ -29,6 +29,15 @@ Describe 'Profile safety defaults' {
         $script:profileText | Should -Not -Match "Measure-Block 'Core Setup'"
         $script:profileText | Should -Match '\$coreSetupTimer'
     }
+
+    It 'creates gst only after its lazy posh-git proxy exists' {
+        $proxyIndex = $script:profileText.IndexOf('Set-Item "Function:\$command"')
+        $aliasIndex = $script:profileText.IndexOf('Set-Alias -Name gst -Value Get-GitStatus')
+
+        $proxyIndex | Should -BeGreaterThan -1
+        $aliasIndex | Should -BeGreaterThan $proxyIndex
+        $script:aliasesText | Should -Not -Match 'Set-Alias -Name gst'
+    }
 }
 
 Describe 'Alias safety' {

@@ -1,7 +1,7 @@
 # Quick Reference
 
 > **Auto-generated documentation**
-> Last updated: 2026-08-27 16:34:05
+> Last updated: 2026-08-27 16:35:06
 
 ## Functions
 
@@ -154,7 +154,7 @@
 | `flushdns` | `Clear-DnsCache` | `Core\Utils\unified_aliases.ps1` |
 | `g` | `git` | `Core\Utils\unified_aliases.ps1` |
 | `grep` | `Find-String` | `Core\Utils\unified_aliases.ps1` |
-| `gst` | `Get-GitStatus` | `Core\Utils\unified_aliases.ps1` |
+| `gst` | `Get-GitStatus` | `Microsoft.PowerShell_profile.ps1` |
 | `l` | `ls_with_eza` | `Core\Utils\unified_aliases.ps1` |
 | `la` | `la_with_eza` | `Core\Utils\unified_aliases.ps1` |
 | `lg` | `lazygit` | `Core\Utils\unified_aliases.ps1` |
