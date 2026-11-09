@@ -3,6 +3,137 @@ BeforeAll {
 }
 
 Describe 'UpdateAppsHelper upgrade noise handling' {
+    It 'captures stderr and a nonzero native exit code without reporting success' {
+        $result = Invoke-UpdateCommand -Command (Get-Process -Id $PID).Path -Arguments @(
+            '-NoProfile', '-Command', 'Write-Output "native-output"; [Console]::Error.WriteLine("native-error"); exit 7'
+        )
+        $result.ExitCode | Should -Be 7
+        ($result.Output -join "`n") | Should -Match 'native-output'
+        ($result.Output -join "`n") | Should -Match 'native-error'
+    }
+
+    It 'uses the publisher checksum for the exact Apache archive' {
+        $manifest = [pscustomobject]@{ version = '2.4.69'; architecture = @{ '64bit' = @{
+            url = 'https://fossies.org/windows/www/httpd-2.4.69-261002-Win64-VS18.zip'; hash = 'upstream-hash'
+        } } }
+        $hash = 'a' * 64
+        $checksums = "SHA256-Checksum for: httpd-2.4.69-261002-Win64-VS18.zip:`r`n$hash`r`n"
+        $result = Get-ApacheLoungeManifest -Manifest $manifest -Checksums $checksums
+        $result.architecture.'64bit'.url | Should -Be 'https://www.apachelounge.com/download/VS18/binaries/httpd-2.4.69-261002-Win64-VS18.zip'
+        $result.architecture.'64bit'.hash | Should -Be $hash
+        $manifest.architecture.'64bit'.hash | Should -Be 'upstream-hash'
+        { Get-ApacheLoungeManifest -Manifest $manifest -Checksums 'unrelated archive checksum' } | Should -Throw
+    }
+
+    It 'does not accept an arbitrary host as an Apache fallback source' {
+        $manifest = [pscustomobject]@{ version = '2.4.69'; architecture = @{ '64bit' = @{
+            url = 'https://example.com/httpd-2.4.69-261002-Win64-VS18.zip'
+        } } }
+        { Get-ApacheLoungeManifest -Manifest $manifest -Checksums '' } | Should -Throw
+    }
+
+    It 'restores the current Scoop metadata file after a legacy installation is upgraded' {
+        $directory = New-Item -ItemType Directory -Path (Join-Path $TestDrive 'scoop-metadata') -Force
+        '{}' | Set-Content -LiteralPath (Join-Path $directory 'install.json')
+        Get-ScoopInstallInfoPath -Directory $directory | Should -Be (Join-Path $directory 'install.json')
+        '{}' | Set-Content -LiteralPath (Join-Path $directory 'scoop-install.json')
+        Get-ScoopInstallInfoPath -Directory $directory | Should -Be (Join-Path $directory 'scoop-install.json')
+    }
+
+    It 'restores Apache upstream tracking after mirror exit <Code>' -TestCases @(@{Code=0}, @{Code=1}) {
+        param($Code)
+        $fixtureRoot = Join-Path $TestDrive "mirror-$Code"
+        $current = New-Item -ItemType Directory -Path "$fixtureRoot\apps\apache\current" -Force
+        $bucket = New-Item -ItemType Directory -Path "$fixtureRoot\buckets\main\bucket" -Force
+        @{bucket='main';architecture='64bit'} | ConvertTo-Json | Set-Content "$current\install.json"
+        @{version='2.4.69';architecture=@{'64bit'=@{url='https://fossies.org/windows/www/httpd-2.4.69-261002-Win64-VS18.zip';hash=('b'*64)}}} |
+            ConvertTo-Json -Depth 10 | Set-Content "$bucket\apache.json"
+        $cacheFile = Join-Path $fixtureRoot 'cache\apache.zip'
+        Mock Invoke-WebRequest {
+            if ($OutFile) { 'archive' | Set-Content -LiteralPath $OutFile; return }
+            return [pscustomobject]@{Content=("SHA256-Checksum for: httpd-2.4.69-261002-Win64-VS18.zip:`n" + ('a'*64) + "`n")}
+        }
+        Mock Get-FileHash { [pscustomobject]@{Hash=('a'*64)} }
+        Mock Write-UpdateStatus {}
+        Mock Invoke-UpdateCommand {
+            if ($Arguments[-1] -like '*cache_path*') { return [pscustomobject]@{ExitCode=0;Output=@($cacheFile)} }
+            @{architecture='64bit';url='temporary-mirror'} | ConvertTo-Json | Set-Content "$current\scoop-install.json"
+            return [pscustomobject]@{ExitCode=$Code;Output=@()}
+        }
+        $previousScoop = $env:SCOOP
+        $previousLocal = $env:LOCALAPPDATA
+        try {
+            $env:SCOOP = $fixtureRoot
+            $env:LOCALAPPDATA = Join-Path $fixtureRoot 'local'
+            $result = Update-ScoopApacheMirror
+            $result.ExitCode | Should -Be $Code
+            $restored = Get-Content "$current\scoop-install.json" -Raw | ConvertFrom-Json
+            $restored.bucket | Should -Be 'main'
+            $restored.PSObject.Properties.Name | Should -Not -Contain 'url'
+        } finally {
+            $env:SCOOP = $previousScoop
+            $env:LOCALAPPDATA = $previousLocal
+        }
+    }
+
+    It 'continues upgrading uv tools after one tool fails' {
+        Mock Test-UpdateCommandExist { $true }
+        Mock Get-UvSelfUpdateCommandPath { $null }
+        Mock Write-UpdateStatus {}
+        Mock Invoke-UpdateCommand {
+            if ($Arguments[1] -eq 'list') {
+                return [pscustomobject]@{ExitCode=0;Output=@('broken v1.0', '- broken-cli', 'working v2.0', '- working-cli')}
+            }
+            if ($Arguments[2] -eq 'broken') { return [pscustomobject]@{ExitCode=1;Output=@('source missing')} }
+            return [pscustomobject]@{ExitCode=0;Output=@('up to date')}
+        }
+        Update-Uv
+        Should -Invoke Invoke-UpdateCommand -Times 1 -ParameterFilter { $Arguments[2] -eq 'working' }
+        Should -Invoke Write-UpdateStatus -Times 1 -ParameterFilter { $Status -eq 'Error' -and $Message -match 'broken' }
+        Should -Invoke Write-UpdateStatus -Times 0 -ParameterFilter { $Status -eq 'Success' }
+    }
+
+    It 'treats absent Ruby and Conda as optional, but incomplete Ruby as an error' {
+        Mock Get-CondaUpdateExecutable { $null }
+        Mock Test-UpdateCommandExist { $false }
+        Mock Write-UpdateStatus {}
+        Update-Gem
+        Update-Conda
+        Should -Invoke Write-UpdateStatus -Times 0 -ParameterFilter { $Status -in @('Warning','Error') }
+        Mock Test-UpdateCommandExist { $Command -eq 'ruby' }
+        Update-Gem
+        Should -Invoke Write-UpdateStatus -Times 1 -ParameterFilter { $Status -eq 'Error' -and $Message -match 'incomplete' }
+    }
+
+    It 'selects only old recognized npm staging folders and preserves other dot directories' {
+        $root = Join-Path $TestDrive 'node_modules'
+        $old = New-Item -ItemType Directory -Path "$root\@openai\.codex-1234abcd" -Force
+        $old.LastWriteTime = (Get-Date).AddDays(-2)
+        New-Item -ItemType Directory -Path "$root\.bin", "$root\.private-data", "$root\.recent-abcd1234" -Force | Out-Null
+        $result = @(Get-NpmStagingDirectory -Root $root)
+        $result.Count | Should -Be 1
+        $result[0].Name | Should -Be '.codex-1234abcd'
+    }
+
+    It 'does not report npm success when a global update failed' {
+        $root = New-Item -ItemType Directory -Path (Join-Path $TestDrive 'npm-failure') -Force
+        $package = New-Item -ItemType Directory -Path (Join-Path $root 'example') -Force
+        '{"name":"example"}' | Set-Content (Join-Path $package 'package.json')
+        Mock Test-UpdateCommandExist { $true }
+        Mock Get-CimInstance { @() }
+        Mock Write-UpdateStatus {}
+        Mock Invoke-UpdateCommand {
+            if ($Arguments[0] -eq 'root') { return [pscustomobject]@{ExitCode=0;Output=@($root.FullName)} }
+            if ($Arguments[0] -eq 'outdated') { return [pscustomobject]@{ExitCode=0;Output=@('{}')} }
+            if ($Arguments[0] -eq 'update') { return [pscustomobject]@{ExitCode=1;Output=@('package locked')} }
+            return [pscustomobject]@{ExitCode=0;Output=@()}
+        }
+        Update-Npm
+        Should -Invoke Write-UpdateStatus -Times 1 -ParameterFilter { $Status -eq 'Error' -and $Message -match 'npm update' }
+        Should -Invoke Write-UpdateStatus -Times 0 -ParameterFilter { $Status -eq 'Success' }
+        Should -Invoke Invoke-UpdateCommand -Times 0 -ParameterFilter { $Arguments[2] -eq '@latest' }
+    }
+
     It 'parses only the primary Winget upgrade table' {
         $output = @(
             'Name             Id                  Version Available Source',
@@ -91,8 +222,11 @@ Describe 'UpdateAppsHelper upgrade noise handling' {
     }
 
     It 'keeps Winget community and Microsoft Store updates in separate layers' {
-        ${function:Update-Winget}.ToString() | Should -Match 'upgrade --source winget'
-        ${function:Update-Winget}.ToString() | Should -Match '--exact --source winget'
+        Mock Get-WingetExecutable { 'test-winget' }
+        Mock Invoke-UpdateCommand { [pscustomobject]@{ExitCode=-1978335189;Output=@()} }
+        Mock Write-UpdateStatus {}
+        Update-Winget
+        Should -Invoke Invoke-UpdateCommand -Times 1 -ParameterFilter { $Arguments[0] -eq 'upgrade' -and $Arguments[1] -eq '--source' -and $Arguments[2] -eq 'winget' }
         ${function:Update-StoreApp}.ToString() | Should -Match 'upgrade --all --source msstore'
     }
 

@@ -29,16 +29,19 @@ function Write-UpdateErrorLog {
 # Main update function with visual progress
 function Update-System {
     [CmdletBinding(SupportsShouldProcess)]
-    param()
-    
+    param(
+        [string[]]$NodeProjectPath = @($PWD.Path),
+        [string]$WslDistribution = 'fedora'
+    )
+
     $logFile = Initialize-UpdateLog
     $script:CurrentUpdateLogFile = $logFile
     $script:UpdateWarningCount = 0
     $script:UpdateErrorCount = 0
-    
+
     # Import helper functions
     . "$PSScriptRoot\..\UpdateAppsHelper.ps1"
-    
+
     # Header
     Write-Host ""
     Write-Host "============================================================" -ForegroundColor Cyan
@@ -50,13 +53,16 @@ function Update-System {
     Write-UpdateLog "Starting system update..." $logFile
 
     $startTime = Get-Date
+    $transcriptFile = [IO.Path]::ChangeExtension($logFile, 'transcript.log')
+    Start-Transcript -LiteralPath $transcriptFile -ErrorAction Stop | Out-Null
+    Write-UpdateStatus "Full command transcript: $transcriptFile" -Status Info
 
     try {
         # ============================================================
         # LAYER 0: WINDOWS SYSTEM
         # ============================================================
         Update-WindowsSystem
-        Update-WSL
+        Update-WSL -Distribution $WslDistribution
 
         # ============================================================
         # LAYER 1: PACKAGE MANAGERS
@@ -64,7 +70,8 @@ function Update-System {
         Update-Winget
         Update-Scoop
         Update-Choco
-        Update-Homebrew
+        Update-Homebrew -Distribution $WslDistribution
+        Update-WslDotnet -Distribution $WslDistribution
 
         # ============================================================
         # LAYER 2: DEVELOPMENT TOOLS
@@ -75,6 +82,7 @@ function Update-System {
         Update-Uv
         Update-Vcpkg
         Update-Conda
+        Update-Msys2
         Update-DotnetTool
         Update-Gem
         Update-GoTools
@@ -87,7 +95,7 @@ function Update-System {
         Update-StoreApp
         Update-PowerShellModule
         Update-PythonEnvironment
-        Update-NodeEnvironment
+        Update-NodeEnvironment -ProjectPath $NodeProjectPath
 
         # ============================================================
         # LAYER 4: DOTFILES & SHELL TOOLS
@@ -103,7 +111,10 @@ function Update-System {
     catch {
         Write-UpdateErrorLog $_.Exception.Message "System Update" $logFile
         Write-UpdateStatus "Update failed: $_" -Status Error
+        $script:CurrentUpdateLogFile = $null
         $PSCmdlet.ThrowTerminatingError($_)
+    } finally {
+        Stop-Transcript -ErrorAction Stop | Out-Null
     }
 
     $endTime = Get-Date
@@ -112,18 +123,20 @@ function Update-System {
     # Footer
     Write-Host ""
     Write-Host "============================================================" -ForegroundColor Green
-    if ($script:UpdateErrorCount -gt 0 -or $script:UpdateWarningCount -gt 0) {
+    if ($script:UpdateErrorCount -gt 0) {
+        Write-Host "       SYSTEM UPGRADE COMPLETED WITH ERRORS                 " -ForegroundColor Red
+    } elseif ($script:UpdateWarningCount -gt 0) {
         Write-Host "       SYSTEM UPGRADE COMPLETED WITH WARNINGS               " -ForegroundColor Yellow
     } else {
         Write-Host "            SYSTEM UPGRADE COMPLETED                        " -ForegroundColor Green
     }
     Write-Host "============================================================" -ForegroundColor Green
     Write-Host ""
-    Write-UpdateStatus "Total duration: $($duration.ToString('hh\:mm\:ss'))" -Status Success
+    Write-UpdateStatus "Total duration: $($duration.ToString('hh\:mm\:ss'))" -Status Info
     Write-UpdateStatus "Warnings: $script:UpdateWarningCount; errors: $script:UpdateErrorCount" -Status Info
     Write-UpdateStatus "Log saved to: $logFile" -Status Info
     Write-Host ""
-    
+
     Write-UpdateLog "System update completed" $logFile
     $script:CurrentUpdateLogFile = $null
 }
